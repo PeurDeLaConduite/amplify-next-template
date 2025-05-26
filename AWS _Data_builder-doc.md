@@ -3,6 +3,7 @@
 ## Index
 
 1. [Étape 1 – Set up Amplify Data](#etape-1--set-up-amplify-data)
+2. [Étape 2 – Connect your app code to API](#etape-2--connect-your-app-code-to-api)
 
 ---
 
@@ -112,3 +113,126 @@ Amplify.configure(outputs);
 - *Auth ultra flexible, mais attention au mode public en prod !*
 
 ---
+
+## Étape 2 – Connect your app code to API
+
+### 🎯 Objectif
+Connecter ton application front-end à l’API Amplify Data, gérer l’authentification, personnaliser les headers et, si besoin, consommer plusieurs endpoints.
+
+---
+
+### 🚦 Prérequis
+
+- Cloud sandbox Amplify Data actif (`npx ampx sandbox`)
+- Application front avec Amplify installé (`npm add aws-amplify`)
+- npm installé
+
+---
+
+### 🛠️ Configuration de la librairie Amplify
+
+**Dans l’entrypoint de ton app :**
+
+```js
+import { Amplify } from 'aws-amplify';
+import outputs from '../amplify_outputs.json';
+
+Amplify.configure(outputs);
+```
+- `amplify_outputs.json` contient toutes les infos (URL, API Key, user pool, etc.).
+
+---
+
+### 🧩 Générer le client Data Amplify
+
+**Avec TypeScript pour avoir l’autocomplétion :**
+
+```ts
+import { generateClient } from 'aws-amplify/data';
+import type { Schema } from '../amplify/data/resource';
+
+const client = generateClient<Schema>();
+```
+- **Tu peux ensuite faire :**
+    ```ts
+    const { data: todos, errors } = await client.models.Todo.list();
+    ```
+
+---
+
+### 🔐 Gestion du mode d’authentification (Authorization Mode)
+
+- **Mode par défaut** : défini dans `amplify_outputs.json` (`userPool` ou `apiKey`)
+- **Pour forcer un mode d’auth globalement sur un client :**
+    ```ts
+    const client = generateClient<Schema>({ authMode: 'apiKey' });
+    ```
+- **Pour forcer un mode d’auth sur une requête :**
+    ```ts
+    const { data } = await client.models.Todo.list({
+      authMode: 'apiKey'
+    });
+    ```
+
+---
+
+### 📦 Personnaliser les headers (ex : tracking, auth, signatures)
+
+- **Headers statiques :**
+    ```ts
+    const client = generateClient<Schema>({
+      headers: {
+        'My-Custom-Header': 'my value'
+      }
+    });
+    ```
+- **Headers dynamiques (fonction async) :**
+    ```ts
+    const client = generateClient<Schema>({
+      headers: async (requestOptions) => ({
+        'Authorization': 'Bearer ' + getToken()
+      })
+    });
+    ```
+- **Ou sur une seule requête :**
+    ```ts
+    await client.models.Todo.list({
+      headers: { 'X-Tracking': 'on' }
+    });
+    ```
+
+---
+
+### 🌐 Utiliser un endpoint de données supplémentaire
+
+- **Changer l’endpoint côté client :**
+    ```ts
+    const client = generateClient({
+      endpoint: 'https://my-other-endpoint.com/graphql',
+      authMode: 'apiKey',
+      apiKey: 'my-api-key'
+    });
+    ```
+
+- **Si l’authentification diffère, passe le header d’auth manuellement (voir headers plus haut).**
+
+---
+
+### ✨ Points à retenir
+
+- **Initialise Amplify dans l’entrypoint avec le fichier outputs**
+- **Génère toujours un client typé (TypeScript) pour le confort dev**
+- **Gère le mode d’auth soit globalement, soit par requête**
+- **Personnalise headers et endpoints selon les besoins**
+- **Possible de connecter plusieurs backends Amplify depuis une même app**
+
+---
+
+### 📌 Particularités
+
+- *Possibilité de typage complet même en JS (avec JSDoc)*
+- *Support multi-endpoints, multi-auth*
+- *Ultra flexible pour tests, intégrations, microservices…*
+
+---
+
