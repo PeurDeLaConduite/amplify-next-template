@@ -17,7 +17,7 @@ export default function CommentsPublicPage() {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
-                            "x-api-key": "da2-k3duvrzumbbhvhasn5vragagc4",
+                            "x-api-key": process.env.NEXT_PUBLIC_API_KEY!,
                         },
                         body: JSON.stringify({
                             query: `
