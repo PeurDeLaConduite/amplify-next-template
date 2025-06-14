@@ -1,15 +1,27 @@
-import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
+import { a, defineData, type ClientSchema } from "@aws-amplify/backend";
 
 const schema = a.schema({
     Todo: a
         .model({
             content: a.string(),
-            isDone: a.boolean(),
+            comments: a.hasMany("Comment", "todoId"), // ✅ référence explicite
         })
         .authorization((allow) => [
-            allow.publicApiKey().to(["read"]), // Accès public en lecture
+            allow.publicApiKey().to(["read"]),
             allow.authenticated().to(["read"]),
-            allow.owner(), // Le propriétaire peut créer, modifier, supprimer
+            allow.owner(),
+        ]),
+
+    Comment: a
+        .model({
+            content: a.string(),
+            todoId: a.id(), // ✅ clé étrangère manuelle
+            todo: a.belongsTo("Todo", "todoId"), // ✅ lien belongsTo explicite
+        })
+        .authorization((allow) => [
+            allow.publicApiKey().to(["read"]),
+            allow.authenticated().to(["create"]),
+            allow.owner(),
         ]),
 });
 
@@ -18,7 +30,7 @@ export type Schema = ClientSchema<typeof schema>;
 export const data = defineData({
     schema,
     authorizationModes: {
-        defaultAuthorizationMode: "userPool", // Auth principal = Cognito
+        defaultAuthorizationMode: "userPool",
         apiKeyAuthorizationMode: {
             expiresInDays: 30,
         },
