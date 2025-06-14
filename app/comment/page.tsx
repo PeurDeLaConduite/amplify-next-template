@@ -1,20 +1,21 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { Schema } from "@/amplify/data/resource";
 
 export default function CommentsPublicPage() {
-    const [comments, setComments] = useState([]);
+    const [comments, setComments] = useState<Array<Schema["Comment"]["type"]>>([]);
 
     useEffect(() => {
         const fetchComments = async () => {
             try {
                 const res = await fetch(
-                    "https://wgs4qa4ymrakzgkszevnzciv74.appsync-api.eu-west-3.amazonaws.com/graphql",
+                    "https://rydb4thk25bkhd7eimmux4hrku.appsync-api.eu-west-3.amazonaws.com/graphql",
                     {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
-                            "x-api-key": "da2-k3duvrzumbbhvhasn5vragagc4", // <- vérifie qu’elle correspond à outputs.data.api_key
+                            "x-api-key": "da2-3xmd4yvcg5e35d7cra3jh6ouaq", // <- vérifie qu’elle correspond à outputs.data.api_key
                         },
                         body: JSON.stringify({
                             query: `
