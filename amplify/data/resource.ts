@@ -4,8 +4,12 @@ const schema = a.schema({
     Todo: a
         .model({
             content: a.string(),
+            isDone: a.boolean(),
         })
-        .authorization((allow) => [allow.owner(), allow.publicApiKey().to(["read"])]),
+        .authorization((allow) => [
+            allow.publicApiKey().to(["read"]), // Accès public en lecture
+            allow.owner(), // Le propriétaire peut créer, modifier, supprimer
+        ]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
@@ -13,6 +17,9 @@ export type Schema = ClientSchema<typeof schema>;
 export const data = defineData({
     schema,
     authorizationModes: {
-        defaultAuthorizationMode: "userPool",
+        defaultAuthorizationMode: "userPool", // Auth principal = Cognito
+        apiKeyAuthorizationMode: {
+            expiresInDays: 30,
+        },
     },
 });
