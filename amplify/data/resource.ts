@@ -19,20 +19,21 @@ const schema = a.schema({
             todo: a.belongsTo("Todo", "todoId"),
         })
         .authorization((allow) => [
-            allow.publicApiKey().to(["read"]),
-            allow.authenticated().to(["create"]),
-            allow.owner(),
+            allow.publicApiKey().to(["read"]), // lecture publique
+            allow.authenticated().to(["create", "read"]), // créer uniquement
+            allow.owner().to(["update", "delete", "read"]), // uniquement sur SES commentaires
         ]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
-// export const amplifyConfig = {
-//     data: {
-//         modelIntrospection: {
-//             enableLazyLoading: false,
-//         },
-//     },
-// };
+export const amplifyConfig = {
+    data: {
+        modelIntrospection: {
+            enableLazyLoading: true, // ✅ permet d'utiliser todo.comments()
+        },
+    },
+};
+
 export const data = defineData({
     schema,
     authorizationModes: {

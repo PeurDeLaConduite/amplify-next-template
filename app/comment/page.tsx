@@ -4,18 +4,20 @@ import { useEffect, useState } from "react";
 import type { Schema } from "@/amplify/data/resource";
 
 export default function CommentsPublicPage() {
-    const [comments, setComments] = useState<Array<Schema["Comment"]["type"]>>([]);
+    const [comments, setComments] = useState<
+        Array<Schema["Comment"]["type"] & { todo?: { id: string; content: string } }>
+    >([]);
 
     useEffect(() => {
         const fetchComments = async () => {
             try {
                 const res = await fetch(
-                    "https://rydb4thk25bkhd7eimmux4hrku.appsync-api.eu-west-3.amazonaws.com/graphql",
+                    "https://wgs4qa4ymrakzgkszevnzciv74.appsync-api.eu-west-3.amazonaws.com/graphql",
                     {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
-                            "x-api-key": "da2-3xmd4yvcg5e35d7cra3jh6ouaq", // <- vérifie qu’elle correspond à outputs.data.api_key
+                            "x-api-key": "da2-k3duvrzumbbhvhasn5vragagc4",
                         },
                         body: JSON.stringify({
                             query: `
@@ -25,6 +27,10 @@ export default function CommentsPublicPage() {
                                             id
                                             content
                                             createdAt
+                                            todo {
+                                                id
+                                                content
+                                            }
                                         }
                                     }
                                 }
@@ -34,6 +40,7 @@ export default function CommentsPublicPage() {
                 );
 
                 const data = await res.json();
+                console.log("GraphQL response:", data);
 
                 if (data.errors) {
                     console.error("GraphQL errors:", data.errors);
@@ -53,7 +60,18 @@ export default function CommentsPublicPage() {
             <h1>Commentaires publics</h1>
             <ul>
                 {comments.map((comment) => (
-                    <li key={comment.id}>{comment.content}</li>
+                    <li key={comment.id}>
+                        <p>
+                            <strong>Commentaire :</strong> {comment.content}
+                        </p>
+                        {comment.todo && (
+                            <p>
+                                <strong>Todo associé :</strong> {comment.todo.content} (ID:{" "}
+                                {comment.todo.id})
+                            </p>
+                        )}
+                        <hr />
+                    </li>
                 ))}
             </ul>
         </main>
