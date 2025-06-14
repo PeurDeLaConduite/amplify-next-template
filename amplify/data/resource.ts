@@ -26,7 +26,13 @@ const schema = a.schema({
 });
 
 export type Schema = ClientSchema<typeof schema>;
-
+// export const amplifyConfig = {
+//     data: {
+//         modelIntrospection: {
+//             enableLazyLoading: false,
+//         },
+//     },
+// };
 export const data = defineData({
     schema,
     authorizationModes: {
