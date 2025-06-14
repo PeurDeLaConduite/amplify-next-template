@@ -8,6 +8,7 @@ const schema = a.schema({
         })
         .authorization((allow) => [
             allow.publicApiKey().to(["read"]), // Accès public en lecture
+            allow.authenticated().to(["read"]),
             allow.owner(), // Le propriétaire peut créer, modifier, supprimer
         ]),
 });
