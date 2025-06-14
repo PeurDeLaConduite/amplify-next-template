@@ -5,18 +5,31 @@ backend:
             commands:
                 - nvm install 22.14.0
                 - nvm use 22.14.0
-                - yarn install
+                - corepack enable
+                - corepack prepare yarn@4.9.2 --activate
+                - yarn cache clean
+                - yarn install --immutable
                 - npx ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID
 frontend:
     phases:
         build:
             commands:
+                - export NEXT_TELEMETRY_DISABLED=1
                 - npm run build
+
     artifacts:
         baseDirectory: .next
         files:
             - "**/*"
+
     cache:
         paths:
             - .next/cache/**/*
+            - .npm/**/*
             - node_modules/**/*
+
+    customHeaders: # ← même niveau que phases, artifacts, cache
+        - pattern: "/img/**"
+          headers:
+              - key: "Cache-Control"
+                value: "public, max-age=31536000, immutable"
