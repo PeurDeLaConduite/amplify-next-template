@@ -15,8 +15,8 @@ const schema = a.schema({
     Comment: a
         .model({
             content: a.string(),
-            todoId: a.id(), // ✅ clé étrangère manuelle
-            todo: a.belongsTo("Todo", "todoId"), // ✅ lien belongsTo explicite
+            todoId: a.id(),
+            todo: a.belongsTo("Todo", "todoId"),
         })
         .authorization((allow) => [
             allow.publicApiKey().to(["read"]),
