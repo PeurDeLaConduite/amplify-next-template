@@ -20,8 +20,8 @@ const schema = a.schema({
         })
         .authorization((allow) => [
             allow.publicApiKey().to(["read"]), // lecture publique
-            allow.authenticated().to(["create", "read"]), // créer uniquement
-            allow.owner().to(["update", "delete", "read"]), // uniquement sur SES commentaires
+            allow.authenticated().to(["read"]), // créer uniquement
+            allow.owner(),
         ]),
 });
 
