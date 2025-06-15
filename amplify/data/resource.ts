@@ -18,7 +18,8 @@ const schema = a.schema({
             todoId: a.id(),
             todo: a.belongsTo("Todo", "todoId"),
 
-            userNameId: a.id().required(), // ★ clé étrangère → UserName.id
+            // ★ on garde userNameId comme FK vers UserName.id
+            userNameId: a.id().required(),
             userName: a.belongsTo("UserName", "userNameId"),
 
             owner: a.string(),
@@ -28,6 +29,22 @@ const schema = a.schema({
             allow.authenticated().to(["read"]),
             allow.group("ADMINS").to(["create", "update", "delete", "read"]),
             allow.owner(),
+        ]),
+
+    UserName: a
+        .model({
+            // ★ on supprime userId et on expose id pour stocker directement le sub Cognito
+            id: a.id().required(), // <— ici on passera user.attributes.sub
+            userName: a.string().required(),
+
+            // relations inverses
+            postComments: a.hasMany("PostComment", "userNameId"),
+            comments: a.hasMany("Comment", "userNameId"),
+        })
+        .authorization((allow) => [
+            allow.publicApiKey().to(["read"]),
+            allow.owner(),
+            allow.group("ADMINS").to(["create", "update", "delete", "read"]),
         ]),
 
     UserProfile: a
@@ -41,20 +58,6 @@ const schema = a.schema({
             phoneNumber: a.string(),
         })
         .authorization((allow) => [allow.owner()]),
-
-    UserName: a
-        .model({
-            userName: a.string().required(),
-            userId: a.id().required(), // id Cognito de l'utilisateur
-            // Relations vers les commentaires
-            postComments: a.hasMany("PostComment", "userNameId"),
-            comments: a.hasMany("Comment", "userNameId"),
-        })
-        .authorization((allow) => [
-            allow.publicApiKey().to(["read"]),
-            allow.owner(),
-            allow.group("ADMINS").to(["create", "update", "delete", "read"]),
-        ]),
 
     Seo: a.customType({
         title: a.string(),
@@ -154,7 +157,7 @@ const schema = a.schema({
             postId: a.id().required(),
             post: a.belongsTo("Post", "postId"),
 
-            userNameId: a.id().required(), // ★ même principe
+            userNameId: a.id().required(),
             userName: a.belongsTo("UserName", "userNameId"),
         })
         .authorization((allow) => [
