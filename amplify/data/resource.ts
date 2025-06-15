@@ -1,23 +1,6 @@
 import { a, defineData, type ClientSchema } from "@aws-amplify/backend";
 
 const schema = a.schema({
-    UserProfile: a
-        .model({
-            firstName: a.string(),
-            familyName: a.string(),
-            address: a.string(),
-            postalCode: a.string(),
-            city: a.string(),
-            country: a.string(),
-            phoneNumber: a.string(),
-        })
-        .authorization((allow) => [allow.owner()]),
-    UserName: a
-        .model({
-            userName: a.string().required(),
-            userId: a.id().required(), // le sub Cognito (lié à owner)
-        })
-        .authorization((allow) => [allow.publicApiKey().to(["read"]), allow.owner()]),
     Todo: a
         .model({
             content: a.string(),
@@ -42,6 +25,26 @@ const schema = a.schema({
             allow.group("ADMINS").to(["create", "update", "delete", "read"]),
             allow.owner(),
         ]),
+
+    UserProfile: a
+        .model({
+            firstName: a.string(),
+            familyName: a.string(),
+            address: a.string(),
+            postalCode: a.string(),
+            city: a.string(),
+            country: a.string(),
+            phoneNumber: a.string(),
+        })
+        .authorization((allow) => [allow.owner()]),
+
+    UserName: a
+        .model({
+            userName: a.string().required(),
+            userId: a.id().required(),
+            comments: a.hasMany("PostComment", "userNameId"),
+        })
+        .authorization((allow) => [allow.publicApiKey().to(["read"]), allow.owner()]),
 
     Seo: a.customType({
         title: a.string(),
@@ -141,8 +144,8 @@ const schema = a.schema({
             owner: a.string(),
         })
         .authorization((allow) => [
-            allow.publicApiKey().to(["read"]),
-            allow.authenticated().to(["create", "read"]),
+            allow.publicApiKey().to(["read"]), // lecture publique
+            allow.authenticated().to(["read"]), // créer uniquement
             allow.group("ADMINS").to(["create", "update", "delete", "read"]),
             allow.owner(),
         ]),
