@@ -4,7 +4,7 @@ const schema = a.schema({
     Todo: a
         .model({
             content: a.string(),
-            comments: a.hasMany("Comment", "todoId"), // ✅ référence explicite
+            comments: a.hasMany("Comment", "todoId"),
         })
         .authorization((allow) => [
             allow.publicApiKey().to(["read"]),
@@ -17,12 +17,11 @@ const schema = a.schema({
             content: a.string(),
             todoId: a.id(),
             todo: a.belongsTo("Todo", "todoId"),
+            owner: a.string(),
 
-            // ★ on garde userNameId comme FK vers UserName.id
+            // 🔑 Clé étrangère vers UserName
             userNameId: a.id().required(),
             userName: a.belongsTo("UserName", "userNameId"),
-
-            owner: a.string(),
         })
         .authorization((allow) => [
             allow.publicApiKey().to(["read"]),
@@ -33,11 +32,11 @@ const schema = a.schema({
 
     UserName: a
         .model({
-            // ★ on supprime userId et on expose id pour stocker directement le sub Cognito
-            id: a.id().required(), // <— ici on passera user.attributes.sub
+            // 🔑 id du modèle UserName = sub Cognito
+            id: a.id().required(),
             userName: a.string().required(),
 
-            // relations inverses
+            // 🟢 relations inverses (avec bonnes références)
             postComments: a.hasMany("PostComment", "userNameId"),
             comments: a.hasMany("Comment", "userNameId"),
         })
@@ -65,7 +64,6 @@ const schema = a.schema({
         image: a.string(),
     }),
 
-    // --- Author ---
     Author: a
         .model({
             id: a.id().required(),
@@ -84,7 +82,6 @@ const schema = a.schema({
             allow.group("ADMINS").to(["create", "update", "delete", "read"]),
         ]),
 
-    // --- Section ---
     Section: a
         .model({
             id: a.id().required(),
@@ -92,7 +89,7 @@ const schema = a.schema({
             title: a.string().required(),
             description: a.string(),
             order: a.integer(),
-            posts: a.hasMany("SectionPost", "sectionId"), // relation many-to-many via SectionPost
+            posts: a.hasMany("SectionPost", "sectionId"),
             seo: a.ref("Seo"),
             createdAt: a.datetime(),
             updatedAt: a.datetime(),
@@ -103,12 +100,11 @@ const schema = a.schema({
             allow.group("ADMINS").to(["create", "update", "delete", "read"]),
         ]),
 
-    // --- Tag ---
     Tag: a
         .model({
             id: a.id().required(),
             name: a.string().required(),
-            posts: a.hasMany("PostTag", "tagId"), // many-to-many
+            posts: a.hasMany("PostTag", "tagId"),
         })
         .authorization((allow) => [
             allow.publicApiKey().to(["read"]),
@@ -116,7 +112,6 @@ const schema = a.schema({
             allow.group("ADMINS").to(["create", "update", "delete", "read"]),
         ]),
 
-    // --- Post ---
     Post: a
         .model({
             id: a.id().required(),
@@ -151,7 +146,6 @@ const schema = a.schema({
         .model({
             id: a.id().required(),
             content: a.string().required(),
-
             owner: a.string(),
 
             postId: a.id().required(),
@@ -161,12 +155,12 @@ const schema = a.schema({
             userName: a.belongsTo("UserName", "userNameId"),
         })
         .authorization((allow) => [
-            allow.publicApiKey().to(["read"]), // lecture publique
-            allow.authenticated().to(["read"]), // créer uniquement
+            allow.publicApiKey().to(["read"]),
+            allow.authenticated().to(["read"]),
             allow.group("ADMINS").to(["create", "update", "delete", "read"]),
             allow.owner(),
         ]),
-    // --- Table de jointure Post/Tag ---
+
     PostTag: a
         .model({
             postId: a.id().required(),
@@ -208,6 +202,7 @@ const schema = a.schema({
 });
 
 export type Schema = ClientSchema<typeof schema>;
+
 export const amplifyConfig = {
     data: {
         modelIntrospection: {
