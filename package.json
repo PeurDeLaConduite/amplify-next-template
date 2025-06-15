@@ -50,8 +50,8 @@
         "@types/react-dom": "^19",
         "@typescript-eslint/parser": "^8.32.1",
         "aws-cdk": "^2",
-        "aws-cdk-lib": "^2",
-        "constructs": "^10.3.0",
+        "aws-cdk-lib": "^2.201.0",
+        "constructs": "^10.4.2",
         "esbuild": "^0.23.1",
         "eslint": "^9.15.0",
         "eslint-config-next": "15.3.1",
@@ -60,8 +60,9 @@
         "sass-loader": "13.0.0",
         "tailwindcss": "^4",
         "tsx": "^4.19.2",
-        "typescript": "^5.7.2",
-        "webpack": "^5.0.0"
+        "typescript": "^5.8.3",
+        "webpack": "^5.0.0",
+        "zod": "^3.25.64"
     },
-    "packageManager": "yarn@4.9.2+sha512.1fc009bc09d13cfd0e19efa44cbfc2b9cf6ca61482725eb35bbc5e257e093ebf4130db6dfe15d604ff4b79efd8e1e8e99b25fa7d0a6197c9f9826358d4d65c3c"
+    "packageManager": "yarn@3.6.1"
 }
