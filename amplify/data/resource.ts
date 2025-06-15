@@ -117,6 +117,7 @@ const schema = a.schema({
             authorId: a.id().required(),
             author: a.belongsTo("Author", "authorId"),
             relatedPosts: a.hasMany("RelatedPost", "postId"),
+            relatedTo: a.hasMany("RelatedPost", "relatedPostId"),
             order: a.integer(),
             type: a.string(),
             status: a.enum(["draft", "published"]),
@@ -159,9 +160,8 @@ const schema = a.schema({
         })
         .authorization((allow) => [
             allow.publicApiKey().to(["read"]),
-            allow.authenticated().to(["create", "read"]),
+            allow.authenticated().to(["read"]),
             allow.group("ADMINS").to(["create", "update", "delete", "read"]),
-            allow.owner(),
         ]),
 
     SectionPost: a
@@ -173,9 +173,8 @@ const schema = a.schema({
         })
         .authorization((allow) => [
             allow.publicApiKey().to(["read"]),
-            allow.authenticated().to(["create", "read"]),
+            allow.authenticated().to(["read"]),
             allow.group("ADMINS").to(["create", "update", "delete", "read"]),
-            allow.owner(),
         ]),
 
     RelatedPost: a
@@ -187,9 +186,8 @@ const schema = a.schema({
         })
         .authorization((allow) => [
             allow.publicApiKey().to(["read"]),
-            allow.authenticated().to(["create", "read"]),
+            allow.authenticated().to(["read"]),
             allow.group("ADMINS").to(["create", "update", "delete", "read"]),
-            allow.owner(),
         ]),
 });
 
