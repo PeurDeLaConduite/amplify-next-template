@@ -6,7 +6,6 @@ import outputs from "@/amplify_outputs.json";
 import "@aws-amplify/ui-react/styles.css";
 
 Amplify.configure(outputs);
-const client = generateClient<Schema>();
 
 type CommentWithTodoId = {
     id: string;
@@ -15,27 +14,28 @@ type CommentWithTodoId = {
     todoId?: string;
 };
 
+const client = generateClient<Schema>();
+
 export default function TodosWithCommentsPage() {
     const [todos, setTodos] = useState<Schema["Todo"]["type"][]>([]);
     const [comments, setComments] = useState<CommentWithTodoId[]>([]);
-    function listTodos() {
-        client.models.Todo.observeQuery().subscribe({
+
+    useEffect(() => {
+        // -- Abonnement au mount
+        const todoSub = client.models.Todo.observeQuery().subscribe({
             next: (data) => setTodos([...data.items]),
         });
-    }
-    function listComment() {
-        client.models.Comment.observeQuery().subscribe({
+        const commentSub = client.models.Comment.observeQuery().subscribe({
             next: (data) => setComments([...(data.items as CommentWithTodoId[])]),
         });
-    }
-    useEffect(() => {
+        // -- Cleanup au unmount
         return () => {
-            listTodos();
-            listComment();
+            todoSub.unsubscribe();
+            commentSub.unsubscribe();
         };
     }, []);
 
-    // CRUD handlers
+    // CRUD handlers (inchangés)
     const createTodo = () => {
         const content = window.prompt("Contenu du Todo ?");
         if (content) client.models.Todo.create({ content });
