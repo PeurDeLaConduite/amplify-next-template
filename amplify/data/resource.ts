@@ -9,7 +9,8 @@ const schema = a.schema({
         .authorization((allow) => [
             allow.publicApiKey().to(["read"]),
             allow.authenticated().to(["read"]),
-            allow.owner(),
+            allow.group("admin").to(["create", "update", "delete", "read"]),
+            // allow.owner(),
         ]),
 
     Comment: a
