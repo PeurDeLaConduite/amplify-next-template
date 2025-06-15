@@ -133,40 +133,11 @@ export default function ProfileManager() {
     const saveSingleField = async () => {
         if (!profile || !editModeField) return;
         const { field, value } = editModeField;
-
         try {
-            if (field === "userName") {
-                const { data: userNames } = await client.models.UserName.list({
-                    filter: { userId: { eq: user.userId } },
-                    limit: 1,
-                });
-                if (userNames && userNames.length > 0) {
-                    await client.models.UserName.update({
-                        id: userNames[0].id,
-                        userName: value,
-                    });
-                } else {
-                    await client.models.UserName.create({
-                        userName: value,
-                        userId: user.userId,
-                    });
-                }
-                // 🔥 MAJ locale pour feedback immédiat
-                setFormData((f) => ({
-                    ...f,
-                    userName: value,
-                }));
-            } else {
-                await client.models.UserProfile.update({
-                    id: profile.id,
-                    [field]: value,
-                });
-                // MAJ formData aussi, par sécurité :
-                setFormData((f) => ({
-                    ...f,
-                    [field]: value,
-                }));
-            }
+            await client.models.UserProfile.update({
+                id: profile.id,
+                [field]: value,
+            });
             setEditModeField(null);
         } catch (err) {
             console.error(err);

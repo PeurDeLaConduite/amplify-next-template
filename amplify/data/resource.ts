@@ -195,7 +195,7 @@ export type Schema = ClientSchema<typeof schema>;
 export const amplifyConfig = {
     data: {
         modelIntrospection: {
-            enableLazyLoading: true, // ✅ permet d'utiliser todo.comments()
+            enableLazyLoading: true,
         },
     },
 };

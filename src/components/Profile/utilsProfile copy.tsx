@@ -1,5 +1,3 @@
-
-
 export type Profile = {
     firstName: string | null;
     familyName: string | null;
@@ -33,7 +31,6 @@ export const label = (field: keyof Profile): string => {
             return field;
     }
 };
-
 
 export type MinimalProfile = {
     firstName: string;

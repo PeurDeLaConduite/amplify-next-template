@@ -18,6 +18,7 @@ type Props = {
 
 export default function ReadOnlyProfileView({ profile, onEditField, onClearField, label }: Props) {
     const fields: (keyof MinimalProfile)[] = [
+        "userName",
         "firstName",
         "familyName",
         "phoneNumber",
@@ -32,6 +33,7 @@ export default function ReadOnlyProfileView({ profile, onEditField, onClearField
             case "phoneNumber":
                 return <PhoneIcon fontSize="small" className="text-gray-800" />;
             case "firstName":
+            case "userName":
             case "familyName":
                 return <PersonIcon fontSize="small" className="text-gray-800" />;
             case "address":

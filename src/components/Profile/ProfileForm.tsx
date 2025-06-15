@@ -1,7 +1,8 @@
-import { SaveButton, AddButton, CancelButton } from "../buttons/Buttons"
+import { SaveButton, AddButton, CancelButton } from "../buttons/Buttons";
 
 type Props = {
     formData: {
+        userName: string;
         firstName: string;
         familyName: string;
         address: string;
@@ -31,7 +32,20 @@ export default function ProfileForm({
             }}
             className="space-y-5 p-6 bg-white border rounded-md shadow-sm max-w-md mx-auto"
         >
-            {/* Prénom */}
+            <div>
+                <label htmlFor="userName" className="block mb-1 font-medium">
+                    Pseudo public
+                </label>
+                <input
+                    id="userName"
+                    name="userName"
+                    placeholder="Pseudo public"
+                    value={formData.userName ?? ""}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded"
+                    required
+                />
+            </div>
             <div>
                 <label htmlFor="firstName" className="block mb-1 font-medium">
                     Prénom
