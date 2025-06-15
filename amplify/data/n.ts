@@ -1,43 +1,44 @@
 // import { a, defineData, type ClientSchema } from "@aws-amplify/backend";
 
+// // Custom type pour le SEO
 // const schema = a.schema({
-//     Post: a
+//     UserProfile: a
 //         .model({
-//             id: a.id().required(),
-//             title: a.string().required(),
-//             content: a.string(),
-//             excerpt: a.string(),
-//             publishedAt: a.datetime(),
-//             authorId: a.id().required(),
-//             sectionId: a.id(),
-//             tags: a.string().array(),
-//             coverImage: a.string(),
+//             firstName: a.string(),
+//             familyName: a.string(),
+//             address: a.string(),
+//             postalCode: a.string(),
+//             city: a.string(),
+//             country: a.string(),
+//             phoneNumber: a.string(),
 //         })
-//         .authorization((allow) => [
-//             allow.publicApiKey().to(["read"]),
-//             allow.authenticated().to(["read"]),
-//             allow.group("admin").to(["create", "update", "delete", "read"]),
-//         ]),
+//         .authorization((allow) => [allow.owner()]),
 
-//     Section: a
+//     UserName: a
 //         .model({
-//             id: a.id().required(),
-//             name: a.string().required(),
-//             description: a.string(),
-//             slug: a.string(),
+//             userName: a.string().required(),
+//             userId: a.id().required(), // le sub Cognito (lié à owner)
 //         })
-//         .authorization((allow) => [
-//             allow.publicApiKey().to(["read"]),
-//             allow.authenticated().to(["read"]),
-//             allow.group("admin").to(["create", "update", "delete", "read"]),
-//         ]),
+//         .authorization((allow) => [allow.publicApiKey().to(["read"]), allow.owner()]),
 
+//     Seo: a.customType({
+//         title: a.string(),
+//         description: a.string(),
+//         image: a.string(),
+//     }),
+
+//     // --- Author ---
 //     Author: a
 //         .model({
 //             id: a.id().required(),
-//             displayName: a.string().required(),
+//             name: a.string().required(),
 //             bio: a.string(),
-//             avatarUrl: a.string(),
+//             email: a.string(),
+//             avatar: a.string(),
+//             posts: a.hasMany("Post", "authorId"),
+//             order: a.integer(),
+//             createdAt: a.datetime(),
+//             updatedAt: a.datetime(),
 //         })
 //         .authorization((allow) => [
 //             allow.publicApiKey().to(["read"]),
@@ -45,16 +46,107 @@
 //             allow.group("admin").to(["create", "update", "delete", "read"]),
 //         ]),
 
+//     // --- Section ---
+//     Section: a
+//         .model({
+//             id: a.id().required(),
+//             slug: a.string().required(),
+//             title: a.string().required(),
+//             description: a.string(),
+//             order: a.integer(),
+//             posts: a.hasMany("SectionPost", "sectionId"), // relation many-to-many via SectionPost
+//             seo: a.ref("Seo"),
+//             createdAt: a.datetime(),
+//             updatedAt: a.datetime(),
+//         })
+//         .authorization((allow) => [
+//             allow.publicApiKey().to(["read"]),
+//             allow.authenticated().to(["read"]),
+//             allow.group("admin").to(["create", "update", "delete", "read"]),
+//         ]),
+
+//     // --- Tag ---
 //     Tag: a
 //         .model({
 //             id: a.id().required(),
 //             name: a.string().required(),
+//             posts: a.hasMany("PostTag", "tagId"), // many-to-many
 //         })
 //         .authorization((allow) => [
 //             allow.publicApiKey().to(["read"]),
 //             allow.authenticated().to(["read"]),
 //             allow.group("admin").to(["create", "update", "delete", "read"]),
 //         ]),
+
+//     // --- Post ---
+//     Post: a
+//         .model({
+//             id: a.id().required(),
+//             slug: a.string().required(),
+//             title: a.string().required(),
+//             excerpt: a.string(),
+//             content: a.string(),
+//             videoUrl: a.string(),
+//             subtitleSource: a.string(),
+//             subtitleDownloaded: a.boolean().default(false),
+//             authorId: a.id().required(),
+//             author: a.belongsTo("Author", "authorId"),
+//             relatedPosts: a.hasMany("RelatedPost", "postId"),
+//             order: a.integer(),
+//             type: a.string(),
+//             status: a.enum(["draft", "published"]),
+//             seo: a.ref("Seo"),
+//             createdAt: a.datetime(),
+//             updatedAt: a.datetime(),
+//             comments: a.hasMany("Comment", "postId"),
+//             sections: a.hasMany("SectionPost", "postId"),
+//             tags: a.hasMany("PostTag", "postId"),
+//         })
+//         .authorization((allow) => [
+//             allow.publicApiKey().to(["read"]),
+//             allow.authenticated().to(["read"]),
+//             allow.group("admin").to(["create", "update", "delete", "read"]),
+//         ]),
+
+//     Comment: a
+//         .model({
+//             id: a.id().required(),
+//             content: a.string().required(),
+//             postId: a.id().required(),
+//             post: a.belongsTo("Post", "postId"),
+//             userNameId: a.id().required(),
+//             userName: a.belongsTo("UserName", "userNameId"),
+//             owner: a.string(),
+//         })
+//         .authorization((allow) => [
+//             allow.publicApiKey().to(["read"]),
+//             allow.authenticated().to(["create", "read"]),
+//             allow.group("admin").to(["create", "update", "delete", "read"]),
+//             allow.owner(),
+//         ]),
+//     // --- Table de jointure Post/Tag ---
+//     PostTag: a.model({
+//         postId: a.id().required(),
+//         tagId: a.id().required(),
+//         post: a.belongsTo("Post", "postId"),
+//         tag: a.belongsTo("Tag", "tagId"),
+//     }),
+
+//     // --- Table de jointure Section/Post ---
+//     SectionPost: a.model({
+//         sectionId: a.id().required(),
+//         postId: a.id().required(),
+//         section: a.belongsTo("Section", "sectionId"),
+//         post: a.belongsTo("Post", "postId"),
+//     }),
+
+//     // --- Table de jointure pour posts liés (related posts) ---
+//     RelatedPost: a.model({
+//         postId: a.id().required(),
+//         relatedPostId: a.id().required(),
+//         post: a.belongsTo("Post", "postId"),
+//         related: a.belongsTo("Post", "relatedPostId"),
+//     }),
 // });
 
 // export type Schema = ClientSchema<typeof schema>;

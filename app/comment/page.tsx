@@ -157,6 +157,11 @@ export default function CommentsPublicPage() {
                                             <small>
                                                 {new Date(comment.createdAt).toLocaleString()}
                                             </small>
+                                            <br />
+                                            {/* Affichage du owner */}
+                                            <small style={{ color: "#888" }}>
+                                                Owner : {comment.owner ?? "—"}
+                                            </small>
                                         </li>
                                     ))}
                                 </ul>

@@ -1,6 +1,17 @@
 import { a, defineData, type ClientSchema } from "@aws-amplify/backend";
 
 const schema = a.schema({
+    UserProfile: a
+        .model({
+            firstName: a.string(),
+            familyName: a.string(),
+            address: a.string(),
+            postalCode: a.string(),
+            city: a.string(),
+            country: a.string(),
+            phoneNumber: a.string(),
+        })
+        .authorization((allow) => [allow.owner()]),
     Todo: a
         .model({
             content: a.string(),
@@ -18,6 +29,7 @@ const schema = a.schema({
             content: a.string(),
             todoId: a.id(),
             todo: a.belongsTo("Todo", "todoId"),
+            owner: a.string(),
         })
         .authorization((allow) => [
             allow.publicApiKey().to(["read"]), // lecture publique
