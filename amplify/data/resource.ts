@@ -46,7 +46,6 @@ const schema = a.schema({
             userId: a.id().required(),
             postComments: a.hasMany("PostComment", "userNameId"),
             comments: a.hasMany("Comment", "userNameId"),
-            owner: a.string(),
         })
         .authorization((allow) => [
             allow.publicApiKey().to(["read"]),
