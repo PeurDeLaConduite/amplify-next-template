@@ -150,28 +150,47 @@ const schema = a.schema({
             allow.owner(),
         ]),
     // --- Table de jointure Post/Tag ---
-    PostTag: a.model({
-        postId: a.id().required(),
-        tagId: a.id().required(),
-        post: a.belongsTo("Post", "postId"),
-        tag: a.belongsTo("Tag", "tagId"),
-    }),
+    PostTag: a
+        .model({
+            postId: a.id().required(),
+            tagId: a.id().required(),
+            post: a.belongsTo("Post", "postId"),
+            tag: a.belongsTo("Tag", "tagId"),
+        })
+        .authorization((allow) => [
+            allow.publicApiKey().to(["read"]),
+            allow.authenticated().to(["create", "read"]),
+            allow.group("ADMINS").to(["create", "update", "delete", "read"]),
+            allow.owner(),
+        ]),
 
-    // --- Table de jointure Section/Post ---
-    SectionPost: a.model({
-        sectionId: a.id().required(),
-        postId: a.id().required(),
-        section: a.belongsTo("Section", "sectionId"),
-        post: a.belongsTo("Post", "postId"),
-    }),
+    SectionPost: a
+        .model({
+            sectionId: a.id().required(),
+            postId: a.id().required(),
+            section: a.belongsTo("Section", "sectionId"),
+            post: a.belongsTo("Post", "postId"),
+        })
+        .authorization((allow) => [
+            allow.publicApiKey().to(["read"]),
+            allow.authenticated().to(["create", "read"]),
+            allow.group("ADMINS").to(["create", "update", "delete", "read"]),
+            allow.owner(),
+        ]),
 
-    // --- Table de jointure pour posts liés (related posts) ---
-    RelatedPost: a.model({
-        postId: a.id().required(),
-        relatedPostId: a.id().required(),
-        post: a.belongsTo("Post", "postId"),
-        related: a.belongsTo("Post", "relatedPostId"),
-    }),
+    RelatedPost: a
+        .model({
+            postId: a.id().required(),
+            relatedPostId: a.id().required(),
+            post: a.belongsTo("Post", "postId"),
+            related: a.belongsTo("Post", "relatedPostId"),
+        })
+        .authorization((allow) => [
+            allow.publicApiKey().to(["read"]),
+            allow.authenticated().to(["create", "read"]),
+            allow.group("ADMINS").to(["create", "update", "delete", "read"]),
+            allow.owner(),
+        ]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
