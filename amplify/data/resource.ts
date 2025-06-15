@@ -47,7 +47,11 @@ const schema = a.schema({
             postComments: a.hasMany("PostComment", "userNameId"),
             comments: a.hasMany("Comment", "userNameId"),
         })
-        .authorization((allow) => [allow.publicApiKey().to(["read"]), allow.owner()]),
+        .authorization((allow) => [
+            allow.publicApiKey().to(["read"]),
+            allow.owner(),
+            allow.group("ADMINS").to(["create", "update", "delete", "read"]),
+        ]),
 
     Seo: a.customType({
         title: a.string(),
