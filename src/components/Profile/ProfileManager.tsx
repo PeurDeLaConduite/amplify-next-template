@@ -36,7 +36,7 @@ export default function ProfileManager() {
         if (!user) return;
         const fetchUserName = async () => {
             const { data } = await client.models.UserName.list({
-                filter: { userId: { eq: user.userId } },
+                filter: { id: { eq: user.userId } }, // ✅ correction ici
                 limit: 1,
             });
             setFormData((f) => ({
@@ -44,6 +44,7 @@ export default function ProfileManager() {
                 userName: data?.[0]?.userName ?? "",
             }));
         };
+
         fetchUserName();
     }, [user]);
 
@@ -106,9 +107,10 @@ export default function ProfileManager() {
             // 3. Enregistre UserName comme avant
             if (userName) {
                 const { data: userNames } = await client.models.UserName.list({
-                    filter: { userId: { eq: user.userId } },
+                    filter: { id: { eq: user.userId } }, // ✅ ici
                     limit: 1,
                 });
+
                 if (userNames && userNames.length > 0) {
                     await client.models.UserName.update({
                         id: userNames[0].id,
@@ -116,11 +118,12 @@ export default function ProfileManager() {
                     });
                 } else {
                     await client.models.UserName.create({
+                        id: user.userId, // ✅ important ici : on impose l’id (= sub Cognito)
                         userName,
-                        userId: user.userId,
                     });
                 }
             }
+
             alert("Profil et pseudo public enregistrés ✔");
             setEditMode(false);
         } catch (err) {
@@ -137,7 +140,7 @@ export default function ProfileManager() {
         try {
             if (field === "userName") {
                 const { data: userNames } = await client.models.UserName.list({
-                    filter: { userId: { eq: user.userId } },
+                    filter: { id: { eq: user.userId } },
                     limit: 1,
                 });
                 if (userNames && userNames.length > 0) {
@@ -148,7 +151,7 @@ export default function ProfileManager() {
                 } else {
                     await client.models.UserName.create({
                         userName: value,
-                        userId: user.userId,
+                        id: user.userId,
                     });
                 }
                 // 🔥 MAJ locale pour feedback immédiat
