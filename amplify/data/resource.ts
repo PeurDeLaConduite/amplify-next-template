@@ -12,7 +12,12 @@ const schema = a.schema({
             phoneNumber: a.string(),
         })
         .authorization((allow) => [allow.owner()]),
-
+    UserName: a
+        .model({
+            userName: a.string().required(),
+            userId: a.id().required(), // le sub Cognito (lié à owner)
+        })
+        .authorization((allow) => [allow.publicApiKey().to(["read"]), allow.owner()]),
     Todo: a
         .model({
             content: a.string(),
