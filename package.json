@@ -11,7 +11,7 @@
         "amplify": "amplify"
     },
     "dependencies": {
-        "@aws-amplify/auth": "^6.12.4",
+        "@aws-amplify/auth": "^6.13.0",
         "@aws-amplify/cli": "^13.0.1",
         "@aws-amplify/core": "^6.11.4",
         "@aws-amplify/ui-react": "^6.11.1",

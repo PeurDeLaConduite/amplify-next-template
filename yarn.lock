@@ -190,7 +190,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-amplify/auth@npm:6.12.4, @aws-amplify/auth@npm:^6.12.4":
+"@aws-amplify/auth@npm:6.12.4":
   version: 6.12.4
   resolution: "@aws-amplify/auth@npm:6.12.4"
   dependencies:
@@ -200,6 +200,19 @@ __metadata:
   peerDependencies:
     "@aws-amplify/core": ^6.1.0
   checksum: 10c0/3ddae4587cd173c5608bd3cfd4e7deeb5095742b71be920f5344da36adc3e853b904d07cae27f27b8be52fe1953ac1fffd5656abd02a6551cdcd3946b30c9a79
+  languageName: node
+  linkType: hard
+
+"@aws-amplify/auth@npm:^6.13.0":
+  version: 6.13.0
+  resolution: "@aws-amplify/auth@npm:6.13.0"
+  dependencies:
+    "@aws-crypto/sha256-js": "npm:5.2.0"
+    "@smithy/types": "npm:^3.3.0"
+    tslib: "npm:^2.5.0"
+  peerDependencies:
+    "@aws-amplify/core": ^6.1.0
+  checksum: 10c0/1db1733faf05d9382ab32462fdca3068f80c5ffa15ab4bd4fcefce964d66e8de7ac537539b032dd66bf8f2b1fbd08448d3c2a6c76ae0f2a6cfa3d0e9772446ff
   languageName: node
   linkType: hard
 
@@ -10614,7 +10627,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "aws-amplify-gen2@workspace:."
   dependencies:
-    "@aws-amplify/auth": "npm:^6.12.4"
+    "@aws-amplify/auth": "npm:^6.13.0"
     "@aws-amplify/backend": "npm:^1.16.1"
     "@aws-amplify/backend-cli": "npm:^1.3.0"
     "@aws-amplify/cli": "npm:^13.0.1"

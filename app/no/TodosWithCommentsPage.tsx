@@ -4,7 +4,7 @@ import type { Schema } from "@/amplify/data/resource";
 import { Amplify } from "aws-amplify";
 import outputs from "@/amplify_outputs.json";
 import "@aws-amplify/ui-react/styles.css";
-
+import { getCurrentUser } from "aws-amplify/auth";
 Amplify.configure(outputs);
 
 type CommentWithTodoId = {
@@ -47,11 +47,19 @@ export default function TodosWithCommentsPage() {
         }
     };
 
-    const addComment = (todoId: string) => {
+    const addComment = async (todoId: string) => {
         const content = window.prompt("Contenu du commentaire ?");
-        if (content) client.models.Comment.create({ content, todoId });
-    };
+        if (!content) return;
 
+        // on récupère { userId, username, ... }
+        const { userId: userNameId } = await getCurrentUser();
+
+        await client.models.Comment.create({
+            content,
+            todoId,
+            userNameId, // ← obligatoire d’après votre schéma
+        });
+    };
     const deleteComment = (id: string) => {
         if (confirm("Supprimer ce commentaire ?")) {
             client.models.Comment.delete({ id });
