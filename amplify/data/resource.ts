@@ -18,6 +18,8 @@ const schema = a.schema({
             todoId: a.id(),
             todo: a.belongsTo("Todo", "todoId"),
             owner: a.string(),
+            userNameId: a.id().required(),
+            userName: a.belongsTo("UserName", "userNameId"),
         })
         .authorization((allow) => [
             allow.publicApiKey().to(["read"]), // lecture publique
@@ -42,7 +44,8 @@ const schema = a.schema({
         .model({
             userName: a.string().required(),
             userId: a.id().required(),
-            comments: a.hasMany("PostComment", "userNameId"),
+            postComments: a.hasMany("PostComment", "userNameId"),
+            comments: a.hasMany("Comment", "userNameId"),
         })
         .authorization((allow) => [allow.publicApiKey().to(["read"]), allow.owner()]),
 
