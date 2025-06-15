@@ -43,7 +43,7 @@
 //         .authorization((allow) => [
 //             allow.publicApiKey().to(["read"]),
 //             allow.authenticated().to(["read"]),
-//             allow.group("admin").to(["create", "update", "delete", "read"]),
+//             allow.group("ADMINS").to(["create", "update", "delete", "read"]),
 //         ]),
 
 //     // --- Section ---
@@ -62,7 +62,7 @@
 //         .authorization((allow) => [
 //             allow.publicApiKey().to(["read"]),
 //             allow.authenticated().to(["read"]),
-//             allow.group("admin").to(["create", "update", "delete", "read"]),
+//             allow.group("ADMINS").to(["create", "update", "delete", "read"]),
 //         ]),
 
 //     // --- Tag ---
@@ -75,7 +75,7 @@
 //         .authorization((allow) => [
 //             allow.publicApiKey().to(["read"]),
 //             allow.authenticated().to(["read"]),
-//             allow.group("admin").to(["create", "update", "delete", "read"]),
+//             allow.group("ADMINS").to(["create", "update", "delete", "read"]),
 //         ]),
 
 //     // --- Post ---
@@ -105,7 +105,7 @@
 //         .authorization((allow) => [
 //             allow.publicApiKey().to(["read"]),
 //             allow.authenticated().to(["read"]),
-//             allow.group("admin").to(["create", "update", "delete", "read"]),
+//             allow.group("ADMINS").to(["create", "update", "delete", "read"]),
 //         ]),
 
 //     Comment: a
@@ -121,7 +121,7 @@
 //         .authorization((allow) => [
 //             allow.publicApiKey().to(["read"]),
 //             allow.authenticated().to(["create", "read"]),
-//             allow.group("admin").to(["create", "update", "delete", "read"]),
+//             allow.group("ADMINS").to(["create", "update", "delete", "read"]),
 //             allow.owner(),
 //         ]),
 //     // --- Table de jointure Post/Tag ---

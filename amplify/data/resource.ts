@@ -12,6 +12,7 @@ const schema = a.schema({
             phoneNumber: a.string(),
         })
         .authorization((allow) => [allow.owner()]),
+
     Todo: a
         .model({
             content: a.string(),
@@ -20,7 +21,7 @@ const schema = a.schema({
         .authorization((allow) => [
             allow.publicApiKey().to(["read"]),
             allow.authenticated().to(["read"]),
-            allow.group("admin").to(["create", "update", "delete", "read"]),
+            allow.group("ADMINS").to(["create", "update", "delete", "read"]),
             // allow.owner(),
         ]),
 
@@ -34,7 +35,7 @@ const schema = a.schema({
         .authorization((allow) => [
             allow.publicApiKey().to(["read"]), // lecture publique
             allow.authenticated().to(["read"]), // créer uniquement
-            allow.group("admin").to(["create", "update", "delete", "read"]),
+            allow.group("ADMINS").to(["create", "update", "delete", "read"]),
             allow.owner(),
         ]),
 });
