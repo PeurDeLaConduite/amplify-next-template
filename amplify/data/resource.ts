@@ -17,13 +17,15 @@ const schema = a.schema({
             content: a.string(),
             todoId: a.id(),
             todo: a.belongsTo("Todo", "todoId"),
+
+            userNameId: a.id().required(), // ★ clé étrangère → UserName.id
+            userName: a.belongsTo("UserName", "userNameId"),
+
             owner: a.string(),
-            userId: a.id().required(),
-            userName: a.belongsTo("UserName", "userId"),
         })
         .authorization((allow) => [
-            allow.publicApiKey().to(["read"]), // lecture publique
-            allow.authenticated().to(["read"]), // créer uniquement
+            allow.publicApiKey().to(["read"]),
+            allow.authenticated().to(["read"]),
             allow.group("ADMINS").to(["create", "update", "delete", "read"]),
             allow.owner(),
         ]),
@@ -43,9 +45,10 @@ const schema = a.schema({
     UserName: a
         .model({
             userName: a.string().required(),
-            userId: a.id().required(),
-            postComments: a.hasMany("PostComment", "userId"),
-            comments: a.hasMany("Comment", "userId"),
+            userId: a.id().required(), // id Cognito de l'utilisateur
+            // Relations vers les commentaires
+            postComments: a.hasMany("PostComment", "userNameId"),
+            comments: a.hasMany("Comment", "userNameId"),
         })
         .authorization((allow) => [
             allow.publicApiKey().to(["read"]),
@@ -145,11 +148,14 @@ const schema = a.schema({
         .model({
             id: a.id().required(),
             content: a.string().required(),
+
+            owner: a.string(),
+
             postId: a.id().required(),
             post: a.belongsTo("Post", "postId"),
-            userNameId: a.id().required(),
+
+            userNameId: a.id().required(), // ★ même principe
             userName: a.belongsTo("UserName", "userNameId"),
-            owner: a.string(),
         })
         .authorization((allow) => [
             allow.publicApiKey().to(["read"]), // lecture publique
