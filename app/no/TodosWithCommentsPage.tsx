@@ -41,9 +41,9 @@ export default function TodosWithCommentsPage() {
         if (content) client.models.Todo.create({ content });
     };
 
-    const deleteTodo = (id: string) => {
-        if (confirm("Supprimer ce Todo ?")) {
-            client.models.Todo.delete({ id });
+    const deleteTodo = async (id: string) => {
+        if (confirm("Supprimer ce Todo (avec ses commentaires) ?")) {
+            await client.mutations.deleteTodoWithComments({ todoId: id });
         }
     };
 
