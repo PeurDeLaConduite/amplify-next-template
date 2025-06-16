@@ -2,10 +2,11 @@ import type { Schema } from "../../data/resource";
 import { Amplify } from "aws-amplify";
 import { generateClient } from "aws-amplify/data";
 import { getAmplifyDataClientConfig } from "@aws-amplify/backend/function/runtime";
-// import { env } from "$amplify/env/delete-todo";
+
+import { env } from "$amplify/env/delete-todo";
 
 export const handler: Schema["deleteTodoWithComments"]["functionHandler"] = async (event) => {
-    // 💡 Récupération automatique de la conf liée à ta fonction
+    // @ts-expect-error - Typage d’env Amplify local juste pour la build, runtime OK cloud
     const { resourceConfig, libraryOptions } = await getAmplifyDataClientConfig(env);
     Amplify.configure(resourceConfig, libraryOptions);
 
