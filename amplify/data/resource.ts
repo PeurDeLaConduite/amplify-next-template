@@ -1,5 +1,8 @@
 import { a, defineData, type ClientSchema } from "@aws-amplify/backend";
 import { deleteTodoWithComments } from "../functions/delete-todo/resource";
+import { deletePostWithChildren } from "../functions/delete-post/resource";
+import { deleteSectionWithLinks } from "../functions/delete-section/resource";
+
 const schema = a.schema({
     Todo: a
         .model({
@@ -209,6 +212,19 @@ const schema = a.schema({
         .returns(a.boolean()) // true si succès
         .authorization((allow) => [allow.group("ADMINS")])
         .handler(a.handler.function(deleteTodoWithComments)),
+
+    deletePostWithChildren: a
+        .mutation()
+        .arguments({ postId: a.id().required() })
+        .returns(a.boolean())
+        .authorization((allow) => [allow.group("ADMINS")])
+        .handler(a.handler.function(deletePostWithChildren)),
+    deleteSectionWithLinks: a
+        .mutation()
+        .arguments({ sectionId: a.id().required() })
+        .returns(a.boolean())
+        .authorization((allow) => [allow.group("ADMINS")])
+        .handler(a.handler.function(deleteSectionWithLinks)),
 });
 
 export type Schema = ClientSchema<typeof schema>;
