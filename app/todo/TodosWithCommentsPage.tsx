@@ -67,8 +67,13 @@ export default function TodosWithCommentsPage() {
     };
 
     return (
-        <main>
-            <button onClick={createTodo}>➕ Ajouter un Todo</button>
+        <section className="py-4">
+            <button
+                onClick={createTodo}
+                className="mb-8 w-full sm:w-auto px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow transition focus:ring-2 focus:ring-blue-300 focus:outline-none"
+            >
+                ➕ Ajouter un Todo
+            </button>
             <TodoList
                 todos={todos}
                 comments={comments}
@@ -76,11 +81,10 @@ export default function TodosWithCommentsPage() {
                 onAddComment={addComment}
                 onDeleteComment={deleteComment}
             />
-        </main>
+        </section>
     );
 }
 
-// Composant d'affichage des todos
 interface TodoListProps {
     todos: Schema["Todo"]["type"][];
     comments: CommentWithTodoId[];
@@ -90,19 +94,35 @@ interface TodoListProps {
 }
 
 function TodoList({ todos, comments, onDeleteTodo, onAddComment, onDeleteComment }: TodoListProps) {
+    if (todos.length === 0)
+        return <div className="text-gray-400 text-center py-12">Aucun todo pour le moment.</div>;
+
     return (
-        <ul>
+        <ul className="space-y-6">
             {todos.map((todo) => {
                 const todoComments = comments.filter((c) => c.todoId === todo.id);
                 return (
-                    <li key={todo.id} style={{ marginBottom: "1rem" }}>
-                        <strong>{todo.content}</strong>
-                        <br />
-                        <button onClick={() => onDeleteTodo(todo.id)}>🗑️ Supprimer</button>
-                        <button onClick={() => onAddComment(todo.id)}>
-                            💬 Ajouter un commentaire
-                        </button>
-
+                    <li
+                        key={todo.id}
+                        className="p-4 bg-gray-50 rounded-xl shadow flex flex-col gap-2"
+                    >
+                        <div className="flex items-center justify-between">
+                            <strong className="text-lg">{todo.content}</strong>
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => onDeleteTodo(todo.id)}
+                                    className="px-3 py-1 rounded-md bg-red-500 text-white hover:bg-red-600 text-sm transition"
+                                >
+                                    🗑️ Supprimer
+                                </button>
+                                <button
+                                    onClick={() => onAddComment(todo.id)}
+                                    className="px-3 py-1 rounded-md bg-green-500 text-white hover:bg-green-600 text-sm transition"
+                                >
+                                    💬 Ajouter un commentaire
+                                </button>
+                            </div>
+                        </div>
                         {todoComments.length > 0 && (
                             <CommentList
                                 comments={todoComments}
@@ -124,11 +144,19 @@ interface CommentListProps {
 
 function CommentList({ comments, onDeleteComment }: CommentListProps) {
     return (
-        <ul style={{ paddingLeft: "1.5rem" }}>
+        <ul className="ml-6 mt-2 space-y-1">
             {comments.map((comment) => (
-                <li key={comment.id} style={{ display: "flex", alignItems: "center" }}>
-                    <span style={{ marginRight: "0.5rem" }}>{comment.content}</span>
-                    <button onClick={() => onDeleteComment(comment.id)}>❌</button>
+                <li
+                    key={comment.id}
+                    className="flex items-center gap-2 bg-white rounded px-2 py-1 shadow-sm"
+                >
+                    <span className="flex-1 text-gray-800">{comment.content}</span>
+                    <button
+                        onClick={() => onDeleteComment(comment.id)}
+                        className="text-xs px-2 py-1 rounded bg-red-100 hover:bg-red-200 text-red-600 transition"
+                    >
+                        ❌
+                    </button>
                 </li>
             ))}
         </ul>
