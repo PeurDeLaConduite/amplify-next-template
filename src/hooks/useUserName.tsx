@@ -7,27 +7,28 @@ const client = generateClient<Schema>();
 
 export function useUserName() {
     const { user } = useAuthenticator();
-    const [userName, setUserName] = useState<string | null>(null);
+    const [userName, setUserName] = useState<string>("");
 
     useEffect(() => {
         if (!user) {
             setUserName("");
-        } else {
-            const fetchUserName = async () => {
-                try {
-                    const { data } = await client.models.UserName.list({
-                        filter: { id: { eq: user.userId } }, // on filtre sur le sub Cognito
-                        limit: 1,
-                    });
-                    setUserName(data?.[0]?.userName ?? "");
-                } catch (err) {
-                    setUserName("");
-                    console.error(err);
-                }
-            };
-
-            fetchUserName();
+            return;
         }
+
+        const fetchUserName = async () => {
+            try {
+                const { data } = await client.models.UserName.list({
+                    filter: { id: { eq: user.userId } },
+                    limit: 1,
+                });
+                setUserName(data?.[0]?.userName ?? "");
+            } catch (err) {
+                setUserName("");
+                console.error(err);
+            }
+        };
+
+        fetchUserName();
     }, [user]);
 
     return userName;

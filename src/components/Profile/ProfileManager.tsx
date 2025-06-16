@@ -86,12 +86,31 @@ export default function ProfileManager() {
         setFormData((f) => ({ ...f, [name]: value }));
 
     // Enregistrer (UserProfile + UserName)
+    async function createOrUpdateUserName(userId: string, userName: string) {
+        const { data: userNames } = await client.models.UserName.list({
+            filter: { id: { eq: userId } },
+            limit: 1,
+        });
+        if (userNames && userNames.length > 0) {
+            await client.models.UserName.update({
+                id: userId,
+                userName,
+                owner: userId,
+            });
+        } else {
+            await client.models.UserName.create({
+                id: userId,
+                userName,
+                owner: userId,
+            });
+        }
+    }
+
+    // Enregistrer tout le profil (profil + pseudo)
     const saveProfile = async () => {
         try {
-            // 1. On sépare le userName du reste
             const { userName, ...userProfileData } = formData;
-
-            // 2. Enregistre UserProfile (SANS le userName)
+            // 1. UserProfile
             if (profile) {
                 await client.models.UserProfile.update({
                     id: profile.id,
@@ -100,27 +119,10 @@ export default function ProfileManager() {
             } else {
                 await client.models.UserProfile.create({ ...userProfileData });
             }
-
-            // 3. Enregistre UserName comme avant
+            // 2. UserName (si fourni)
             if (userName) {
-                const { data: userNames } = await client.models.UserName.list({
-                    filter: { id: { eq: user.userId } }, // ✅ ici
-                    limit: 1,
-                });
-
-                if (userNames && userNames.length > 0) {
-                    await client.models.UserName.update({
-                        id: userNames[0].id,
-                        userName,
-                    });
-                } else {
-                    await client.models.UserName.create({
-                        id: user.userId, // ✅ important ici : on impose l’id (= sub Cognito)
-                        userName,
-                    });
-                }
+                await createOrUpdateUserName(user.userId, userName);
             }
-
             alert("Profil et pseudo public enregistrés ✔");
             setEditMode(false);
         } catch (err) {
@@ -129,29 +131,13 @@ export default function ProfileManager() {
         }
     };
 
-    // Champ unique
+    // Mise à jour d'un champ unique (profil ou userName)
     const saveSingleField = async () => {
         if (!profile || !editModeField) return;
         const { field, value } = editModeField;
-
         try {
             if (field === "userName") {
-                const { data: userNames } = await client.models.UserName.list({
-                    filter: { id: { eq: user.userId } },
-                    limit: 1,
-                });
-                if (userNames && userNames.length > 0) {
-                    await client.models.UserName.update({
-                        id: userNames[0].id,
-                        userName: value,
-                    });
-                } else {
-                    await client.models.UserName.create({
-                        userName: value,
-                        id: user.userId,
-                    });
-                }
-                // 🔥 MAJ locale pour feedback immédiat
+                await createOrUpdateUserName(user.userId, value);
                 setFormData((f) => ({
                     ...f,
                     userName: value,
@@ -161,7 +147,6 @@ export default function ProfileManager() {
                     id: profile.id,
                     [field]: value,
                 });
-                // MAJ formData aussi, par sécurité :
                 setFormData((f) => ({
                     ...f,
                     [field]: value,
@@ -179,10 +164,27 @@ export default function ProfileManager() {
         if (!profile) return;
         if (!confirm(`Supprimer le contenu du champ "${fieldLabel(field)}" ?`)) return;
         try {
-            await client.models.UserProfile.update({
-                id: profile.id,
-                [field]: "",
-            });
+            if (field === "userName") {
+                // Vider le userName public
+                const { data: userNames } = await client.models.UserName.list({
+                    filter: { id: { eq: user.userId } },
+                    limit: 1,
+                });
+                if (userNames && userNames.length > 0) {
+                    await client.models.UserName.update({
+                        id: user.userId,
+                        userName: "",
+                        owner: user.userId,
+                    });
+                }
+                setFormData((f) => ({ ...f, userName: "" }));
+            } else {
+                await client.models.UserProfile.update({
+                    id: profile.id,
+                    [field]: "",
+                });
+                setFormData((f) => ({ ...f, [field]: "" }));
+            }
         } catch (err) {
             console.error(err);
             alert("Erreur lors de la suppression du champ");
@@ -194,8 +196,19 @@ export default function ProfileManager() {
         if (!profile) return;
         if (!confirm("Supprimer définitivement votre profil ?")) return;
         try {
+            // 1. Supprimer UserProfile
             await client.models.UserProfile.delete({ id: profile.id });
-            alert("Profil supprimé ✔");
+
+            // 2. Supprimer aussi UserName si présent
+            const { data: userNames } = await client.models.UserName.list({
+                filter: { id: { eq: user.userId } },
+                limit: 1,
+            });
+            if (userNames && userNames.length > 0) {
+                await client.models.UserName.delete({ id: user.userId });
+            }
+
+            alert("Profil et pseudo public supprimés ✔");
             setFormData({
                 userName: "",
                 firstName: "",

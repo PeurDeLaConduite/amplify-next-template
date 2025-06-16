@@ -1,6 +1,5 @@
 import { a, defineData, type ClientSchema } from "@aws-amplify/backend";
 
-
 const schema = a.schema({
     Todo: a
         .model({
@@ -36,8 +35,8 @@ const schema = a.schema({
             // 🔑 id du modèle UserName = sub Cognito
             id: a.id().required(),
             userName: a.string().required(),
+            owner: a.string().required(), // <= à ajouter
 
-            // 🟢 relations inverses (avec bonnes références)
             postComments: a.hasMany("PostComment", "userNameId"),
             comments: a.hasMany("Comment", "userNameId"),
         })
