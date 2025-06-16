@@ -40,13 +40,7 @@ export default function TodosWithCommentsPage() {
         const content = window.prompt("Contenu du Todo ?");
         if (content) client.models.Todo.create({ content });
     };
-
-    const deleteTodo = async (id: string) => {
-        if (confirm("Supprimer ce Todo (avec ses commentaires) ?")) {
-            await client.mutations.deleteTodoWithComments({ todoId: id });
-        }
-    };
-
+    
     const addComment = async (todoId: string) => {
         const content = window.prompt("Contenu du commentaire ?");
         if (!content) return;
@@ -60,9 +54,29 @@ export default function TodosWithCommentsPage() {
             userNameId, // ← obligatoire d’après votre schéma
         });
     };
+
+
     const deleteComment = (id: string) => {
         if (confirm("Supprimer ce commentaire ?")) {
             client.models.Comment.delete({ id });
+        }
+    };
+    const deleteTodo = async (id: string) => {
+        if (confirm("Supprimer ce Todo (et ses commentaires) ?")) {
+            // 1. Récupère tous les commentaires liés au Todo
+            const { data: comments } = await client.models.Comment.list({
+                filter: { todoId: { eq: id } },
+            });
+
+            // 2. Supprime chaque commentaire
+            if (comments) {
+                for (const comment of comments) {
+                    await client.models.Comment.delete({ id: comment.id });
+                }
+            }
+
+            // 3. Supprime le Todo
+            await client.models.Todo.delete({ id });
         }
     };
 

@@ -12,14 +12,12 @@ import ReadOnlyProfileView from "./ReadOnlyProfileView";
 import ProfileForm from "./ProfileForm";
 import { label as fieldLabel, normalizeFormData, MinimalProfile } from "./utilsProfile";
 import { DeleteButton } from "@/src/components/buttons/Buttons";
-import { useAuth } from "@/src/context/AuthContext";
 
 Amplify.configure(outputs);
 const client = generateClient<Schema>();
 
 export default function ProfileManager() {
     const { user } = useAuthenticator();
-    const { refreshProfile } = useAuth();
     const [profile, setProfile] = useState<Schema["UserProfile"]["type"] | null>(null);
 
     // Centralise tout dans un seul formData (profil + pseudo)
@@ -75,14 +73,13 @@ export default function ProfileManager() {
                         secure: true,
                         sameSite: "Strict",
                     });
-                    refreshProfile();
                 }
             },
         });
 
         return () => sub.unsubscribe();
         // formData en dépendance pour garder le dernier pseudo connu !
-    }, [user, editMode, refreshProfile, formData]);
+    }, [user, editMode, formData]);
 
     // Champ universel
     const handleChange = ({ target: { name, value } }: React.ChangeEvent<HTMLInputElement>) =>

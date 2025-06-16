@@ -8,7 +8,7 @@ import TodosWithCommentsPage from "./TodosWithCommentsPage";
 Amplify.configure(outputs);
 
 export default function CommentsPage() {
-    const { user, signOut } = useAuthenticator();
+    const { user } = useAuthenticator();
 
     return (
         <div className="max-w-2xl mx-auto my-12 p-8 bg-white rounded-3xl shadow-2xl border border-gray-200">
@@ -18,12 +18,6 @@ export default function CommentsPage() {
                     <span className="font-normal text-gray-500">— Todos & Commentaires</span>
                 </h1>
                 <TodosWithCommentsPage />
-                <button
-                    onClick={signOut}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-500 hover:bg-red-600 text-white font-semibold shadow transition focus:ring-2 focus:ring-red-300 focus:outline-none"
-                >
-                    🚪 Se déconnecter
-                </button>
             </div>
         </div>
     );
