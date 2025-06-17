@@ -41,7 +41,7 @@ const Header = () => {
                         userName ? (
                             <>
                                 <p className="text-sm text-gray-700">
-                                    Connecté en tant que : <strong>{userName}</strong>
+                                    Connecté en tant que : <strong>{userName | ["Profile"]}</strong>
                                 </p>
                                 <Link
                                     href="/connection"
@@ -56,8 +56,15 @@ const Header = () => {
                                 </Link>
                             </>
                         ) : (
-                            // Pendant le chargement du userName : affiche rien, ou un skeleton si tu veux
-                            <span className="text-sm text-gray-400">Chargement...</span>
+                            <>
+                                <span className="text-sm text-gray-400">Chargement...</span>{" "}
+                                <PowerButton
+                                    onClick={signOut}
+                                    className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
+                                >
+                                    Se déconnecter
+                                </PowerButton>{" "}
+                            </>
                         )
                     ) : (
                         <Link href="/connection" className="text-gray-700 hover:text-blue-600">

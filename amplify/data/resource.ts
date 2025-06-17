@@ -40,7 +40,11 @@ const schema = a.schema({
             postComments: a.hasMany("PostComment", "userNameId"),
             comments: a.hasMany("Comment", "userNameId"),
         })
-        .authorization((allow) => [allow.publicApiKey().to(["read"]), allow.owner()]),
+        .authorization((allow) => [
+            allow.publicApiKey().to(["read"]), // facultatif, lecture anonyme
+            allow.authenticated().to(["read"]), // ⬅️ obligatoire pour lecture par TOUS les users connectés
+            allow.owner(), // owner : gère son pseudo
+        ]),
 
     UserProfile: a
         .model({
