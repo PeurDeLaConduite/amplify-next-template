@@ -1,5 +1,9 @@
 @import "tailwindcss";
-
+body {
+    margin: 0;
+    background: linear-gradient(180deg, rgb(117, 81, 194), rgb(255, 255, 255));
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
 /* dans globals.css ou un module CSS importé */
 .markdown-container {
     max-width: 800px;

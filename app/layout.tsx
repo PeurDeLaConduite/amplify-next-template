@@ -1,6 +1,5 @@
 import React from "react";
 import { Amplify } from "aws-amplify";
-import "./app.css";
 import "./globals.css";
 import "@aws-amplify/ui-react/styles.css";
 import outputs from "@/amplify_outputs.json";

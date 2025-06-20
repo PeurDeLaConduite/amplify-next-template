@@ -12,12 +12,14 @@ import ReadOnlyProfileView from "./ReadOnlyProfileView";
 import ProfileForm from "./ProfileForm";
 import { label as fieldLabel, normalizeFormData, MinimalProfile } from "./utilsProfile";
 import { DeleteButton } from "@/src/components/buttons/Buttons";
+import { useUserName } from "@/src/hooks/useUserName";
 
 Amplify.configure(outputs);
 const client = generateClient<Schema>();
 
 export default function ProfileManager() {
     const { user } = useAuthenticator();
+    const { userName, updateUserName, loading: loadingUserName } = useUserName();
     const [profile, setProfile] = useState<Schema["UserProfile"]["type"] | null>(null);
 
     // Centralise tout dans un seul formData (profil + pseudo)
@@ -29,24 +31,12 @@ export default function ProfileManager() {
         value: string;
     } | null>(null);
 
-    // 1. Charger le pseudo public (UserName) séparément et fusionner dans formData
+    // Synchronise userName dès qu'il change
     useEffect(() => {
-        if (!user) return;
-        const fetchUserName = async () => {
-            const { data } = await client.models.UserName.list({
-                filter: { id: { eq: user.userId } }, // ✅ correction ici
-                limit: 1,
-            });
-            setFormData((f) => ({
-                ...f,
-                userName: data?.[0]?.userName ?? "",
-            }));
-        };
+        setFormData((f) => ({ ...f, userName: userName ?? "" }));
+    }, [userName]);
 
-        fetchUserName();
-    }, [user]);
-
-    // 2. Charger le profil principal (UserProfile) et fusionner dans formData
+    // Charger le profil principal (UserProfile) et fusionner dans formData
     useEffect(() => {
         if (!user) return;
         const sub = client.models.UserProfile.observeQuery().subscribe({
@@ -55,7 +45,6 @@ export default function ProfileManager() {
                 setProfile(item);
 
                 if (item && !editMode) {
-                    // NE PAS toucher à userName ici, il est déjà dans formData
                     const normalized = {
                         ...formData,
                         firstName: item.firstName ?? "",
@@ -78,38 +67,17 @@ export default function ProfileManager() {
         });
 
         return () => sub.unsubscribe();
-        // formData en dépendance pour garder le dernier pseudo connu !
-    }, [user, editMode, formData]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user, editMode]);
 
     // Champ universel
     const handleChange = ({ target: { name, value } }: React.ChangeEvent<HTMLInputElement>) =>
         setFormData((f) => ({ ...f, [name]: value }));
 
-    // Enregistrer (UserProfile + UserName)
-    async function createOrUpdateUserName(userId: string, userName: string) {
-        const { data: userNames } = await client.models.UserName.list({
-            filter: { id: { eq: userId } },
-            limit: 1,
-        });
-        if (userNames && userNames.length > 0) {
-            await client.models.UserName.update({
-                id: userId,
-                userName,
-                owner: userId,
-            });
-        } else {
-            await client.models.UserName.create({
-                id: userId,
-                userName,
-                owner: userId,
-            });
-        }
-    }
-
     // Enregistrer tout le profil (profil + pseudo)
     const saveProfile = async () => {
         try {
-            const { userName, ...userProfileData } = formData;
+            const { userName: formUserName, ...userProfileData } = formData;
             // 1. UserProfile
             if (profile) {
                 await client.models.UserProfile.update({
@@ -119,9 +87,9 @@ export default function ProfileManager() {
             } else {
                 await client.models.UserProfile.create({ ...userProfileData });
             }
-            // 2. UserName (si fourni)
-            if (userName) {
-                await createOrUpdateUserName(user.userId, userName);
+            // 2. UserName (si fourni et différent de l’actuel)
+            if (formUserName && formUserName !== userName) {
+                await updateUserName(formUserName);
             }
             alert("Profil et pseudo public enregistrés ✔");
             setEditMode(false);
@@ -137,7 +105,7 @@ export default function ProfileManager() {
         const { field, value } = editModeField;
         try {
             if (field === "userName") {
-                await createOrUpdateUserName(user.userId, value);
+                await updateUserName(value);
                 setFormData((f) => ({
                     ...f,
                     userName: value,
@@ -165,18 +133,7 @@ export default function ProfileManager() {
         if (!confirm(`Supprimer le contenu du champ "${fieldLabel(field)}" ?`)) return;
         try {
             if (field === "userName") {
-                // Vider le userName public
-                const { data: userNames } = await client.models.UserName.list({
-                    filter: { id: { eq: user.userId } },
-                    limit: 1,
-                });
-                if (userNames && userNames.length > 0) {
-                    await client.models.UserName.update({
-                        id: user.userId,
-                        userName: "",
-                        owner: user.userId,
-                    });
-                }
+                await updateUserName("");
                 setFormData((f) => ({ ...f, userName: "" }));
             } else {
                 await client.models.UserProfile.update({
@@ -200,12 +157,8 @@ export default function ProfileManager() {
             await client.models.UserProfile.delete({ id: profile.id });
 
             // 2. Supprimer aussi UserName si présent
-            const { data: userNames } = await client.models.UserName.list({
-                filter: { id: { eq: user.userId } },
-                limit: 1,
-            });
-            if (userNames && userNames.length > 0) {
-                await client.models.UserName.delete({ id: user.userId });
+            if (userName) {
+                await updateUserName("");
             }
 
             alert("Profil et pseudo public supprimés ✔");
@@ -259,7 +212,7 @@ export default function ProfileManager() {
                     onCancel={() => {
                         setEditMode(false);
                         setFormData({
-                            ...formData, // garde le dernier pseudo chargé
+                            ...formData,
                             firstName: profile?.firstName ?? "",
                             familyName: profile?.familyName ?? "",
                             address: profile?.address ?? "",

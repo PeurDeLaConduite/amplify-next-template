@@ -20,7 +20,7 @@
             "@src/*": ["src/*"],
             "@amplify/*": ["amplify/*"],
             "@components/*": ["src/components/*"],
-            "@hooks/*": ["src/hooks/*"],
+            "@hooks/*": ["src/hooks f/*"],
             "@context/*": ["src/context/*"],
             "@utils/*": ["src/utils/*"],
             "@types/*": ["src/types/*"],
@@ -40,6 +40,8 @@
         "src/**/*.tsx",
         "public/**/*.json",
         ".next/types/**/*.ts",
+        "src/components/Blog/Create/components/EditableField.jsx",
+        "src/hooks/useUserProfile.tsx",
         "src/components/Blog/Create/components/EditableField.jsx",
         "src/hooks/useEditableForm.js"
     ],

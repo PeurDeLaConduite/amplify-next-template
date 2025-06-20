@@ -10319,6 +10319,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ampx@npm:^0.2.2":
+  version: 0.2.2
+  resolution: "ampx@npm:0.2.2"
+  checksum: 10c0/3f6fa2310d94cf87ff718631015775320165d6b5050c500e34c81a4185064918b129a2206535506c57882ece07029117f01a0e5b4e0d9d53ca87bdb80aa1d434
+  languageName: node
+  linkType: hard
+
 "ansi-escapes@npm:^4.3.2":
   version: 4.3.2
   resolution: "ansi-escapes@npm:4.3.2"
@@ -10647,6 +10654,7 @@ __metadata:
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     "@typescript-eslint/parser": "npm:^8.32.1"
+    ampx: "npm:^0.2.2"
     aws-amplify: "npm:^6.14.4"
     aws-cdk: "npm:^2"
     aws-cdk-lib: "npm:^2"

@@ -8,13 +8,13 @@ import { useAuthenticator } from "@aws-amplify/ui-react";
 
 const Header = () => {
     const { user, signOut } = useAuthenticator();
-    const userName = useUserName();
+    const {userName} = useUserName();
     return (
         <header className="bg-white shadow-md">
             <nav className="max-w-6xl mx-auto flex items-center justify-between p-4">
                 <div className="flex gap-6">
                     <Link href="/comment" className="text-gray-700 hover:text-blue-600">
-                        Commantaires
+                        Commentaires
                     </Link>
                     <Link href="/todo" className="text-gray-700 hover:text-blue-600">
                         Todo
@@ -22,15 +22,15 @@ const Header = () => {
                     <Link href="/" className="text-gray-700 hover:text-blue-600">
                         Home
                     </Link>
-                    {/* <Link href="/uploadPage" className="text-gray-700 hover:text-blue-600">
+                    <Link href="/uploadPage" className="text-gray-700 hover:text-blue-600">
                         Upload Page
                     </Link>
                     <Link href="/createBlog" className="text-gray-700 hover:text-blue-600">
                         Create Blog
-                    </Link>{" "}
+                    </Link>
                     <Link href="/blog" className="text-gray-700 hover:text-blue-600">
                         Blog
-                    </Link> */}
+                    </Link>
                     <Link href="/profile" className="text-gray-700 hover:text-blue-600">
                         My profile
                     </Link>
@@ -41,7 +41,7 @@ const Header = () => {
                         userName ? (
                             <>
                                 <p className="text-sm text-gray-700">
-                                    Connecté en tant que : <strong>{userName | ["Profile"]}</strong>
+                                    Connecté en tant que : <strong>{userName}</strong>
                                 </p>
                                 <Link
                                     href="/connection"
