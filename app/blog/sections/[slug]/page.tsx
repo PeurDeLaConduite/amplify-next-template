@@ -27,8 +27,8 @@ export async function generateMetadata(
     const previousImages = parentMeta.openGraph?.images || [];
 
     const titles =
-        section.postIds
-            ?.map((id) => posts.find((p) => p.id === id)?.title)
+        section.postJsonIds
+            ?.map((id) => posts.find((p) => p.postJsonId === id)?.title)
             .filter(Boolean)
             .join(" • ") || "";
 
@@ -49,7 +49,7 @@ export default async function SectionPage({ params }: { params: Promise<{ slug: 
 
     const section = sections.find((s) => s.slug === slug)!;
     const postsInSection = posts.filter(
-        (post) => post.status === "published" && post.sectionIds.includes(section.id)
+        (post) => post.status === "published" && post.sectionJsonIds.includes(section.sectionJsonId)
     );
 
     return (
@@ -59,8 +59,8 @@ export default async function SectionPage({ params }: { params: Promise<{ slug: 
 
             <div className="space-y-16">
                 {postsInSection.map((post) => {
-                    const author = authors.find((a) => a.id === post.authorId)!;
-                    return <PostContent key={post.id} post={post} author={author} />;
+                    const author = authors.find((a) => a.authorJsonId === post.authorJsonId)!;
+                    return <PostContent key={post.postJsonId} post={post} author={author} />;
                 })}
             </div>
 

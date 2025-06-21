@@ -8,7 +8,7 @@ import useEditableForm from "@/src/hooks/useEditableForm";
 import EditableTextArea from "./components/EditableTextArea";
 export default function AuthorsForm({ authors, setAuthors }) {
     const initialForm = {
-        id: "",
+        authorJsonId: "",
         name: "",
         avatar: "",
         bio: "",
@@ -20,7 +20,7 @@ export default function AuthorsForm({ authors, setAuthors }) {
             initialForm,
             items: authors,
             setItems: setAuthors,
-            itemKey: "id",
+            itemKey: "authorJsonId",
             idPrefix: "A", // ← préfixe pour les IDs auteurs
             prepareItem: (item) => item,
         });
@@ -34,7 +34,7 @@ export default function AuthorsForm({ authors, setAuthors }) {
                 <EditableField
                     name="id"
                     label="ID"
-                    value={form.id}
+                    value={form.authorJsonId}
                     onChange={handleChange}
                     readOnly
                 />
@@ -86,7 +86,7 @@ export default function AuthorsForm({ authors, setAuthors }) {
                     const active = editingIndex === idx;
                     return (
                         <li
-                            key={author.id}
+                            key={author.authorJsonId}
                             className={`flex justify-between items-center p-2 transition-colors duration-300 ${
                                 active ? "bg-yellow-100 shadow-sm" : "border-b"
                             }`}

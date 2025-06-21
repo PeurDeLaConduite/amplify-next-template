@@ -20,7 +20,7 @@
             "@src/*": ["src/*"],
             "@amplify/*": ["amplify/*"],
             "@components/*": ["src/components/*"],
-            "@hooks/*": ["src/hooks f/*"],
+            "@hooks/*": ["src/hooks/*"],
             "@context/*": ["src/context/*"],
             "@utils/*": ["src/utils/*"],
             "@types/*": ["src/types/*"],
@@ -44,6 +44,6 @@
         "src/hooks/useUserProfile.tsx",
         "src/components/Blog/Create/components/EditableField.jsx",
         "src/hooks/useEditableForm.js"
-    ],
+, "src/components/Blog/Create/components/ArticleEditForm.jsx"    ],
     "exclude": ["node_modules", "amplify"]
 }

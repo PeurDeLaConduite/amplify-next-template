@@ -16,13 +16,13 @@ import ArticleCreationForm from "./components/ArticleCreationForm";
 
 export default function PostsForm({ posts, setPosts, sections, setSections, authors }) {
     const initialForm = {
-        id: "",
+        postJsonId: "",
         slug: "",
         title: "",
         excerpt: "",
         content: "",
-        authorId: "",
-        sectionIds: [],
+        authorJsonId: "",
+        sectionJsonIds: [],
         relatedPostIds: [],
         videoUrl: "",
         subtitleSource: "",
@@ -42,9 +42,9 @@ export default function PostsForm({ posts, setPosts, sections, setSections, auth
             setItems: setPosts,
             relatedItems: sections,
             setRelatedItems: setSections,
-            itemKey: "id",
-            relationKey: "sectionIds",
-            relatedKey: "postIds",
+            itemKey: "postJsonId",
+            relationKey: "sectionJsonIds",
+            relatedKey: "postJsonIds",
             idPrefix: "P",
             prepareItem: (item) => ({
                 ...item,
@@ -103,13 +103,16 @@ export default function PostsForm({ posts, setPosts, sections, setSections, auth
                 />
                 <AuthorSelector
                     authors={authors}
-                    selectedId={form.authorId}
-                    onChange={(id) => handleChange({ target: { name: "authorId", value: id } })}
+                    selectedId={form.authorJsonId}
+                    onChange={(id) => handleChange({ target: { name: "authorJsonId", value: id } })}
                 />
                 <ItemSelector
                     items={sections}
-                    selectedIds={form.sectionIds}
-                    onChange={(ids) => handleChange({ target: { name: "sectionIds", value: ids } })}
+                    idKey="sectionJsonId"
+                    selectedIds={form.sectionJsonIds}
+                    onChange={(ids) =>
+                        handleChange({ target: { name: "sectionJsonIds", value: ids } })
+                    }
                     label="Sections associées :"
                 />
                 <EditableField
@@ -148,7 +151,7 @@ export default function PostsForm({ posts, setPosts, sections, setSections, auth
             <ul className="mt-4 space-y-2">
                 {posts.map((post, idx) => (
                     <li
-                        key={post.id}
+                        key={post.postJsonId}
                         className={`flex justify-between items-center p-2 ${
                             editingIndex === idx ? "bg-yellow-100 shadow-sm" : "border-b"
                         }`}

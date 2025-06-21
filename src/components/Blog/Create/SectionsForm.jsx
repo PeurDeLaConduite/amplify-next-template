@@ -11,12 +11,12 @@ import ItemSelector from "./components/ItemSelector";
 
 export default function SectionsForm({ sections, setSections, posts, setPosts }) {
     const initialForm = {
-        id: "",
+        sectionJsonId: "",
         slug: "",
         title: "",
         description: "",
         order: 1,
-        postIds: [],
+        postJsonIds: [],
         seo: { title: "", description: "", image: "" },
     };
 
@@ -30,22 +30,22 @@ export default function SectionsForm({ sections, setSections, posts, setPosts })
         handleCancel,
         handleDelete,
         handleReorder,
-        handlePostsChange, // gère postIds ↔ sectionIds bidirectionnel
+        handlePostsChange, // gère postJsonIds ↔ sectionJsonIds bidirectionnel
     } = useEditableForm({
         initialForm,
         items: sections,
         setItems: setSections,
         relatedItems: posts,
         setRelatedItems: setPosts,
-        itemKey: "id",
-        relatedKey: "sectionIds", // dans posts
-        relationKey: "postIds", // dans sections
+        itemKey: "sectionJsonId",
+        relatedKey: "sectionJsonIds", // dans posts
+        relationKey: "postJsonIds", // dans sections
         idPrefix: "S", // génère S1, S2, ...
         prepareItem: (item) => ({
             ...item,
-            postIds: Array.isArray(item.postIds)
-                ? item.postIds
-                : item.postIds.split(",").map(Number),
+            postJsonIds: Array.isArray(item.postJsonIds)
+                ? item.postJsonIds
+                : item.postJsonIds.split(",").map(Number),
             order: Number(item.order),
         }),
     });
@@ -57,9 +57,9 @@ export default function SectionsForm({ sections, setSections, posts, setPosts })
             <form onSubmit={(e) => e.preventDefault()} className="grid gap-2">
                 {/* ID & Slug automatiques */}
                 <EditableField
-                    name="id"
+                    name="sectionJsonId"
                     label="ID"
-                    value={form.id}
+                    value={form.sectionJsonId}
                     onChange={handleChange}
                     readOnly
                 />
@@ -102,7 +102,8 @@ export default function SectionsForm({ sections, setSections, posts, setPosts })
                 {/* Sélection des articles associés */}
                 <ItemSelector
                     items={posts}
-                    selectedIds={form.postIds}
+                    idKey="postJsonId"
+                    selectedIds={form.postJsonIds}
                     onChange={handlePostsChange}
                     label="Articles associés :"
                 />
@@ -127,7 +128,7 @@ export default function SectionsForm({ sections, setSections, posts, setPosts })
                         const active = editingIndex === idx;
                         return (
                             <li
-                                key={section.id}
+                                key={section.sectionJsonId}
                                 className={`flex justify-between items-center p-2 transition-colors duration-300 ${
                                     active ? "bg-yellow-100 shadow-sm" : "border-b"
                                 }`}

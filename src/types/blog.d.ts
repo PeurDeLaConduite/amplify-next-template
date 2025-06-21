@@ -1,18 +1,18 @@
 export interface Author {
-    id: string;
+    authorJsonId: string;
     name: string;
     avatar: string;
 }
 
 export interface Post {
-    id: string;
+    postJsonId: string;
     title: string;
     slug: string;
     excerpt: string;
     content: string;
-    authorId: string;
-    sectionIds: string[];
-    relatedPostIds: string[];
+    authorJsonId: string;
+    sectionJsonIds: string[];
+    relatedPostJsonIds: string[];
     videoUrl: string | null;
     tags: string[];
     type: string;
@@ -23,12 +23,12 @@ export interface Post {
 }
 
 export type Section = {
-    id: string;
+    sectionJsonId: string;
     title: string;
     slug: string;
     description: string;
     order: number;
-    postIds: string[];
+    postJsonIds: string[];
     seo?: {
         title: string;
         description: string;

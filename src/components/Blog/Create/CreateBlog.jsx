@@ -57,7 +57,11 @@ export default function CreateBlog() {
             return;
         }
 
-        const payload = { sections, posts, authors };
+        const sanitizedPosts = posts.map((p) => {
+            const { subtitleSource, generatedPrompt, subtitleDownloaded, ...rest } = p;
+            return rest;
+        });
+        const payload = { sections, posts: sanitizedPosts, authors };
         const blob = new Blob([JSON.stringify(payload, null, 2)], {
             type: "application/json",
         });

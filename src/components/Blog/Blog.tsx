@@ -18,7 +18,7 @@ const Blog: React.FC<BlogProps> = ({ data, singlePost, noWrapper }) => {
     const { sections = [], posts = [], authors = [] } = data || {};
 
     if (singlePost) {
-        const author = authors.find((a) => a.id === singlePost.authorId);
+        const author = authors.find((a) => a.authorJsonId === singlePost.authorJsonId);
         if (!author) return <p>Auteur introuvable</p>;
         return <PostContent post={singlePost} author={author} />;
     }
@@ -36,12 +36,12 @@ const Blog: React.FC<BlogProps> = ({ data, singlePost, noWrapper }) => {
                 .sort((a, b) => a.order - b.order)
                 .map((section) => {
                     const postsInSection = publishedPosts.filter((p) =>
-                        p.sectionIds.includes(section.id)
+                        p.sectionJsonIds.includes(section.sectionJsonId)
                     );
                     if (!postsInSection.length) return null;
                     return (
                         <BlogSectionCard
-                            key={section.id}
+                            key={section.sectionJsonId}
                             section={section}
                             posts={postsInSection}
                             authors={authors}
