@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { generateClient } from "aws-amplify/data";
-import type { Schema } from "@/amplify/data/resource";
+// import type { Schema } from "@/amplify/data/resource";
 import EditableField from "./EditableField";
 import EditableTextArea from "./EditableTextArea";
 import { DateTimeField } from "./DateTimeField";
