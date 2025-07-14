@@ -28,7 +28,7 @@ frontend:
             - .npm/**/*
             - node_modules/**/*
 
-    customHeaders: # ← même niveau que phases, artifacts, cache
+    customHeaders:
         - pattern: "/img/**"
           headers:
               - key: "Cache-Control"

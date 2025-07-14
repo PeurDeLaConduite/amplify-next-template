@@ -19,7 +19,6 @@ const client = generateClient<Schema>();
 
 export default function ProfileManager() {
     const { user } = useAuthenticator();
-    // eslint-disable-next-line no-unused-vars
     const { userName, updateUserName } = useUserName();
     const [profile, setProfile] = useState<Schema["UserProfile"]["type"] | null>(null);
 

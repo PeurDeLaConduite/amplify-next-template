@@ -8,7 +8,7 @@ import { useAuthenticator } from "@aws-amplify/ui-react";
 
 const Header = () => {
     const { user, signOut } = useAuthenticator();
-    const {userName} = useUserName();
+    const { userName } = useUserName();
     return (
         <header className="bg-white shadow-md">
             <nav className="max-w-6xl mx-auto flex items-center justify-between p-4">
@@ -25,8 +25,14 @@ const Header = () => {
                     <Link href="/uploadPage" className="text-gray-700 hover:text-blue-600">
                         Upload Page
                     </Link>
-                    <Link href="/createBlog" className="text-gray-700 hover:text-blue-600">
-                        Create Blog
+                    <Link href="/createAuthor" className="text-gray-700 hover:text-blue-600">
+                        Create Author
+                    </Link>
+                    <Link href="/createSection" className="text-gray-700 hover:text-blue-600">
+                        Create Section
+                    </Link>
+                    <Link href="/createArticle" className="text-gray-700 hover:text-blue-600">
+                        Create Article
                     </Link>
                     <Link href="/blog" className="text-gray-700 hover:text-blue-600">
                         Blog

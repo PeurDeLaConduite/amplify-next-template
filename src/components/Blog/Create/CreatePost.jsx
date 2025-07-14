@@ -8,10 +8,8 @@ import AuthorsForm from "./AuthorsForm";
 import { loadData } from "@utils/loadData";
 import { uploadData } from "aws-amplify/storage";
 import RequireAdmin from "../../RequireAdmin";
-export default function CreateBlog() {
-    const [sections, setSections] = useState([]);
+export default function CreatePost() {
     const [posts, setPosts] = useState([]);
-    const [authors, setAuthors] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [message, setMessage] = useState("");
@@ -60,7 +58,7 @@ export default function CreateBlog() {
     return (
         <RequireAdmin>
             <div className="p-6 max-w-5xl mx-auto space-y-6">
-                <h1 className="text-2xl font-bold">Éditeur de contenu du blog</h1>
+                <h1 className="text-2xl font-bold">Éditeur de contenu du blog : Articles</h1>
                 <PostsForm
                     posts={posts}
                     setPosts={setPosts}
