@@ -134,7 +134,7 @@ const schema = a.schema({
             updatedAt: a.datetime(),
             comments: a.hasMany("PostComment", "postId"),
             sections: a.hasMany("SectionPost", "postId"),
-            tags: a.hasMany("PostTag", "postId"),
+            tags: a.hasMany("Tag", "tagId"),
         })
         .authorization((allow) => [
             allow.publicApiKey().to(["read"]),
