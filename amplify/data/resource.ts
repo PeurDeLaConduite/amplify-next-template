@@ -100,18 +100,6 @@ const schema = a.schema({
             allow.group("ADMINS").to(["create", "update", "delete", "read"]),
         ]),
 
-    Tag: a
-        .model({
-            id: a.id().required(),
-            name: a.string().required(),
-            posts: a.hasMany("PostTag", "tagId"),
-        })
-        .authorization((allow) => [
-            allow.publicApiKey().to(["read"]),
-            allow.authenticated().to(["read"]),
-            allow.group("ADMINS").to(["create", "update", "delete", "read"]),
-        ]),
-
     Post: a
         .model({
             id: a.id().required(),
@@ -130,12 +118,38 @@ const schema = a.schema({
             type: a.string(),
             status: a.enum(["draft", "published"]),
             seo: a.ref("Seo"),
-            createdAt: a.datetime(),
-            updatedAt: a.datetime(),
+            // createdAt: a.datetime(),
+            // updatedAt: a.datetime(),
             comments: a.hasMany("PostComment", "postId"),
             sections: a.hasMany("SectionPost", "postId"),
             tags: a.hasMany("PostTag", "postId"),
         })
+        .authorization((allow) => [
+            allow.publicApiKey().to(["read"]),
+            allow.authenticated().to(["read"]),
+            allow.group("ADMINS").to(["create", "update", "delete", "read"]),
+        ]),
+
+    Tag: a
+        .model({
+            id: a.id().required(),
+            name: a.string().required(),
+            posts: a.hasMany("PostTag", "tagId"),
+        })
+        .authorization((allow) => [
+            allow.publicApiKey().to(["read"]),
+            allow.authenticated().to(["read"]),
+            allow.group("ADMINS").to(["create", "update", "delete", "read"]),
+        ]),
+
+    PostTag: a
+        .model({
+            postId: a.id().required(),
+            tagId: a.id().required(),
+            post: a.belongsTo("Post", "postId"),
+            tag: a.belongsTo("Tag", "tagId"),
+        })
+        .identifier(["postId", "tagId"])
         .authorization((allow) => [
             allow.publicApiKey().to(["read"]),
             allow.authenticated().to(["read"]),
@@ -159,20 +173,6 @@ const schema = a.schema({
             allow.authenticated().to(["read"]),
             allow.group("ADMINS").to(["create", "update", "delete", "read"]),
             allow.owner(),
-        ]),
-
-    PostTag: a
-        .model({
-            postId: a.id().required(),
-            tagId: a.id().required(),
-            post: a.belongsTo("Post", "postId"),
-            tag: a.belongsTo("Tag", "tagId"),
-        })
-        .identifier(["postId", "tagId"])
-        .authorization((allow) => [
-            allow.publicApiKey().to(["read"]),
-            allow.authenticated().to(["read"]),
-            allow.group("ADMINS").to(["create", "update", "delete", "read"]),
         ]),
 
     SectionPost: a

@@ -13,7 +13,8 @@ const Header = () => {
         <header className="bg-white shadow-md">
             <nav className="max-w-6xl mx-auto flex items-center justify-between p-4">
                 <div className="flex gap-6">
-                    <Link href="/comment" className="text-gray-700 hover:text-blue-600">
+
+                    {/* <Link href="/comment" className="text-gray-700 hover:text-blue-600">
                         Commentaires
                     </Link>
                     <Link href="/todo" className="text-gray-700 hover:text-blue-600">
@@ -24,12 +25,18 @@ const Header = () => {
                     </Link>
                     <Link href="/uploadPage" className="text-gray-700 hover:text-blue-600">
                         Upload Page
-                    </Link>
+                    </Link> */}
+
+
+
                     <Link href="/createAuthor" className="text-gray-700 hover:text-blue-600">
                         Create Author
                     </Link>
                     <Link href="/createSection" className="text-gray-700 hover:text-blue-600">
                         Create Section
+                    </Link>
+                    <Link href="/createTag" className="text-gray-700 hover:text-blue-600">
+                        Create Tag
                     </Link>
                     <Link href="/createArticle" className="text-gray-700 hover:text-blue-600">
                         Create Article

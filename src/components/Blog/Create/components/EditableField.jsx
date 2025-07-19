@@ -1,6 +1,6 @@
 import React from "react";
 
-const EditableField = ({ label, value, onChange, readOnly, name }) => (
+const EditableField = ({ label, value = "", onChange, readOnly, name }) => (
     <div style={{ marginBottom: "1rem" }}>
         <label>
             {label}
