@@ -43,7 +43,7 @@ export default function TagsManager() {
         setEditTagName("");
         fetchAll();
     }
-    async function handleDeleteTag(tagId) {
+    async function handleDeleteTag(tagId: string) {
         if (!window.confirm("Supprimer ce tag ?")) return;
         await client.models.Tag.delete({ id: tagId });
         fetchAll();

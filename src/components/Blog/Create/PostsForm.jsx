@@ -8,7 +8,7 @@ import FormActionButtons from "./FormActionButtons";
 import ItemSelector from "./components/ItemSelector";
 import AuthorSelector from "./components/AuthorSelector";
 import useEditableForm from "@/src/hooks/useEditableForm";
-import { DateTimeField } from "./components/DateTimeField";
+// import { DateTimeField } from "./components/DateTimeField";
 import TagSelector from "./components/TagSelector";
 import TagCrudManager from "./components/TagsManager";
 import ArticleCreationForm from "./components/ArticleCreationForm";
@@ -138,7 +138,7 @@ export default function PostsForm({
                     label="Sections associées :"
                 />
                 <SeoFields seo={form.seo} readOnly={!!editingIndex} onChange={handleChange} />
-                <DateTimeField
+                {/* <DateTimeField
                     label="Date de création"
                     name="createdAt"
                     value={form.createdAt}
@@ -149,7 +149,7 @@ export default function PostsForm({
                     name="updatedAt"
                     value={form.updatedAt}
                     onChange={handleChange}
-                />
+                /> */}
                 <TagSelector
                     tags={tags}
                     selectedIds={form.tagIds || []}

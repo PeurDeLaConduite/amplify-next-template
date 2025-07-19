@@ -16,6 +16,7 @@ export default function CreatePost() {
     const [sections, setSections] = useState<Schema["Section"]["type"][]>([]);
     const [authors, setAuthors] = useState<Schema["Author"]["type"][]>([]);
     const [tags, setTags] = useState<Schema["Tag"]["type"][]>([]);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [postTags, setPostTags] = useState<Schema["PostTag"]["type"][]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -52,9 +53,11 @@ export default function CreatePost() {
 
     // Ajout tag
     const handleAddTag = async (name: string) => {
-        const newTagObj = await client.models.Tag.create({ name });
-        setTags((prev) => [...prev, newTagObj]);
+        await client.models.Tag.create({ name });
+        const tagsData = await client.models.Tag.list();
+        setTags(tagsData.data);
     };
+
     // Édition tag
     const handleUpdateTag = async () => {
         if (!editTagId || !editTagName.trim()) return;
@@ -74,16 +77,30 @@ export default function CreatePost() {
     // Ajout d’un post (exemple simplifié)
     const handleAddPost = async (form: PostFormData) => {
         try {
-            const post = await client.models.Post.create({
+            await client.models.Post.create({
                 ...form,
-                createdAt: form.createdAt || new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
             });
-            setPosts((prev) => [...prev, post]);
+
+            const postsData = await client.models.Post.list();
+            setPosts(postsData.data);
+
             setMessage("✅ Article ajouté !");
         } catch (err: unknown) {
             setError(err instanceof Error ? err.message : String(err));
             setMessage("❌ Erreur lors de l'ajout");
+        }
+    };
+    const handleUpdatePost = async (form: PostFormData) => {
+        try {
+            await client.models.Post.update({ ...form });
+
+            const postsData = await client.models.Post.list();
+            setPosts(postsData.data);
+
+            setMessage("✅ Article mis à jour !");
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : String(err));
+            setMessage("❌ Erreur lors de la mise à jour");
         }
     };
 
@@ -122,6 +139,7 @@ export default function CreatePost() {
                     editTagName={editTagName}
                     setEditTagName={setEditTagName}
                     onAdd={handleAddPost}
+                    onUpdate={handleUpdatePost}
                     onDelete={handleDeletePost}
                     onAddTag={handleAddTag}
                     onUpdateTag={handleUpdateTag}
