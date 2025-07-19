@@ -10,7 +10,7 @@ import RequireAdmin from "../../RequireAdmin";
 
 Amplify.configure(outputs);
 const client = generateClient<Schema>();
-
+type PostFormData = Schema["Post"]["type"];
 export default function CreatePost() {
     const [posts, setPosts] = useState<Schema["Post"]["type"][]>([]);
     const [sections, setSections] = useState<Schema["Section"]["type"][]>([]);
@@ -72,7 +72,7 @@ export default function CreatePost() {
     };
 
     // Ajout d’un post (exemple simplifié)
-    const handleAddPost = async (form: any) => {
+    const handleAddPost = async (form: PostFormData) => {
         try {
             const post = await client.models.Post.create({
                 ...form,

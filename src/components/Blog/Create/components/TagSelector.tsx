@@ -3,9 +3,19 @@ import { generateClient } from "aws-amplify/data";
 import { Schema } from "@/amplify/data/resource";
 const client = generateClient<Schema>();
 
-export default function TagSelector({ tags, selectedIds = [], onChange, postId }) {
-    const [linkedTagIds, setLinkedTagIds] = useState(selectedIds);
-
+interface TagSelectorProps {
+    tags: Schema["Tag"]["type"][];
+    selectedIds?: string[];
+    onChange: (ids: string[]) => void;
+    postId?: string;
+}
+export default function TagSelector({
+    tags,
+    selectedIds = [],
+    onChange,
+    postId,
+}: TagSelectorProps) {
+    const [linkedTagIds, setLinkedTagIds] = useState<string[]>(selectedIds);
     // Si mode édition (postId), récupère la vraie liste à chaque changement
     useEffect(() => {
         if (!postId) {
@@ -21,7 +31,7 @@ export default function TagSelector({ tags, selectedIds = [], onChange, postId }
         };
     }, [postId, selectedIds]);
 
-    const handleClick = async (tagId) => {
+    const handleClick = async (tagId: string): Promise<void> => {
         // Mode création : local
         if (!postId) {
             if (selectedIds.includes(tagId)) {
@@ -47,7 +57,7 @@ export default function TagSelector({ tags, selectedIds = [], onChange, postId }
         }
     };
 
-    const current = postId ? linkedTagIds : selectedIds;
+    const current: string[] = postId ? linkedTagIds : selectedIds;
 
     return (
         <div className="mb-4">
