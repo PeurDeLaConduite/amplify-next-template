@@ -189,19 +189,19 @@ const schema = a.schema({
             allow.group("ADMINS").to(["create", "update", "delete", "read"]),
         ]),
 
-    RelatedPost: a
-        .model({
-            postId: a.id().required(),
-            relatedPostId: a.id().required(),
-            post: a.belongsTo("Post", "postId"),
-            related: a.belongsTo("Post", "relatedPostId"),
-        })
-        .identifier(["postId", "relatedPostId"])
-        .authorization((allow) => [
-            allow.publicApiKey().to(["read"]),
-            allow.authenticated().to(["read"]),
-            allow.group("ADMINS").to(["create", "update", "delete", "read"]),
-        ]),
+    // RelatedPost: a
+    //     .model({
+    //         postId: a.id().required(),
+    //         relatedPostId: a.id().required(),
+    //         post: a.belongsTo("Post", "postId"),
+    //         related: a.belongsTo("Post", "relatedPostId"),
+    //     })
+    //     .identifier(["postId", "relatedPostId"])
+    //     .authorization((allow) => [
+    //         allow.publicApiKey().to(["read"]),
+    //         allow.authenticated().to(["read"]),
+    //         allow.group("ADMINS").to(["create", "update", "delete", "read"]),
+    //     ]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
