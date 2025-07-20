@@ -13,7 +13,6 @@ const Header = () => {
         <header className="bg-white shadow-md">
             <nav className="max-w-6xl mx-auto flex items-center justify-between p-4">
                 <div className="flex gap-6">
-
                     {/* <Link href="/comment" className="text-gray-700 hover:text-blue-600">
                         Commentaires
                     </Link>
@@ -26,8 +25,6 @@ const Header = () => {
                     <Link href="/uploadPage" className="text-gray-700 hover:text-blue-600">
                         Upload Page
                     </Link> */}
-
-
 
                     <Link href="/createAuthor" className="text-gray-700 hover:text-blue-600">
                         Create Author

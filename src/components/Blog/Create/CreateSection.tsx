@@ -56,8 +56,6 @@ export default function CreateSection() {
                 description: form.description,
                 order: form.order,
                 seo: form.seo,
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
             });
             setMessage("Section ajoutée !");
             return section; // Pour chainage
@@ -76,7 +74,6 @@ export default function CreateSection() {
                 description: form.description,
                 order: form.order,
                 seo: form.seo,
-                updatedAt: new Date().toISOString(),
             });
             setMessage("Section mise à jour !");
         } catch (err) {

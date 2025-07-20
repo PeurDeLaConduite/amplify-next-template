@@ -73,6 +73,9 @@ export default function PostsForm({
                       ? item.tagIds.split(",").map((t) => t.trim())
                       : [],
             }),
+            onAdd,
+            onUpdate,
+            onDelete,
         });
 
     // Wizard IA

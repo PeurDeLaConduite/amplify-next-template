@@ -85,14 +85,12 @@ const schema = a.schema({
     Section: a
         .model({
             id: a.id().required(),
-            slug: a.string().required(),
             title: a.string().required(),
+            slug: a.string().required(),
             description: a.string(),
             order: a.integer(),
             posts: a.hasMany("SectionPost", "sectionId"),
             seo: a.ref("Seo"),
-            createdAt: a.datetime(),
-            updatedAt: a.datetime(),
         })
         .authorization((allow) => [
             allow.publicApiKey().to(["read"]),
@@ -108,18 +106,12 @@ const schema = a.schema({
             excerpt: a.string(),
             content: a.string(),
             videoUrl: a.string(),
-            subtitleSource: a.string(),
-            subtitleDownloaded: a.boolean().default(false),
             authorId: a.id().required(),
             author: a.belongsTo("Author", "authorId"),
-            // relatedPosts: a.hasMany("RelatedPost", "postId"),
-            // relatedTo: a.hasMany("RelatedPost", "relatedPostId"),
             order: a.integer(),
             type: a.string(),
             status: a.enum(["draft", "published"]),
             seo: a.ref("Seo"),
-            // createdAt: a.datetime(),
-            // updatedAt: a.datetime(),
             comments: a.hasMany("PostComment", "postId"),
             sections: a.hasMany("SectionPost", "postId"),
             tags: a.hasMany("PostTag", "postId"),
@@ -188,20 +180,6 @@ const schema = a.schema({
             allow.authenticated().to(["read"]),
             allow.group("ADMINS").to(["create", "update", "delete", "read"]),
         ]),
-
-    // RelatedPost: a
-    //     .model({
-    //         postId: a.id().required(),
-    //         relatedPostId: a.id().required(),
-    //         post: a.belongsTo("Post", "postId"),
-    //         related: a.belongsTo("Post", "relatedPostId"),
-    //     })
-    //     .identifier(["postId", "relatedPostId"])
-    //     .authorization((allow) => [
-    //         allow.publicApiKey().to(["read"]),
-    //         allow.authenticated().to(["read"]),
-    //         allow.group("ADMINS").to(["create", "update", "delete", "read"]),
-    //     ]),
 });
 
 export type Schema = ClientSchema<typeof schema>;

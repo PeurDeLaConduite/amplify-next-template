@@ -12,6 +12,9 @@ export default function useEditableForm({
     relationKey = "postIds",
     idPrefix = "", // ex: "S", "P" ou "A"
     prepareItem = (item) => item,
+    onAdd,
+    onUpdate,
+    onDelete,
 }) {
     const [form, setForm] = useState(initialForm);
     const [editingIndex, setEditingIndex] = useState(null);
@@ -93,6 +96,11 @@ export default function useEditableForm({
 
         setItems(copy);
         handleCancel();
+        if (editingIndex !== null) {
+            onUpdate?.(toSave);
+        } else {
+            onAdd?.(toSave);
+        }
     };
 
     const handleEdit = (index) => {
@@ -110,9 +118,13 @@ export default function useEditableForm({
     };
 
     const handleDelete = (index) => {
+        const toDelete = items[index];
         const updated = items.filter((_, i) => i !== index);
         setItems(updated);
         if (editingIndex === index) handleCancel();
+        if (toDelete) {
+            onDelete?.(toDelete[itemKey] || toDelete.id);
+        }
     };
 
     const handleReorder = (fromIndex, toPosition) => {
