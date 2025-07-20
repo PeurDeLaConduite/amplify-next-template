@@ -43,7 +43,11 @@
         "src/components/Blog/Create/components/EditableField.jsx",
         "src/hooks/useUserProfile.tsx",
         "src/components/Blog/Create/components/EditableField.jsx",
-        "src/hooks/useEditableForm.js"
-, "src/components/Blog/Create/components/ArticleEditForm.jsx", "src/components/Blog/Create/CreateAuthor.tsx", "src/components/Blog/Create/components/TagSelector.tsx", "src/components/Blog/Create/PostsForm.jsx"    ],
+        "src/hooks/useEditableForm.js",
+        "src/components/Blog/Create/components/ArticleEditForm.jsx",
+        "src/components/Blog/Create/CreateAuthor.tsx",
+        "src/components/Blog/Create/components/TagPostManager.tsx",
+        "src/components/Blog/Create/PostsForm.jsx"
+    ],
     "exclude": ["node_modules", "amplify"]
 }
