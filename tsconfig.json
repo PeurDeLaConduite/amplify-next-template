@@ -48,6 +48,6 @@
         "src/components/Blog/Create/CreateAuthor.tsx",
         "src/components/Blog/Create/components/TagPostManager.tsx",
         "src/components/Blog/Create/PostsForm.jsx"
-    ],
+, "src/components/Blog/Create/SectionsForm.tsx", "src/components/Blog/Create/components/ItemSelector.tsx"    ],
     "exclude": ["node_modules", "amplify"]
 }

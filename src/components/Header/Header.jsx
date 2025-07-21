@@ -38,9 +38,9 @@ const Header = () => {
                     <Link href="/createArticle" className="text-gray-700 hover:text-blue-600">
                         Create Article
                     </Link>
-                    <Link href="/blog" className="text-gray-700 hover:text-blue-600">
+                    {/* <Link href="/blog" className="text-gray-700 hover:text-blue-600">
                         Blog
-                    </Link>
+                    </Link> */}
                     <Link href="/profile" className="text-gray-700 hover:text-blue-600">
                         My profile
                     </Link>

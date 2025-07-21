@@ -22,24 +22,26 @@ type SectionForm = {
     };
     postIds: string[]; // si tu passes les posts liés dans le form
 };
+type Section = Schema["Section"]["type"];
 export default function CreateSection() {
-    const [sections, setSections] = useState<Schema["Section"]["type"][] | undefined>(undefined);
+    const [sections, setSections] = useState<Schema["Section"]["type"][]>([]);
     const [posts, setPosts] = useState<Schema["Post"]["type"][]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [message, setMessage] = useState("");
 
     useEffect(() => {
-        // Charge Sections
         const subSection = client.models.Section.observeQuery().subscribe({
             next: (data) => setSections(data.items),
-            error: (err) => setError(err),
+            error: (err) =>
+                setError(err instanceof Error ? err.message : (err.message ?? JSON.stringify(err))),
         });
-        // Charge Posts
         const subPosts = client.models.Post.observeQuery().subscribe({
             next: (data) => setPosts(data.items),
-            error: (err) => setError(err),
+            error: (err) =>
+                setError(err instanceof Error ? err.message : (err.message ?? JSON.stringify(err))),
         });
+
         setLoading(false);
         return () => {
             subSection.unsubscribe();
@@ -48,21 +50,31 @@ export default function CreateSection() {
     }, []);
 
     // CRUD Section
-    const handleAddSection = async (form: SectionForm) => {
-        try {
-            const section = await client.models.Section.create({
-                slug: form.slug,
-                title: form.title,
-                description: form.description,
-                order: form.order,
-                seo: form.seo,
-            });
-            setMessage("Section ajoutée !");
-            return section; // Pour chainage
-        } catch (err) {
-            setError(err instanceof Error ? err.message : String(err));
+    // CreateSection.tsx (extrait de handleCreateSection)
+
+    // avant : Promise<SectionForm>
+    const handleCreateSection = async (form: SectionForm): Promise<Section> => {
+        const { data: section, errors } = await client.models.Section.create({
+            slug: form.slug,
+            title: form.title,
+            description: form.description,
+            order: form.order,
+            seo: form.seo,
+        });
+        if (errors?.length) {
+            const message = errors.map((e) => e.message).join(", ");
+            setError(message);
             setMessage("Erreur lors de l'ajout");
+            throw new Error(message);
         }
+        if (!section) {
+            const message = "Aucune donnée retournée";
+            setError(message);
+            setMessage("Erreur lors de l'ajout");
+            throw new Error(message);
+        }
+        setMessage("Section ajoutée !");
+        return section;
     };
 
     const handleUpdateSection = async (id: string, form: SectionForm) => {
@@ -94,7 +106,12 @@ export default function CreateSection() {
     };
 
     if (loading) return <p>Chargement…</p>;
-    if (error) return <p className="text-red-600">Erreur : {error}</p>;
+    if (error)
+        return (
+            <p className="text-red-600">
+                Erreur : {typeof error === "string" ? error : JSON.stringify(error, null, 2)}
+            </p>
+        );
 
     return (
         <RequireAdmin>
@@ -103,7 +120,7 @@ export default function CreateSection() {
                 <SectionsForm
                     sections={sections}
                     posts={posts}
-                    onAdd={handleAddSection}
+                    onAdd={handleCreateSection}
                     onUpdate={handleUpdateSection}
                     onDelete={handleDeleteSection}
                     client={client}

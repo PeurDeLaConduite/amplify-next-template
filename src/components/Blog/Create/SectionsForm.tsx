@@ -1,13 +1,38 @@
 "use client";
 
 import React, { useState } from "react";
+import { Schema } from "@/amplify/data/resource";
+import { generateClient } from "aws-amplify/data";
 import EditableField from "./components/EditableField";
 import SeoFields from "./components/SeoFields";
 import FormActionButtons from "./FormActionButtons";
 import OrderSelector from "./components/OrderSelector";
 import ItemSelector from "./components/ItemSelector";
+type Section = Schema["Section"]["type"];
 
-const initialForm = {
+interface SectionsFormProps {
+    sections?: Section[];
+    posts: Schema["Post"]["type"][];
+    onAdd: (form: SectionForm) => Promise<Section>;
+    onUpdate: (id: string, form: SectionForm) => Promise<void>;
+    onDelete: (id: string) => Promise<void>;
+    client: ReturnType<typeof generateClient<Schema>>;
+}
+
+interface SectionForm {
+    slug: string;
+    title: string;
+    description: string;
+    order: number;
+    seo: {
+        title: string;
+        description: string;
+        image: string;
+    };
+    postIds: string[];
+}
+
+const initialForm: SectionForm = {
     slug: "",
     title: "",
     description: "",
@@ -16,13 +41,20 @@ const initialForm = {
     postIds: [],
 };
 
-export default function SectionsForm({ sections, posts, onAdd, onUpdate, onDelete, client }) {
-    const [form, setForm] = useState(initialForm);
-    const [editingIndex, setEditingIndex] = useState(null);
+export default function SectionsForm({
+    sections = [],
+    posts,
+    onAdd,
+    onUpdate,
+    onDelete,
+    client,
+}: SectionsFormProps) {
+    const [form, setForm] = useState<SectionForm>(initialForm);
+    const [editingIndex, setEditingIndex] = useState<number | null>(null);
     const [saving, setSaving] = useState(false);
 
     // 🟢 handleChange pour tout sauf postIds
-    const handleChange = (e) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         if (name.startsWith("seo.")) {
             const key = name.split(".")[1];
@@ -34,9 +66,8 @@ export default function SectionsForm({ sections, posts, onAdd, onUpdate, onDelet
             setForm((f) => ({ ...f, [name]: value }));
         }
     };
-
     // 🟢 Edition : charger les articles liés
-    const handleEdit = async (idx) => {
+    const handleEdit = async (idx: number) => {
         setEditingIndex(idx);
         const s = sections[idx];
         // Charge SectionPost pour cette section
@@ -49,7 +80,11 @@ export default function SectionsForm({ sections, posts, onAdd, onUpdate, onDelet
             title: s.title || "",
             description: s.description || "",
             order: s.order || 1,
-            seo: s.seo || { title: "", description: "", image: "" },
+            seo: {
+                title: s.seo?.title ?? "",
+                description: s.seo?.description ?? "",
+                image: s.seo?.image ?? "",
+            },
             postIds,
         });
     };
@@ -94,7 +129,7 @@ export default function SectionsForm({ sections, posts, onAdd, onUpdate, onDelet
         handleCancel();
     };
 
-    const handleDeleteLocal = (idx) => {
+    const handleDeleteLocal = (idx: number) => {
         if (sections[idx]?.id) {
             onDelete(sections[idx].id);
         }
@@ -104,24 +139,34 @@ export default function SectionsForm({ sections, posts, onAdd, onUpdate, onDelet
         <div className="mb-6">
             <h2 className="text-xl font-semibold mb-4">Sections</h2>
             <form onSubmit={(e) => e.preventDefault()} className="grid gap-2">
-                <EditableField name="slug" label="Slug" value={form.slug} onChange={handleChange} />
                 <EditableField
                     name="title"
                     label="Titre"
                     value={form.title}
                     onChange={handleChange}
+                    readOnly={false}
+                />
+                <EditableField
+                    name="slug"
+                    label="Slug"
+                    value={form.slug}
+                    onChange={handleChange}
+                    readOnly={false}
                 />
                 <EditableField
                     name="description"
                     label="Description"
                     value={form.description}
+                    readOnly={false}
                     onChange={handleChange}
                 />
                 <OrderSelector
                     sections={sections}
                     currentIndex={editingIndex === null ? sections.length : editingIndex}
                     value={form.order}
-                    onReorder={(_i, newOrder) => setForm((f) => ({ ...f, order: newOrder }))}
+                    onReorder={(index: number, newOrder: number) => {
+                        setForm((f) => ({ ...f, order: newOrder }));
+                    }}
                 />
                 <SeoFields seo={form.seo} readOnly={false} onChange={handleChange} />
 
@@ -131,7 +176,8 @@ export default function SectionsForm({ sections, posts, onAdd, onUpdate, onDelet
                     idKey="id"
                     selectedIds={form.postIds}
                     onChange={(postIds) => setForm((f) => ({ ...f, postIds }))}
-                    label="Articles associés :"
+                    label="Articles associés :"
+                    getLabel={(post) => post.title}
                 />
 
                 {editingIndex === null && (
@@ -148,7 +194,7 @@ export default function SectionsForm({ sections, posts, onAdd, onUpdate, onDelet
 
             <ul className="mt-6 space-y-2">
                 {sections
-                    .sort((a, b) => a.order - b.order)
+                    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
                     .map((section, idx) => {
                         const active = editingIndex === idx;
                         return (
@@ -168,6 +214,7 @@ export default function SectionsForm({ sections, posts, onAdd, onUpdate, onDelet
                                     onSave={handleSave}
                                     onCancel={handleCancel}
                                     onDelete={() => handleDeleteLocal(idx)}
+                                    isFormNew={false}
                                 />
                             </li>
                         );

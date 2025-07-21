@@ -1,8 +1,8 @@
 import React from "react";
 
 export default function OrderSelector({ sections, currentIndex, value, onReorder }) {
-    const max = sections.length;
-    const options = Array.from({ length: max }, (_, i) => i + 1);
+    const max = currentIndex >= sections.length ? sections.length + 1 : sections.length;
+    const options = Array.from({ length: Math.max(max, 1) }, (_, i) => i + 1);
 
     const handleChange = (e) => {
         const newPosition = parseInt(e.target.value, 10);
