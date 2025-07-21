@@ -32,18 +32,15 @@ const schema = a.schema({
 
     UserName: a
         .model({
-            // 🔑 id du modèle UserName = sub Cognito
             id: a.id().required(),
             userName: a.string().required(),
-            owner: a.string().required(), // <= à ajouter
-
-            postComments: a.hasMany("PostComment", "userNameId"),
-            comments: a.hasMany("Comment", "userNameId"),
+            owner: a.string().required(),
+            // … vos relations
         })
         .authorization((allow) => [
-            allow.publicApiKey().to(["read"]), // facultatif, lecture anonyme
-            allow.authenticated().to(["read"]), // ⬅️ obligatoire pour lecture par TOUS les users connectés
-            allow.owner(), // owner : gère son pseudo
+            allow.publicApiKey().to(["read"]), // lecture publique
+            allow.authenticated().to(["create", "read"]), // create/read pour tout user logué
+            allow.owner().to(["read", "update", "delete"]), // propriétaire peut maj/effacer
         ]),
 
     UserProfile: a
