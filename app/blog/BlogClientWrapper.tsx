@@ -1,33 +1,40 @@
 // app/blog/BlogClientWrapper.tsx
 "use client";
-import React from "react";
-import { DataBlogProvider, useDataBlog } from "@context/DataBlogProvider";
+import React, { useEffect, useState } from "react";
 import Blog from "@/src/components/Blog/Blog";
 import { RefreshButton } from "@/src/components/buttons/Buttons";
+import { fetchBlogDataFromAmplify } from "@utils/fetchBlogDataFromAmplify";
+import type { BlogData } from "@src/types/blog";
 
-function InnerBlog() {
-    const { data, loading, error, refresh } = useDataBlog();
+export default function BlogClientWrapper() {
+    const [data, setData] = useState<BlogData | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<Error | null>(null);
+
+    const load = async () => {
+        setLoading(true);
+        try {
+            const result = await fetchBlogDataFromAmplify();
+            setData(result);
+            setError(null);
+        } catch (err) {
+            setError(err as Error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        void load();
+    }, []);
 
     if (loading) return <p>Chargement…</p>;
     if (error) return <p>Erreur : {error.message}</p>;
-    console.log(data);
+
     return (
         <div className="max-w-5xl mx-auto px-4 py-8">
-            {/* On passe noWrapper pour éviter un deuxième conteneur */}
             <Blog data={data!} noWrapper />
-            <RefreshButton
-                onClick={refresh}
-                label="Actualiser la liste d'articles"
-                className="mb-6"
-            />
+            <RefreshButton onClick={load} label="Actualiser la liste d'articles" className="mb-6" />
         </div>
-    );
-}
-
-export default function BlogClientWrapper() {
-    return (
-        <DataBlogProvider>
-            <InnerBlog />
-        </DataBlogProvider>
     );
 }

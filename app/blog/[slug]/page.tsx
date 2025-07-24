@@ -1,5 +1,5 @@
 // app/blog/[slug]/page.tsx
-import { fetchBlogData } from "@utils/fetchData";
+import { fetchBlogDataFromAmplify } from "@utils/fetchBlogDataFromAmplify";
 import type { Metadata, ResolvingMetadata } from "next";
 import Blog from "@components/Blog/Blog";
 import { BackButton } from "@/src/components/buttons/Buttons";
@@ -7,11 +7,9 @@ type Props = {
     params: Promise<{ slug: string }>;
     searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
-import { loadData } from "@utils/loadData";
-
 
 export async function generateStaticParams() {
-    const { posts } = await fetchBlogData();
+    const { posts } = await fetchBlogDataFromAmplify();
     return posts.map((p) => ({ slug: p.slug }));
 }
 export async function generateMetadata(
@@ -22,7 +20,7 @@ export async function generateMetadata(
     const { slug } = await params;
 
     // 2) chargez vos données
-    const { posts } = await loadData();
+    const { posts } = await fetchBlogDataFromAmplify();
     const post = posts.find((p) => p.slug === slug)!;
 
     // 3) vous pouvez étendre le metadata parent si besoin
@@ -43,7 +41,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
     const { slug } = await params;
 
     // ❗️ ici aussi tu avais oublié `await`
-    const { sections, posts, authors } = await loadData();
+    const { sections, posts, authors } = await fetchBlogDataFromAmplify();
 
     const post = posts.find((p) => p.slug === slug)!;
 
