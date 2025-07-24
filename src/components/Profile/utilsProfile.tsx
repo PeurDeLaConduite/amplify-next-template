@@ -1,5 +1,3 @@
-
-
 export type Profile = {
     firstName: string | null;
     familyName: string | null;
@@ -8,13 +6,10 @@ export type Profile = {
     city: string | null;
     country: string | null;
     phoneNumber: string | null;
-    userName?: string | null; // 👈 Ajout du pseudo public
 };
 
 export const label = (field: keyof Profile): string => {
     switch (field) {
-        case "userName":
-            return "Pseudo public";
         case "firstName":
             return "Prénom";
         case "familyName":
@@ -34,7 +29,6 @@ export const label = (field: keyof Profile): string => {
     }
 };
 
-
 export type MinimalProfile = {
     firstName: string;
     familyName: string;
@@ -43,11 +37,9 @@ export type MinimalProfile = {
     city: string;
     country: string;
     phoneNumber: string;
-    userName: string;
 };
 
 export const normalizeFormData = (data: Partial<MinimalProfile>) => ({
-    userName: data.userName ?? "", // 👈 ici
     firstName: data.firstName ?? "",
     familyName: data.familyName ?? "",
     address: data.address ?? "",
@@ -56,3 +48,11 @@ export const normalizeFormData = (data: Partial<MinimalProfile>) => ({
     country: data.country ?? "",
     phoneNumber: data.phoneNumber ?? "",
 });
+export type UserNameData = { userName: string };
+export const normalizeUserName = (d: Partial<UserNameData> = {}): UserNameData => ({
+    userName: d.userName ?? "",
+});
+export const fieldLabel = (k: string) =>
+    ({
+        userName: "Pseudo public",
+    })[k] ?? k;

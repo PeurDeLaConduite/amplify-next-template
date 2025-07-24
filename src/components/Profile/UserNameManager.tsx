@@ -1,129 +1,110 @@
-// "use client";
+"use client";
+import { useState, useEffect } from "react";
+import { Authenticator, useAuthenticator } from "@aws-amplify/ui-react";
+import "@aws-amplify/ui-react/styles.css";
 
-// import React, { useState, useEffect } from "react";
-// import { Amplify, Auth } from "aws-amplify";
-// import { Authenticator, useAuthenticator } from "@aws-amplify/ui-react";
-// import "@aws-amplify/ui-react/styles.css";
-// import { generateClient } from "aws-amplify/data";
-// import type { Schema } from "@/amplify/data/resource";
-// import outputs from "@/amplify_outputs.json";
-// // import { Button } from "@/src/components/buttons";
+import EditSingleFieldUserName from "./EditSingleFieldUserName";
+import ReadOnlyUserNameView from "./ReadOnlyUserNameView";
+import ProfileForm from "./ProfileForm";
 
-// // 1) Configure Amplify
-// Amplify.configure(outputs);
+import { createUserName, updateUserName, getUserName } from "./userNameService";
+// import { UserNameData, normalizeUserName, fieldLabel, type Profile } from "./utilsProfile";
+import {
+    UserNameData,
+    SingleFieldUserName,
+    normalizeUserName,
+    userNameLabel,
+} from "./utilsUserName";
 
-// // 2) Génère un client qui forcera le mode User Pools sur mutations
-// const client = generateClient<Schema>({
-//     defaultAuthMode: "AMAZON_COGNITO_USER_POOLS",
-//     authModeStrategies: async () => {
-//         const session = await Auth.currentSession();
-//         return {
-//             type: "AMAZON_COGNITO_USER_POOLS",
-//             jwtToken: session.getAccessToken().getJwtToken(),
-//         };
-//     },
-// });
+export default function UserNameManager() {
+    /* ---------- hooks toujours dans le même ordre ---------- */
+    const { user } = useAuthenticator();
+    const sub = user?.username ?? null; // string | null
 
-// export default function UserNameManager() {
-//     const { user } = useAuthenticator();
-//     const sub = user?.username; // par défaut, Amplify UI React place le sub Cognito dans `username`
+    const [current, setCurrent] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
+    const [formData, setFormData] = useState<UserNameData>(normalizeUserName);
+    const [editModeField, setEditModeField] = useState<SingleFieldUserName | null>(null);
 
-//     const [currentName, setCurrentName] = useState<string>("");
-//     const [draftName, setDraftName] = useState<string>("");
-//     const [loading, setLoading] = useState<boolean>(false);
+    /* ---------- charger le pseudo quand sub est connu ---------- */
+    useEffect(() => {
+        if (!sub) return; // pas encore authentifié
+        setLoading(true);
+        getUserName(sub)
+            .then((name) => {
+                setCurrent(name);
+                setFormData({ userName: name ?? "" });
+            })
+            .finally(() => setLoading(false));
+    }, [sub]);
 
-//     // 3) Au montage (ou quand l'user change), on fetch le UserName existant
-//     useEffect(() => {
-//         if (!sub) return;
-//         setLoading(true);
-//         client.models.UserName.get({ id: sub })
-//             .then(({ data }) => {
-//                 setCurrentName(data?.userName ?? "");
-//             })
-//             .catch(() => {
-//                 // pas de record -> pas encore de userName
-//                 setCurrentName("");
-//             })
-//             .finally(() => setLoading(false));
-//     }, [sub]);
+    /* ---------- handlers ---------- */
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+        setFormData({ userName: e.target.value });
 
-//     // 4) Création ou mise à jour en fonction de l'existence
-//     const saveUserName = async () => {
-//         if (!sub || !draftName.trim()) return;
-//         setLoading(true);
-//         try {
-//             // on tente d'abord la MAJ
-//             await client.models.UserName.update({
-//                 id: sub,
-//                 userName: draftName.trim(),
-//                 owner: sub,
-//             });
-//         } catch (err: any) {
-//             // si record introuvable -> on crée
-//             const errMsg = err?.errors?.[0]?.message ?? err?.message;
-//             if (err.name === "NotFound" || /not found/i.test(errMsg)) {
-//                 await client.models.UserName.create({
-//                     id: sub,
-//                     userName: draftName.trim(),
-//                     owner: sub,
-//                 });
-//             } else {
-//                 console.error(err);
-//                 alert("Erreur inattendue : " + errMsg);
-//                 setLoading(false);
-//                 return;
-//             }
-//         }
-//         // on rafraîchit l'affichage
-//         setCurrentName(draftName.trim());
-//         setDraftName("");
-//         setLoading(false);
-//     };
+    const saveUserName = async (name: string) => {
+        if (!sub) return; // sécurité
+        if (current === null) {
+            await createUserName(sub, name);
+        } else {
+            await updateUserName(sub, name);
+        }
+        setCurrent(name);
+    };
 
-//     // 5) UI
-//     if (!user) {
-//         return <Authenticator />;
-//     }
+    const saveProfileForm = () => {
+        const name = formData.userName.trim();
+        if (name) void saveUserName(name);
+    };
 
-//     return (
-//         <div className="max-w-sm mx-auto p-4 bg-white shadow rounded">
-//             <h2 className="text-xl font-semibold mb-4">Mon pseudo public</h2>
+    const saveSingleField = async () => {
+        if (!editModeField) return;
+        const name = editModeField.value.trim();
+        if (name) await saveUserName(name);
+        setEditModeField(null);
+    };
 
-//             {loading ? (
-//                 <p>Chargement…</p>
-//             ) : (
-//                 <>
-//                     {currentName ? (
-//                         <p className="mb-4">
-//                             Votre pseudo actuel :{" "}
-//                             <span className="font-bold text-blue-600">{currentName}</span>
-//                         </p>
-//                     ) : (
-//                         <p className="mb-4 text-gray-600">
-//                             Vous n’avez pas encore de pseudo public.
-//                         </p>
-//                     )}
+    /* ---------- rendu ---------- */
+    if (!user) return <Authenticator />; // rendu possible après les hooks
 
-//                     <div className="flex gap-2">
-//                         <input
-//                             type="text"
-//                             placeholder="Nouveau pseudo"
-//                             className="flex-1 border rounded p-2"
-//                             value={draftName}
-//                             onChange={(e) => setDraftName(e.target.value)}
-//                             disabled={loading}
-//                         />
-//                         <button
-//                             type="submit"
-//                             // label={currentName ? "Mettre à jour" : "Créer"}
-//                             onClick={saveUserName}
-//                             disabled={loading || !draftName.trim()}
-//                         >
-//                             {currentName ? "Mettre à jour" : "Créer"}
-//                         </button>
-//                     </div>
-//                 </>
-//             )}
-//         </div>
-//     );
-// }
+    return (
+        <section className="w-full max-w-md mx-auto px-4 py-6 bg-white shadow rounded-lg mb-8">
+            <h1 className="text-2xl font-bold text-center mb-6">Mon pseudo public</h1>
+
+            {editModeField && (
+                <EditSingleFieldUserName<UserNameData>
+                    editModeField={editModeField}
+                    setEditModeField={setEditModeField}
+                    saveSingleField={saveSingleField}
+                    label={userNameLabel}
+                />
+            )}
+
+            {current === null && !editModeField && (
+                <ProfileForm<UserNameData>
+                    formData={formData}
+                    fields={["userName"]}
+                    label={userNameLabel}
+                    handleChange={handleChange}
+                    handleSubmit={saveProfileForm}
+                    isEdit={false}
+                    onCancel={() => setFormData({ userName: "" })}
+                />
+            )}
+
+            {current !== null && !editModeField && (
+                <ReadOnlyUserNameView
+                    title="Mon pseudo public"
+                    fields={["userName"]}
+                    profile={{ userName: current }}
+                    label={userNameLabel}
+                    onEditField={() =>
+                        setEditModeField({ field: "userName", value: current ?? "" })
+                    }
+                />
+            )}
+
+            {loading && <p className="text-center">Chargement…</p>}
+        </section>
+    );
+}

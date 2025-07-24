@@ -2,20 +2,17 @@ import { SaveButton, BackButton } from "@/src/components/buttons/Buttons";
 import React from "react";
 import type { Profile } from "./utilsProfile";
 
-type Props = {
-    editModeField: { field: keyof Profile; value: string };
-    setEditModeField: React.Dispatch<
-        React.SetStateAction<{ field: keyof Profile; value: string } | null>
-    >;
+type Props<K extends keyof Profile = keyof Profile> = {
+    editModeField: { field: K; value: string };
+    setEditModeField: React.Dispatch<React.SetStateAction<{ field: K; value: string } | null>>;
     saveSingleField: () => void;
-    label: (field: keyof Profile) => string;
+    label: (field: K) => string;
 };
-
 export default function EditSingleField({
     editModeField,
     setEditModeField,
     saveSingleField,
-    label
+    label,
 }: Props) {
     return (
         <fieldset className="my-6 p-4 border rounded-md bg-white shadow-sm max-w-md mx-auto">
@@ -32,19 +29,13 @@ export default function EditSingleField({
                 value={editModeField.value}
                 placeholder={label(editModeField.field)}
                 title={label(editModeField.field)}
-                onChange={e =>
-                    setEditModeField(prev =>
-                        prev ? { ...prev, value: e.target.value } : null
-                    )
+                onChange={(e) =>
+                    setEditModeField((prev) => (prev ? { ...prev, value: e.target.value } : null))
                 }
             />
 
             <div className="flex justify-between mt-5 gap-10">
-                <SaveButton
-                    onClick={saveSingleField}
-                    label="Sauvegarder"
-                    className="flex-1 mr-2"
-                />
+                <SaveButton onClick={saveSingleField} label="Sauvegarder" className="flex-1 mr-2" />
                 <BackButton
                     onClick={() => setEditModeField(null)}
                     label="Retour"
