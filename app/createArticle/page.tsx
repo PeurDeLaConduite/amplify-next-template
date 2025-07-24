@@ -1,6 +1,6 @@
 "use client";
 
-import PostManagerPage from "@/src/components/Blog/Essaie/PostManagerPage";
+import PostManagerPage from "@/src/components/Blog/Create/CreatePost";
 
 export default function UploadPage() {
     return <PostManagerPage />;
