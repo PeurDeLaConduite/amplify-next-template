@@ -4,9 +4,10 @@ import outputs from "@/amplify_outputs.json";
 import type { Schema } from "@/amplify/data/resource";
 import type { BlogData, Author, Post, Section } from "@src/types/blog";
 
+//
 Amplify.configure(outputs);
-const client = generateClient<Schema>();
-
+// use API key for public server-side calls
+const client = generateClient<Schema>({ authMode: "apiKey" });
 export async function fetchBlogDataFromAmplify(): Promise<BlogData> {
     const [authorsRes, sectionsRes, postsRes, tagsRes, postTagsRes, sectionPostsRes] =
         await Promise.all([
