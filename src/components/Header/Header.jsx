@@ -16,16 +16,16 @@ const Header = () => {
                     {/* <Link href="/comment" className="text-gray-700 hover:text-blue-600">
                         Commentaires
                     </Link>
-                    <Link href="/todo" className="text-gray-700 hover:text-blue-600">
-                        Todo
-                    </Link>
+
                     <Link href="/" className="text-gray-700 hover:text-blue-600">
                         Home
                     </Link>
                     <Link href="/uploadPage" className="text-gray-700 hover:text-blue-600">
                         Upload Page
                     </Link> */}
-
+                    <Link href="/todo" className="text-gray-700 hover:text-blue-600">
+                        Todo
+                    </Link>
                     <Link href="/createAuthor" className="text-gray-700 hover:text-blue-600">
                         Create Author
                     </Link>
@@ -37,10 +37,10 @@ const Header = () => {
                     </Link>
                     <Link href="/createArticle" className="text-gray-700 hover:text-blue-600">
                         Create Article
+                    </Link>{" "}
+                    <Link href="/blog" className="text-gray-700 hover:text-blue-600">
+                        Blog
                     </Link>
-                    {/* <Link href="/usernames" className="text-gray-700 hover:text-blue-600">
-                        Username
-                    </Link> */}
                     <Link href="/profile" className="text-gray-700 hover:text-blue-600">
                         My profile
                     </Link>
