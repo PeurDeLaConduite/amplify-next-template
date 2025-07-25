@@ -18,11 +18,13 @@ export function useSections() {
 
     const create = useCallback(async (input: SectionCreateInput): Promise<Section> => {
         const { data } = await client.models.Section.create(input);
+        if (!data) throw new Error("Failed to create section");
         return data;
     }, []);
 
     const update = useCallback(async (id: string, input: SectionUpdateInput): Promise<Section> => {
         const { data } = await client.models.Section.update({ id, ...input });
+        if (!data) throw new Error("Failed to update section");
         return data;
     }, []);
 
