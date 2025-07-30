@@ -14,3 +14,6 @@ export * from "./models/userName";
 export * from "./models/userProfile";
 
 export * from "./forms/sectionForm";
+export * from "./forms/postForm";
+export * from "./forms/tagForm";
+export * from "./forms/authorForm";

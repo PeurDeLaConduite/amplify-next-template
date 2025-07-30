@@ -1,60 +1,20 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import EditableField from "../Create/components/EditableField";
 import EditableTextArea from "../Create/components/EditableTextArea";
 import FormActionButtons from "../Create/FormActionButtons";
+import { useAuthorForm } from "./useAuthorForm";
+import type { Author } from "@/src/types";
 
-const initialForm = {
-    name: "",
-    avatar: "",
-    bio: "",
-    email: "",
-};
+interface Props {
+    authors: Author[];
+    setMessage: (msg: string) => void;
+}
 
-export default function AuthorsForm({ authors, onAdd, onUpdate, onDelete }) {
-    const [form, setForm] = useState(initialForm);
-    const [editingIndex, setEditingIndex] = useState(null);
-
-    // Récupère la structure actuelle depuis Amplify Data
-    const getAuthorDisplay = (author) => (author.author ? author.author : author);
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setForm((f) => ({ ...f, [name]: value }));
-    };
-
-    const handleEdit = (idx) => {
-        setEditingIndex(idx);
-        const a = getAuthorDisplay(authors[idx]);
-        setForm({
-            name: a.name || "",
-            avatar: a.avatar || "",
-            bio: a.bio || "",
-            email: a.email || "",
-        });
-    };
-
-    const handleCancel = () => {
-        setEditingIndex(null);
-        setForm(initialForm);
-    };
-
-    const handleSave = () => {
-        if (!form.name) return;
-        if (editingIndex === null) {
-            onAdd(form);
-        } else {
-            onUpdate(authors[editingIndex].id, form);
-        }
-        handleCancel();
-    };
-
-    const handleDeleteLocal = (idx) => {
-        if (authors[idx]?.id) {
-            onDelete(authors[idx].id);
-        }
-    };
+export default function AuthorsForm({ authors, setMessage }: Props) {
+    const { form, editingIndex, handleChange, handleEdit, handleCancel, handleSave, handleDelete } =
+        useAuthorForm(authors, setMessage);
 
     return (
         <div className="mb-6">
@@ -87,7 +47,6 @@ export default function AuthorsForm({ authors, onAdd, onUpdate, onDelete }) {
 
             <ul className="mt-4 space-y-2">
                 {authors.map((author, idx) => {
-                    const a = getAuthorDisplay(author);
                     const active = editingIndex === idx;
                     return (
                         <li
@@ -97,7 +56,7 @@ export default function AuthorsForm({ authors, onAdd, onUpdate, onDelete }) {
                             }`}
                         >
                             <div>
-                                <strong>{a.name}</strong> — {a.email}
+                                <strong>{author.name}</strong> — {author.email}
                             </div>
                             <FormActionButtons
                                 editingIndex={editingIndex}
@@ -105,7 +64,7 @@ export default function AuthorsForm({ authors, onAdd, onUpdate, onDelete }) {
                                 onEdit={() => handleEdit(idx)}
                                 onSave={handleSave}
                                 onCancel={handleCancel}
-                                onDelete={() => handleDeleteLocal(idx)}
+                                onDelete={() => handleDelete(idx)}
                             />
                         </li>
                     );

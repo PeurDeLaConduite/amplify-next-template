@@ -1,9 +1,8 @@
 import { useCallback } from "react";
-import { generateClient } from "aws-amplify/data";
-import type { Schema } from "@/amplify/data/resource";
+import { client } from "./amplifyClient";
+
 import type { Post, PostOmit, PostUpdateInput } from "@/src/types/models/post";
 
-const client = generateClient<Schema>();
 
 export function usePosts() {
     const list = useCallback(async (): Promise<Post[]> => {

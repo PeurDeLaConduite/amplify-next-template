@@ -1,9 +1,6 @@
 import { useCallback } from "react";
-import { generateClient } from "aws-amplify/data";
-import type { Schema } from "@/amplify/data/resource";
+import { client } from "./amplifyClient";
 import type { Section, SectionOmit, SectionUpdateInput } from "@/src/types/models/section";
-
-const client = generateClient<Schema>();
 
 export function useSections() {
     const list = useCallback(async (): Promise<Section[]> => {

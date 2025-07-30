@@ -1,51 +1,49 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { generateClient } from "aws-amplify/data";
-import { Schema } from "@/amplify/data/resource";
-import { Amplify } from "aws-amplify";
-import outputs from "@/amplify_outputs.json";
+import React, { useState, useEffect, useCallback } from "react";
+import { useTags } from "@/src/services/useTags";
 
 import TagCrudManager from "./tag/TagManager";
-
-Amplify.configure(outputs);
-const client = generateClient<Schema>();
+import type { Tag } from "@/src/types/models/tag";
 
 export default function TagsManager() {
-    const [tags, setTags] = useState<Schema["Tag"]["type"][]>([]);
+    const { list, create, update, delete: remove } = useTags();
+    const [tags, setTags] = useState<Tag[]>([]);
 
     // CRUD State
     const [newTag, setNewTag] = useState("");
     const [editTagId, setEditTagId] = useState(null);
     const [editTagName, setEditTagName] = useState("");
 
+    const fetchAll = useCallback(async () => {
+        const data = await list();
+        setTags(data);
+    }, [list]);
+
     useEffect(() => {
         fetchAll();
-    }, []);
-
-    async function fetchAll() {
-        const [tagsData] = await Promise.all([client.models.Tag.list()]);
-        setTags(tagsData.data);
-    }
+    }, [fetchAll]);
 
     // Liaisons PostTag
 
     // CRUD tag handlers
     async function handleCreateTag() {
         if (!newTag.trim()) return;
-        await client.models.Tag.create({ name: newTag.trim() });
+        await create({ name: newTag.trim() });
         setNewTag("");
         fetchAll();
     }
+
     async function handleUpdateTag() {
         if (!editTagId || !editTagName.trim()) return;
-        await client.models.Tag.update({ id: editTagId, name: editTagName.trim() });
+        await update(editTagId, { name: editTagName.trim() });
         setEditTagId(null);
         setEditTagName("");
         fetchAll();
     }
+
     async function handleDeleteTag(tagId: string) {
         if (!window.confirm("Supprimer ce tag ?")) return;
-        await client.models.Tag.delete({ id: tagId });
+        await remove(tagId);
         fetchAll();
     }
 

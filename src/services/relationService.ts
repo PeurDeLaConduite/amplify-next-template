@@ -9,6 +9,7 @@ interface RelationModel<ParentIdKey extends string, ChildIdKey extends string> {
     delete: (parentId: string, childId: string) => Promise<void>;
     listByParent: (parentId: string) => Promise<string[]>;
     listByChild: (childId: string) => Promise<string[]>;
+    _types?: { parent: ParentIdKey; child: ChildIdKey };
 }
 
 export function relationService<
@@ -35,14 +36,14 @@ export function relationService<
             const { data } = await model.list({
                 filter: { [parentIdKey]: { eq: parentId } },
             });
-            return data.map((item: any) => item[childIdKey]);
+            return data.map((item) => (item as Record<string, string>)[childIdKey]);
         },
 
         async listByChild(childId: string) {
             const { data } = await model.list({
                 filter: { [childIdKey]: { eq: childId } },
             });
-            return data.map((item: any) => item[parentIdKey]);
+            return data.map((item) => (item as Record<string, string>)[parentIdKey]);
         },
     };
 }

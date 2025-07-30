@@ -1,13 +1,13 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import { Schema } from "@/amplify/data/resource";
 import { client } from "@/src/services/amplifyClient";
 import PostList from "./PostList";
 import PostForm from "./PostForm";
+import type { Post } from "@/src/types";
 
 export default function PostManagerPage() {
-    const [posts, setPosts] = useState<Schema["Post"]["type"][]>([]);
-    const [editingPost, setEditingPost] = useState<Schema["Post"]["type"] | null>(null);
+    const [posts, setPosts] = useState<Post[]>([]);
+    const [editingPost, setEditingPost] = useState<Post | null>(null);
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
     const formRef = useRef<HTMLFormElement>(null);
 
@@ -47,12 +47,7 @@ export default function PostManagerPage() {
     return (
         <div className="p-4">
             <h1 className="text-2xl font-bold mb-4">Gestion des Posts</h1>
-            <PostForm
-                ref={formRef}
-                post={editingPost}
-                posts={posts}
-                onSave={handleSave}
-            />
+            <PostForm ref={formRef} post={editingPost} posts={posts} onSave={handleSave} />
             <PostList
                 posts={posts}
                 editingIndex={editingIndex}

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import RequireAdmin from "@/src/components/RequireAdmin";
-import { client } from "@/src/services/amplifyClient";
+import { client } from "@/src/services";
 import SectionForm from "./SectionsForm";
 import SectionList from "./SectionList";
 import type { Section } from "@/src/types";

@@ -1,8 +1,7 @@
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { generateClient } from "aws-amplify/data";
 import { Schema } from "@/amplify/data/resource";
-import { postTagService } from "@/src/services/postTagService";
-import { sectionPostService } from "@/src/services/sectionPostService";
+import { postTagService, sectionPostService } from "@/src/services";
 import { useAutoGenFields, slugify } from "@/src/hooks/useAutoGenFields"; // <-- Assure-toi d'importer le bon
 
 const client = generateClient<Schema>();
@@ -47,9 +46,9 @@ export function usePostForm(post: Schema["Post"]["type"] | null, onSave: () => v
     const [sections, setSections] = useState<Schema["Section"]["type"][]>([]);
     const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
     const [selectedSectionIds, setSelectedSectionIds] = useState<string[]>([]);
-    const [saving, setSaving] = useState(false);
+    const [saving] = useState(false);
 
-    const { autoFlags, handleSourceFocus, handleSourceBlur, handleManualEdit } = useAutoGenFields({
+    const { handleSourceFocus, handleSourceBlur, handleManualEdit } = useAutoGenFields({
         configs: [
             {
                 editingKey: "title",

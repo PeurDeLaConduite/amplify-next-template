@@ -1,7 +1,6 @@
 import { useState, useEffect, ChangeEvent } from "react";
 import type { SectionForm, Section, Post } from "@/src/types";
-import { client } from "@/src/services/amplifyClient";
-import { sectionPostService } from "@/src/services/sectionPostService";
+import { client, sectionPostService } from "@/src/services";
 import { useAutoGenFields, slugify } from "@/src/hooks/useAutoGenFields";
 
 export function useSectionForm(section: Section | null, onSave: () => void) {
@@ -19,7 +18,7 @@ export function useSectionForm(section: Section | null, onSave: () => void) {
     const [saving, setSaving] = useState(false);
 
     // HOOK d'auto-génération : slug & seo.title depuis title, seo.description depuis description
-    const { autoFlags, handleSourceFocus, handleSourceBlur, handleManualEdit } = useAutoGenFields({
+    const { handleSourceFocus, handleSourceBlur, handleManualEdit } = useAutoGenFields({
         configs: [
             {
                 editingKey: "title",
@@ -96,6 +95,7 @@ export function useSectionForm(section: Section | null, onSave: () => void) {
         }
 
         const { postIds, ...sectionInput } = form;
+        void postIds;
         const isUpdate = Boolean(section?.id);
 
         try {
