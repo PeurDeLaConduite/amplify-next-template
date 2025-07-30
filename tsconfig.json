@@ -40,14 +40,16 @@
         "src/**/*.tsx",
         "public/**/*.json",
         ".next/types/**/*.ts",
-        "src/components/Blog/Create/components/EditableField.jsx",
+        "src/components/Blog/Create/components/EditableField.tsx",
         "src/hooks/useUserProfile.tsx",
-        "src/components/Blog/Create/components/EditableField.jsx",
+        "src/components/Blog/Create/components/EditableField.tsx",
         "src/hooks/useEditableForm.js",
         "src/components/Blog/Create/components/ArticleEditForm.jsx",
-        "src/components/Blog/Create/CreateAuthor.tsx",
+        "src/components/Blog/CreateAuthor/CreateAuthor.tsx",
         "src/components/Blog/Create/components/TagPostManager.tsx",
-        "src/components/Blog/Create/PostsForm.jsx"
-, "src/components/Blog/Create/SectionsForm.tsx", "src/components/Blog/Create/components/ItemSelector.tsx"    ],
+        "src/components/Blog/Create/PostsForm.jsx",
+        "src/components/Blog/CreateSection/SectionsForm.tsx",
+        "src/components/Blog/Create/components/ItemSelector.tsx"
+    ],
     "exclude": ["node_modules", "amplify"]
 }

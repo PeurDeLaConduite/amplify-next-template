@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
-import type { Section, SectionCreateInput, SectionUpdateInput } from "@src/types/section";
+import type { Section, SectionOmit, SectionUpdateInput } from "@/src/types/models/section";
 
 const client = generateClient<Schema>();
 
@@ -16,7 +16,7 @@ export function useSections() {
         return data ?? null;
     }, []);
 
-    const create = useCallback(async (input: SectionCreateInput): Promise<Section> => {
+    const create = useCallback(async (input: SectionOmit): Promise<Section> => {
         const { data } = await client.models.Section.create(input);
         if (!data) throw new Error("Failed to create section");
         return data;

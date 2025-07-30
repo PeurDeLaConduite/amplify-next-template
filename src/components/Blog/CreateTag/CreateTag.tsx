@@ -7,8 +7,8 @@ import outputs from "@/amplify_outputs.json";
 import RequireAdmin from "../../RequireAdmin";
 import { RefreshButton } from "@/src/components/buttons";
 
-import TagCrudManager from "./components/tag/TagManager";
-import TagsAssociationManager from "./components/tag/PostTagsManager";
+import TagCrudManager from "../Create/components/tag/TagManager";
+import TagsAssociationManager from "../Create/components/tag/PostTagsManager";
 
 Amplify.configure(outputs);
 const client = generateClient<Schema>();

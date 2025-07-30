@@ -9,7 +9,7 @@ type SeoFieldsProps = {
         image: string;
     };
     readOnly: boolean;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 };
 
 export default function SeoFields({ seo, readOnly, onChange }: SeoFieldsProps) {

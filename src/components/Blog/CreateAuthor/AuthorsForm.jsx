@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import EditableField from "./components/EditableField";
-import EditableTextArea from "./components/EditableTextArea";
-import FormActionButtons from "./FormActionButtons";
+import EditableField from "../Create/components/EditableField";
+import EditableTextArea from "../Create/components/EditableTextArea";
+import FormActionButtons from "../Create/FormActionButtons";
 
 const initialForm = {
     name: "",

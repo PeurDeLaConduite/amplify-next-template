@@ -1,31 +1,14 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import SectionsForm from "./SectionsForm";
-import { generateClient } from "aws-amplify/data";
-import { Schema } from "@/amplify/data/resource";
-import { Amplify } from "aws-amplify";
-import outputs from "@/amplify_outputs.json";
+import React, { useEffect, useState } from "react";
 import RequireAdmin from "../../RequireAdmin";
+import SectionsForm from "../CreateSection/SectionsForm";
+import { client } from "@/src/services/amplifyClient";
+import type { Section, Post, SectionForm } from "@src/types";
 
-Amplify.configure(outputs);
-const client = generateClient<Schema>();
-type SectionForm = {
-    slug: string;
-    title: string;
-    description?: string;
-    order: number;
-    seo: {
-        title: string;
-        description: string;
-        image: string;
-    };
-    postIds: string[]; // si tu passes les posts liés dans le form
-};
-type Section = Schema["Section"]["type"];
 export default function CreateSection() {
-    const [sections, setSections] = useState<Schema["Section"]["type"][]>([]);
-    const [posts, setPosts] = useState<Schema["Post"]["type"][]>([]);
+    const [sections, setSections] = useState<Section[]>([]);
+    const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [message, setMessage] = useState("");
@@ -33,13 +16,11 @@ export default function CreateSection() {
     useEffect(() => {
         const subSection = client.models.Section.observeQuery().subscribe({
             next: (data) => setSections(data.items),
-            error: (err) =>
-                setError(err instanceof Error ? err.message : (err.message ?? JSON.stringify(err))),
+            error: (err) => setError(err instanceof Error ? err.message : JSON.stringify(err)),
         });
         const subPosts = client.models.Post.observeQuery().subscribe({
             next: (data) => setPosts(data.items),
-            error: (err) =>
-                setError(err instanceof Error ? err.message : (err.message ?? JSON.stringify(err))),
+            error: (err) => setError(err instanceof Error ? err.message : JSON.stringify(err)),
         });
 
         setLoading(false);
@@ -49,10 +30,6 @@ export default function CreateSection() {
         };
     }, []);
 
-    // CRUD Section
-    // CreateSection.tsx (extrait de handleCreateSection)
-
-    // avant : Promise<SectionForm>
     const handleCreateSection = async (form: SectionForm): Promise<Section> => {
         const { data: section, errors } = await client.models.Section.create({
             slug: form.slug,
@@ -61,18 +38,21 @@ export default function CreateSection() {
             order: form.order,
             seo: form.seo,
         });
+
         if (errors?.length) {
             const message = errors.map((e) => e.message).join(", ");
             setError(message);
             setMessage("Erreur lors de l'ajout");
             throw new Error(message);
         }
+
         if (!section) {
             const message = "Aucune donnée retournée";
             setError(message);
             setMessage("Erreur lors de l'ajout");
             throw new Error(message);
         }
+
         setMessage("Section ajoutée !");
         return section;
     };
@@ -106,12 +86,7 @@ export default function CreateSection() {
     };
 
     if (loading) return <p>Chargement…</p>;
-    if (error)
-        return (
-            <p className="text-red-600">
-                Erreur : {typeof error === "string" ? error : JSON.stringify(error, null, 2)}
-            </p>
-        );
+    if (error) return <p className="text-red-600">Erreur : {error}</p>;
 
     return (
         <RequireAdmin>

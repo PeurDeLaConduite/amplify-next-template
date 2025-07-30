@@ -57,12 +57,6 @@ const schema = a.schema({
         })
         .authorization((allow) => [allow.owner()]),
 
-    Seo: a.customType({
-        title: a.string(),
-        description: a.string(),
-        image: a.string(),
-    }),
-
     Author: a
         .model({
             id: a.id().required(),
@@ -80,6 +74,12 @@ const schema = a.schema({
             allow.authenticated().to(["read"]),
             allow.group("ADMINS").to(["create", "update", "delete", "read"]),
         ]),
+
+    Seo: a.customType({
+        title: a.string(),
+        description: a.string(),
+        image: a.string(),
+    }),
 
     Section: a
         .model({

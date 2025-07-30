@@ -1,18 +1,16 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { generateClient } from "aws-amplify/data";
-import type { Schema } from "@/amplify/data/resource";
-import { Amplify } from "aws-amplify";
-import outputs from "@/amplify_outputs.json";
 import RequireAdmin from "../../RequireAdmin";
 import AuthorsForm from "./AuthorsForm";
+import { crudService } from "@/src/services/crudService";
+import { omitId } from "@/src/utils/omitId";
+import { client } from "@/src/services/amplifyClient";
+import type { Author } from "@src/types";
 
-Amplify.configure(outputs);
+const { create, update, delete: remove } = crudService("Author");
 
-const client = generateClient<Schema>();
-
-type AuthorType = Schema["Author"]["type"];
+type AuthorType = Author;
 type AuthorsType = AuthorType[];
 
 export default function CreateAuthor() {
@@ -34,11 +32,10 @@ export default function CreateAuthor() {
 
     const handleAddAuthor = async (authorData: AuthorType) => {
         setMessage("");
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { id: _id, ...rest } = authorData;
+        const rest = omitId(authorData);
         setLocalAuthors([{ ...rest, id: "tmp-" + Math.random() }, ...localAuthors]);
         try {
-            await client.models.Author.create(rest);
+            await create(rest);
             setMessage("Auteur ajouté !");
         } catch (err) {
             setError(err as Error);
@@ -48,11 +45,10 @@ export default function CreateAuthor() {
 
     const handleUpdateAuthor = async (id: string, authorData: AuthorType) => {
         setMessage("");
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { id: _removed, ...rest } = authorData;
+        const rest = omitId(authorData);
         setLocalAuthors(localAuthors.map((a) => (a.id === id ? { ...a, ...rest } : a)));
         try {
-            await client.models.Author.update({ id, ...rest });
+            await update({ id, ...rest });
             setMessage("Auteur mis à jour !");
         } catch (err) {
             setError(err as Error);
@@ -65,7 +61,7 @@ export default function CreateAuthor() {
         setMessage("");
         setLocalAuthors(localAuthors.filter((a) => a.id !== id));
         try {
-            await client.models.Author.delete({ id });
+            await remove({ id });
             setMessage("Auteur supprimé !");
         } catch (err) {
             setError(err as Error);

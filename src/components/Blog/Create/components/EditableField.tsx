@@ -1,6 +1,24 @@
-import React from "react";
+import React, { ChangeEvent, FocusEvent } from "react";
 
-const EditableField = ({ label, value = "", onChange, readOnly, name }) => (
+type EditableFieldProps = {
+    label: string;
+    value?: string;
+    onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+    readOnly: boolean;
+    name: string;
+    onFocus?: (e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+    onBlur?: (e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+};
+
+const EditableField = ({
+    label,
+    value = "",
+    onChange,
+    readOnly,
+    name,
+    onFocus,
+    onBlur,
+}: EditableFieldProps) => (
     <div style={{ marginBottom: "1rem" }}>
         <label>
             {label}
@@ -9,6 +27,8 @@ const EditableField = ({ label, value = "", onChange, readOnly, name }) => (
                 name={name}
                 value={value ?? ""}
                 onChange={onChange}
+                onFocus={onFocus}
+                onBlur={onBlur}
                 readOnly={readOnly}
                 style={{
                     display: "block",

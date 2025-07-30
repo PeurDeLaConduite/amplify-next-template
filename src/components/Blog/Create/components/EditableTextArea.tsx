@@ -1,6 +1,24 @@
-import React from "react";
+import React, { ChangeEvent, FocusEvent } from "react";
 
-const EditableTextArea = ({ label, value = "", onChange, readOnly, name }) => (
+type EditableTextAreaProps = {
+    label: string;
+    value?: string;
+    onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+    readOnly: boolean;
+    name: string;
+    onFocus?: (e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+    onBlur?: (e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+};
+
+const EditableTextArea = ({
+    label,
+    value = "",
+    onChange,
+    readOnly,
+    name,
+    onFocus,
+    onBlur,
+}: EditableTextAreaProps) => (
     <div style={{ marginBottom: "1rem" }}>
         <label htmlFor={name} style={{ display: "block", marginBottom: "0.5rem" }}>
             {label}
@@ -10,6 +28,8 @@ const EditableTextArea = ({ label, value = "", onChange, readOnly, name }) => (
             name={name}
             value={value ?? ""}
             onChange={onChange}
+            onFocus={onFocus}
+            onBlur={onBlur}
             readOnly={readOnly}
             style={{
                 width: "100%",

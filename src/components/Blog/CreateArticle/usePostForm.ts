@@ -1,9 +1,9 @@
-// usePostForm.ts
-"use client";
-
-import { useEffect, useState, ChangeEvent, FormEvent } from "react";
+import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { generateClient } from "aws-amplify/data";
 import { Schema } from "@/amplify/data/resource";
+import { postTagService } from "@/src/services/postTagService";
+import { sectionPostService } from "@/src/services/sectionPostService";
+import { useAutoGenFields, slugify } from "@/src/hooks/useAutoGenFields"; // <-- Assure-toi d'importer le bon
 
 const client = generateClient<Schema>();
 
@@ -14,6 +14,7 @@ type PostFormFields = {
     content: string;
     status: "draft" | "published";
     authorId: string;
+    order: number; // Ajouté
 };
 
 type SeoFields = {
@@ -23,7 +24,6 @@ type SeoFields = {
 };
 
 export function usePostForm(post: Schema["Post"]["type"] | null, onSave: () => void) {
-    // états du form
     const [form, setForm] = useState<PostFormFields>({
         title: "",
         slug: "",
@@ -31,6 +31,7 @@ export function usePostForm(post: Schema["Post"]["type"] | null, onSave: () => v
         content: "",
         status: "draft",
         authorId: "",
+        order: 1,
     });
     const [seo, setSeo] = useState<SeoFields>({
         title: "",
@@ -38,12 +39,7 @@ export function usePostForm(post: Schema["Post"]["type"] | null, onSave: () => v
         image: "",
     });
 
-    // focus sur le titre
-    const [isEditingTitle, setIsEditingTitle] = useState(false);
-
-    // flags d'auto‑génération
-    const [autoSlug, setAutoSlug] = useState(true);
-    const [autoSeo, setAutoSeo] = useState(true);
+    // Abstraction auto-gen (le même hook que pour les sections !)
 
     // fetch auteurs, tags, sections...
     const [authors, setAuthors] = useState<Schema["Author"]["type"][]>([]);
@@ -51,7 +47,31 @@ export function usePostForm(post: Schema["Post"]["type"] | null, onSave: () => v
     const [sections, setSections] = useState<Schema["Section"]["type"][]>([]);
     const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
     const [selectedSectionIds, setSelectedSectionIds] = useState<string[]>([]);
+    const [saving, setSaving] = useState(false);
 
+    const { autoFlags, handleSourceFocus, handleSourceBlur, handleManualEdit } = useAutoGenFields({
+        configs: [
+            {
+                editingKey: "title",
+                source: form.title ?? "",
+                target: "slug",
+                setter: (v) => setForm((f) => ({ ...f, slug: slugify(v ?? "") })),
+                transform: slugify,
+            },
+            {
+                editingKey: "title",
+                source: form.title ?? "",
+                target: "seo.title",
+                setter: (v) => setSeo((s) => ({ ...s, title: v ?? "" })),
+            },
+            {
+                editingKey: "excerpt",
+                source: form.excerpt ?? "",
+                target: "seo.description",
+                setter: (v) => setSeo((s) => ({ ...s, description: v ?? "" })),
+            },
+        ],
+    });
     useEffect(() => {
         void (async () => {
             await Promise.all([fetchAuthors(), fetchTagsAndSections()]);
@@ -59,88 +79,38 @@ export function usePostForm(post: Schema["Post"]["type"] | null, onSave: () => v
     }, []);
 
     useEffect(() => {
-        if (post) {
-            void loadPostData(post);
-        }
+        if (post) void loadPostData(post);
     }, [post]);
 
-    // Auto‑update slug & seo.title à chaque frappe, tant que focus sur title et flag auto actif
-    useEffect(() => {
-        if (!isEditingTitle) return;
-
-        const t = form.title.trim();
-        if (!t) {
-            // si titre vide, on vide aussi automatiquement si flag auto
-            if (autoSlug) setForm((p) => ({ ...p, slug: "" }));
-            if (autoSeo) setSeo((p) => ({ ...p, title: "" }));
-            return;
-        }
-
-        if (autoSlug) {
-            setForm((p) => ({ ...p, slug: slugify(t) }));
-        }
-        if (autoSeo) {
-            setSeo((p) => ({ ...p, title: t }));
-        }
-    }, [form.title, isEditingTitle, autoSlug, autoSeo]);
-
-    // Handlers
-
-    function handleTitleFocus() {
-        setIsEditingTitle(true);
-    }
-    function handleTitleBlur() {
-        setIsEditingTitle(false);
-
-        // slug
-        const gen = slugify(form.title.trim());
-        if (form.slug === "" || form.slug === gen) {
-            setAutoSlug(true);
-        } else {
-            setAutoSlug(false);
-        }
-
-        // seo.title
-        if (seo.title === "" || seo.title === form.title) {
-            setAutoSeo(true);
-        } else {
-            setAutoSeo(false);
-        }
-    }
+    // --------- Handlers ---------
 
     function handlePostChange(
         e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
     ) {
         const { name, value } = e.target;
-        setForm((p) => ({ ...p, [name]: value }));
-
-        // si l'utilisateur édite manuellement slug, on désactive l'auto‑slug
         if (name === "slug") {
-            setAutoSlug(false);
+            handleManualEdit("slug");
+            setForm((p) => ({ ...p, slug: slugify(value) }));
+        } else if (name === "title") {
+            setForm((p) => ({ ...p, title: value }));
+        } else if (name === "excerpt") {
+            setForm((p) => ({ ...p, excerpt: value }));
+        } else {
+            setForm((p) => ({ ...p, [name]: value }));
         }
     }
 
-    function handleSeoChange(e: ChangeEvent<HTMLInputElement>) {
-        const { name, value } = e.target;
-        setSeo((p) => ({ ...p, [name]: value }));
-
-        // si l'utilisateur édite manuellement le SEO title, on désactive l'auto‑seo
-        if (name === "title") {
-            setAutoSeo(false);
-        }
+    function handleTitleFocus() {
+        handleSourceFocus("title");
     }
-
-    // — Fonctions auxiliaires / handlers —
-
-    function slugify(text: string) {
-        return text
-            .normalize("NFD") // décompose les caractères accentués
-            .replace(/[\u0300-\u036f]/g, "") // enlève les diacritiques
-            .toLowerCase()
-            .trim()
-            .replace(/[\s_]+/g, "-")
-            .replace(/[^\w-]+/g, "")
-            .replace(/--+/g, "-");
+    function handleTitleBlur() {
+        handleSourceBlur("title");
+    }
+    function handleExcerptFocus() {
+        handleSourceFocus("excerpt");
+    }
+    function handleExcerptBlur() {
+        handleSourceBlur("excerpt");
     }
 
     function toggleTag(tagId: string) {
@@ -155,6 +125,23 @@ export function usePostForm(post: Schema["Post"]["type"] | null, onSave: () => v
         );
     }
 
+    // ----------- Service Relations ------------
+
+    async function syncRelations(postId: string) {
+        const currentTagIds = await postTagService.listByParent(postId);
+        const tagsToAdd = selectedTagIds.filter((id) => !currentTagIds.includes(id));
+        const tagsToRemove = currentTagIds.filter((id) => !selectedTagIds.includes(id));
+        const currentSectionIds = await sectionPostService.listByChild(postId);
+        const sectionsToAdd = selectedSectionIds.filter((id) => !currentSectionIds.includes(id));
+        const sectionsToRemove = currentSectionIds.filter((id) => !selectedSectionIds.includes(id));
+        await Promise.all([
+            ...tagsToAdd.map((tagId) => postTagService.create(postId, tagId)),
+            ...tagsToRemove.map((tagId) => postTagService.delete(postId, tagId)),
+            ...sectionsToAdd.map((sectionId) => sectionPostService.create(sectionId, postId)),
+            ...sectionsToRemove.map((sectionId) => sectionPostService.delete(sectionId, postId)),
+        ]);
+    }
+
     async function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
         if (!form.authorId) {
@@ -163,15 +150,7 @@ export function usePostForm(post: Schema["Post"]["type"] | null, onSave: () => v
         }
         const isUpdate = Boolean(post?.id);
         const postId = await savePost(isUpdate);
-        if (isUpdate && post?.id) {
-            await cleanupRelations(post.id);
-        }
-        await Promise.all([
-            ...selectedTagIds.map((tagId) => client.models.PostTag.create({ postId, tagId })),
-            ...selectedSectionIds.map((sectionId) =>
-                client.models.SectionPost.create({ postId, sectionId })
-            ),
-        ]);
+        await syncRelations(postId);
         resetForm();
         onSave();
     }
@@ -198,6 +177,7 @@ export function usePostForm(post: Schema["Post"]["type"] | null, onSave: () => v
             content: post.content ?? "",
             status: post.status ?? "draft",
             authorId: post.authorId ?? "",
+            order: post.order ?? 1,
         });
 
         setSeo({
@@ -206,13 +186,12 @@ export function usePostForm(post: Schema["Post"]["type"] | null, onSave: () => v
             image: post.seo?.image ?? "",
         });
 
-        const [tagLinks, sectionLinks] = await Promise.all([
-            client.models.PostTag.list({ filter: { postId: { eq: post.id } } }),
-            client.models.SectionPost.list({ filter: { postId: { eq: post.id } } }),
+        const [tagIds, sectionIds] = await Promise.all([
+            postTagService.listByParent(post.id),
+            sectionPostService.listByChild(post.id),
         ]);
-
-        setSelectedTagIds(tagLinks.data.map((t) => t.tagId));
-        setSelectedSectionIds(sectionLinks.data.map((s) => s.sectionId));
+        setSelectedTagIds(tagIds);
+        setSelectedSectionIds(sectionIds);
     }
 
     async function savePost(isUpdate: boolean): Promise<string> {
@@ -231,23 +210,6 @@ export function usePostForm(post: Schema["Post"]["type"] | null, onSave: () => v
         }
     }
 
-    async function cleanupRelations(postId: string) {
-        const [postTags, sectionPosts] = await Promise.all([
-            client.models.PostTag.list({ filter: { postId: { eq: postId } } }),
-            client.models.SectionPost.list({ filter: { postId: { eq: postId } } }),
-        ]);
-
-        await Promise.all([
-            ...postTags.data.map((pt) => client.models.PostTag.delete({ postId, tagId: pt.tagId })),
-            ...sectionPosts.data.map((sp) =>
-                client.models.SectionPost.delete({
-                    postId,
-                    sectionId: sp.sectionId,
-                })
-            ),
-        ]);
-    }
-
     function resetForm() {
         setForm({
             title: "",
@@ -256,6 +218,7 @@ export function usePostForm(post: Schema["Post"]["type"] | null, onSave: () => v
             content: "",
             status: "draft",
             authorId: "",
+            order: 1,
         });
         setSeo({ title: "", description: "", image: "" });
         setSelectedTagIds([]);
@@ -270,12 +233,15 @@ export function usePostForm(post: Schema["Post"]["type"] | null, onSave: () => v
         sections,
         selectedTagIds,
         selectedSectionIds,
+        saving,
         handlePostChange,
-        handleSeoChange,
         handleTitleFocus,
         handleTitleBlur,
+        handleExcerptFocus,
+        handleExcerptBlur,
         toggleTag,
         toggleSection,
         handleSubmit,
+        setForm, // <---- AJOUTE-LA ICI !
     };
 }

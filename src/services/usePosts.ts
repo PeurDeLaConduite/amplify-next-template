@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
-import type { Post, PostCreateInput, PostUpdateInput } from "@src/types/post";
+import type { Post, PostOmit, PostUpdateInput } from "@/src/types/models/post";
 
 const client = generateClient<Schema>();
 
@@ -16,7 +16,7 @@ export function usePosts() {
         return data ?? null;
     }, []);
 
-    const create = useCallback(async (input: PostCreateInput): Promise<Post | null> => {
+    const create = useCallback(async (input: PostOmit): Promise<Post | null> => {
         const { data } = await client.models.Post.create(input);
         if (!data) {
             return null;
