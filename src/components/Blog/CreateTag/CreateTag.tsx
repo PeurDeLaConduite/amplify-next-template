@@ -1,95 +1,49 @@
 "use client";
-import React, { useState, useEffect, useCallback } from "react";
-import { generateClient } from "aws-amplify/data";
-import { Schema } from "@/amplify/data/resource";
-import { Amplify } from "aws-amplify";
-import outputs from "@/amplify_outputs.json";
+import React from "react";
 import RequireAdmin from "../../RequireAdmin";
 import { RefreshButton } from "@/src/components/buttons";
 
 import TagCrudManager from "../Create/components/tag/TagManager";
 import TagsAssociationManager from "../Create/components/tag/PostTagsManager";
-
-Amplify.configure(outputs);
-const client = generateClient<Schema>();
+import { useTagForm } from "./useTagForm";
 
 export default function PostsTagsManagerPage() {
-    const [tags, setTags] = useState<Schema["Tag"]["type"][]>([]);
-    const [posts, setPosts] = useState<Schema["Post"]["type"][]>([]);
-    const [postTags, setPostTags] = useState<Schema["PostTag"]["type"][]>([]);
-    const [loading, setLoading] = useState(true);
+    const {
+        tags,
+        posts,
+        form,
+        editingIndex,
+        loading,
+        setForm,
+        handleEdit,
+        handleCancel,
+        handleSubmit,
+        handleDelete,
+        handleAddPostTag,
+        handleRemovePostTag,
+        tagsForPost,
+        isTagLinked,
+        fetchAll,
+    } = useTagForm();
 
-    // CRUD State
-    const [newTag, setNewTag] = useState("");
-    const [editTagId, setEditTagId] = useState(null);
-    const [editTagName, setEditTagName] = useState("");
-    const fetchAll = useCallback(async () => {
-        setLoading(true);
-        const [tagsData, postsData, postTagsData] = await Promise.all([
-            client.models.Tag.list(),
-            client.models.Post.list(),
-            client.models.PostTag.list(),
-        ]);
-        setTags(tagsData.data);
-        setPosts(postsData.data);
-        setPostTags(postTagsData.data);
-        setLoading(false);
-    }, []);
+    const newTag = editingIndex === null ? form.name : "";
+    const editTagId = editingIndex !== null ? tags[editingIndex].id : null;
+    const editTagName = editingIndex !== null ? form.name : "";
 
-    useEffect(() => {
-        fetchAll();
-    }, [fetchAll]);
-
-    // Liaisons PostTag
-    async function handleAddPostTag(postId: string, tagId: string) {
-        await client.models.PostTag.create({ postId, tagId });
-        fetchAll();
-    }
-    async function handleRemovePostTag(postId: string, tagId: string) {
-        const { data } = await client.models.PostTag.list({
-            filter: { postId: { eq: postId }, tagId: { eq: tagId } },
-        });
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        await Promise.all(data.map((pt) => client.models.PostTag.delete({ postId, tagId })));
-        setPostTags((prev) => prev.filter((pt) => !(pt.postId === postId && pt.tagId === tagId)));
-    }
-    function tagsForPost(postId: string) {
-        const tagIds = postTags.filter((pt) => pt.postId === postId).map((pt) => pt.tagId);
-        return tags.filter((t) => tagIds.includes(t.id));
-    }
-    function isTagLinked(postId: string, tagId: string) {
-        return postTags.some((pt) => pt.postId === postId && pt.tagId === tagId);
+    function setNewTag(value: string) {
+        if (editingIndex === null) setForm({ ...form, name: value });
     }
 
-    // CRUD tag handlers
-    async function handleCreateTag() {
-        if (!newTag.trim()) return;
-        await client.models.Tag.create({ name: newTag.trim() });
-        setNewTag("");
-        fetchAll();
+    function setEditTagId(id: string | null) {
+        if (id === null) handleCancel();
+        else {
+            const idx = tags.findIndex((t) => t.id === id);
+            if (idx !== -1) handleEdit(idx);
+        }
     }
-    async function handleUpdateTag() {
-        if (!editTagId || !editTagName.trim()) return;
-        await client.models.Tag.update({ id: editTagId, name: editTagName.trim() });
-        setEditTagId(null);
-        setEditTagName("");
-        fetchAll();
-    }
-    async function handleDeleteTag(tagId: string) {
-        if (!window.confirm("Supprimer ce tag ?")) return;
 
-        // Supprime d'abord les relations PostTag liées à ce tag
-        const { data: linkedTags } = await client.models.PostTag.list({
-            filter: { tagId: { eq: tagId } },
-        });
-        await Promise.all(
-            linkedTags.map((pt) =>
-                client.models.PostTag.delete({ postId: pt.postId, tagId: pt.tagId })
-            )
-        );
-
-        await client.models.Tag.delete({ id: tagId });
-        fetchAll();
+    function setEditTagName(value: string) {
+        if (editingIndex !== null) setForm({ ...form, name: value });
     }
 
     return (
@@ -107,9 +61,12 @@ export default function PostsTagsManagerPage() {
                     setNewTag={setNewTag}
                     setEditTagId={setEditTagId}
                     setEditTagName={setEditTagName}
-                    onCreate={handleCreateTag}
-                    onUpdate={handleUpdateTag}
-                    onDelete={handleDeleteTag}
+                    onCreate={handleSubmit}
+                    onUpdate={handleSubmit}
+                    onDelete={(id) => {
+                        const idx = tags.findIndex((t) => t.id === id);
+                        if (idx !== -1) handleDelete(idx);
+                    }}
                 />
                 <TagsAssociationManager
                     posts={posts}
