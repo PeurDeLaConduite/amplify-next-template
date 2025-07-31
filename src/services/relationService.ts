@@ -1,49 +1,54 @@
-// services/relationService.ts
+// src/services/relationService.ts
 import { client } from "./amplifyClient";
 import type { Schema } from "@/amplify/data/resource";
 
 type ModelKey = keyof typeof client.models;
+type BaseModel<K extends ModelKey> = Schema[K]["type"];
+type CreateData<K extends ModelKey> = Omit<BaseModel<K>, "id" | "createdAt" | "updatedAt">;
+interface RelationCrudModel<K extends ModelKey> {
+    create: (data: Partial<CreateData<K>>) => Promise<{ data: BaseModel<K> }>;
+    delete: (where: Partial<CreateData<K>>) => Promise<{ data: BaseModel<K> }>;
+    list: (args?: { filter?: Record<string, unknown> }) => Promise<{ data: BaseModel<K>[] }>;
+}
 
-interface RelationModel<ParentIdKey extends string, ChildIdKey extends string> {
-    create: (parentId: string, childId: string) => Promise<void>;
-    delete: (parentId: string, childId: string) => Promise<void>;
-    listByParent: (parentId: string) => Promise<string[]>;
-    listByChild: (childId: string) => Promise<string[]>;
-    _types?: { parent: ParentIdKey; child: ChildIdKey };
+function getRelationClient<K extends ModelKey>(key: K): RelationCrudModel<K> {
+    return client.models[key] as unknown as RelationCrudModel<K>;
 }
 
 export function relationService<
     K extends ModelKey,
     ParentIdKey extends keyof Schema[K]["type"] & string,
     ChildIdKey extends keyof Schema[K]["type"] & string,
->(
-    modelName: K,
-    parentIdKey: ParentIdKey,
-    childIdKey: ChildIdKey
-): RelationModel<ParentIdKey, ChildIdKey> {
-    const model = client.models[modelName];
+>(modelName: K, parentIdKey: ParentIdKey, childIdKey: ChildIdKey) {
+    const model = getRelationClient(modelName);
 
     return {
         async create(parentId: string, childId: string) {
-            await model.create({ [parentIdKey]: parentId, [childIdKey]: childId });
+            await model.create({
+                [parentIdKey]: parentId,
+                [childIdKey]: childId,
+            } as Partial<CreateData<K>>);
         },
 
         async delete(parentId: string, childId: string) {
-            await model.delete({ [parentIdKey]: parentId, [childIdKey]: childId });
+            await model.delete({
+                [parentIdKey]: parentId,
+                [childIdKey]: childId,
+            } as Partial<CreateData<K>>);
         },
 
         async listByParent(parentId: string) {
             const { data } = await model.list({
                 filter: { [parentIdKey]: { eq: parentId } },
             });
-            return data.map((item) => (item as Record<string, string>)[childIdKey]);
+            return data.map((item) => item[childIdKey]) as string[];
         },
 
         async listByChild(childId: string) {
             const { data } = await model.list({
                 filter: { [childIdKey]: { eq: childId } },
             });
-            return data.map((item) => (item as Record<string, string>)[parentIdKey]);
+            return data.map((item) => item[parentIdKey]) as string[];
         },
     };
 }

@@ -20,19 +20,33 @@ export default function AuthorsForm({ authors, setMessage }: Props) {
         <div className="mb-6">
             <h2 className="text-xl font-semibold mb-4">Auteurs</h2>
             <form onSubmit={(e) => e.preventDefault()} className="grid gap-2">
-                <EditableField name="name" label="Nom" value={form.name} onChange={handleChange} />
+                <EditableField
+                    name="name"
+                    label="Nom"
+                    value={form.name ?? ""}
+                    onChange={handleChange}
+                    readOnly={false}
+                />
                 <EditableField
                     name="avatar"
                     label="Avatar Url"
-                    value={form.avatar}
+                    value={form.avatar ?? ""}
                     onChange={handleChange}
+                    readOnly={false}
                 />
-                <EditableTextArea name="bio" label="Bio" value={form.bio} onChange={handleChange} />
+                <EditableTextArea
+                    name="bio"
+                    label="Bio"
+                    value={form.bio ?? ""}
+                    onChange={handleChange}
+                    readOnly={false}
+                />
                 <EditableField
                     name="email"
                     label="Email"
-                    value={form.email}
+                    value={form.email ?? ""}
                     onChange={handleChange}
+                    readOnly={false}
                 />
                 {editingIndex === null && (
                     <button
@@ -65,6 +79,7 @@ export default function AuthorsForm({ authors, setMessage }: Props) {
                                 onSave={handleSave}
                                 onCancel={handleCancel}
                                 onDelete={() => handleDelete(idx)}
+                                isFormNew={false}
                             />
                         </li>
                     );

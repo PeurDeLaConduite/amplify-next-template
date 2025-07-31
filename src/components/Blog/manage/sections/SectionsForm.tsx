@@ -66,7 +66,7 @@ const SectionForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
             <OrderSelector
                 sections={sections}
                 currentIndex={sections.findIndex((s) => s.id === section?.id)}
-                value={form.order}
+                value={form.order ?? 1}
                 onReorder={(_: number, newOrder: number) =>
                     setForm((f) => ({ ...f, order: newOrder }))
                 }

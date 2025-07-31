@@ -1,43 +1,13 @@
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
-import { client, postTagService, sectionPostService } from "@/src/services";
+import { crudService, postTagService, sectionPostService } from "@/src/services";
 import { useAutoGenFields, slugify } from "@/src/hooks/useAutoGenFields";
-import type { Section, Post, Author, Tag } from "@/src/types";
-
-type PostFormFields = {
-    title: string;
-    slug: string;
-    excerpt: string;
-    content: string;
-    status: "draft" | "published";
-    authorId: string;
-    order: number; // Ajouté
-};
-
-type SeoFields = {
-    title: string;
-    description: string;
-    image: string;
-};
+import type { Section, Post, Author, Tag, PostForm, SeoForm } from "@/src/types";
+import { initialPostForm, initialSeoForm, toPostForm } from "@/src/utils/modelForm";
 
 export function usePostForm(post: Post | null, onSave: () => void) {
-    const [form, setForm] = useState<PostFormFields>({
-        title: "",
-        slug: "",
-        excerpt: "",
-        content: "",
-        status: "draft",
-        authorId: "",
-        order: 1,
-    });
-    const [seo, setSeo] = useState<SeoFields>({
-        title: "",
-        description: "",
-        image: "",
-    });
+    const [form, setForm] = useState<PostForm>({ ...initialPostForm });
+    const [seo, setSeo] = useState<SeoForm>({ ...initialSeoForm });
 
-    // Abstraction auto-gen (le même hook que pour les sections !)
-
-    // fetch auteurs, tags, sections...
     const [authors, setAuthors] = useState<Author[]>([]);
     const [tags, setTags] = useState<Tag[]>([]);
     const [sections, setSections] = useState<Section[]>([]);
@@ -68,14 +38,15 @@ export function usePostForm(post: Post | null, onSave: () => void) {
             },
         ],
     });
-    useEffect(() => {
-        void (async () => {
-            await Promise.all([fetchAuthors(), fetchTagsAndSections()]);
-        })();
-    }, []);
 
     useEffect(() => {
-        if (post) void loadPostData(post);
+        fetchAuthors();
+        fetchTagsAndSections();
+        if (post) {
+            loadPostData(post);
+        } else {
+            resetForm();
+        }
     }, [post]);
 
     // --------- Handlers ---------
@@ -152,71 +123,54 @@ export function usePostForm(post: Post | null, onSave: () => void) {
     }
 
     async function fetchAuthors() {
-        const { data } = await client.models.Author.list();
+        const { data } = await crudService("Author").list();
         setAuthors(data ?? []);
     }
 
     async function fetchTagsAndSections() {
         const [tagData, sectionData] = await Promise.all([
-            client.models.Tag.list(),
-            client.models.Section.list(),
+            crudService("Tag").list(),
+            crudService("Section").list(),
         ]);
         setTags(tagData.data ?? []);
         setSections(sectionData.data ?? []);
     }
 
     async function loadPostData(post: Post) {
-        setForm({
-            title: post.title ?? "",
-            slug: post.slug ?? "",
-            excerpt: post.excerpt ?? "",
-            content: post.content ?? "",
-            status: post.status ?? "draft",
-            authorId: post.authorId ?? "",
-            order: post.order ?? 1,
-        });
-
-        setSeo({
-            title: post.seo?.title ?? "",
-            description: post.seo?.description ?? "",
-            image: post.seo?.image ?? "",
-        });
-
         const [tagIds, sectionIds] = await Promise.all([
             postTagService.listByParent(post.id),
             sectionPostService.listByChild(post.id),
         ]);
+        const formData = toPostForm(post, tagIds, sectionIds);
+        setForm(formData);
+        setSeo(formData.seo);
         setSelectedTagIds(tagIds);
         setSelectedSectionIds(sectionIds);
     }
 
     async function savePost(isUpdate: boolean): Promise<string> {
+        const { tagIds, sectionIds, ...postInput } = form;
+        void tagIds;
+        void sectionIds;
+
         if (isUpdate && post?.id) {
-            const { data } = await client.models.Post.update({
+            const { data } = await crudService("Post").update({
                 id: post.id,
-                ...form,
+                ...postInput,
                 seo,
             });
             if (!data) throw new Error("Erreur lors de la mise à jour de l'article.");
             return data.id;
         } else {
-            const { data } = await client.models.Post.create({ ...form, seo });
+            const { data } = await crudService("Post").create({ ...postInput, seo });
             if (!data) throw new Error("Erreur lors de la création de l'article.");
             return data.id;
         }
     }
 
     function resetForm() {
-        setForm({
-            title: "",
-            slug: "",
-            excerpt: "",
-            content: "",
-            status: "draft",
-            authorId: "",
-            order: 1,
-        });
-        setSeo({ title: "", description: "", image: "" });
+        setForm({ ...initialPostForm });
+        setSeo({ ...initialSeoForm });
         setSelectedTagIds([]);
         setSelectedSectionIds([]);
     }
@@ -238,6 +192,6 @@ export function usePostForm(post: Post | null, onSave: () => void) {
         toggleTag,
         toggleSection,
         handleSubmit,
-        setForm, // <---- AJOUTE-LA ICI !
+        setForm,
     };
 }

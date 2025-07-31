@@ -1,20 +1,11 @@
 import { useState, useEffect, ChangeEvent } from "react";
-import { client, sectionPostService } from "@/src/services";
+import { crudService, sectionPostService } from "@/src/services";
 import { useAutoGenFields, slugify } from "@/src/hooks/useAutoGenFields";
 import type { SectionForm, Section, Post } from "@/src/types";
-
+import { initialSectionForm, toSectionForm } from "@/src/utils/modelForm";
 
 export function useSectionForm(section: Section | null, onSave: () => void) {
-    const initialForm: SectionForm = {
-        slug: "",
-        title: "",
-        description: "",
-        order: 1,
-        seo: { title: "", description: "", image: "" },
-        postIds: [],
-    };
-
-    const [form, setForm] = useState<SectionForm>(initialForm);
+    const [form, setForm] = useState<SectionForm>(initialSectionForm);
     const [posts, setPosts] = useState<Post[]>([]);
     const [saving, setSaving] = useState(false);
 
@@ -46,29 +37,18 @@ export function useSectionForm(section: Section | null, onSave: () => void) {
     useEffect(() => {
         loadPosts();
         if (section) loadSection(section);
-        else setForm(initialForm);
+        else setForm(initialSectionForm);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [section]);
 
     async function loadPosts() {
-        const { data } = await client.models.Post.list();
+        const { data } = await crudService("Post").list();
         setPosts(data ?? []);
     }
 
     async function loadSection(section: Section) {
         const postIds = await sectionPostService.listByParent(section.id);
-        setForm({
-            slug: section.slug ?? "",
-            title: section.title ?? "",
-            description: section.description ?? "",
-            order: section.order ?? 1,
-            seo: {
-                title: section.seo?.title ?? "",
-                description: section.seo?.description ?? "",
-                image: section.seo?.image ?? "",
-            },
-            postIds,
-        });
+        setForm(toSectionForm(section, postIds));
         // Ici tu pourrais aussi remettre à true tous les autoFlags si tu veux "réinitialiser" l'autogen à chaque changement de section.
     }
 
@@ -101,8 +81,8 @@ export function useSectionForm(section: Section | null, onSave: () => void) {
 
         try {
             const result = isUpdate
-                ? await client.models.Section.update({ id: section!.id, ...sectionInput })
-                : await client.models.Section.create(sectionInput);
+                ? await crudService("Section").update({ id: section!.id, ...sectionInput })
+                : await crudService("Section").create(sectionInput);
 
             if (!result.data) {
                 throw new Error(
@@ -112,7 +92,7 @@ export function useSectionForm(section: Section | null, onSave: () => void) {
 
             const sectionId = result.data.id;
             await syncRelations(sectionId);
-            setForm(initialForm);
+            setForm(initialSectionForm);
             onSave();
         } catch (err) {
             const message = err instanceof Error ? err.message : String(err);

@@ -1,12 +1,11 @@
 import { useState, type ChangeEvent } from "react";
 import { useAuthors } from "@/src/services/useAuthors";
-import { omitId } from "@/src/utils/omitId";
-import type { Author, AuthorOmit } from "@/src/types";
+import type { Author, AuthorOmit, AuthorUpdateInput, AuthorForm } from "@/src/types/";
+import { initialAuthorForm } from "@/src/utils/modelForm";
 
 export function useAuthorForm(authors: Author[], setMessage: (msg: string) => void) {
     const { create, update, delete: remove } = useAuthors();
-    const initialForm: AuthorOmit = { name: "", avatar: "", bio: "", email: "" };
-    const [form, setForm] = useState<AuthorOmit>(initialForm);
+    const [form, setForm] = useState<AuthorForm>({ ...initialAuthorForm });
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -22,22 +21,26 @@ export function useAuthorForm(authors: Author[], setMessage: (msg: string) => vo
             avatar: a.avatar ?? "",
             bio: a.bio ?? "",
             email: a.email ?? "",
+            postIds: [],
         });
     };
 
     const handleCancel = () => {
         setEditingIndex(null);
-        setForm(initialForm);
+        setForm({ ...initialAuthorForm });
     };
 
     const handleSave = async () => {
         if (!form.name) return;
         try {
+            const { postIds, ...authorInput } = form;
+            void postIds;
+            const input = { ...authorInput, posts: [] };
             if (editingIndex === null) {
-                await create(form);
+                await create(input as unknown as AuthorOmit);
                 setMessage("Auteur ajouté !");
             } else {
-                await update(authors[editingIndex].id, omitId(form));
+                await update(authors[editingIndex].id, input as unknown as AuthorUpdateInput);
                 setMessage("Auteur mis à jour !");
             }
             handleCancel();

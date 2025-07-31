@@ -6,6 +6,7 @@ import EditableField from "../components/EditableField";
 import EditableTextArea from "../components/EditableTextArea";
 import SeoFields from "../components/SeoFields";
 import OrderSelector from "../components/OrderSelector";
+import SelectField from "../components/SelectField";
 import type { Post } from "@/src/types";
 
 interface Props {
@@ -79,7 +80,6 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
                 onChange={handlePostChange}
                 readOnly={false}
             />
-
             <EditableTextArea
                 name="content"
                 label="Contenu"
@@ -87,34 +87,30 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
                 onChange={handlePostChange}
                 readOnly={false}
             />
-
-            <select
+            <SelectField
+                label="Statut"
                 name="status"
-                value={form.status}
+                value={form.status ?? ""}
                 onChange={handlePostChange}
-                className="border p-2 w-full"
-            >
-                <option value="draft">Brouillon</option>
-                <option value="published">Publié</option>
-            </select>
-
-            <select
+                options={[
+                    { value: "draft", label: "Brouillon" },
+                    { value: "published", label: "Publié" },
+                ]}
+            />
+            <SelectField
+                label="Auteur"
                 name="authorId"
                 value={form.authorId}
                 onChange={handlePostChange}
-                className="border p-2 w-full"
-            >
-                <option value="">Sélectionner un auteur</option>
-                {authors.map((a) => (
-                    <option key={a.id} value={a.id}>
-                        {a.name}
-                    </option>
-                ))}
-            </select>
+                options={[
+                    { value: "", label: "Sélectionner un auteur" },
+                    ...authors.map((a) => ({ value: a.id, label: a.name })),
+                ]}
+            />
             <OrderSelector
                 sections={posts} // tu passes la bonne liste ici
                 currentIndex={posts.findIndex((p) => p.id === post?.id)}
-                value={form.order}
+                value={form.order ?? 1}
                 onReorder={(_: number, newOrder: number) =>
                     setForm((f) => ({ ...f, order: newOrder }))
                 }
@@ -132,7 +128,6 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
                     </label>
                 ))}
             </fieldset>
-
             <fieldset className="border p-2 space-y-2">
                 <legend className="font-semibold">Sections</legend>
                 {sections
@@ -150,7 +145,6 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
                         </label>
                     ))}
             </fieldset>
-
             <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
                 {post ? "Mettre à jour" : "Créer"}
             </button>

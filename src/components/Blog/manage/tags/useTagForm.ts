@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, type ChangeEvent } from "react";
 import { crudService, postTagService } from "@/src/services";
 import type { Tag, Post, PostTag, TagForm } from "@/src/types";
+import { initialTagForm } from "@/src/utils/modelForm";
 import type { Schema } from "@/amplify/data/resource";
 
 export function useTagForm() {
@@ -9,7 +10,7 @@ export function useTagForm() {
     const [postTags, setPostTags] = useState<PostTag[]>([]);
     const [loading, setLoading] = useState(true);
 
-    const [form, setForm] = useState<TagForm>({ name: "", postIds: [] });
+    const [form, setForm] = useState<TagForm>(initialTagForm);
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
     const fetchAll = useCallback(async () => {

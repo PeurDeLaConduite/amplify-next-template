@@ -1,5 +1,17 @@
+interface ItemSelectorProps<
+    T extends Record<K, string> & { order?: number | null },
+    K extends keyof T,
+> {
+    items: T[];
+    idKey: K;
+    selectedIds: T[K][];
+    onChange: (ids: T[K][]) => void;
+    label: string;
+    getLabel: (item: T) => string;
+}
+
 export default function ItemSelector<
-    T extends Record<K, string> & { order?: number },
+    T extends Record<K, string> & { order?: number | null },
     K extends keyof T,
 >({ items, idKey, selectedIds, onChange, label, getLabel }: ItemSelectorProps<T, K>) {
     const toggle = (id: T[K]) => {
