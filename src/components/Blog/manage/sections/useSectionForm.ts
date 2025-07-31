@@ -1,7 +1,8 @@
 import { useState, useEffect, ChangeEvent } from "react";
-import type { SectionForm, Section, Post } from "@/src/types";
 import { client, sectionPostService } from "@/src/services";
 import { useAutoGenFields, slugify } from "@/src/hooks/useAutoGenFields";
+import type { SectionForm, Section, Post } from "@/src/types";
+
 
 export function useSectionForm(section: Section | null, onSave: () => void) {
     const initialForm: SectionForm = {

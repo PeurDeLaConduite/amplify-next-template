@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import RequireAdmin from "../../RequireAdmin";
+import RequireAdmin from "../../../RequireAdmin";
 import AuthorsForm from "./AuthorsForm";
 import { client } from "@/src/services/amplifyClient";
 import type { Author } from "@src/types";

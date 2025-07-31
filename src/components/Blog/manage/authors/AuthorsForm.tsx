@@ -1,9 +1,9 @@
 "use client";
 
 import React from "react";
-import EditableField from "../Create/components/EditableField";
-import EditableTextArea from "../Create/components/EditableTextArea";
-import FormActionButtons from "../Create/FormActionButtons";
+import EditableField from "../components/EditableField";
+import EditableTextArea from "../components/EditableTextArea";
+import FormActionButtons from "../components/FormActionButtons";
 import { useAuthorForm } from "./useAuthorForm";
 import type { Author } from "@/src/types";
 

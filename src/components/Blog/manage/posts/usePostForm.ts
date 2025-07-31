@@ -1,10 +1,7 @@
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
-import { generateClient } from "aws-amplify/data";
-import { Schema } from "@/amplify/data/resource";
-import { postTagService, sectionPostService } from "@/src/services";
-import { useAutoGenFields, slugify } from "@/src/hooks/useAutoGenFields"; // <-- Assure-toi d'importer le bon
-
-const client = generateClient<Schema>();
+import { client, postTagService, sectionPostService } from "@/src/services";
+import { useAutoGenFields, slugify } from "@/src/hooks/useAutoGenFields";
+import type { Section, Post, Author, Tag } from "@/src/types";
 
 type PostFormFields = {
     title: string;
@@ -22,7 +19,7 @@ type SeoFields = {
     image: string;
 };
 
-export function usePostForm(post: Schema["Post"]["type"] | null, onSave: () => void) {
+export function usePostForm(post: Post | null, onSave: () => void) {
     const [form, setForm] = useState<PostFormFields>({
         title: "",
         slug: "",
@@ -41,9 +38,9 @@ export function usePostForm(post: Schema["Post"]["type"] | null, onSave: () => v
     // Abstraction auto-gen (le même hook que pour les sections !)
 
     // fetch auteurs, tags, sections...
-    const [authors, setAuthors] = useState<Schema["Author"]["type"][]>([]);
-    const [tags, setTags] = useState<Schema["Tag"]["type"][]>([]);
-    const [sections, setSections] = useState<Schema["Section"]["type"][]>([]);
+    const [authors, setAuthors] = useState<Author[]>([]);
+    const [tags, setTags] = useState<Tag[]>([]);
+    const [sections, setSections] = useState<Section[]>([]);
     const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
     const [selectedSectionIds, setSelectedSectionIds] = useState<string[]>([]);
     const [saving] = useState(false);
@@ -168,7 +165,7 @@ export function usePostForm(post: Schema["Post"]["type"] | null, onSave: () => v
         setSections(sectionData.data ?? []);
     }
 
-    async function loadPostData(post: Schema["Post"]["type"]) {
+    async function loadPostData(post: Post) {
         setForm({
             title: post.title ?? "",
             slug: post.slug ?? "",

@@ -1,10 +1,10 @@
 "use client";
 import React, { forwardRef } from "react";
-import EditableField from "../Create/components/EditableField";
-import EditableTextArea from "../Create/components/EditableTextArea";
-import SeoFields from "../Create/components/SeoFields";
-import OrderSelector from "../Create/components/OrderSelector";
-import ItemSelector from "../Create/components/ItemSelector";
+import EditableField from "../components/EditableField";
+import EditableTextArea from "../components/EditableTextArea";
+import SeoFields from "../components/SeoFields";
+import OrderSelector from "../components/OrderSelector";
+import ItemSelector from "../components/ItemSelector";
 import { useSectionForm } from "./useSectionForm";
 import type { Section } from "@/src/types";
 

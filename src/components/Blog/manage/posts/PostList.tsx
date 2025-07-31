@@ -1,10 +1,10 @@
 "use client";
 import React from "react";
-import type { Section } from "@/src/types";
-import FormActionButtons from "../Create/FormActionButtons";
+import FormActionButtons from "../components/FormActionButtons";
+import type { Post } from "@/src/types";
 
 interface Props {
-    sections: Section[];
+    posts: Post[];
     editingIndex: number | null;
     onEdit: (idx: number) => void;
     onSave: () => void;
@@ -12,29 +12,30 @@ interface Props {
     onDelete: (idx: number) => void;
 }
 
-export default function SectionList({
-    sections,
+export default function PostList({
+    posts,
     editingIndex,
     onEdit,
     onSave,
     onCancel,
     onDelete,
 }: Props) {
+    // Pas de mutation d'ordre du state parent (slice())
     return (
         <ul className="mt-6 space-y-2">
-            {sections
+            {posts
                 .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-                .map((section, idx) => {
+                .map((post, idx) => {
                     const active = editingIndex === idx;
                     return (
                         <li
-                            key={section.id}
+                            key={post.id}
                             className={`flex justify-between items-center p-2 transition-colors duration-300 ${
                                 active ? "bg-yellow-100 shadow-sm" : "border-b"
                             }`}
                         >
                             <div>
-                                <strong>{section.title}</strong> (ordre : {section.order})
+                                <strong>{post.title}</strong> (ordre : {post.order})
                             </div>
                             <FormActionButtons
                                 editingIndex={editingIndex}

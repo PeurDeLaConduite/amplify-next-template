@@ -1,10 +1,10 @@
 "use client";
 import React from "react";
-import RequireAdmin from "../../RequireAdmin";
+import RequireAdmin from "../../../RequireAdmin";
 import { RefreshButton } from "@/src/components/buttons";
 
-import TagCrudManager from "../Create/components/tag/TagManager";
-import TagsAssociationManager from "../Create/components/tag/PostTagsManager";
+import TagCrudManager from "../components/tag/TagManager";
+import TagsAssociationManager from "../components/tag/PostTagsManager";
 import { useTagForm } from "./useTagForm";
 
 export default function PostsTagsManagerPage() {
@@ -63,7 +63,7 @@ export default function PostsTagsManagerPage() {
                     setEditTagName={setEditTagName}
                     onCreate={handleSubmit}
                     onUpdate={handleSubmit}
-                    onDelete={(id) => {
+                    onDelete={(id: string) => {
                         const idx = tags.findIndex((t) => t.id === id);
                         if (idx !== -1) handleDelete(idx);
                     }}

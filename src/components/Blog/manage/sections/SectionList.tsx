@@ -1,12 +1,10 @@
 "use client";
 import React from "react";
-import { Schema } from "@/amplify/data/resource";
-import FormActionButtons from "../Create/FormActionButtons";
-
-type Post = Schema["Post"]["type"];
+import type { Section } from "@/src/types";
+import FormActionButtons from "../components/FormActionButtons";
 
 interface Props {
-    posts: Post[];
+    sections: Section[];
     editingIndex: number | null;
     onEdit: (idx: number) => void;
     onSave: () => void;
@@ -14,30 +12,29 @@ interface Props {
     onDelete: (idx: number) => void;
 }
 
-export default function PostList({
-    posts,
+export default function SectionList({
+    sections,
     editingIndex,
     onEdit,
     onSave,
     onCancel,
     onDelete,
 }: Props) {
-    // Pas de mutation d'ordre du state parent (slice())
     return (
         <ul className="mt-6 space-y-2">
-            {posts
+            {sections
                 .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-                .map((post, idx) => {
+                .map((section, idx) => {
                     const active = editingIndex === idx;
                     return (
                         <li
-                            key={post.id}
+                            key={section.id}
                             className={`flex justify-between items-center p-2 transition-colors duration-300 ${
                                 active ? "bg-yellow-100 shadow-sm" : "border-b"
                             }`}
                         >
                             <div>
-                                <strong>{post.title}</strong> (ordre : {post.order})
+                                <strong>{section.title}</strong> (ordre : {section.order})
                             </div>
                             <FormActionButtons
                                 editingIndex={editingIndex}

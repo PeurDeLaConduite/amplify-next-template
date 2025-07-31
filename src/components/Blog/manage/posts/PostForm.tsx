@@ -2,10 +2,10 @@
 "use client";
 import React, { forwardRef } from "react";
 import { usePostForm } from "./usePostForm";
-import EditableField from "../Create/components/EditableField";
-import EditableTextArea from "../Create/components/EditableTextArea";
-import SeoFields from "../Create/components/SeoFields";
-import OrderSelector from "../Create/components/OrderSelector";
+import EditableField from "../components/EditableField";
+import EditableTextArea from "../components/EditableTextArea";
+import SeoFields from "../components/SeoFields";
+import OrderSelector from "../components/OrderSelector";
 import type { Post } from "@/src/types";
 
 interface Props {

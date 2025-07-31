@@ -1,4 +1,4 @@
-import ActionButtons from "./components/buttons/ActionButtons";
+import ActionButtons from "./buttons/ActionButtons";
 import { EditButton, DeleteButton } from "@/src/components/buttons";
 
 export default function FormActionButtons({
