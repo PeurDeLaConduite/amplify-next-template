@@ -38,7 +38,6 @@ export function useSectionForm(section: Section | null, onSave: () => void) {
         loadPosts();
         if (section) loadSection(section);
         else setForm(initialSectionForm);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [section]);
 
     async function loadPosts() {

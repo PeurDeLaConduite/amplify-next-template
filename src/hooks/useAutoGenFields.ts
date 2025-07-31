@@ -30,12 +30,7 @@ export function useAutoGenFields({ configs }: UseAutoGenFieldsProps) {
                 cfg.setter(value ?? "");
             }
         });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [
-        ...configs.map((c) => c.source),
-        ...configs.map((c) => autoFlags[c.target]),
-        ...configs.map((c) => isEditing[c.editingKey]),
-    ]);
+    }, [configs, autoFlags, isEditing]);
 
     function handleSourceFocus(key: string) {
         setIsEditing((prev) => ({ ...prev, [key]: true }));

@@ -1,11 +1,7 @@
 // src/lib/userProfileService.ts
-import { Amplify } from "aws-amplify";
-import { generateClient } from "aws-amplify/data";
-import type { Schema } from "@/amplify/data/resource";
-import outputs from "@/amplify_outputs.json";
 
-Amplify.configure(outputs);
-const client = generateClient<Schema>();
+import type { Schema } from "@/amplify/data/resource";
+import { client } from "@/src/services";
 
 /** CREATE */
 export async function createUserProfile(

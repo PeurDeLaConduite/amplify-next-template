@@ -1,12 +1,8 @@
 import React from "react";
-import { Amplify } from "aws-amplify";
 import "./globals.css";
 import "@aws-amplify/ui-react/styles.css";
-import outputs from "@/amplify_outputs.json";
 import Header from "@/src/components/Header/Header";
 import AuthProvider from "@/src/components/Authentication/auth-provider";
-
-Amplify.configure(outputs);
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (

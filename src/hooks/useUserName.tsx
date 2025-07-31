@@ -3,10 +3,8 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useAuthenticator } from "@aws-amplify/ui-react";
-import { generateClient } from "aws-amplify/data";
-import type { Schema } from "@/amplify/data/resource";
+import { client } from "@/src/services";
 
-const client = generateClient<Schema>();
 
 export function useUserName() {
     const { user } = useAuthenticator();

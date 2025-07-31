@@ -1,22 +1,15 @@
-import { Amplify } from "aws-amplify";
-import { generateClient } from "aws-amplify/data";
-import outputs from "@/amplify_outputs.json";
-import type { Schema } from "@/amplify/data/resource";
+import { client } from "@/src/services";
 import type { BlogData, Author, Post, Section } from "@src/types/blog";
 
-//
-Amplify.configure(outputs);
-// use API key for public server-side calls
-const client = generateClient<Schema>({ authMode: "apiKey" });
 export async function fetchBlogDataFromAmplify(): Promise<BlogData> {
     const [authorsRes, sectionsRes, postsRes, tagsRes, postTagsRes, sectionPostsRes] =
         await Promise.all([
-            client.models.Author.list(),
-            client.models.Section.list(),
-            client.models.Post.list(),
-            client.models.Tag.list(),
-            client.models.PostTag.list(),
-            client.models.SectionPost.list(),
+            client.models.Author.list({ authMode: "apiKey" }),
+            client.models.Section.list({ authMode: "apiKey" }),
+            client.models.Post.list({ authMode: "apiKey" }),
+            client.models.Tag.list({ authMode: "apiKey" }),
+            client.models.PostTag.list({ authMode: "apiKey" }),
+            client.models.SectionPost.list({ authMode: "apiKey" }),
         ]);
 
     const tagsById: Record<string, string> = {};
@@ -60,8 +53,8 @@ export async function fetchBlogDataFromAmplify(): Promise<BlogData> {
         postJsonIds: [],
         seo: s.seo
             ? {
-                  title: s.seo.title,
-                  description: s.seo.description,
+                  title: s.seo.title ?? "",
+                  description: s.seo.description ?? "",
                   image: s.seo.image || undefined,
               }
             : undefined,

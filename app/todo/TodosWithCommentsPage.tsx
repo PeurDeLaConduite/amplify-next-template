@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
-import { Amplify } from "aws-amplify";
-import outputs from "@/amplify_outputs.json";
+import { client } from "@/src/services";
 import "@aws-amplify/ui-react/styles.css";
 import { getCurrentUser } from "aws-amplify/auth";
-Amplify.configure(outputs);
 
 type CommentWithTodoId = {
     id: string;
@@ -13,8 +10,6 @@ type CommentWithTodoId = {
     createdAt: string;
     todoId?: string;
 };
-
-const client = generateClient<Schema>();
 
 export default function TodosWithCommentsPage() {
     const [todos, setTodos] = useState<Schema["Todo"]["type"][]>([]);
@@ -40,7 +35,7 @@ export default function TodosWithCommentsPage() {
         const content = window.prompt("Contenu du Todo ?");
         if (content) client.models.Todo.create({ content });
     };
-    
+
     const addComment = async (todoId: string) => {
         const content = window.prompt("Contenu du commentaire ?");
         if (!content) return;
@@ -54,7 +49,6 @@ export default function TodosWithCommentsPage() {
             userNameId, // ← obligatoire d’après votre schéma
         });
     };
-
 
     const deleteComment = (id: string) => {
         if (confirm("Supprimer ce commentaire ?")) {

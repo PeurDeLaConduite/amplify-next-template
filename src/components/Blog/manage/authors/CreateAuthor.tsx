@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import RequireAdmin from "../../../RequireAdmin";
 import AuthorsForm from "./AuthorsForm";
-import { client } from "@/src/services/amplifyClient";
+import { client } from "@/src/services";
 import type { Author } from "@src/types";
 
 type AuthorType = Author;

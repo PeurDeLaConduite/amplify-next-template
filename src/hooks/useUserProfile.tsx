@@ -2,11 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useAuthenticator } from "@aws-amplify/ui-react";
-import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
+import { client } from "@/src/services";
 import type { MinimalProfile } from "@/src/components/Profile/utilsProfile";
-
-const client = generateClient<Schema>();
 
 type UserProfile = Schema["UserProfile"]["type"];
 
@@ -20,19 +18,17 @@ export function useUserProfile() {
         if (!user) return;
 
         setLoading(true);
-        const subscription = client.models.UserProfile.observeQuery().subscribe(
-            {
-                next: ({ items }) => {
-                    setProfile(items[0] ?? null);
-                    setLoading(false);
-                },
-                error: err => {
-                    console.error("Error fetching profile:", err);
-                    setError(err);
-                    setLoading(false);
-                }
-            }
-        );
+        const subscription = client.models.UserProfile.observeQuery().subscribe({
+            next: ({ items }) => {
+                setProfile(items[0] ?? null);
+                setLoading(false);
+            },
+            error: (err) => {
+                console.error("Error fetching profile:", err);
+                setError(err);
+                setLoading(false);
+            },
+        });
 
         return () => subscription.unsubscribe();
     }, [user]);
@@ -42,7 +38,7 @@ export function useUserProfile() {
         try {
             const { data: updated } = await client.models.UserProfile.update({
                 id: profile.id,
-                ...data
+                ...data,
             });
             setProfile(updated);
             return updated;
@@ -58,12 +54,10 @@ export function useUserProfile() {
                 ...data,
                 owner: user?.username ?? "anonymous",
                 createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString()
+                updatedAt: new Date().toISOString(),
             };
 
-            const { data: created } = await client.models.UserProfile.create(
-                input
-            );
+            const { data: created } = await client.models.UserProfile.create(input);
             setProfile(created);
             return created;
         } catch (err) {
@@ -89,6 +83,6 @@ export function useUserProfile() {
         error,
         update,
         create,
-        remove
+        remove,
     };
 }

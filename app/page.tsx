@@ -1,16 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { generateClient } from "aws-amplify/data";
+import { client } from "@/src/services";
 import type { Schema } from "@/amplify/data/resource";
-import { Amplify } from "aws-amplify";
-import outputs from "@/amplify_outputs.json";
 import "@aws-amplify/ui-react/styles.css";
 import "./../app/app.css";
-
-Amplify.configure(outputs);
-
-const client = generateClient<Schema>();
 
 export default function TodosPublicPage() {
     const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
