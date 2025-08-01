@@ -4,7 +4,7 @@ import { client } from "@/src/services";
 import PostList from "./PostList";
 import PostForm from "./PostForm";
 import type { Post } from "@/src/types";
-
+import RequireAdmin from "../../../RequireAdmin";
 export default function PostManagerPage() {
     const [posts, setPosts] = useState<Post[]>([]);
     const [editingPost, setEditingPost] = useState<Post | null>(null);
@@ -45,20 +45,22 @@ export default function PostManagerPage() {
     };
 
     return (
-        <div className="p-4">
-            <h1 className="text-2xl font-bold mb-4">Gestion des Posts</h1>
-            <PostForm ref={formRef} post={editingPost} posts={posts} onSave={handleSave} />
-            <PostList
-                posts={posts}
-                editingIndex={editingIndex}
-                onEdit={handleEdit}
-                onSave={() => {
-                    // Appelle le submit du formulaire via la ref
-                    formRef.current?.requestSubmit();
-                }}
-                onCancel={handleCancel}
-                onDelete={handleDelete}
-            />
-        </div>
+        <RequireAdmin>
+            <div className="p-4">
+                <h1 className="text-2xl font-bold mb-4">Gestion des Posts</h1>
+                <PostForm ref={formRef} post={editingPost} posts={posts} onSave={handleSave} />
+                <PostList
+                    posts={posts}
+                    editingIndex={editingIndex}
+                    onEdit={handleEdit}
+                    onSave={() => {
+                        // Appelle le submit du formulaire via la ref
+                        formRef.current?.requestSubmit();
+                    }}
+                    onCancel={handleCancel}
+                    onDelete={handleDelete}
+                />
+            </div>
+        </RequireAdmin>
     );
 }

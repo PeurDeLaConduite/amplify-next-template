@@ -15,7 +15,7 @@ import {
     updateUserProfile,
     deleteUserProfile,
     observeUserProfile,
-} from "./userProfileService";
+} from "@/src/services";
 
 /**
  * Gestion du profil utilisateur (UserProfile uniquement)

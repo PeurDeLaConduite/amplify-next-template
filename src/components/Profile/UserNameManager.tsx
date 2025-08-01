@@ -7,14 +7,14 @@ import EditSingleFieldUserName from "./EditSingleFieldUserName";
 import ReadOnlyUserNameView from "./ReadOnlyUserNameView";
 import ProfileForm from "./ProfileForm";
 
-import { createUserName, updateUserName, getUserName } from "./userNameService";
+import { createUserName, updateUserName, getUserName } from "@/src/services";
 // import { UserNameData, normalizeUserName, fieldLabel, type Profile } from "./utilsProfile";
 import {
     UserNameData,
     SingleFieldUserName,
     normalizeUserName,
     userNameLabel,
-} from "./utilsUserName";
+} from "./utilsProfile";
 
 export default function UserNameManager() {
     /* ---------- hooks toujours dans le même ordre ---------- */
