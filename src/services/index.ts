@@ -4,7 +4,3 @@ export { relationService } from "./relationService";
 export { postTagService } from "./postTagService";
 export { sectionPostService } from "./sectionPostService";
 export { fetchBlogData } from "./blogDataService";
-export { usePosts } from "./usePosts";
-export { useSections } from "./useSections";
-export { useAuthors } from "./useAuthors";
-export { useTags } from "./useTags";

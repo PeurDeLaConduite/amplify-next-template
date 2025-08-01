@@ -12,9 +12,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </head>
             <body>
                 <AuthProvider>
-                    {/* <AuthIsConnected> */}
                     <Header />
-                    {/* </AuthIsConnected> */}
                     <main className="min-h-screen px-4 py-6 sm:px-8 sm:py-10  from-gray-100 via-white to-gray-50">
                         {children}
                     </main>
