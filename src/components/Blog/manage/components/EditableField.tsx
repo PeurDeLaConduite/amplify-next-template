@@ -19,27 +19,26 @@ const EditableField = ({
     onFocus,
     onBlur,
 }: EditableFieldProps) => (
-    <div style={{ marginBottom: "1rem" }}>
-        <label>
+    <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor={name}>
             {label}
-            <input
-                type="text"
-                name={name}
-                value={value ?? ""}
-                onChange={onChange}
-                onFocus={onFocus}
-                onBlur={onBlur}
-                readOnly={readOnly}
-                style={{
-                    display: "block",
-                    width: "100%",
-                    padding: "8px",
-                    border: readOnly ? "1px solid gray" : "1px solid blue",
-                    backgroundColor: readOnly ? "#f4f4f4" : "#fff",
-                    borderRadius: "4px",
-                }}
-            />
         </label>
+        <input
+            type="text"
+            id={name}
+            name={name}
+            value={value ?? ""}
+            onChange={onChange}
+            onFocus={onFocus}
+            onBlur={onBlur}
+            readOnly={readOnly}
+            className={`w-full px-3 py-2 rounded-md border text-sm shadow-sm transition 
+                ${
+                    readOnly
+                        ? "bg-gray-100 border-gray-300 text-gray-500 cursor-not-allowed"
+                        : "bg-white border-blue-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                }`}
+        />
     </div>
 );
 

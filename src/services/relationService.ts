@@ -1,6 +1,5 @@
 // src/services/relationService.ts
-import { client } from "./amplifyClient";
-import type { Schema } from "@/amplify/data/resource";
+import { client, Schema } from "./amplifyClient";
 
 type ModelKey = keyof typeof client.models;
 type BaseModel<K extends ModelKey> = Schema[K]["type"];

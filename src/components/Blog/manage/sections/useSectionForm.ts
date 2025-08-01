@@ -15,6 +15,7 @@ export function useSectionForm(section: Section | null, onSave: () => void) {
             {
                 editingKey: "title",
                 source: form.title ?? "",
+                current: form.slug ?? "",
                 target: "slug",
                 setter: (v) => setForm((f) => ({ ...f, slug: v ?? "" })),
                 transform: slugify,
@@ -22,12 +23,14 @@ export function useSectionForm(section: Section | null, onSave: () => void) {
             {
                 editingKey: "title",
                 source: form.title ?? "",
+                current: form.seo.title ?? "",
                 target: "seo.title",
                 setter: (v) => setForm((f) => ({ ...f, seo: { ...f.seo, title: v ?? "" } })),
             },
             {
                 editingKey: "description",
                 source: form.description ?? "",
+                current: form.seo.description ?? "",
                 target: "seo.description",
                 setter: (v) => setForm((f) => ({ ...f, seo: { ...f.seo, description: v ?? "" } })),
             },

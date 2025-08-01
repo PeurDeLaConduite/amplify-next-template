@@ -20,6 +20,7 @@ export function usePostForm(post: Post | null, onSave: () => void) {
             {
                 editingKey: "title",
                 source: form.title ?? "",
+                current: form.slug ?? "",
                 target: "slug",
                 setter: (v) => setForm((f) => ({ ...f, slug: slugify(v ?? "") })),
                 transform: slugify,
@@ -27,12 +28,14 @@ export function usePostForm(post: Post | null, onSave: () => void) {
             {
                 editingKey: "title",
                 source: form.title ?? "",
+                current: seo.title ?? "",
                 target: "seo.title",
                 setter: (v) => setSeo((s) => ({ ...s, title: v ?? "" })),
             },
             {
                 editingKey: "excerpt",
                 source: form.excerpt ?? "",
+                current: seo.description ?? "",
                 target: "seo.description",
                 setter: (v) => setSeo((s) => ({ ...s, description: v ?? "" })),
             },
@@ -55,7 +58,11 @@ export function usePostForm(post: Post | null, onSave: () => void) {
         e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
     ) {
         const { name, value } = e.target;
-        if (name === "slug") {
+        if (name.startsWith("seo.")) {
+            const key = name.split(".")[1] as keyof SeoForm;
+            setSeo((s) => ({ ...s, [key]: value }));
+            handleManualEdit(`seo.${key}`);
+        } else if (name === "slug") {
             handleManualEdit("slug");
             setForm((p) => ({ ...p, slug: slugify(value) }));
         } else if (name === "title") {
@@ -66,7 +73,6 @@ export function usePostForm(post: Post | null, onSave: () => void) {
             setForm((p) => ({ ...p, [name]: value }));
         }
     }
-
     function handleTitleFocus() {
         handleSourceFocus("title");
     }

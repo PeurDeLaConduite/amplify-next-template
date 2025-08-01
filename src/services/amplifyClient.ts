@@ -7,3 +7,4 @@ import type { Schema } from "@/amplify/data/resource";
 
 Amplify.configure(outputs);
 export const client = generateClient<Schema>();
+export type { Schema } from "@/amplify/data/resource";

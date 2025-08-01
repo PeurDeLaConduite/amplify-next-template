@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback, type ChangeEvent } from "react";
 import { crudService, postTagService } from "@/src/services";
 import type { Tag, Post, PostTag, TagForm } from "@/src/types";
 import { initialTagForm } from "@/src/utils/modelForm";
-import type { Schema } from "@/amplify/data/resource";
 
 export function useTagForm() {
     const [tags, setTags] = useState<Tag[]>([]);
@@ -84,7 +83,7 @@ export function useTagForm() {
 
     const handleAddPostTag = async (postId: string, tagId: string) => {
         await postTagService.create(postId, tagId);
-        setPostTags((prev) => [...prev, { postId, tagId } as Schema["PostTag"]["type"]]);
+        setPostTags((prev) => [...prev, { postId, tagId } as PostTag]);
     };
 
     const handleRemovePostTag = async (postId: string, tagId: string) => {

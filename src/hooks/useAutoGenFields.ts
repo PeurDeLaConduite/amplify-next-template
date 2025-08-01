@@ -5,6 +5,8 @@ import { useState, useEffect } from "react";
 type AutoGenConfig = {
     editingKey: string; // ex: "title" ou "description"
     source: string;
+    /** Valeur actuelle du champ cible */
+    current: string;
     target: string;
     setter: (v: string) => void;
     transform?: (s: string) => string;
@@ -27,7 +29,9 @@ export function useAutoGenFields({ configs }: UseAutoGenFieldsProps) {
         configs.forEach((cfg) => {
             if (isEditing[cfg.editingKey] && autoFlags[cfg.target]) {
                 const value = cfg.transform ? cfg.transform(cfg.source) : cfg.source;
-                cfg.setter(value ?? "");
+                if (value !== cfg.current) {
+                    cfg.setter(value ?? "");
+                }
             }
         });
     }, [configs, autoFlags, isEditing]);

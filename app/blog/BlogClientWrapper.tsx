@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Blog from "@/src/components/Blog/Blog";
 import { RefreshButton } from "@/src/components/buttons/Buttons";
-import { fetchBlogDataFromAmplify } from "@utils/fetchBlogDataFromAmplify";
+import { fetchBlogData } from "@/src/services";
 import type { BlogData } from "@src/types/blog";
 
 export default function BlogClientWrapper() {
@@ -14,7 +14,7 @@ export default function BlogClientWrapper() {
     const load = async () => {
         setLoading(true);
         try {
-            const result = await fetchBlogDataFromAmplify();
+            const result = await fetchBlogData();
             setData(result);
             setError(null);
         } catch (err) {
@@ -23,7 +23,6 @@ export default function BlogClientWrapper() {
             setLoading(false);
         }
     };
-
     useEffect(() => {
         void load();
     }, []);

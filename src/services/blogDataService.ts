@@ -1,7 +1,7 @@
 import { client } from "@/src/services";
 import type { BlogData, Author, Post, Section } from "@src/types/blog";
 
-export async function fetchBlogDataFromAmplify(): Promise<BlogData> {
+export async function fetchBlogData(): Promise<BlogData> {
     const [authorsRes, sectionsRes, postsRes, tagsRes, postTagsRes, sectionPostsRes] =
         await Promise.all([
             client.models.Author.list({ authMode: "apiKey" }),

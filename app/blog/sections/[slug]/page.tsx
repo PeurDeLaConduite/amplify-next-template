@@ -1,10 +1,10 @@
-import { fetchBlogDataFromAmplify } from "@utils/fetchBlogDataFromAmplify";
+import { fetchBlogData } from "@/src/services";
 import type { Metadata, ResolvingMetadata } from "next";
 import PostContent from "@components/Blog/PostContent";
 import { BackButton } from "@/src/components/buttons/Buttons";
 
 export async function generateStaticParams() {
-    const { sections } = await fetchBlogDataFromAmplify();
+    const { sections } = await fetchBlogData();
     return sections.map((section) => ({ slug: section.slug }));
 }
 
@@ -13,7 +13,7 @@ export async function generateMetadata(
     parent: ResolvingMetadata
 ): Promise<Metadata> {
     const { slug } = await params;
-    const { sections, posts } = await fetchBlogDataFromAmplify();
+    const { sections, posts } = await fetchBlogData();
 
     const section = sections.find((s) => s.slug === slug)!;
     const seo = section.seo ?? {
@@ -44,7 +44,7 @@ export async function generateMetadata(
 
 export default async function SectionPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
-    const { sections, posts, authors } = await fetchBlogDataFromAmplify();
+    const { sections, posts, authors } = await fetchBlogData();
 
     const section = sections.find((s) => s.slug === slug)!;
     const postsInSection = posts.filter(

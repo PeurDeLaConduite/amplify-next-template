@@ -18,7 +18,34 @@ export default function AuthorsForm({ authors, setMessage }: Props) {
 
     return (
         <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-4">Auteurs</h2>
+            <h2 className="text-xl font-semibold mb-4 border-b">Liste d&apos;auteurs</h2>
+            <ul className="mt-4 space-y-2">
+                {authors.map((author, idx) => {
+                    const active = editingIndex === idx;
+                    return (
+                        <li
+                            key={author.id}
+                            className={`flex justify-between items-center p-2 transition-colors duration-300 ${
+                                active ? "bg-yellow-100 shadow-sm " : "bg-white "
+                            }`}
+                        >
+                            <div>
+                                <strong>{author.name}</strong> — {author.email}
+                            </div>
+                            <FormActionButtons
+                                editingIndex={editingIndex}
+                                currentIndex={idx}
+                                onEdit={() => handleEdit(idx)}
+                                onSave={handleSave}
+                                onCancel={handleCancel}
+                                onDelete={() => handleDelete(idx)}
+                                isFormNew={false}
+                            />
+                        </li>
+                    );
+                })}
+            </ul>
+            <h2 className="text-xl font-semibold mb-4 mt-8 border-b">Nouvel auteur</h2>
             <form onSubmit={(e) => e.preventDefault()} className="grid gap-2">
                 <EditableField
                     name="name"
@@ -29,7 +56,7 @@ export default function AuthorsForm({ authors, setMessage }: Props) {
                 />
                 <EditableField
                     name="avatar"
-                    label="Avatar Url"
+                    label="URL de l'avatar"
                     value={form.avatar ?? ""}
                     onChange={handleChange}
                     readOnly={false}
@@ -58,33 +85,6 @@ export default function AuthorsForm({ authors, setMessage }: Props) {
                     </button>
                 )}
             </form>
-
-            <ul className="mt-4 space-y-2">
-                {authors.map((author, idx) => {
-                    const active = editingIndex === idx;
-                    return (
-                        <li
-                            key={author.id}
-                            className={`flex justify-between items-center p-2 transition-colors duration-300 ${
-                                active ? "bg-yellow-100 shadow-sm" : "border-b"
-                            }`}
-                        >
-                            <div>
-                                <strong>{author.name}</strong> — {author.email}
-                            </div>
-                            <FormActionButtons
-                                editingIndex={editingIndex}
-                                currentIndex={idx}
-                                onEdit={() => handleEdit(idx)}
-                                onSave={handleSave}
-                                onCancel={handleCancel}
-                                onDelete={() => handleDelete(idx)}
-                                isFormNew={false}
-                            />
-                        </li>
-                    );
-                })}
-            </ul>
         </div>
     );
 }
