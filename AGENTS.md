@@ -17,7 +17,7 @@ Utilisez les scripts définis dans le `package.json` :
 -   **`yarn build`** : construit la production (`next build`).
 -   **`yarn start`** : démarre le serveur en production (`next start`).
 -   **`yarn lint`** : exécute le lint via Next.js (`next lint`).
--   **`yarn generate:sitemap`** : génère le sitemap (`node scripts/generate-sitemap.js`).
+
 
 ## Style de code
 

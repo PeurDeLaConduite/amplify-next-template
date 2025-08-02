@@ -7,7 +7,6 @@
         "build": "next build",
         "start": "next start",
         "lint": "next lint",
-        "generate:sitemap": "node scripts/generate-sitemap.js",
         "amplify": "amplify"
     },
     "dependencies": {
@@ -36,8 +35,7 @@
         "react-markdown": "^10.1.0",
         "remark-gfm": "^4.0.1",
         "sass": "1.60.0",
-        "sharp": "^0.34.1",
-        "sitemap": "^8.0.0"
+        "sharp": "^0.34.1"
     },
     "devDependencies": {
         "@aws-amplify/backend": "^1.16.1",

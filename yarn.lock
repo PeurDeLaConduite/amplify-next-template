@@ -10679,7 +10679,6 @@ __metadata:
     sass: "npm:1.60.0"
     sass-loader: "npm:13.0.0"
     sharp: "npm:^0.34.1"
-    sitemap: "npm:^8.0.0"
     tailwindcss: "npm:^4"
     tsx: "npm:^4.19.2"
     typescript: "npm:^5.7.2"
@@ -17909,19 +17908,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sitemap@npm:^8.0.0":
-  version: 8.0.0
-  resolution: "sitemap@npm:8.0.0"
-  dependencies:
-    "@types/node": "npm:^17.0.5"
-    "@types/sax": "npm:^1.2.1"
-    arg: "npm:^5.0.0"
-    sax: "npm:^1.2.4"
-  bin:
-    sitemap: dist/cli.js
-  checksum: 10c0/adaabfb1f27e3c76ba25f9a16dcb02ff17dd2ecbd1b2dbe2608a6770eff37bd71f7d21c10df6824917453bc4da2c2790fd85ee6424d75699bd053e3422d2ef5c
-  languageName: node
-  linkType: hard
 
 "slash@npm:^3.0.0":
   version: 3.0.0
