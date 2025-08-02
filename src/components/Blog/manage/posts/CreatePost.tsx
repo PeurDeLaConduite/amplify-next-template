@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { client } from "@/src/services";
 import PostList from "./PostList";
 import PostForm from "./PostForm";
-import type { Post } from "@/src/types";
+import type { Post } from "@/src/entities/post";
 import RequireAdmin from "../../../RequireAdmin";
 export default function PostManagerPage() {
     const [posts, setPosts] = useState<Post[]>([]);

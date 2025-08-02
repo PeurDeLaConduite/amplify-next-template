@@ -1,4 +1,4 @@
-import type { Section, SectionForm } from "@/src/types";
+import type { Section, SectionForm } from "@entities/section";
 import { createModelForm } from "../createModelForm";
 import { initialSeoForm, toSeoForm } from "./seoForm";
 

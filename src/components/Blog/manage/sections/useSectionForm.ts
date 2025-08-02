@@ -1,7 +1,10 @@
 import { useState, useEffect, ChangeEvent } from "react";
-import { crudService, sectionPostService } from "@/src/services";
+import { postService, sectionService } from "@/src/entities";
+import { sectionPostService } from "@/src/services";
 import { useAutoGenFields, slugify } from "@/src/hooks/useAutoGenFields";
-import type { SectionForm, Section, Post } from "@/src/types";
+import type { SectionForm } from "@/src/entities/section";
+import type { Section } from "@/src/entities/section";
+import type { Post } from "@/src/entities/post";
 import { initialSectionForm, toSectionForm } from "@/src/utils/modelForm";
 
 export function useSectionForm(section: Section | null, onSave: () => void) {
@@ -44,7 +47,7 @@ export function useSectionForm(section: Section | null, onSave: () => void) {
     }, [section]);
 
     async function loadPosts() {
-        const { data } = await crudService("Post").list();
+        const { data } = await postService.list();
         setPosts(data ?? []);
     }
 
@@ -83,8 +86,8 @@ export function useSectionForm(section: Section | null, onSave: () => void) {
 
         try {
             const result = isUpdate
-                ? await crudService("Section").update({ id: section!.id, ...sectionInput })
-                : await crudService("Section").create(sectionInput);
+                ? await sectionService.update({ id: section!.id, ...sectionInput })
+                : await sectionService.create(sectionInput);
 
             if (!result.data) {
                 throw new Error(

@@ -1,4 +1,4 @@
-import type { BaseModel, CreateOmit, UpdateInput } from "../amplifyBaseTypes";
+import type { BaseModel, CreateOmit, UpdateInput } from "@myTypes/amplifyBaseTypes";
 
 export type Comment = BaseModel<"Comment">;
 export type CommentOmit = CreateOmit<"Comment">;

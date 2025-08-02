@@ -1,7 +1,12 @@
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
+import { postService, sectionService, tagService } from "@/src/entities";
 import { crudService, postTagService, sectionPostService } from "@/src/services";
 import { useAutoGenFields, slugify } from "@/src/hooks/useAutoGenFields";
-import type { Section, Post, Author, Tag, PostForm, SeoForm } from "@/src/types";
+import type { Post, PostForm } from "@/src/entities/post";
+import type { Section } from "@/src/entities/section";
+import type { Tag } from "@/src/entities/tag";
+import type { Author } from "@/src/types/models/author";
+import type { SeoForm } from "@/src/types/forms/seoForm";
 import { initialPostForm, initialSeoForm, toPostForm } from "@/src/utils/modelForm";
 
 export function usePostForm(post: Post | null, onSave: () => void) {
@@ -135,8 +140,8 @@ export function usePostForm(post: Post | null, onSave: () => void) {
 
     async function fetchTagsAndSections() {
         const [tagData, sectionData] = await Promise.all([
-            crudService("Tag").list(),
-            crudService("Section").list(),
+            tagService.list(),
+            sectionService.list(),
         ]);
         setTags(tagData.data ?? []);
         setSections(sectionData.data ?? []);
@@ -160,7 +165,7 @@ export function usePostForm(post: Post | null, onSave: () => void) {
         void sectionIds;
 
         if (isUpdate && post?.id) {
-            const { data } = await crudService("Post").update({
+            const { data } = await postService.update({
                 id: post.id,
                 ...postInput,
                 seo,
@@ -168,7 +173,7 @@ export function usePostForm(post: Post | null, onSave: () => void) {
             if (!data) throw new Error("Erreur lors de la mise à jour de l'article.");
             return data.id;
         } else {
-            const { data } = await crudService("Post").create({ ...postInput, seo });
+            const { data } = await postService.create({ ...postInput, seo });
             if (!data) throw new Error("Erreur lors de la création de l'article.");
             return data.id;
         }

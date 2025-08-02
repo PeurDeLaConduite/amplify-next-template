@@ -1,4 +1,4 @@
-import type { Post, PostForm } from "@/src/types";
+import type { Post, PostForm } from "@entities/post";
 import { createModelForm } from "../createModelForm";
 import { initialSeoForm, toSeoForm } from "./seoForm";
 

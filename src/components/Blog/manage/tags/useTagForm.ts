@@ -1,6 +1,9 @@
 import { useState, useEffect, useCallback, type ChangeEvent } from "react";
+import { postService, tagService } from "@/src/entities";
 import { crudService, postTagService } from "@/src/services";
-import type { Tag, Post, PostTag, TagForm } from "@/src/types";
+import type { TagForm, Tag } from "@/src/entities/tag";
+import type { Post } from "@/src/entities/post";
+import type { PostTag } from "@/src/types/models/postTag";
 import { initialTagForm } from "@/src/utils/modelForm";
 
 export function useTagForm() {
@@ -15,8 +18,8 @@ export function useTagForm() {
     const fetchAll = useCallback(async () => {
         setLoading(true);
         const [tagsData, postsData, postTagsData] = await Promise.all([
-            crudService("Tag").list(),
-            crudService("Post").list(),
+            tagService.list(),
+            postService.list(),
             crudService("PostTag").list(),
         ]);
         setTags(tagsData.data ?? []);
@@ -60,11 +63,11 @@ export function useTagForm() {
         if (!form.name.trim()) return;
 
         if (editingIndex === null) {
-            const { data } = await crudService("Tag").create({ name: form.name });
+            const { data } = await tagService.create({ name: form.name });
             if (data) await syncRelations(data.id);
         } else {
             const tag = tags[editingIndex];
-            await crudService("Tag").update({ id: tag.id, name: form.name });
+            await tagService.update({ id: tag.id, name: form.name });
             await syncRelations(tag.id);
         }
 
@@ -77,7 +80,7 @@ export function useTagForm() {
         if (!window.confirm("Supprimer ce tag ?")) return;
         const linkedPosts = await postTagService.listByChild(tag.id);
         await Promise.all(linkedPosts.map((p) => postTagService.delete(p, tag.id)));
-        await crudService("Tag").delete({ id: tag.id });
+        await tagService.delete({ id: tag.id });
         await fetchAll();
     };
 

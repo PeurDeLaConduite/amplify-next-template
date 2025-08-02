@@ -5,7 +5,7 @@ import RequireAdmin from "@/src/components/RequireAdmin";
 import { client } from "@/src/services";
 import SectionForm from "./SectionsForm";
 import SectionList from "./SectionList";
-import type { Section } from "@/src/types";
+import type { Section } from "@/src/entities/section";
 
 export default function SectionManagerPage() {
     const [sections, setSections] = useState<Section[]>([]);
