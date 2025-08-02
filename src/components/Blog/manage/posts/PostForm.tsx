@@ -7,7 +7,7 @@ import EditableTextArea from "../components/EditableTextArea";
 import SeoFields from "../components/SeoFields";
 import OrderSelector from "../components/OrderSelector";
 import SelectField from "../components/SelectField";
-import type { Post } from "@/src/entities/post";
+import { type Post } from "@/src/entities/post";
 
 interface Props {
     post: Post | null;

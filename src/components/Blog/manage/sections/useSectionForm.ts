@@ -1,10 +1,15 @@
 import { useState, useEffect, ChangeEvent } from "react";
-import { postService, sectionService, SectionForm, Section } from "@src/entities";
+import {
+    postService,
+    sectionService,
+    SectionForm,
+    type Post,
+    type Section,
+    initialSectionForm,
+    toSectionForm,
+} from "@src/entities";
 import { sectionPostService } from "@/src/services";
 import { useAutoGenFields, slugify } from "@/src/hooks/useAutoGenFields";
-
-import type { Post } from "@/src/entities/post";
-import { initialSectionForm, toSectionForm } from "@/src/utils/modelForm";
 
 export function useSectionForm(section: Section | null, onSave: () => void) {
     const [form, setForm] = useState<SectionForm>(initialSectionForm);

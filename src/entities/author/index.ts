@@ -1,3 +1,3 @@
 export * from "./author";
-export * from "./authorForm";
+export * from "./form";
 export { authorService } from "./service";

@@ -1,3 +1,3 @@
 export * from "./section";
-export * from "./sectionForm";
+export * from "./form";
 export { sectionService } from "./service";

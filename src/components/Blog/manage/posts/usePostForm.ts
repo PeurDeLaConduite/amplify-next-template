@@ -7,15 +7,16 @@ import {
     sectionService,
     tagService,
     authorService,
-    Post,
-    PostForm,
-    Section,
-    Tag,
-    Author,
-    SeoForm,
+    type Post,
+    type PostForm,
+    type Section,
+    type Tag,
+    type Author,
+    type SeoForm,
+    initialPostForm,
+    toPostForm,
+    initialSeoForm,
 } from "@src/entities";
-
-import { initialPostForm, initialSeoForm, toPostForm } from "@/src/utils/modelForm";
 
 export function usePostForm(post: Post | null, onSave: () => void) {
     const [form, setForm] = useState<PostForm>({ ...initialPostForm });

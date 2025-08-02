@@ -1,6 +1,11 @@
 import { useState, type ChangeEvent } from "react";
-import { authorService, Author, AuthorForm } from "@src/entities";
-import { initialAuthorForm, toAuthorForm } from "@/src/utils/modelForm";
+import {
+    authorService,
+    type Author,
+    type AuthorForm,
+    initialAuthorForm,
+    toAuthorForm,
+} from "@src/entities";
 
 export function useAuthorForm(authors: Author[], setMessage: (msg: string) => void) {
     const [form, setForm] = useState<AuthorForm>({ ...initialAuthorForm });

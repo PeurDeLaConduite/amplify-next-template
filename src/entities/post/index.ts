@@ -1,3 +1,3 @@
 export * from "./post";
-export * from "./postForm";
+export * from "./form";
 export { postService } from "./service";

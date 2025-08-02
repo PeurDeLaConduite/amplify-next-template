@@ -5,12 +5,12 @@ import {
     postService,
     tagService,
     postTagService,
-    TagForm,
-    Tag,
-    Post,
-    PostTag,
+    type TagForm,
+    type Tag,
+    type Post,
+    type PostTag,
+    initialTagForm,
 } from "@src/entities";
-import { initialTagForm } from "@/src/utils/modelForm";
 
 export function useTagForm() {
     const [tags, setTags] = useState<Tag[]>([]);

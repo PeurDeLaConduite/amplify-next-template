@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import FormActionButtons from "../components/FormActionButtons";
-import type { Post } from "@/src/entities/post";
+import { type Post } from "@/src/entities/post";
 
 interface Props {
     posts: Post[];
