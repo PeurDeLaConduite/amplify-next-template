@@ -1,12 +1,20 @@
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
-import { postService, sectionService, tagService } from "@/src/entities";
-import { crudService, postTagService, sectionPostService } from "@/src/services";
+
 import { useAutoGenFields, slugify } from "@/src/hooks/useAutoGenFields";
-import type { Post, PostForm } from "@/src/entities/post";
-import type { Section } from "@/src/entities/section";
-import type { Tag } from "@/src/entities/tag";
-import type { Author } from "@/src/types/models/author";
-import type { SeoForm } from "@/src/types/forms/seoForm";
+import { postTagService, sectionPostService } from "@/src/services";
+import {
+    postService,
+    sectionService,
+    tagService,
+    authorService,
+    Post,
+    PostForm,
+    Section,
+    Tag,
+    Author,
+    SeoForm,
+} from "@src/entities";
+
 import { initialPostForm, initialSeoForm, toPostForm } from "@/src/utils/modelForm";
 
 export function usePostForm(post: Post | null, onSave: () => void) {
@@ -134,7 +142,7 @@ export function usePostForm(post: Post | null, onSave: () => void) {
     }
 
     async function fetchAuthors() {
-        const { data } = await crudService("Author").list();
+        const { data } = await authorService.list();
         setAuthors(data ?? []);
     }
 

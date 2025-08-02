@@ -1,5 +1,4 @@
-import type { SeoForm } from "@/src/types/forms/seoForm";
-import type { Seo } from "@/src/types/models/seo";
+import type { SeoForm, Seo } from "@src/entities";
 
 export const initialSeoForm: SeoForm = {
     title: "",

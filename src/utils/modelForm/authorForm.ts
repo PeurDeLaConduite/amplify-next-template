@@ -1,4 +1,4 @@
-import type { Author, AuthorForm } from "@/src/types";
+import type { Author, AuthorForm } from "@src/entities";
 import { createModelForm } from "../createModelForm";
 
 export const { initialForm: initialAuthorForm, toForm: toAuthorForm } = createModelForm<

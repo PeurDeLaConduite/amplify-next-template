@@ -5,7 +5,7 @@ import EditableField from "../components/EditableField";
 import EditableTextArea from "../components/EditableTextArea";
 import FormActionButtons from "../components/FormActionButtons";
 import { useAuthorForm } from "./useAuthorForm";
-import type { Author } from "@/src/types";
+import type { Author } from "@src/entities";
 
 interface Props {
     authors: Author[];

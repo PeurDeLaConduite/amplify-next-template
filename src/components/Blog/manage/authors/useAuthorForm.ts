@@ -1,10 +1,8 @@
 import { useState, type ChangeEvent } from "react";
-import { crudService } from "@/src/services";
-import type { Author, AuthorForm } from "@/src/types";
+import { authorService, Author, AuthorForm } from "@src/entities";
 import { initialAuthorForm, toAuthorForm } from "@/src/utils/modelForm";
 
 export function useAuthorForm(authors: Author[], setMessage: (msg: string) => void) {
-    const service = crudService("Author");
     const [form, setForm] = useState<AuthorForm>({ ...initialAuthorForm });
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
@@ -30,10 +28,10 @@ export function useAuthorForm(authors: Author[], setMessage: (msg: string) => vo
             const { postIds, ...authorInput } = form;
             void postIds;
             if (editingIndex === null) {
-                await service.create(authorInput);
+                await authorService.create(authorInput);
                 setMessage("Auteur ajouté !");
             } else {
-                await service.update({ id: authors[editingIndex].id, ...authorInput });
+                await authorService.update({ id: authors[editingIndex].id, ...authorInput });
                 setMessage("Auteur mis à jour !");
             }
             handleCancel();
@@ -47,7 +45,7 @@ export function useAuthorForm(authors: Author[], setMessage: (msg: string) => vo
         if (!authors[idx]?.id) return;
         if (!window.confirm("Supprimer cet auteur ?")) return;
         try {
-            await service.delete({ id: authors[idx].id });
+            await authorService.delete({ id: authors[idx].id });
             setMessage("Auteur supprimé !");
         } catch (err) {
             const msg = err instanceof Error ? err.message : String(err);

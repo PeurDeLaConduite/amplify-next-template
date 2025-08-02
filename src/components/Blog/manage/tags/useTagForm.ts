@@ -1,9 +1,15 @@
 import { useState, useEffect, useCallback, type ChangeEvent } from "react";
-import { postService, tagService } from "@/src/entities";
-import { crudService, postTagService } from "@/src/services";
-import type { TagForm, Tag } from "@/src/entities/tag";
-import type { Post } from "@/src/entities/post";
-import type { PostTag } from "@/src/types/models/postTag";
+
+import { crudService } from "@/src/services";
+import {
+    postService,
+    tagService,
+    postTagService,
+    TagForm,
+    Tag,
+    Post,
+    PostTag,
+} from "@src/entities";
 import { initialTagForm } from "@/src/utils/modelForm";
 
 export function useTagForm() {

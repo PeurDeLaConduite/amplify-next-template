@@ -1,9 +1,8 @@
 import { useState, useEffect, ChangeEvent } from "react";
-import { postService, sectionService } from "@/src/entities";
+import { postService, sectionService, SectionForm, Section } from "@src/entities";
 import { sectionPostService } from "@/src/services";
 import { useAutoGenFields, slugify } from "@/src/hooks/useAutoGenFields";
-import type { SectionForm } from "@/src/entities/section";
-import type { Section } from "@/src/entities/section";
+
 import type { Post } from "@/src/entities/post";
 import { initialSectionForm, toSectionForm } from "@/src/utils/modelForm";
 
