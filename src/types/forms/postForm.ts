@@ -1,8 +1,10 @@
 import type { ModelForm } from "@/src/utils/createModelForm";
-
+import { SeoOmit } from "../models/seo";
+type PostCustomTypes = { seo: SeoOmit };
 export type PostForm = ModelForm<
     "Post",
     "comments" | "sections" | "tags" | "author",
     "tag" | "section",
-    true
+    PostCustomTypes,
+    "seo"
 >;

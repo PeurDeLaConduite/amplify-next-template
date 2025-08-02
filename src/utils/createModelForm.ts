@@ -1,25 +1,28 @@
+// src/types/modelForm.ts
 import type { Schema } from "@/amplify/data/resource";
 import type { CreateOmit } from "@/src/types/amplifyBaseTypes";
-import type { SeoOmit } from "@/src/types/models/seo";
 
 /**
- * Type générique représentant la structure d'un formulaire basé sur un modèle.
+ * Type générique représentant la structure d'un formulaire basé sur un modèle,
+ * avec un mapping dynamique pour gérer les CustomTypes.
  *
- * @typeParam K - Nom du modèle dans le schéma Amplify.
- * @typeParam O - Propriétés du modèle à exclure du formulaire.
- * @typeParam R - Relations représentées par des listes d'identifiants.
- * @typeParam S - Indique si le modèle possède un champ SEO imbriqué.
+ * @typeParam K - Modèle Amplify.
+ * @typeParam O - Champs du modèle à exclure.
+ * @typeParam R - Relations converties en identifiants.
+ * @typeParam CTMap - Mapping injecté des CustomTypes.
+ * @typeParam CT - Clés sélectionnées dans CTMap.
  */
 export type ModelForm<
-    K extends keyof Schema,
-    O extends keyof CreateOmit<K> = never,
-    R extends string = never,
-    S extends boolean = false,
-> = Omit<CreateOmit<K>, O | (S extends true ? "seo" : never)> &
-    (S extends true ? { seo: SeoOmit } : Record<never, never>) & {
-        [P in R as `${P}Ids`]: string[];
-    };
-
+  K extends keyof Schema,
+  O extends keyof CreateOmit<K> = never,
+  R extends string = never,
+  CTMap extends Record<string, unknown> = Record<string, never>,
+  CT extends keyof CTMap = never,
+> =
+  Omit<CreateOmit<K>, O | R | CT> &
+  { [P in CT]: CTMap[P] } &
+  { [P in R as `${P}Ids`]: string[] };
+  
 /**
  * Génère un couple { initialForm, toForm } pour un modèle spécifique.
  * Cela permet de centraliser la logique de transformation des données.
