@@ -1,8 +1,8 @@
-import type { PostOmit } from "../models/post";
-import type { SeoOmit } from "../models/seo";
+import type { ModelForm } from "@/src/utils/createModelForm";
 
-export type PostForm = Omit<PostOmit, "comments" | "sections" | "tags" | "seo" | "author"> & {
-    seo: SeoOmit;
-    tagIds: string[];
-    sectionIds: string[];
-};
+export type PostForm = ModelForm<
+    "Post",
+    "comments" | "sections" | "tags" | "author",
+    "tag" | "section",
+    true
+>;

@@ -1,7 +1,3 @@
-import type { SectionOmit } from "../models/section";
-import type { SeoOmit } from "../models/seo";
+import type { ModelForm } from "@/src/utils/createModelForm";
 
-export type SectionForm = Omit<SectionOmit, "posts" | "seo"> & {
-    seo: SeoOmit;
-    postIds: string[];
-};
+export type SectionForm = ModelForm<"Section", "posts", "post", true>;

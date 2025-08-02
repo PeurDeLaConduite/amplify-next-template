@@ -1,5 +1,3 @@
-import type { AuthorOmit } from "../models/author";
+import type { ModelForm } from "@/src/utils/createModelForm";
 
-export type AuthorForm = Omit<AuthorOmit, "posts"> & {
-    postIds: string[];
-};
+export type AuthorForm = ModelForm<"Author", "posts", "post">;

@@ -1,23 +1,27 @@
 import type { Post, PostForm } from "@/src/types";
+import { createModelForm } from "../createModelForm";
 import { initialSeoForm, toSeoForm } from "./seoForm";
 
-export const initialPostForm: PostForm = {
-    slug: "",
-    title: "",
-    excerpt: "",
-    content: "",
-    status: "draft",
-    authorId: "",
-    order: 1,
-    videoUrl: "",
-    type: "",
-    seo: { ...initialSeoForm },
-    tagIds: [],
-    sectionIds: [],
-};
-
-export function toPostForm(post: Post, tagIds: string[], sectionIds: string[]): PostForm {
-    return {
+export const { initialForm: initialPostForm, toForm: toPostForm } = createModelForm<
+    Post,
+    PostForm,
+    [string[], string[]]
+>(
+    {
+        slug: "",
+        title: "",
+        excerpt: "",
+        content: "",
+        status: "draft",
+        authorId: "",
+        order: 1,
+        videoUrl: "",
+        type: "",
+        seo: { ...initialSeoForm },
+        tagIds: [],
+        sectionIds: [],
+    },
+    (post, tagIds: string[] = [], sectionIds: string[] = []) => ({
         slug: post.slug ?? "",
         title: post.title ?? "",
         excerpt: post.excerpt ?? "",
@@ -30,5 +34,5 @@ export function toPostForm(post: Post, tagIds: string[], sectionIds: string[]): 
         seo: toSeoForm(post.seo),
         tagIds,
         sectionIds,
-    };
-}
+    })
+);

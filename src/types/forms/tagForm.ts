@@ -1,5 +1,3 @@
-import type { TagOmit } from "../models/tag";
+import type { ModelForm } from "@/src/utils/createModelForm";
 
-export type TagForm = Omit<TagOmit, "posts"> & {
-    postIds: string[];
-};
+export type TagForm = ModelForm<"Tag", "posts", "post">;
