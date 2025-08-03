@@ -2,9 +2,11 @@ import { useState, useEffect, useCallback, type ChangeEvent } from "react";
 
 export type CrudService<TEntity, TForm> = {
     list: () => Promise<{ data: TEntity[] }>;
-    create: (input: Partial<TForm>) => Promise<{ data?: TEntity; errors?: any[] }>;
-    update: (input: Partial<TForm> & { id: string }) => Promise<{ data?: TEntity; errors?: any[] }>;
-    delete: (input: { id: string }) => Promise<{ data?: TEntity; errors?: any[] }>;
+    create: (input: Partial<TForm>) => Promise<{ data?: TEntity; errors?: unknown[] }>;
+    update: (
+        input: Partial<TForm> & { id: string }
+    ) => Promise<{ data?: TEntity; errors?: unknown[] }>;
+    delete: (input: { id: string }) => Promise<{ data?: TEntity; errors?: unknown[] }>;
 };
 
 type CrudManagerOptions<TEntity, TForm> = {
@@ -20,7 +22,7 @@ export function useCrudManager<TEntity, TForm>({
     service,
     initialForm,
     toForm,
-    getId = (entity: any) => entity.id,
+    getId = (entity: TEntity) => (entity as { id: string }).id,
     entityLabel = "cet élément",
     onMessage = (msg) => console.log(msg),
 }: CrudManagerOptions<TEntity, TForm>) {

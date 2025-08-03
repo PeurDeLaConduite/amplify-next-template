@@ -1,13 +1,11 @@
-// src/lib/userProfileService.ts
-
-import type { Schema } from "@/amplify/data/resource";
 import { client } from "@/src/services";
+import type { UserProfileType } from "./types";
 
 /** CREATE */
 export async function createUserProfile(
     sub: string,
     data: Pick<
-        Schema["UserProfile"]["type"],
+        UserProfileType,
         "firstName" | "familyName" | "address" | "postalCode" | "city" | "country" | "phoneNumber"
     >
 ) {
@@ -15,30 +13,24 @@ export async function createUserProfile(
 }
 
 /** UPDATE (partial) */
-export async function updateUserProfile(sub: string, data: Partial<Schema["UserProfile"]["type"]>) {
+export async function updateUserProfile(sub: string, data: Partial<UserProfileType>) {
     return client.models.UserProfile.update({ id: sub, ...data });
 }
 
-/** DELETE  🔥  (fonction manquante précédemment) */
+/** DELETE */
 export async function deleteUserProfile(sub: string) {
     return client.models.UserProfile.delete({ id: sub });
 }
 
-/** READ (one‑shot) */
-export async function getUserProfile(sub: string) {
-    const { data } = await client.models.UserProfile.get({ id: sub });
-    return data ?? null;
-}
-
-/** OBSERVE (temps‑réel) – facultatif : renvoie la subscription pour `unsubscribe()` */
+/** OBSERVE */
 export function observeUserProfile(
     sub: string,
-    onChange: (profile: Schema["UserProfile"]["type"] | null) => void
+    onChange: (profile: UserProfileType | null) => void
 ) {
     return client.models.UserProfile.observeQuery({}).subscribe({
         next: ({ items }) => {
             const item = items.find((p) => p.id === sub) ?? null;
-            onChange(item as Schema["UserProfile"]["type"] | null);
+            onChange(item as UserProfileType | null);
         },
         error: console.error,
     });
