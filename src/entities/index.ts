@@ -5,5 +5,5 @@ export * from "./relations/sectionPost";
 export * from "./models/tag";
 export * from "./models/author";
 export * from "./customTypes/seo";
-export * from "./models/user";
-export * from "./models/profile";
+export * from "./models/userName";
+export * from "./models/userProfile";
