@@ -7,17 +7,8 @@ import EditSingleFieldUserName from "./EditSingleFieldUserName";
 import ReadOnlyUserNameView from "./ReadOnlyUserNameView";
 import ProfileForm from "./ProfileForm";
 
-import {
-    createUserName,
-    updateUserName,
-    getUserName,
-    initialUserNameForm,
-    type UserNameFormType,
-    // type UserNameType,
-    // type UserNameTypeOmit,
-    type UserNameTypeUpdateInput,
-} from "@src/entities";
-import { SingleFieldUserName, userNameLabel } from "./utilsUserName";
+import { createUserName, updateUserName, getUserName, type UserNameFormType } from "@src/entities";
+import { SingleFieldUserName, normalizeUserName, userNameLabel } from "./utilsProfile";
 
 export default function UserNameManager() {
     /* ---------- hooks toujours dans le même ordre ---------- */
@@ -26,7 +17,7 @@ export default function UserNameManager() {
 
     const [current, setCurrent] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
-    const [formData, setFormData] = useState<UserNameTypeUpdateInput>(initialUserNameForm);
+    const [formData, setFormData] = useState<UserNameFormType>(normalizeUserName);
     const [editModeField, setEditModeField] = useState<SingleFieldUserName | null>(null);
 
     /* ---------- charger le pseudo quand sub est connu ---------- */
@@ -56,7 +47,7 @@ export default function UserNameManager() {
     };
 
     const saveProfileForm = () => {
-        const name = formData.userName?.trim();
+        const name = formData.userName.trim();
         if (name) void saveUserName(name);
     };
 

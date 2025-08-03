@@ -1,8 +1,7 @@
-// src/components/ReadOnlyUserNameView.tsx
 import React from "react";
 import { EditButton } from "@/src/components/buttons/Buttons";
 import PersonIcon from "@mui/icons-material/Person";
-import type { UserNameData } from "./utilsProfile";
+import type { UserNameData } from "./utilsUserName";
 
 const Icon = () => <PersonIcon fontSize="small" className="text-gray-800" />;
 
