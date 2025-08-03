@@ -6,15 +6,15 @@ import {
     postTagService,
     type TagFormType,
     type TagType,
-    type Post,
-    type PostTag,
+    type PostType,
+    type PostTagType,
     initialTagForm,
 } from "@src/entities";
 
 export function useTagForm() {
     const [tags, setTags] = useState<TagType[]>([]);
-    const [posts, setPosts] = useState<Post[]>([]);
-    const [postTags, setPostTags] = useState<PostTag[]>([]);
+    const [posts, setPosts] = useState<PostType[]>([]);
+    const [postTags, setPostTags] = useState<PostTagType[]>([]);
     const [loading, setLoading] = useState(true);
 
     const [form, setForm] = useState<TagFormType>(initialTagForm);
@@ -92,7 +92,7 @@ export function useTagForm() {
 
     const handleAddPostTag = async (postId: string, tagId: string) => {
         await postTagService.create(postId, tagId);
-        setPostTags((prev) => [...prev, { postId, tagId } as PostTag]);
+        setPostTags((prev) => [...prev, { postId, tagId } as PostTagType]);
     };
 
     const handleRemovePostTag = async (postId: string, tagId: string) => {

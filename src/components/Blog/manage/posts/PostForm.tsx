@@ -7,12 +7,12 @@ import EditableTextArea from "../components/EditableTextArea";
 import SeoFields from "../components/SeoFields";
 import OrderSelector from "../components/OrderSelector";
 import SelectField from "../components/SelectField";
-import { type Post } from "@/src/entities/models/post";
+import { type PostType } from "@/src/entities/models/post";
 
 interface Props {
-    post: Post | null;
+    post: PostType | null;
     onSave: () => void;
-    posts: Post[];
+    posts: PostType[];
 }
 
 const PostForm = forwardRef<HTMLFormElement, Props>(function SectionForm(

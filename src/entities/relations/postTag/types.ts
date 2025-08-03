@@ -1,5 +1,5 @@
 import type { BaseModel, CreateOmit, UpdateInput } from "@myTypes/amplifyBaseTypes";
 
-export type PostTag = BaseModel<"PostTag">;
-export type PostTagOmit = CreateOmit<"PostTag">;
-export type PostTagUpdateInput = UpdateInput<"PostTag">;
+export type PostTagType = BaseModel<"PostTag">;
+export type PostTagTypeOmit = CreateOmit<"PostTag">;
+export type PostTagTypeUpdateInput = UpdateInput<"PostTag">;

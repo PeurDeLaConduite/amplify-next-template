@@ -1,5 +1,15 @@
-import type { BaseModel, CreateOmit, UpdateInput } from "@myTypes/amplifyBaseTypes";
+import type { BaseModel, CreateOmit, UpdateInput, ModelForm } from "@myTypes/amplifyBaseTypes";
+import { type SeoTypeOmit } from "@src/entities";
 
-export type Post = BaseModel<"Post">;
-export type PostOmit = CreateOmit<"Post">;
-export type PostUpdateInput = UpdateInput<"Post">;
+export type PostType = BaseModel<"Post">;
+export type PostTypeOmit = CreateOmit<"Post">;
+export type PostTypeUpdateInput = UpdateInput<"Post">;
+
+type PostCustomTypes = { seo: SeoTypeOmit };
+export type PostFormType = ModelForm<
+    "Post",
+    "comments" | "sections" | "tags" | "author",
+    "tag" | "section",
+    PostCustomTypes,
+    "seo"
+>;

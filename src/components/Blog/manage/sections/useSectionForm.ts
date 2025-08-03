@@ -3,7 +3,7 @@ import {
     postService,
     sectionService,
     sectionPostService,
-    type Post,
+    type PostType,
     type SectionFormTypes,
     type SectionTypes,
     initialSectionForm,
@@ -13,7 +13,7 @@ import { useAutoGenFields, slugify } from "@/src/hooks/useAutoGenFields";
 
 export function useSectionForm(section: SectionTypes | null, onSave: () => void) {
     const [form, setForm] = useState<SectionFormTypes>(initialSectionForm);
-    const [posts, setPosts] = useState<Post[]>([]);
+    const [posts, setPosts] = useState<PostType[]>([]);
     const [saving, setSaving] = useState(false);
 
     // HOOK d'auto-génération : slug & seo.title depuis title, seo.description depuis description

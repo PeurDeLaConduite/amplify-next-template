@@ -1,18 +1,10 @@
-import { type Post, type SeoTypeOmit, toSeoForm } from "@src/entities";
-import { ModelForm, createModelForm } from "@utils/createModelForm";
+import { type PostType, type PostFormType, toSeoForm } from "@src/entities";
+import { createModelForm } from "@utils/createModelForm";
 import { initialSeoForm } from "@/src/entities/customTypes/seo/form";
 
-type PostCustomTypes = { seo: SeoTypeOmit };
-export type PostForm = ModelForm<
-    "Post",
-    "comments" | "sections" | "tags" | "author",
-    "tag" | "section",
-    PostCustomTypes,
-    "seo"
->;
 export const { initialForm: initialPostForm, toForm: toPostForm } = createModelForm<
-    Post,
-    PostForm,
+    PostType,
+    PostFormType,
     [string[], string[]]
 >(
     {
