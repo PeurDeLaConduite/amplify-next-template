@@ -92,6 +92,7 @@ export default function UserNameManager() {
                     handleSubmit={saveProfileForm}
                     isEdit={false}
                     onCancel={() => setFormData({ userName: "" })}
+                    requiredFields={["userName"]}
                 />
             )}
 

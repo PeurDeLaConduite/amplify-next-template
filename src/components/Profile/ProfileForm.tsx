@@ -11,6 +11,7 @@ type Props<T extends Record<string, string>> = {
     handleSubmit: () => void;
     isEdit: boolean;
     onCancel: () => void;
+    requiredFields?: (keyof T)[];
 };
 
 export default function ProfileForm<T extends Record<string, string>>({
@@ -21,6 +22,7 @@ export default function ProfileForm<T extends Record<string, string>>({
     handleSubmit,
     isEdit,
     onCancel,
+    requiredFields,
 }: Props<T>) {
     return (
         <form
@@ -42,7 +44,7 @@ export default function ProfileForm<T extends Record<string, string>>({
                         value={formData[field] ?? ""}
                         onChange={handleChange}
                         className="w-full p-2 border rounded"
-                        required={["userName", "firstName", "familyName"].includes(String(field))}
+                        required={requiredFields?.includes(field)}
                     />
                 </div>
             ))}

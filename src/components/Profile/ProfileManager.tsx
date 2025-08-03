@@ -197,6 +197,7 @@ export default function ProfileManager() {
                             phoneNumber: profile?.phoneNumber ?? "",
                         });
                     }}
+                    requiredFields={["firstName", "familyName"]}
                 />
             )}
 
