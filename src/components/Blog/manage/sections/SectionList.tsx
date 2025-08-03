@@ -1,10 +1,10 @@
 "use client";
 import React from "react";
-import { type Section } from "@/src/entities/models/section";
+import { type SectionTypes } from "@/src/entities/models/section";
 import FormActionButtons from "../components/FormActionButtons";
 
 interface Props {
-    sections: Section[];
+    sections: SectionTypes[];
     editingIndex: number | null;
     onEdit: (idx: number) => void;
     onSave: () => void;

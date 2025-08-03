@@ -5,10 +5,10 @@ import EditableField from "../components/EditableField";
 import EditableTextArea from "../components/EditableTextArea";
 import FormActionButtons from "../components/FormActionButtons";
 import { useAuthorForm } from "./useAuthorForm";
-import { type Author } from "@src/entities";
+import { type AuthorType  } from "@src/entities";
 
 interface Props {
-    authors: Author[];
+    authors: AuthorType [];
     setMessage: (msg: string) => void;
 }
 

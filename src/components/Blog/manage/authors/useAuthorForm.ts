@@ -1,14 +1,14 @@
 import { useState, type ChangeEvent } from "react";
 import {
     authorService,
-    type Author,
-    type AuthorForm,
+    type AuthorType,
+    type AuthorFormType,
     initialAuthorForm,
     toAuthorForm,
 } from "@src/entities";
 
-export function useAuthorForm(authors: Author[], setMessage: (msg: string) => void) {
-    const [form, setForm] = useState<AuthorForm>({ ...initialAuthorForm });
+export function useAuthorForm(authors: AuthorType[], setMessage: (msg: string) => void) {
+    const [form, setForm] = useState<AuthorFormType>({ ...initialAuthorForm });
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

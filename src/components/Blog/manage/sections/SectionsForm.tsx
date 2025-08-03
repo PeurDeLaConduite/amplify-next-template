@@ -6,12 +6,12 @@ import SeoFields from "../components/SeoFields";
 import OrderSelector from "../components/OrderSelector";
 import ItemSelector from "../components/ItemSelector";
 import { useSectionForm } from "./useSectionForm";
-import { type Section } from "@/src/entities/models/section";
+import { type SectionTypes } from "@/src/entities/models/section";
 
 interface Props {
-    section: Section | null;
+    section: SectionTypes | null;
     onSave: () => void;
-    sections: Section[];
+    sections: SectionTypes[];
 }
 
 const SectionForm = forwardRef<HTMLFormElement, Props>(function SectionForm(

@@ -1,2 +1,2 @@
-export * from "./seo";
+export * from "./types";
 export * from "./form";

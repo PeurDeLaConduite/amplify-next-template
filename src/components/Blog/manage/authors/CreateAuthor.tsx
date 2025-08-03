@@ -4,10 +4,10 @@ import React, { useEffect, useState } from "react";
 import RequireAdmin from "../../../RequireAdmin";
 import AuthorsForm from "./AuthorsForm";
 import { client } from "@/src/services";
-import { type Author } from "@src/entities";
+import { type AuthorType  } from "@src/entities";
 
-type AuthorType = Author;
-type AuthorsType = AuthorType[];
+type AuthorT = AuthorType ;
+type AuthorsType = AuthorT[];
 
 export default function CreateAuthor() {
     const [localAuthors, setLocalAuthors] = useState<AuthorsType>([]);

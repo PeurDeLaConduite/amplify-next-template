@@ -2,8 +2,8 @@
 
 ## Installation
 
--   Toujours commencer par `yarn install` pour installer toutes les dépendances.
--   Si vous utilisez Yarn v4.x (Berry/PnP), ajoutez ou vérifiez dans `.yarnrc.yml` :
+- Toujours commencer par `yarn install` pour installer toutes les dépendances.
+- Si vous utilisez Yarn v4.x (Berry/PnP), ajoutez ou vérifiez dans `.yarnrc.yml` :
 
     ```yaml
     nodeLinker: node-modules
@@ -13,21 +13,20 @@
 
 Utilisez les scripts définis dans le `package.json` :
 
--   **`yarn dev`** : lance l’application en mode développement (`next dev`).
--   **`yarn build`** : construit la production (`next build`).
--   **`yarn start`** : démarre le serveur en production (`next start`).
--   **`yarn lint`** : exécute le lint via Next.js (`next lint`).
-
+- **`yarn dev`** : lance l’application en mode développement (`next dev`).
+- **`yarn build`** : construit la production (`next build`).
+- **`yarn start`** : démarre le serveur en production (`next start`).
+- **`yarn lint`** : exécute le lint via Next.js (`next lint`).
 
 ## Style de code
 
--   Utiliser **Prettier** pour formater le code :
+- Utiliser **Prettier** pour formater le code :
 
     ```bash
     yarn prettier --write .
     ```
 
--   Respecter les règles **ESLint** intégrées à Next.js :
+- Respecter les règles **ESLint** intégrées à Next.js :
 
     ```bash
     yarn lint
@@ -35,19 +34,19 @@ Utilisez les scripts définis dans le `package.json` :
 
 ## Dépendances clés
 
--   **Framework** : Next.js v15.0.3
--   **AWS & Amplify** : aws-amplify 6.9.0 et @aws-amplify/ui-react
+- **Framework** : Next.js v15.0.3
+- **AWS & Amplify** : aws-amplify 6.9.0 et @aws-amplify/ui-react
 
 ## Tests
 
--   Actuellement, il n’y a pas de script de test défini.
--   Si vous ajoutez des tests, créez un script `yarn test` et assurez-vous qu’il passe avant chaque PR.
+- Actuellement, il n’y a pas de script de test défini.
+- Si vous ajoutez des tests, créez un script `yarn test` et assurez-vous qu’il passe avant chaque PR.
 
 ## Pull Request
 
--   **Titre de la PR** : `[Fix|Feat] courte description`
--   **Description** : expliquer l’objectif du changement.
--   **Tests effectués** : listez les commandes exécutées (ex. `yarn dev`, `yarn lint`, `yarn build`).
+- **Titre de la PR** : `[Fix|Feat] courte description`
+- **Description** : expliquer l’objectif du changement.
+- **Tests effectués** : listez les commandes exécutées (ex. `yarn dev`, `yarn lint`, `yarn build`).
 
 ---
 
@@ -85,14 +84,14 @@ Aucune étape ne doit être sautée ni mélangée, afin de garantir la cohérenc
 
 ## Avancement de la refonte (mise à jour : 2024-08-01)
 
-- [x] 1. Nettoyage du code mort et des fichiers inutilisés (hooks CRUD, omitId.ts…)
-- [x] 2. Déplacement et centralisation des services profil (`userProfileService`, `userNameService`)
-- [ ] 3. Factorisation/Uniformisation des types et formulaires avec utilitaires génériques
-- [ ] 4. Migration vers structure par entité dans `/src/entities/{entity}`
-- [ ] 5. Refonte des hooks (UI/présentation séparés)
-- [ ] 6. Mise à jour des composants pour la nouvelle API métier
-- [ ] 7. Tests, lint, validation étape par étape
-- [ ] 8. Documentation finale de l’architecture cible dans le README
+- [x]   1. Nettoyage du code mort et des fichiers inutilisés (hooks CRUD, omitId.ts…)
+- [x]   2. Déplacement et centralisation des services profil (`userProfileService`, `userNameService`)
+- [ ]   3. Factorisation/Uniformisation des types et formulaires avec utilitaires génériques
+- [ ]   4. Migration vers structure par entité dans `/src/entities/{entity}`
+- [ ]   5. Refonte des hooks (UI/présentation séparés)
+- [ ]   6. Mise à jour des composants pour la nouvelle API métier
+- [ ]   7. Tests, lint, validation étape par étape
+- [ ]   8. Documentation finale de l’architecture cible dans le README
 
 **Dernière mise à jour :** 2024-08-01
 

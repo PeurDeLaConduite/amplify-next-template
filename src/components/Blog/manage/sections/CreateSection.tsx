@@ -4,11 +4,11 @@ import React, { useEffect, useState, useRef } from "react";
 import RequireAdmin from "@/src/components/RequireAdmin";
 import SectionForm from "./SectionsForm";
 import SectionList from "./SectionList";
-import { sectionService, type Section } from "@src/entities";
+import { sectionService, type SectionTypes } from "@src/entities";
 
 export default function SectionManagerPage() {
-    const [sections, setSections] = useState<Section[]>([]);
-    const [editingSection, setEditingSection] = useState<Section | null>(null);
+    const [sections, setSections] = useState<SectionTypes[]>([]);
+    const [editingSection, setEditingSection] = useState<SectionTypes | null>(null);
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
     const formRef = useRef<HTMLFormElement>(null);
     const fetchSections = async () => {

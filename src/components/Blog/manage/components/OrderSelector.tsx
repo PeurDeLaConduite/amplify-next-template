@@ -9,12 +9,7 @@ interface Props {
     onReorder: (currentIndex: number, newOrder: number) => void;
 }
 
-export default function OrderSelector({
-    sections,
-    currentIndex,
-    value,
-    onReorder,
-}: Props) {
+export default function OrderSelector({ sections, currentIndex, value, onReorder }: Props) {
     const max = currentIndex >= sections.length ? sections.length + 1 : sections.length;
     const options = Array.from({ length: Math.max(max, 1) }, (_, i) => ({
         value: String(i + 1),

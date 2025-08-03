@@ -1,14 +1,12 @@
-import { type ModelForm } from "@/src/utils/createModelForm";
-import { type Seo } from "@src/entities";
-export type SeoForm = ModelForm<"Seo">;
+import type { SeoType, SeoFormType } from "./types";
 
-export const initialSeoForm: SeoForm = {
+export const initialSeoForm: SeoFormType = {
     title: "",
     description: "",
     image: "",
 };
 
-export function toSeoForm(seo: Seo | null | undefined): SeoForm {
+export function toSeoForm(seo: SeoType | null | undefined): SeoFormType {
     return {
         title: seo?.title ?? "",
         description: seo?.description ?? "",

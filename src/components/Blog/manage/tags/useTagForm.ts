@@ -4,20 +4,20 @@ import {
     postService,
     tagService,
     postTagService,
-    type TagForm,
-    type Tag,
+    type TagFormType,
+    type TagType,
     type Post,
     type PostTag,
     initialTagForm,
 } from "@src/entities";
 
 export function useTagForm() {
-    const [tags, setTags] = useState<Tag[]>([]);
+    const [tags, setTags] = useState<TagType[]>([]);
     const [posts, setPosts] = useState<Post[]>([]);
     const [postTags, setPostTags] = useState<PostTag[]>([]);
     const [loading, setLoading] = useState(true);
 
-    const [form, setForm] = useState<TagForm>(initialTagForm);
+    const [form, setForm] = useState<TagFormType>(initialTagForm);
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
     const fetchAll = useCallback(async () => {

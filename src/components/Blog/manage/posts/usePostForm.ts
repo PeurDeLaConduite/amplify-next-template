@@ -10,10 +10,10 @@ import {
     authorService,
     type Post,
     type PostForm,
-    type Section,
-    type Tag,
-    type Author,
-    type SeoForm,
+    type SectionTypes,
+    type TagType,
+    type AuthorType,
+    type SeoFormType,
     initialPostForm,
     toPostForm,
     initialSeoForm,
@@ -21,11 +21,11 @@ import {
 
 export function usePostForm(post: Post | null, onSave: () => void) {
     const [form, setForm] = useState<PostForm>({ ...initialPostForm });
-    const [seo, setSeo] = useState<SeoForm>({ ...initialSeoForm });
+    const [seo, setSeo] = useState<SeoFormType>({ ...initialSeoForm });
 
-    const [authors, setAuthors] = useState<Author[]>([]);
-    const [tags, setTags] = useState<Tag[]>([]);
-    const [sections, setSections] = useState<Section[]>([]);
+    const [authors, setAuthors] = useState<AuthorType[]>([]);
+    const [tags, setTags] = useState<TagType[]>([]);
+    const [sections, setSections] = useState<SectionTypes[]>([]);
     const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
     const [selectedSectionIds, setSelectedSectionIds] = useState<string[]>([]);
     const [saving] = useState(false);
@@ -74,7 +74,7 @@ export function usePostForm(post: Post | null, onSave: () => void) {
     ) {
         const { name, value } = e.target;
         if (name.startsWith("seo.")) {
-            const key = name.split(".")[1] as keyof SeoForm;
+            const key = name.split(".")[1] as keyof SeoFormType;
             setSeo((s) => ({ ...s, [key]: value }));
             handleManualEdit(`seo.${key}`);
         } else if (name === "slug") {

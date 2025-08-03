@@ -34,7 +34,6 @@ export function EditButton({ onClick, label, className, color }: ButtonProps) {
             onClick={onClick}
             icon={<EditIcon fontSize="small" />}
             className={className}
-            
             variant="outlined"
             sx={getEditButtonStyles(color)}
         />

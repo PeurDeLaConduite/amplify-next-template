@@ -2,17 +2,17 @@ import { useState, useEffect, ChangeEvent } from "react";
 import {
     postService,
     sectionService,
-    SectionForm,
     sectionPostService,
     type Post,
-    type Section,
+    type SectionFormTypes,
+    type SectionTypes,
     initialSectionForm,
     toSectionForm,
 } from "@src/entities";
 import { useAutoGenFields, slugify } from "@/src/hooks/useAutoGenFields";
 
-export function useSectionForm(section: Section | null, onSave: () => void) {
-    const [form, setForm] = useState<SectionForm>(initialSectionForm);
+export function useSectionForm(section: SectionTypes | null, onSave: () => void) {
+    const [form, setForm] = useState<SectionFormTypes>(initialSectionForm);
     const [posts, setPosts] = useState<Post[]>([]);
     const [saving, setSaving] = useState(false);
 
@@ -55,7 +55,7 @@ export function useSectionForm(section: Section | null, onSave: () => void) {
         setPosts(data ?? []);
     }
 
-    async function loadSection(section: Section) {
+    async function loadSection(section: SectionTypes) {
         const postIds = await sectionPostService.listByParent(section.id);
         setForm(toSectionForm(section, postIds));
         // Ici tu pourrais aussi remettre à true tous les autoFlags si tu veux "réinitialiser" l'autogen à chaque changement de section.

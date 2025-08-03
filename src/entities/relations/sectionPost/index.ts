@@ -1,2 +1,2 @@
-export * from "./sectionPost";
+export * from "./types";
 export { sectionPostService } from "./service";

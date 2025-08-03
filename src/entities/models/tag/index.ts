@@ -1,3 +1,3 @@
-export * from "./tag";
+export * from "./types";
 export * from "./form";
 export { tagService } from "./service";

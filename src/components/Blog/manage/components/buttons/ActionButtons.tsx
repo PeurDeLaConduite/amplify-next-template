@@ -17,7 +17,7 @@ const ActionButtons = ({
     className = "",
 }: ActionButtonsProps) => {
     return (
-        <div className={className} style={{ display: "flex", gap: "0.5rem",  }}>
+        <div className={className} style={{ display: "flex", gap: "0.5rem" }}>
             {!isEditing && <EditButton onClick={onEdit} label="Modifier" />}
             {isEditing && (
                 <>

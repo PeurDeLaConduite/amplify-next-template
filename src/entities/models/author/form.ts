@@ -1,11 +1,9 @@
-import type { Author } from "./author";
-import { createModelForm, type ModelForm } from "@/src/utils/createModelForm";
-
-export type AuthorForm = ModelForm<"Author", "posts", "post">;
+import type { AuthorType, AuthorFormType } from "./types";
+import { createModelForm } from "@/src/utils/createModelForm";
 
 export const { initialForm: initialAuthorForm, toForm: toAuthorForm } = createModelForm<
-    Author,
-    AuthorForm,
+    AuthorType,
+    AuthorFormType,
     [string[]]
 >(
     {
