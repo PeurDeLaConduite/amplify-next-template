@@ -7,8 +7,14 @@ import EditSingleFieldUserName from "./EditSingleFieldUserName";
 import ReadOnlyUserNameView from "./ReadOnlyUserNameView";
 import ProfileForm from "./ProfileForm";
 
-import { createUserName, updateUserName, getUserName, type UserNameFormType } from "@src/entities";
-import { SingleFieldUserName, normalizeUserName, userNameLabel } from "./utilsProfile";
+import { createUserName, updateUserName, getUserName } from "@/src/services";
+// import { UserNameData, normalizeUserName, fieldLabel, type Profile } from "./utilsProfile";
+import {
+    UserNameData,
+    SingleFieldUserName,
+    normalizeUserName,
+    userNameLabel,
+} from "./utilsProfile";
 
 export default function UserNameManager() {
     /* ---------- hooks toujours dans le même ordre ---------- */
@@ -17,7 +23,7 @@ export default function UserNameManager() {
 
     const [current, setCurrent] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
-    const [formData, setFormData] = useState<UserNameFormType>(normalizeUserName);
+    const [formData, setFormData] = useState<UserNameData>(normalizeUserName);
     const [editModeField, setEditModeField] = useState<SingleFieldUserName | null>(null);
 
     /* ---------- charger le pseudo quand sub est connu ---------- */
@@ -66,7 +72,7 @@ export default function UserNameManager() {
             <h1 className="text-2xl font-bold text-center mb-6">Mon pseudo public</h1>
 
             {editModeField && (
-                <EditSingleFieldUserName<UserNameFormType>
+                <EditSingleFieldUserName<UserNameData>
                     editModeField={editModeField}
                     setEditModeField={setEditModeField}
                     saveSingleField={saveSingleField}
@@ -75,7 +81,7 @@ export default function UserNameManager() {
             )}
 
             {current === null && !editModeField && (
-                <ProfileForm<UserNameFormType>
+                <ProfileForm<UserNameData>
                     formData={formData}
                     fields={["userName"]}
                     label={userNameLabel}

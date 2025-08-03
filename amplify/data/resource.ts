@@ -66,8 +66,6 @@ const schema = a.schema({
             avatar: a.string(),
             posts: a.hasMany("Post", "authorId"),
             order: a.integer(),
-            createdAt: a.datetime(),
-            updatedAt: a.datetime(),
         })
         .authorization((allow) => [
             allow.publicApiKey().to(["read"]),

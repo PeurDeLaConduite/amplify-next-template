@@ -8,4 +8,3 @@ export {
     deleteUserProfile,
     observeUserProfile,
 } from "./userProfileService";
-export { createUserName, updateUserName, getUserName } from "./userNameService";

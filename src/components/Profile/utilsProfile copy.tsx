@@ -1,4 +1,3 @@
-import type { UserNameFormType } from "@src/entities";
 export type Profile = {
     firstName: string | null;
     familyName: string | null;
@@ -49,12 +48,12 @@ export const normalizeFormData = (data: Partial<MinimalProfile>) => ({
     country: data.country ?? "",
     phoneNumber: data.phoneNumber ?? "",
 });
-export type UserNameData = UserNameFormType;
+export type UserNameData = { userName: string };
 export type SingleFieldUserName = {
-    field: keyof UserNameFormType;
+    field: "userName";
     value: string;
 };
-export const normalizeUserName = (d: Partial<UserNameFormType> = {}): UserNameFormType => ({
+export const normalizeUserName = (d: Partial<UserNameData> = {}): UserNameData => ({
     userName: d.userName ?? "",
 });
 export const fieldLabel = (k: string) =>

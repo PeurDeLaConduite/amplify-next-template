@@ -29,7 +29,6 @@ const Header = () => {
                     <Link href="/createAuthor" className="text-gray-700 hover:text-blue-600">
                         Create Author
                     </Link>
-
                     <Link href="/createSection" className="text-gray-700 hover:text-blue-600">
                         Create Section
                     </Link>
