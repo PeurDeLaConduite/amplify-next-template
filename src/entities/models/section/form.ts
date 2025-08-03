@@ -1,7 +1,7 @@
 import type { ModelForm } from "@/src/utils/createModelForm";
 import { type SeoOmit, type Section, toSeoForm } from "@src/entities";
 import { createModelForm } from "@utils/createModelForm";
-import { initialSeoForm } from "@/src/entities/seo/form";
+import { initialSeoForm } from "@/src/entities/customTypes/seo/form";
 type PostCustomTypes = { seo: SeoOmit };
 
 export type SectionForm = ModelForm<"Section", "posts", "post", PostCustomTypes, "seo">;

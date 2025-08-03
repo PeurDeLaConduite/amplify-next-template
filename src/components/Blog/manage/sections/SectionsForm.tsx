@@ -6,7 +6,7 @@ import SeoFields from "../components/SeoFields";
 import OrderSelector from "../components/OrderSelector";
 import ItemSelector from "../components/ItemSelector";
 import { useSectionForm } from "./useSectionForm";
-import { type Section } from "@/src/entities/section";
+import { type Section } from "@/src/entities/models/section";
 
 interface Props {
     section: Section | null;
