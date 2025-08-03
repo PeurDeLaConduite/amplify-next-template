@@ -1,8 +1,9 @@
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 
 import { useAutoGenFields, slugify } from "@/src/hooks/useAutoGenFields";
-import { postTagService, sectionPostService } from "@/src/services";
 import {
+    postTagService,
+    sectionPostService,
     postService,
     sectionService,
     tagService,

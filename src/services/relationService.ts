@@ -35,7 +35,9 @@ export function relationService<
                 [childIdKey]: childId,
             } as Partial<CreateData<K>>);
         },
-
+        async list(args?: { filter?: Record<string, unknown> }) {
+            return model.list(args);
+        },
         async listByParent(parentId: string) {
             const { data } = await model.list({
                 filter: { [parentIdKey]: { eq: parentId } },

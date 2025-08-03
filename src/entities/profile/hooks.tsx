@@ -1,3 +1,4 @@
+// src/entities/profile/hooks.ts
 "use client";
 
 import { useEffect, useState } from "react";

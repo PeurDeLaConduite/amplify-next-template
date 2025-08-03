@@ -3,12 +3,12 @@ import {
     postService,
     sectionService,
     SectionForm,
+    sectionPostService,
     type Post,
     type Section,
     initialSectionForm,
     toSectionForm,
 } from "@src/entities";
-import { sectionPostService } from "@/src/services";
 import { useAutoGenFields, slugify } from "@/src/hooks/useAutoGenFields";
 
 export function useSectionForm(section: Section | null, onSave: () => void) {

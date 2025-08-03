@@ -1,9 +1,8 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import { client } from "@/src/services";
 import PostList from "./PostList";
 import PostForm from "./PostForm";
-import { type Post } from "@/src/entities/post";
+import { postService, type Post } from "@src/entities";
 import RequireAdmin from "../../../RequireAdmin";
 export default function PostManagerPage() {
     const [posts, setPosts] = useState<Post[]>([]);
@@ -12,7 +11,7 @@ export default function PostManagerPage() {
     const formRef = useRef<HTMLFormElement>(null);
 
     const fetchPosts = async () => {
-        const { data } = await client.models.Post.list();
+        const { data } = await postService.list();
         setPosts(data ?? []);
     };
 
@@ -29,7 +28,7 @@ export default function PostManagerPage() {
     const handleDelete = async (idx: number) => {
         if (!confirm("Supprimer ce post ?")) return;
         const id = posts[idx].id;
-        await client.models.Post.delete({ id });
+        await postService.delete({ id });
         await fetchPosts();
     };
 

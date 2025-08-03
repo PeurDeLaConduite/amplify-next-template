@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback, type ChangeEvent } from "react";
 
-import { crudService } from "@/src/services";
 import {
     postService,
     tagService,
@@ -26,7 +25,8 @@ export function useTagForm() {
         const [tagsData, postsData, postTagsData] = await Promise.all([
             tagService.list(),
             postService.list(),
-            crudService("PostTag").list(),
+            postTagService.list(),
+            // crudService("PostTag").list(),
         ]);
         setTags(tagsData.data ?? []);
         setPosts(postsData.data ?? []);

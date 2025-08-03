@@ -23,6 +23,7 @@
             "@hooks/*": ["src/hooks/*"],
             "@context/*": ["src/context/*"],
             "@utils/*": ["src/utils/*"],
+            "@services/*": ["src/services/*"],
             "@myTypes/*": ["src/types/*"],
             "@entities/*": ["src/entities/*"],
             "@public/*": ["public/*"]
@@ -42,7 +43,7 @@
         "public/**/*.json",
         ".next/types/**/*.ts",
         "src/components/Blog/manage/components/EditableField.tsx",
-        "src/hooks/useUserProfile.tsx",
+        "src/entities/profile/hooks.tsx",
         "src/components/Blog/manage/components/EditableField.tsx",
         "src/hooks/useEditableForm.js",
         "src/components/Blog/Create/components/ArticleEditForm.jsx",

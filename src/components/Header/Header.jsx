@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { useUserName } from "@/src/hooks/useUserName";
+import { useUserName } from "@src/entities";
 import { PowerButton } from "../buttons/Buttons";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 

@@ -27,7 +27,12 @@ function getModelClient<K extends ClientModelKey>(key: K): CrudModel<K> {
     return client.models[key] as unknown as CrudModel<K>;
 }
 
-// ✅ CRUD Service générique
+/**
+ * CRUD générique pour les *modèles* (❌ pas pour les customTypes).
+ *
+ * @param key Nom d’un modèle présent dans `client.models`.
+ *            Les customTypes n’y figurent pas, donc TypeScript refusera "Seo", "Address", etc.
+ */
 export function crudService<K extends ClientModelKey>(key: K) {
     const model = getModelClient(key);
     return {

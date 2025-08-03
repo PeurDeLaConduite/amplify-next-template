@@ -2,10 +2,9 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import RequireAdmin from "@/src/components/RequireAdmin";
-import { client } from "@/src/services";
 import SectionForm from "./SectionsForm";
 import SectionList from "./SectionList";
-import { type Section } from "@/src/entities/section";
+import { sectionService, type Section } from "@src/entities";
 
 export default function SectionManagerPage() {
     const [sections, setSections] = useState<Section[]>([]);
@@ -13,7 +12,7 @@ export default function SectionManagerPage() {
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
     const formRef = useRef<HTMLFormElement>(null);
     const fetchSections = async () => {
-        const { data } = await client.models.Section.list();
+        const { data } = await sectionService.list();
         setSections(data ?? []);
     };
 
@@ -29,7 +28,7 @@ export default function SectionManagerPage() {
     const handleDelete = async (idx: number) => {
         if (!confirm("Supprimer cette section ?")) return;
         const id = sections[idx].id;
-        await client.models.Section.delete({ id });
+        await sectionService.delete({ id });
         await fetchSections();
     };
 
