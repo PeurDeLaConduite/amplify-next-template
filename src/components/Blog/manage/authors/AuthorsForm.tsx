@@ -1,24 +1,33 @@
-"use client";
-
 import React from "react";
 import EditableField from "../components/EditableField";
 import EditableTextArea from "../components/EditableTextArea";
 import FormActionButtons from "../components/FormActionButtons";
 import { useAuthorForm } from "./useAuthorForm";
-import { type AuthorType  } from "@src/entities";
 
 interface Props {
-    authors: AuthorType [];
     setMessage: (msg: string) => void;
 }
 
-export default function AuthorsForm({ authors, setMessage }: Props) {
-    const { form, editingIndex, handleChange, handleEdit, handleCancel, handleSave, handleDelete } =
-        useAuthorForm(authors, setMessage);
+export default function AuthorsForm({ setMessage }: Props) {
+    const {
+        authors,
+        form,
+        editingIndex,
+        loading,
+        handleFormChange,
+        handleEdit,
+        handleCancel,
+        handleSave,
+        handleDelete,
+    } = useAuthorForm(setMessage);
 
     return (
         <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-4 border-b">Liste d&apos;auteurs</h2>
+            <h2 className="text-xl font-semibold mb-4 border-b">
+                {loading && <span className=" ml-2 animate-pulse">Actualisation…</span>}
+                Liste d&apos;auteurs
+            </h2>
+
             <ul className="mt-4 space-y-2">
                 {authors.map((author, idx) => {
                     const active = editingIndex === idx;
@@ -51,28 +60,28 @@ export default function AuthorsForm({ authors, setMessage }: Props) {
                     name="name"
                     label="Nom"
                     value={form.name ?? ""}
-                    onChange={handleChange}
+                    onChange={handleFormChange}
                     readOnly={false}
                 />
                 <EditableField
                     name="avatar"
                     label="URL de l'avatar"
                     value={form.avatar ?? ""}
-                    onChange={handleChange}
+                    onChange={handleFormChange}
                     readOnly={false}
                 />
                 <EditableTextArea
                     name="bio"
                     label="Bio"
                     value={form.bio ?? ""}
-                    onChange={handleChange}
+                    onChange={handleFormChange}
                     readOnly={false}
                 />
                 <EditableField
                     name="email"
                     label="Email"
                     value={form.email ?? ""}
-                    onChange={handleChange}
+                    onChange={handleFormChange}
                     readOnly={false}
                 />
                 {editingIndex === null && (

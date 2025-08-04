@@ -7,4 +7,3 @@ export * from "./models/author";
 export * from "./customTypes/seo";
 export * from "./models/userName";
 export * from "./models/userProfile";
-export { createUserName, updateUserName, getUserName } from "./models/userName/service";

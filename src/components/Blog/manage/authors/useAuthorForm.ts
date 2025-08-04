@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent } from "react";
+import { useState, useEffect, type ChangeEvent } from "react";
 import {
     authorService,
     type AuthorType,
@@ -7,19 +7,33 @@ import {
     toAuthorForm,
 } from "@src/entities";
 
-export function useAuthorForm(authors: AuthorType[], setMessage: (msg: string) => void) {
+export function useAuthorForm(setMessage: (msg: string) => void) {
+    const [authors, setAuthors] = useState<AuthorType[]>([]);
     const [form, setForm] = useState<AuthorFormType>({ ...initialAuthorForm });
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
+    const [loading, setLoading] = useState(true);
 
-    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    // -------- Chargement initial --------
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    const fetchData = async () => {
+        setLoading(true);
+        const { data } = await authorService.list();
+        setAuthors(data ?? []);
+        setLoading(false);
+    };
+
+    // --------- Handlers ---------
+    const handleFormChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setForm((f) => ({ ...f, [name]: value }));
     };
 
     const handleEdit = (idx: number) => {
         setEditingIndex(idx);
-        const a = authors[idx];
-        setForm(toAuthorForm(a, []));
+        setForm(toAuthorForm(authors[idx], []));
     };
 
     const handleCancel = () => {
@@ -39,6 +53,7 @@ export function useAuthorForm(authors: AuthorType[], setMessage: (msg: string) =
                 await authorService.update({ id: authors[editingIndex].id, ...authorInput });
                 setMessage("Auteur mis à jour !");
             }
+            await fetchData(); // Refresh list after change
             handleCancel();
         } catch (err) {
             const msg = err instanceof Error ? err.message : String(err);
@@ -52,11 +67,23 @@ export function useAuthorForm(authors: AuthorType[], setMessage: (msg: string) =
         try {
             await authorService.delete({ id: authors[idx].id });
             setMessage("Auteur supprimé !");
+            await fetchData(); // Refresh après suppression
         } catch (err) {
             const msg = err instanceof Error ? err.message : String(err);
             setMessage(`Erreur : ${msg}`);
         }
     };
 
-    return { form, editingIndex, handleChange, handleEdit, handleCancel, handleSave, handleDelete };
+    return {
+        authors,
+        form,
+        editingIndex,
+        loading,
+        handleFormChange,
+        handleEdit,
+        handleCancel,
+        handleSave,
+        handleDelete,
+        fetchData, 
+    };
 }

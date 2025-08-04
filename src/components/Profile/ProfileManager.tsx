@@ -4,18 +4,18 @@ import { useState, useEffect } from "react";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 
+import type { Schema } from "@/amplify/data/resource";
 import EditSingleField from "./EditSingleField";
 import ReadOnlyProfileView from "./ReadOnlyProfileView";
 import ProfileForm from "./ProfileForm";
 import { label as fieldLabel, normalizeFormData, MinimalProfile } from "./utilsProfile";
 import { DeleteButton } from "@/src/components/buttons/Buttons";
 import {
-    type UserProfileType,
     createUserProfile,
     updateUserProfile,
     deleteUserProfile,
     observeUserProfile,
-} from "@src/entities";
+} from "@/src/services";
 
 /**
  * Gestion du profil utilisateur (UserProfile uniquement)
@@ -23,7 +23,7 @@ import {
  */
 export default function ProfileManager() {
     const { user } = useAuthenticator();
-    const [profile, setProfile] = useState<UserProfileType | null>(null);
+    const [profile, setProfile] = useState<Schema["UserProfile"]["type"] | null>(null);
     const [formData, setFormData] = useState<MinimalProfile>(() => normalizeFormData({}));
     const [editMode, setEditMode] = useState(false);
     const [editModeField, setEditModeField] = useState<{
@@ -197,7 +197,6 @@ export default function ProfileManager() {
                             phoneNumber: profile?.phoneNumber ?? "",
                         });
                     }}
-                    requiredFields={["firstName", "familyName"]}
                 />
             )}
 

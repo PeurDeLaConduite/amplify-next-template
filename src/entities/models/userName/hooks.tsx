@@ -3,11 +3,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useAuthenticator } from "@aws-amplify/ui-react";
-import {
-    getUserName,
-    updateUserName as updateUserNameService,
-    createUserName as createUserNameService,
-} from "@services/userNameService";
+import { client } from "@/src/services";
 
 export function useUserName() {
     const { user } = useAuthenticator();
@@ -25,8 +21,8 @@ export function useUserName() {
 
         const fetchUserName = async () => {
             try {
-                const name = await getUserName(sub);
-                setUserName(name ?? "");
+                const { data } = await client.models.UserName.get({ id: sub });
+                setUserName(data?.userName ?? "");
             } catch {
                 // si erreur (not found…), on considère qu'il n'y a pas encore de pseudo
                 setUserName("");
@@ -46,7 +42,11 @@ export function useUserName() {
 
             try {
                 // on tente la mise à jour
-                await updateUserNameService(sub, newUserName);
+                await client.models.UserName.update({
+                    id: sub,
+                    userName: newUserName,
+                    owner: sub,
+                });
                 setUserName(newUserName);
             } catch (err: unknown) {
                 const error = err as {
@@ -60,7 +60,11 @@ export function useUserName() {
 
                 if (notFound) {
                     // si n'existe pas, on crée
-                    await createUserNameService(sub, newUserName);
+                    await client.models.UserName.create({
+                        id: sub,
+                        userName: newUserName,
+                        owner: sub,
+                    });
                     setUserName(newUserName);
                 } else {
                     throw err;
