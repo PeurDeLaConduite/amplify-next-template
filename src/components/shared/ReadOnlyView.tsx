@@ -1,28 +1,29 @@
 import React from "react";
 import { EditButton, DeleteButton } from "@/src/components/buttons/Buttons";
+import { type FieldKey } from "@/src/hooks/useEntityManager";
 
-export type ReadOnlyViewProps<T> = {
+export type ReadOnlyViewProps<T extends Record<string, string>> = {
     /** Données partiellement définies */
     data: Partial<T>;
     /** Champs à afficher */
-    fields: (keyof T)[];
+    fields: FieldKey<T>[];
     /** Libellé affiché pour chaque champ */
-    label: (field: keyof T) => string;
+    label: (field: FieldKey<T>) => string;
     /** Callback sur le bouton d'édition */
-    onEditField: (edit: { field: keyof T; value: string }) => void;
+    onEditField: (edit: { field: FieldKey<T>; value: string }) => void;
     /** Callback sur le bouton de suppression */
-    onClearField?: (field: keyof T) => void;
+    onClearField?: (field: FieldKey<T>) => void;
     /** Titre de la section */
     title?: string;
     /** Permet d'injecter des icônes spécifiques */
-    renderIcon?: (field: keyof T) => React.ReactNode;
+    renderIcon?: (field: FieldKey<T>) => React.ReactNode;
     /** Permet d'injecter des boutons supplémentaires */
-    extraButtons?: (field: keyof T, value: string) => React.ReactNode;
+    extraButtons?: (field: FieldKey<T>, value: string) => React.ReactNode;
     /** Rendu personnalisé de la valeur */
-    renderValue?: (field: keyof T, value: string) => React.ReactNode;
+    renderValue?: (field: FieldKey<T>, value: string) => React.ReactNode;
 };
 
-export default function ReadOnlyView<T>({
+export default function ReadOnlyView<T extends Record<string, string>>({
     data,
     fields,
     label,

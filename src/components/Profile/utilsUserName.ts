@@ -1,9 +1,9 @@
-export type UserNameData = { userName: string };
+export type MinimalUserName = { userName: string; id?: string };
 export type SingleFieldUserName = {
     field: "userName";
     value: string;
 };
-export const normalizeUserName = (d: Partial<UserNameData> = {}): UserNameData => ({
+export const normalizeUserName = (d: Partial<MinimalUserName> = {}): MinimalUserName => ({
     userName: d.userName ?? "",
 });
 export const fieldLabel = (k: string) =>

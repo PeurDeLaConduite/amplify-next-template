@@ -2,16 +2,17 @@
 "use client";
 import React, { type ChangeEvent, FormEvent } from "react";
 import { SaveButton, AddButton, CancelButton } from "../buttons/Buttons";
+import { type FieldKey } from "@/src/hooks/useEntityManager";
 
 type Props<T extends Record<string, string>> = {
     formData: Partial<T>;
-    fields: (keyof T)[];
-    label: (field: keyof T) => string;
+    fields: FieldKey<T>[];
+    label: (field: FieldKey<T>) => string;
     handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
     handleSubmit: () => void;
     isEdit: boolean;
     onCancel: () => void;
-    requiredFields: (keyof T)[];
+    requiredFields: FieldKey<T>[];
 };
 
 export default function EntityForm<T extends Record<string, string>>({

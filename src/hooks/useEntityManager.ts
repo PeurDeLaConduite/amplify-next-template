@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 export type FieldKey<T> = keyof T & string;
 
-interface UseEntityManagerProps<T extends Record<string, string>> {
+export interface UseEntityManagerOptions<T extends Record<string, string>> {
     fetch: (setData: (entity: (T & { id?: string }) | null) => void) => void | (() => void);
     create: (data: T) => Promise<void>;
     update: (entity: (T & { id?: string }) | null, data: Record<string, string>) => Promise<void>;
@@ -20,7 +20,7 @@ export default function useEntityManager<T extends Record<string, string>>({
     labels,
     fields,
     initialData,
-}: UseEntityManagerProps<T>) {
+}: UseEntityManagerOptions<T>) {
     const [entity, setEntity] = useState<(T & { id?: string }) | null>(null);
     const [formData, setFormData] = useState<T>(initialData);
     const [editMode, setEditMode] = useState(false);
