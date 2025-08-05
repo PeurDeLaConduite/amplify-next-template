@@ -1,8 +1,6 @@
 import {
     type UserNameType,
     type UserNameTypeUpdateInput,
-    // type UserNameFormType,
-    // type UserNameTypeOmit,
 } from "@src/entities";
 import { createModelForm } from "@utils/createModelForm";
 

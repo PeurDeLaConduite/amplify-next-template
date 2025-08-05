@@ -1,106 +1,99 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Authenticator, useAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 
-import EditSingleFieldUserName from "./EditSingleFieldUserName";
-import ReadOnlyUserNameView from "./ReadOnlyUserNameView";
+import EditField from "./EditField";
+import ReadOnlyView from "./ReadOnlyView";
 import ProfileForm from "./ProfileForm";
 
 import { createUserName, updateUserName, getUserName } from "@/src/services";
-// import { UserNameData, normalizeUserName, fieldLabel, type Profile } from "./utilsProfile";
-import {
-    UserNameData,
-    SingleFieldUserName,
-    normalizeUserName,
-    userNameLabel,
-} from "./utilsProfile";
 
+import PersonIcon from "@mui/icons-material/Person";
+import useEntityManager from "./useEntityManager";
+import { UserNameData, normalizeUserName, fieldLabel } from "./utilsUserName";
 export default function UserNameManager() {
     /* ---------- hooks toujours dans le même ordre ---------- */
     const { user } = useAuthenticator();
-    const sub = user?.username ?? null; // string | null
+    const sub = user?.username ?? null;
+    const [loading, setLoading] = useState(true);
+    const {
+        entity,
+        formData,
+        setFormData,
+        editModeField,
+        setEditModeField,
+        handleChange,
+        save,
+        saveField,
+        labels,
+        fields,
+    } = useEntityManager<UserNameData>({
+        fields: ["userName"],
+        labels: fieldLabel,
+        initialData: normalizeUserName(),
+        fetch: (setData) => {
+            if (!sub) {
+                setLoading(false);
+                return;
+            }
+            void getUserName(sub)
+                .then((name) => {
+                    setData(name ? { userName: name } : null);
+                })
+                .finally(() => setLoading(false));
+        },
+        create: async (data) => {
+            if (!sub) return;
+            await createUserName(sub, data.userName);
+        },
+        update: async (_entity, data) => {
+            if (!sub) return;
+            await updateUserName(sub, data.userName ?? "");
+        },
+        remove: async () => {
+            if (!sub) return;
+            await updateUserName(sub, "");
+        },
+    });
 
-    const [current, setCurrent] = useState<string | null>(null);
-    const [loading, setLoading] = useState(false);
-    const [formData, setFormData] = useState<UserNameData>(normalizeUserName);
-    const [editModeField, setEditModeField] = useState<SingleFieldUserName | null>(null);
-
-    /* ---------- charger le pseudo quand sub est connu ---------- */
-    useEffect(() => {
-        if (!sub) return; // pas encore authentifié
-        setLoading(true);
-        getUserName(sub)
-            .then((name) => {
-                setCurrent(name);
-                setFormData({ userName: name ?? "" });
-            })
-            .finally(() => setLoading(false));
-    }, [sub]);
-
-    /* ---------- handlers ---------- */
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-        setFormData({ userName: e.target.value });
-
-    const saveUserName = async (name: string) => {
-        if (!sub) return; // sécurité
-        if (current === null) {
-            await createUserName(sub, name);
-        } else {
-            await updateUserName(sub, name);
-        }
-        setCurrent(name);
-    };
-
-    const saveProfileForm = () => {
-        const name = formData.userName.trim();
-        if (name) void saveUserName(name);
-    };
-
-    const saveSingleField = async () => {
-        if (!editModeField) return;
-        const name = editModeField.value.trim();
-        if (name) await saveUserName(name);
-        setEditModeField(null);
-    };
-
-    /* ---------- rendu ---------- */
-    if (!user) return <Authenticator />; // rendu possible après les hooks
+    if (!user) return <Authenticator />;
 
     return (
         <section className="w-full max-w-md mx-auto px-4 py-6 bg-white shadow rounded-lg mb-8">
             <h1 className="text-2xl font-bold text-center mb-6">Mon pseudo public</h1>
 
             {editModeField && (
-                <EditSingleFieldUserName<UserNameData>
+                <EditField<UserNameData>
                     editModeField={editModeField}
                     setEditModeField={setEditModeField}
-                    saveSingleField={saveSingleField}
-                    label={userNameLabel}
+                    saveSingleField={saveField}
+                    label={labels}
                 />
             )}
 
-            {current === null && !editModeField && (
+            {entity === null && !editModeField && (
                 <ProfileForm<UserNameData>
                     formData={formData}
-                    fields={["userName"]}
-                    label={userNameLabel}
+                    fields={fields}
+                    label={labels}
                     handleChange={handleChange}
-                    handleSubmit={saveProfileForm}
+                    handleSubmit={save}
                     isEdit={false}
-                    onCancel={() => setFormData({ userName: "" })}
+                    onCancel={() => setFormData(normalizeUserName())}
                 />
             )}
 
-            {current !== null && !editModeField && (
-                <ReadOnlyUserNameView
+            {entity !== null && !editModeField && (
+                <ReadOnlyView<UserNameData>
                     title="Mon pseudo public"
-                    fields={["userName"]}
-                    profile={{ userName: current }}
-                    label={userNameLabel}
+                    fields={fields}
+                    data={formData}
+                    label={labels}
                     onEditField={() =>
-                        setEditModeField({ field: "userName", value: current ?? "" })
+                        setEditModeField({ field: "userName", value: formData.userName })
                     }
+                    renderIcon={() => <PersonIcon fontSize="small" className="text-gray-800" />}
                 />
             )}
 

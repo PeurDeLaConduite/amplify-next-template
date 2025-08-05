@@ -1,36 +1,42 @@
 import { SaveButton, BackButton } from "@/src/components/buttons/Buttons";
 import React from "react";
-import type { Profile } from "./utilsProfile";
 
-type Props<K extends keyof Profile = keyof Profile> = {
-    editModeField: { field: K; value: string };
-    setEditModeField: React.Dispatch<React.SetStateAction<{ field: K; value: string } | null>>;
+export type EditFieldProps<T extends Record<string, string>> = {
+    editModeField: { field: keyof T; value: T[keyof T] };
+    setEditModeField: React.Dispatch<
+        React.SetStateAction<{ field: keyof T; value: T[keyof T] } | null>
+    >;
     saveSingleField: () => void;
-    label: (field: K) => string;
+    label: (field: keyof T) => string;
 };
-export default function EditSingleField({
+
+export default function EditField<T extends Record<string, string>>({
     editModeField,
     setEditModeField,
     saveSingleField,
     label,
-}: Props) {
+}: EditFieldProps<T>) {
+    const { field, value } = editModeField;
+
     return (
         <fieldset className="my-6 p-4 border rounded-md bg-white shadow-sm max-w-md mx-auto">
-            <legend className="font-semibold text-lg mb-4 block">
-                Modifier mon {label(editModeField.field).toLowerCase()} :
+            <legend className="font-semibold text-lg mb-4">
+                Modifier mon {label(field).toLowerCase()} :
             </legend>
 
             <label htmlFor="edit-field" className="sr-only">
-                {label(editModeField.field)}
+                {label(field)}
             </label>
             <input
                 id="edit-field"
                 className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-                value={editModeField.value}
-                placeholder={label(editModeField.field)}
-                title={label(editModeField.field)}
+                value={value}
+                placeholder={label(field)}
+                title={label(field)}
                 onChange={(e) =>
-                    setEditModeField((prev) => (prev ? { ...prev, value: e.target.value } : null))
+                    setEditModeField((prev) =>
+                        prev ? { ...prev, value: e.target.value as T[keyof T] } : null
+                    )
                 }
             />
 
