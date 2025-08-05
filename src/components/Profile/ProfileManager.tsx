@@ -5,7 +5,7 @@ import "@aws-amplify/ui-react/styles.css";
 import useEntityManager from "./useEntityManager";
 import EditField from "./EditField";
 import ReadOnlyView from "./ReadOnlyView";
-import ProfileForm from "./ProfileForm";
+import EntityForm from "../shared/EntityForm";
 import { label as fieldLabel, normalizeFormData, MinimalProfile } from "./utilsProfile";
 import { DeleteButton } from "@/src/components/buttons/Buttons";
 import PhoneIcon from "@mui/icons-material/Phone";
@@ -163,7 +163,7 @@ export default function ProfileManager() {
             )}
 
             {(editMode || !entity) && !editModeField && (
-                <ProfileForm
+                <EntityForm
                     formData={formData}
                     fields={fields}
                     label={labels}
@@ -180,6 +180,7 @@ export default function ProfileManager() {
                             setFormData(reset);
                         }
                     }}
+                    requiredFields={["firstName", "familyName"]}
                 />
             )}
 

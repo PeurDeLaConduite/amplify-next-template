@@ -5,7 +5,7 @@ import "@aws-amplify/ui-react/styles.css";
 
 import EditField from "./EditField";
 import ReadOnlyView from "./ReadOnlyView";
-import ProfileForm from "./ProfileForm";
+import EntityForm from "../shared/EntityForm";
 
 import { createUserName, updateUserName, getUserName } from "@/src/services";
 
@@ -73,7 +73,7 @@ export default function UserNameManager() {
             )}
 
             {entity === null && !editModeField && (
-                <ProfileForm<UserNameData>
+                <EntityForm<UserNameData>
                     formData={formData}
                     fields={fields}
                     label={labels}
@@ -81,6 +81,7 @@ export default function UserNameManager() {
                     handleSubmit={save}
                     isEdit={false}
                     onCancel={() => setFormData(normalizeUserName())}
+                    requiredFields={["userName"]}
                 />
             )}
 
