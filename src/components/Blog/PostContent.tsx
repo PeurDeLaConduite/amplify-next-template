@@ -13,7 +13,7 @@ const PostContent: React.FC<PostContentProps> = ({ post, author }) => (
     <article className="mx-auto max-w-3xl py-8">
         <h1 className="text-4xl font-bold mb-2">{post.title}</h1>
         <div className="text-sm text-gray-500 mb-6">
-            Par {author.name} ·{" "}
+            Par {author.authorName} ·{" "}
             {new Date(post.createdAt).toLocaleDateString("fr-FR", {
                 year: "numeric",
                 month: "long",

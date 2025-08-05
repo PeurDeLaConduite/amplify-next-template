@@ -1,6 +1,6 @@
 export interface Author {
     authorJsonId: string;
-    name: string;
+    authorName: string;
     avatar: string;
 }
 

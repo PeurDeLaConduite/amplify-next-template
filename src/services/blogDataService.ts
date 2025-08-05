@@ -88,7 +88,7 @@ export async function fetchBlogData(): Promise<BlogData> {
 
     const authors: Author[] = authorsRes.data.map((a) => ({
         authorJsonId: a.id,
-        name: a.name ?? "",
+        authorName: a.authorName ?? "",
         avatar: a.avatar ?? "",
     }));
 

@@ -18,7 +18,7 @@ export default function BlogCard({ post, author }: Props) {
                 </h3>
                 <p className="text-gray-700 mb-2">{post.excerpt}</p>
                 <div className="text-sm text-gray-500">
-                    Par {author.name} ·{" "}
+                    Par {author.authorName} ·{" "}
                     {new Date(post.createdAt).toLocaleDateString("fr-FR", {
                         year: "numeric",
                         month: "long",
