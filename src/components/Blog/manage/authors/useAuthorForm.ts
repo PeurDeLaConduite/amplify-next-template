@@ -42,7 +42,7 @@ export function useAuthorForm(setMessage: (msg: string) => void) {
     };
 
     const handleSave = async () => {
-        if (!form.name) return;
+        if (!form.authorName) return;
         try {
             const { postIds, ...authorInput } = form;
             void postIds;

@@ -39,7 +39,7 @@ export default function AuthorsForm({ setMessage }: Props) {
                             }`}
                         >
                             <div>
-                                <strong>{author.name}</strong> — {author.email}
+                                <strong>{author.authorName}</strong> — {author.email}
                             </div>
                             <FormActionButtons
                                 editingIndex={editingIndex}
@@ -57,9 +57,9 @@ export default function AuthorsForm({ setMessage }: Props) {
             <h2 className="text-xl font-semibold mb-4 mt-8 border-b">Nouvel auteur</h2>
             <form onSubmit={(e) => e.preventDefault()} className="grid gap-2">
                 <EditableField
-                    name="name"
+                    name="authorName"
                     label="Nom"
-                    value={form.name ?? ""}
+                    value={form.authorName ?? ""}
                     onChange={handleFormChange}
                     readOnly={false}
                 />

@@ -7,14 +7,14 @@ export const { initialForm: initialAuthorForm, toForm: toAuthorForm } = createMo
     [string[]]
 >(
     {
-        name: "",
+        authorName: "",
         avatar: "",
         bio: "",
         email: "",
         postIds: [],
     },
     (author, postIds: string[] = []) => ({
-        name: author.name ?? "",
+        authorName: author.authorName ?? "",
         avatar: author.avatar ?? "",
         bio: author.bio ?? "",
         email: author.email ?? "",

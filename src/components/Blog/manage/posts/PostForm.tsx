@@ -104,7 +104,7 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
                 onChange={handlePostChange}
                 options={[
                     { value: "", label: "Sélectionner un auteur" },
-                    ...authors.map((a) => ({ value: a.id, label: a.name })),
+                    ...authors.map((a) => ({ value: a.id, label: a.authorName })),
                 ]}
             />
             <OrderSelector

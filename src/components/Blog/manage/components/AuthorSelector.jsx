@@ -22,7 +22,7 @@ export default function AuthorSelector({ authors, selectedId, onChange }) {
                             className="mr-2"
                         />
                         <span>
-                            {a.id} – {a.name}
+                            {a.id} – {a.authorName}
                         </span>
                     </div>
                 ))}

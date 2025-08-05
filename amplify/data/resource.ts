@@ -60,7 +60,7 @@ const schema = a.schema({
     Author: a
         .model({
             id: a.id().required(),
-            name: a.string().required(),
+            authorName: a.string().required(),
             bio: a.string(),
             email: a.string(),
             avatar: a.string(),
