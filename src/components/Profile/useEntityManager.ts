@@ -5,7 +5,7 @@ export type FieldKey<T> = keyof T & string;
 interface UseEntityManagerProps<T extends Record<string, string>> {
     fetch: (setData: (entity: (T & { id?: string }) | null) => void) => void | (() => void);
     create: (data: T) => Promise<void>;
-    update: (entity: (T & { id?: string }) | null, data: Partial<T>) => Promise<void>;
+    update: (entity: (T & { id?: string }) | null, data: Record<string, string>) => Promise<void>;
     remove: (entity: (T & { id?: string }) | null) => Promise<void>;
     labels: (field: FieldKey<T>) => string;
     fields: FieldKey<T>[];
@@ -61,13 +61,13 @@ export default function useEntityManager<T extends Record<string, string>>({
     const saveField = async () => {
         if (!editModeField) return;
         const { field, value } = editModeField;
-        await update(entity, { [field]: value } as Partial<T>);
+        await update(entity, { [field]: value });
         setFormData((f) => ({ ...f, [field]: value }));
         setEditModeField(null);
     };
 
     const clearField = async (field: FieldKey<T>) => {
-        await update(entity, { [field]: "" } as Partial<T>);
+        await update(entity, { [field]: "" });
         setFormData((f) => ({ ...f, [field]: "" }));
     };
 

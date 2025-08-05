@@ -2,9 +2,9 @@ import { SaveButton, BackButton } from "@/src/components/buttons/Buttons";
 import React from "react";
 
 export type EditFieldProps<T extends Record<string, string>> = {
-    editModeField: { field: keyof T; value: T[keyof T] };
+    editModeField: { field: keyof T; value: string };
     setEditModeField: React.Dispatch<
-        React.SetStateAction<{ field: keyof T; value: T[keyof T] } | null>
+        React.SetStateAction<{ field: keyof T; value: string } | null>
     >;
     saveSingleField: () => void;
     label: (field: keyof T) => string;
@@ -34,9 +34,7 @@ export default function EditField<T extends Record<string, string>>({
                 placeholder={label(field)}
                 title={label(field)}
                 onChange={(e) =>
-                    setEditModeField((prev) =>
-                        prev ? { ...prev, value: e.target.value as T[keyof T] } : null
-                    )
+                    setEditModeField((prev) => (prev ? { ...prev, value: e.target.value } : null))
                 }
             />
 
