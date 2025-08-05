@@ -470,8 +470,8 @@
                             "isRequired": true,
                             "attributes": []
                         },
-                        "name": {
-                            "name": "name",
+                        "authorName": {
+                            "name": "authorName",
                             "isArray": false,
                             "type": "String",
                             "isRequired": true,
@@ -524,14 +524,16 @@
                             "isArray": false,
                             "type": "AWSDateTime",
                             "isRequired": false,
-                            "attributes": []
+                            "attributes": [],
+                            "isReadOnly": true
                         },
                         "updatedAt": {
                             "name": "updatedAt",
                             "isArray": false,
                             "type": "AWSDateTime",
                             "isRequired": false,
-                            "attributes": []
+                            "attributes": [],
+                            "isReadOnly": true
                         }
                     },
                     "syncable": true,
