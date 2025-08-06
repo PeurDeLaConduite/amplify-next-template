@@ -41,9 +41,10 @@ export async function getUserName(sub: string) {
  * @param onChange Callback appelé à chaque changement
  */
 export function observeUserName(sub: string, onChange: (item: UserNameType | null) => void) {
-    return client.models.UserName.observeQuery({ id: sub }).subscribe({
-        next: ({ data }) => {
-            onChange((data as UserNameType) ?? null);
+    return client.models.UserName.observeQuery({}).subscribe({
+        next: ({ items }) => {
+            const item = items.find((u) => u.id === sub) ?? null;
+            onChange(item as UserNameType | null);
         },
         error: console.error,
     });

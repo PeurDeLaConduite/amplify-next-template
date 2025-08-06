@@ -8,7 +8,7 @@ import { MinimalUserName as UserNameData, normalizeUserName, fieldLabel } from "
 
 export default function UserNameManager() {
     const { user } = useAuthenticator();
-    const sub = user?.username ?? null;
+    const sub = user?.userId ?? user?.username;
     if (!user) return <Authenticator />;
 
     return (
