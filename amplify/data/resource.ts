@@ -41,7 +41,7 @@ const schema = a.schema({
         })
         .authorization((allow) => [
             allow.publicApiKey().to(["read"]), // lecture publique
-            allow.authenticated().to(["create", "read"]), // create/read pour tout user logué
+            allow.authenticated().to(["create", "read", "delete"]), // create/read pour tout user logué
             allow.owner().to(["read", "update", "delete"]), // propriétaire peut maj/suppr
         ]),
 

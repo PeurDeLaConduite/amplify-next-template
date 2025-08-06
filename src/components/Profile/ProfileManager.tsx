@@ -58,6 +58,24 @@ export default function ProfileManager() {
         );
     };
 
+    // Fonction fetch unique, lecture profil via .get
+    const fetchProfile = async () => {
+        if (!sub) return null;
+        const item = await getUserProfile(sub);
+        if (!item) return null;
+        const data: MinimalProfile & { id?: string } = {
+            id: item.id,
+            firstName: item.firstName ?? "",
+            familyName: item.familyName ?? "",
+            address: item.address ?? "",
+            postalCode: item.postalCode ?? "",
+            city: item.city ?? "",
+            country: item.country ?? "",
+            phoneNumber: item.phoneNumber ?? "",
+        };
+        return data;
+    };
+
     return (
         <EntitySection<MinimalProfile>
             title="Mon profil"
@@ -72,22 +90,7 @@ export default function ProfileManager() {
             ]}
             labels={fieldLabel}
             initialData={normalizeFormData({})}
-            fetch={async () => {
-                if (!sub) return null;
-                const item = await getUserProfile(sub);
-                if (!item) return null;
-                const data: MinimalProfile & { id?: string } = {
-                    id: item.id,
-                    firstName: item.firstName ?? "",
-                    familyName: item.familyName ?? "",
-                    address: item.address ?? "",
-                    postalCode: item.postalCode ?? "",
-                    city: item.city ?? "",
-                    country: item.country ?? "",
-                    phoneNumber: item.phoneNumber ?? "",
-                };
-                return data;
-            }}
+            fetch={fetchProfile} // <= pattern fetchData via .get
             create={async (data) => {
                 if (!sub) throw new Error("sub manquant");
                 await createUserProfile(sub, data);

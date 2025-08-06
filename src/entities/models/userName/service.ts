@@ -33,8 +33,12 @@ export async function updateUserName(sub: string, name: string) {
  */
 export async function getUserName(sub: string) {
     const { data } = await client.models.UserName.get({ id: sub });
-    return data?.userName ?? null;
+    return data ?? null;
 }
+export async function deleteUserName(sub: string) {
+    return client.models.UserName.delete({ id: sub });
+}
+
 /**
  * Observe en temps réel le pseudo utilisateur
  * @param sub Sub Cognito
@@ -55,4 +59,5 @@ export const userNameService = {
     update: updateUserName,
     get: getUserName,
     observe: observeUserName,
+    delete: deleteUserName,
 };

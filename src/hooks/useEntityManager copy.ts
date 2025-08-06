@@ -76,10 +76,8 @@ export default function useEntityManager<T extends Record<string, string>>({
         try {
             if (entity) {
                 await update(entity, formData);
-                await fetchData();
             } else {
                 await create(formData);
-                await fetchData();
             }
 
             // Optionnel : refresh après save si besoin
