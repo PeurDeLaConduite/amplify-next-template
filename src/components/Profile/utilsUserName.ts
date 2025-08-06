@@ -1,4 +1,4 @@
-export type MinimalUserName = { userName: string; id: string; owner: string };
+export type MinimalUserName = { userName: string };
 
 export type SingleFieldUserName = {
     field: keyof MinimalUserName;

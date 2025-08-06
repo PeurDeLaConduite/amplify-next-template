@@ -16,9 +16,7 @@ export default function UserNameManager() {
         const item = await getUserName(sub);
         if (!item) return null;
         const data: MinimalUserName & { id?: string } = {
-            id: item.id ?? "",
             userName: item.userName ?? "",
-            owner: item.owner ?? "",
         };
         return data;
     };

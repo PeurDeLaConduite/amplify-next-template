@@ -49,11 +49,11 @@ export default function useEntityManager<T extends Record<string, string>>({
             setLoading(false);
             setEditMode(false);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [fetch, editMode, fields, formData]);
 
     // Chargement initial (et possible refresh)
     useEffect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         let cancelled = false;
         async function load() {
             await fetchData();
@@ -62,7 +62,6 @@ export default function useEntityManager<T extends Record<string, string>>({
         return () => {
             cancelled = true;
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [fetchData]);
 
     // ...le reste inchangé
