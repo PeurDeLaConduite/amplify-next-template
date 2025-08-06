@@ -1,6 +1,6 @@
 // src/entities/models/userName/service.ts
 import { client } from "@/src/services";
-
+import type { UserNameType } from "./types";
 /**
  * Crée un nouveau record UserName pour l'utilisateur
  * @param sub  Sub Cognito (id du user)
@@ -8,9 +8,9 @@ import { client } from "@/src/services";
  */
 export async function createUserName(sub: string, name: string) {
     return client.models.UserName.create({
-        id: sub,
+        // id: sub,
         userName: name,
-        owner: sub,
+        // owner: sub,
     });
 }
 
@@ -35,9 +35,23 @@ export async function getUserName(sub: string) {
     const { data } = await client.models.UserName.get({ id: sub });
     return data?.userName ?? null;
 }
+/**
+ * Observe en temps réel le pseudo utilisateur
+ * @param sub Sub Cognito
+ * @param onChange Callback appelé à chaque changement
+ */
+export function observeUserName(sub: string, onChange: (item: UserNameType | null) => void) {
+    return client.models.UserName.observeQuery({ id: sub }).subscribe({
+        next: ({ data }) => {
+            onChange((data as UserNameType) ?? null);
+        },
+        error: console.error,
+    });
+}
 
 export const userNameService = {
     create: createUserName,
     update: updateUserName,
     get: getUserName,
+    observe: observeUserName,
 };

@@ -1,5 +1,5 @@
 "use client";
-import Cookies from "js-cookie";
+
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 import EntitySection from "../shared/EntitySection";
@@ -12,11 +12,11 @@ import {
     updateUserProfile,
     deleteUserProfile,
     observeUserProfile,
-} from "@/src/services";
+} from "@src/entities";
 
 export default function ProfileManager() {
     const { user } = useAuthenticator();
-    const sub = user?.userId ?? user?.username;
+    const sub = user?.userId;
     if (!user) return null;
 
     const getIcon = (field: keyof MinimalProfile) => {
@@ -87,11 +87,6 @@ export default function ProfileManager() {
                             phoneNumber: item.phoneNumber ?? "",
                         };
                         setData(data);
-                        Cookies.set("userProfile", JSON.stringify(data), {
-                            expires: 7,
-                            secure: true,
-                            sameSite: "Strict",
-                        });
                     } else {
                         setData(null);
                     }
