@@ -66,3 +66,6 @@ body {
 .markdown-container ol li::marker {
     font-weight: bold;
 }
+.modal-inner_content {
+    padding: 20px !important;
+}

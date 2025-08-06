@@ -10652,6 +10652,7 @@ __metadata:
     react-hook-form: "npm:7"
     react-icons: "npm:^5.5.0"
     react-markdown: "npm:^10.1.0"
+    react-modal-component-by-jeremy: "npm:^1.1.1"
     remark-gfm: "npm:^4.0.1"
     sass: "npm:1.60.0"
     sass-loader: "npm:13.0.0"
@@ -17075,6 +17076,16 @@ __metadata:
     "@types/react": ">=18"
     react: ">=18"
   checksum: 10c0/4a5dc7d15ca6d05e9ee95318c1904f83b111a76f7588c44f50f1d54d4c97193b84e4f64c4b592057c989228238a2590306cedd0c4d398e75da49262b2b5ae1bf
+  languageName: node
+  linkType: hard
+
+"react-modal-component-by-jeremy@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "react-modal-component-by-jeremy@npm:1.1.1"
+  peerDependencies:
+    react: ^19.0.0
+    react-dom: ^19.0.0
+  checksum: 10c0/fbeec812e859165d08491221c4eca597b25f367a426b069ce88a0820fdd48e14d05f85ac1ebe6cc8c38b018b71dcf4a0a165de09bf7c82db29b1e2982e07dba3
   languageName: node
   linkType: hard
 
