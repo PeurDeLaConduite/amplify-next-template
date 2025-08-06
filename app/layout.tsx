@@ -3,6 +3,7 @@ import "./globals.css";
 import "@aws-amplify/ui-react/styles.css";
 import Header from "@/src/components/Header/Header";
 import AuthProvider from "@/src/components/Authentication/auth-provider";
+import WarpContext from "@/src/context/userName/WarpContext";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
@@ -12,10 +13,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </head>
             <body>
                 <AuthProvider>
-                    <Header />
-                    <main className="min-h-screen px-4 py-6 sm:px-8 sm:py-10  from-gray-100 via-white to-gray-50">
-                        {children}
-                    </main>
+                    <WarpContext>
+                        <Header />
+                        <main className="min-h-screen px-4 py-6 sm:px-8 sm:py-10  from-gray-100 via-white to-gray-50">
+                            {children}
+                        </main>
+                    </WarpContext>
                 </AuthProvider>
             </body>
         </html>

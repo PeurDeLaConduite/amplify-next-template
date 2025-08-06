@@ -337,7 +337,7 @@
                                     },
                                     {
                                         "allow": "private",
-                                        "operations": ["create", "read"]
+                                        "operations": ["create", "read", "delete"]
                                     },
                                     {
                                         "provider": "userPools",

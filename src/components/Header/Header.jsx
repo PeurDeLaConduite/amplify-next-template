@@ -1,15 +1,16 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Link from "next/link";
-import { useUserName } from "@src/entities";
 import { PowerButton } from "../buttons/Buttons";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import UserNameModal from "../Profile/UserNameModal";
+import { UserNameContext } from "@src/context/userName/UserNameContext";
 
 const Header = () => {
+    const { userName } = useContext(UserNameContext); // ← AJOUTE CETTE LIGNE
+
     const { user, signOut } = useAuthenticator();
-    const { userName } = useUserName();
     const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
@@ -86,7 +87,7 @@ const Header = () => {
                                         className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
                                     >
                                         Se déconnecter
-                                    </PowerButton>{" "}
+                                    </PowerButton>
                                 </>
                             )
                         ) : (
