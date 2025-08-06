@@ -53,5 +53,5 @@
         "src/components/Blog/manage/sections/SectionsForm.tsx",
         "src/components/Blog/manage/components/ItemSelector.tsx"
     ],
-    "exclude": ["node_modules", "amplify"]
+    "exclude": ["node_modules", "amplify", "src/examples"]
 }
