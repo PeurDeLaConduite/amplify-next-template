@@ -66,6 +66,17 @@ Ce projet fait l’objet d’une refonte structurée de la gestion des données 
 
 ---
 
+Quand tu génères du code, n’argumente pas sur la forme des imports ni sur l’utilisation des alias relatifs :
+
+    Toujours utiliser un alias qui contient au minimum un /, jamais d’alias simple sans /.
+
+    Si j’ai un dossier (par exemple services) qui contient un fichier index.ts pour regrouper les exports, alors j’utilise l’alias :
+    @src/services
+    (et pas @services ni @/src/services)
+
+    Si je n’utilise pas d’index pour centraliser les exports dans un dossier, alors importe directement le module voulu, ex :
+    @example/monComposant
+
 ## Plan d’action attendu (à suivre impérativement) :
 
 - [x] Nettoyage du code mort et des fichiers inutilisés

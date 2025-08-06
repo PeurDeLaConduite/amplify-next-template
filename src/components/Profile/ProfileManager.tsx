@@ -11,7 +11,7 @@ import {
     createUserProfile,
     updateUserProfile,
     deleteUserProfile,
-    observeUserProfile,
+    getUserProfile,
 } from "@src/entities";
 
 export default function ProfileManager() {
@@ -72,26 +72,21 @@ export default function ProfileManager() {
             ]}
             labels={fieldLabel}
             initialData={normalizeFormData({})}
-            fetch={(setData) => {
-                if (!sub) return;
-                const subscription = observeUserProfile(sub, (item) => {
-                    if (item) {
-                        const data: MinimalProfile & { id?: string } = {
-                            id: item.id,
-                            firstName: item.firstName ?? "",
-                            familyName: item.familyName ?? "",
-                            address: item.address ?? "",
-                            postalCode: item.postalCode ?? "",
-                            city: item.city ?? "",
-                            country: item.country ?? "",
-                            phoneNumber: item.phoneNumber ?? "",
-                        };
-                        setData(data);
-                    } else {
-                        setData(null);
-                    }
-                });
-                return () => subscription.unsubscribe();
+            fetch={async () => {
+                if (!sub) return null;
+                const item = await getUserProfile(sub);
+                if (!item) return null;
+                const data: MinimalProfile & { id?: string } = {
+                    id: item.id,
+                    firstName: item.firstName ?? "",
+                    familyName: item.familyName ?? "",
+                    address: item.address ?? "",
+                    postalCode: item.postalCode ?? "",
+                    city: item.city ?? "",
+                    country: item.country ?? "",
+                    phoneNumber: item.phoneNumber ?? "",
+                };
+                return data;
             }}
             create={async (data) => {
                 if (!sub) throw new Error("sub manquant");

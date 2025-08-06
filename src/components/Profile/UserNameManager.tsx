@@ -3,8 +3,8 @@ import { Authenticator, useAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 import EntitySection from "../shared/EntitySection";
 import PersonIcon from "@mui/icons-material/Person";
-import { createUserName, updateUserName, observeUserName } from "@src/entities";
-import { MinimalUserName as UserNameData, normalizeUserName, fieldLabel } from "./utilsUserName";
+import { createUserName, updateUserName, getUserName } from "@src/entities";
+import { MinimalUserName, normalizeUserName, fieldLabel } from "./utilsUserName";
 
 export default function UserNameManager() {
     const { user } = useAuthenticator();
@@ -12,17 +12,15 @@ export default function UserNameManager() {
     if (!user) return <Authenticator />;
 
     return (
-        <EntitySection<UserNameData>
+        <EntitySection<MinimalUserName>
             title="Mon pseudo public"
             fields={["userName"]}
             labels={fieldLabel}
             initialData={normalizeUserName()}
-            fetch={(setData) => {
-                if (!sub) return;
-                const subscription = observeUserName(sub, (item) => {
-                    setData(item ? { userName: item.userName } : null);
-                });
-                return () => subscription.unsubscribe();
+            fetch={async () => {
+                if (!sub) return null;
+                const name = await getUserName(sub);
+                return name ? { userName: name } : null;
             }}
             create={async (data) => {
                 if (!sub) return;

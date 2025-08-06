@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 export type FieldKey<T> = keyof T & string;
 
 export interface UseEntityManagerOptions<T extends Record<string, string>> {
-    fetch: (setData: (entity: (T & { id?: string }) | null) => void) => void | (() => void);
+    fetch: () => Promise<(T & { id?: string }) | null>;
     create: (data: T) => Promise<void>;
     update: (entity: (T & { id?: string }) | null, data: Record<string, string>) => Promise<void>;
     remove: (entity: (T & { id?: string }) | null) => Promise<void>;
@@ -30,17 +30,20 @@ export default function useEntityManager<T extends Record<string, string>>({
     } | null>(null);
 
     useEffect(() => {
-        const unsub = fetch((data) => {
-            setEntity(data);
-            if (data && !editMode) {
-                const next = { ...formData };
-                fields.forEach((f) => {
-                    next[f] = data[f] ?? "";
-                });
-                setFormData(next);
-            }
-        });
-        return unsub;
+        // Lecture ponctuelle via `get` : pas d'`observeQuery` ni de `list`
+        // car aucune souscription n'est nécessaire.
+        fetch()
+            .then((data) => {
+                setEntity(data);
+                if (data && !editMode) {
+                    const next = { ...formData };
+                    fields.forEach((f) => {
+                        next[f] = data[f] ?? "";
+                    });
+                    setFormData(next);
+                }
+            })
+            .catch(console.error);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [fetch, editMode]);
 
@@ -65,7 +68,6 @@ export default function useEntityManager<T extends Record<string, string>>({
         setFormData((f) => ({ ...f, [field]: value }));
         setEditModeField(null);
     };
-
     const clearField = async (field: FieldKey<T>) => {
         await update(entity, { [field]: "" });
         setFormData((f) => ({ ...f, [field]: "" }));

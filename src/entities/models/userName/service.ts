@@ -8,9 +8,9 @@ import type { UserNameType } from "./types";
  */
 export async function createUserName(sub: string, name: string) {
     return client.models.UserName.create({
-        // id: sub,
+        id: sub,
         userName: name,
-        // owner: sub,
+        owner: sub,
     });
 }
 
