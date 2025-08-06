@@ -1,13 +1,17 @@
-export type MinimalUserName = { userName: string; id?: string };
+export type MinimalUserName = { userName: string };
+
 export type SingleFieldUserName = {
-    field: "userName";
-    value: string;
+    field: keyof MinimalUserName;
+    value: MinimalUserName[keyof MinimalUserName];
 };
+
 export const normalizeUserName = (d: Partial<MinimalUserName> = {}): MinimalUserName => ({
     userName: d.userName ?? "",
 });
-export const fieldLabel = (k: string) =>
-    ({
-        userName: "Pseudo public",
-    })[k] ?? k;
+
 export const userNameLabel = (): string => fieldLabel("userName");
+const labels: Record<keyof MinimalUserName, string> = {
+    userName: "Pseudo public",
+};
+
+export const fieldLabel = (k: keyof MinimalUserName): string => labels[k];
