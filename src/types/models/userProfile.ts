@@ -1,5 +1,0 @@
-import type { BaseModel, CreateOmit, UpdateInput } from "@myTypes/amplifyBaseTypes";
-
-export type UserProfile = BaseModel<"UserProfile">;
-export type UserProfileOmit = CreateOmit<"UserProfile">;
-export type UserProfileUpdateInput = UpdateInput<"UserProfile">;
