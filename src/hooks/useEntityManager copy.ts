@@ -54,6 +54,7 @@ export default function useEntityManager<T extends Record<string, string>>({
 
     // Chargement initial (et possible refresh)
     useEffect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         let cancelled = false;
         async function load() {
             await fetchData();
