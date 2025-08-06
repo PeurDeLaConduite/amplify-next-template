@@ -40,7 +40,7 @@ export default function UserNameManager() {
             }}
             remove={async () => {
                 if (!sub) return;
-                await deleteUserName();
+                await deleteUserName(sub);
                 const after = await getUserName(sub);
                 console.log("Après suppression, record UserName:", after); // Doit être null si bien supprimé
             }}
