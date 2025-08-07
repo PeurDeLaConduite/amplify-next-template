@@ -1,80 +1,45 @@
 // src/entities/user/hooks.ts
-"use client";
-
-import { useEffect, useState, useCallback } from "react";
+import useEntityManager from "@/src/hooks/useEntityManager";
+import { getUserName, createUserName, updateUserName, deleteUserName } from "@src/entities";
 import { useAuthenticator } from "@aws-amplify/ui-react";
-import { client } from "@src/services";
+import {
+    MinimalUserName,
+    normalizeUserName,
+    fieldLabel,
+} from "@src/components/Profile/utilsUserName";
 
-export function useUserName() {
+export function useUserNameManager() {
     const { user } = useAuthenticator();
-    const [userName, setUserName] = useState<string>("");
-    const [loading, setLoading] = useState<boolean>(false);
 
-    useEffect(() => {
-        // si pas connecté, on vide et on sort
-        if (!user) {
-            setUserName("");
-            return;
-        }
-        const sub = user.username; // par défaut, `username` === sub Cognito
-        setLoading(true);
+    const sub = user?.userId ?? user?.username;
 
-        const fetchUserName = async () => {
-            try {
-                const { data } = await client.models.UserName.get({ id: sub });
-                setUserName(data?.userName ?? "");
-            } catch {
-                // si erreur (not found…), on considère qu'il n'y a pas encore de pseudo
-                setUserName("");
-            } finally {
-                setLoading(false);
-            }
+    // Fetch UserName
+    const fetch = async () => {
+        if (!sub) return null;
+        const item = await getUserName(sub);
+        if (!item) return null;
+        const data: MinimalUserName & { id?: string } = {
+            userName: item.userName ?? "",
         };
+        return data;
+    };
 
-        fetchUserName();
-    }, [user]);
-
-    const updateUserName = useCallback(
-        async (newUserName: string) => {
-            if (!user) return;
-            const sub = user.username;
-            setLoading(true);
-
-            try {
-                // on tente la mise à jour
-                await client.models.UserName.update({
-                    id: sub,
-                    userName: newUserName,
-                    owner: sub,
-                });
-                setUserName(newUserName);
-            } catch (err: unknown) {
-                const error = err as {
-                    name?: string;
-                    errors?: { message?: string }[];
-                };
-                const notFound =
-                    error?.name === "NotFound" ||
-                    error?.name === "NotFoundError" ||
-                    error?.errors?.some((e) => e.message?.toLowerCase().includes("not found"));
-
-                if (notFound) {
-                    // si n'existe pas, on crée
-                    await client.models.UserName.create({
-                        id: sub,
-                        userName: newUserName,
-                        owner: sub,
-                    });
-                    setUserName(newUserName);
-                } else {
-                    throw err;
-                }
-            } finally {
-                setLoading(false);
-            }
+    return useEntityManager<MinimalUserName>({
+        fetch,
+        create: async (data) => {
+            if (!sub) return;
+            await createUserName(sub, data.userName);
         },
-        [user]
-    );
-
-    return { userName, updateUserName, loading };
+        update: async (_entity, data) => {
+            if (!sub) return;
+            await updateUserName(sub, data.userName ?? "");
+        },
+        remove: async () => {
+            if (!sub) return;
+            await deleteUserName(sub);
+        },
+        fields: ["userName"],
+        labels: fieldLabel,
+        initialData: normalizeUserName(),
+    });
 }

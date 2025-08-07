@@ -9,7 +9,7 @@ export default function ConnectionPage() {
     return (
         <AuthProvider>
             <UserNameManager />
-            <ProfileForm />
+            {/* <ProfileForm /> */}
         </AuthProvider>
     );
 }
