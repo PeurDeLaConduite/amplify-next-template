@@ -21,11 +21,13 @@ export default function UserNameManager() {
             await baseManager.fetchData();
         },
     };
-    const { fetchData } = manager;
 
     useEffect(() => {
-        void fetchData();
-    }, [user, fetchData]);
+        if (user) {
+            baseManager.fetchData();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user]);
 
     if (!user) return <Authenticator />;
 

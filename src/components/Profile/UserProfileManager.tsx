@@ -12,7 +12,7 @@ import { useUserProfileManager } from "@src/entities";
 export default function UserProfileManager() {
     const { user } = useAuthenticator();
     const manager = useUserProfileManager();
-    // if (!user) return null;
+    // const baseManager = useUserNameManager();
 
     const getIcon = (field: keyof MinimalProfile) => {
         switch (field) {
@@ -52,11 +52,12 @@ export default function UserProfileManager() {
             <p className="text-sm text-gray-400 italic">Information non disponible</p>
         );
     };
-    const { fetchData } = manager;
-
     useEffect(() => {
-        void fetchData();
-    }, [user, fetchData]);
+        if (user) {
+            manager.fetchData();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user]);
 
     if (!user) return null;
 
