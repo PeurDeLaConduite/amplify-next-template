@@ -1,4 +1,5 @@
 "use client";
+import { useEffect } from "react";
 import { Authenticator, useAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 import EntitySection from "./shared/EntitySection";
@@ -9,7 +10,6 @@ import { MinimalUserName } from "./utilsUserName";
 export default function UserNameManager() {
     const { user } = useAuthenticator();
     const baseManager = useUserNameManager();
-    if (!user) return <Authenticator />;
     const manager = {
         ...baseManager,
         save: async () => {
@@ -21,6 +21,13 @@ export default function UserNameManager() {
             await baseManager.fetchData();
         },
     };
+    const { fetchData } = manager;
+
+    useEffect(() => {
+        void fetchData();
+    }, [user, fetchData]);
+
+    if (!user) return <Authenticator />;
 
     return (
         <EntitySection<MinimalUserName>

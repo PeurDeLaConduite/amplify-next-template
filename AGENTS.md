@@ -91,18 +91,6 @@ Quand tu génères du code, n’argumente pas sur la forme des imports ni sur l�
 Chaque étape doit être traitée séquentiellement, avec commit et validation avant de passer à la suivante.
 Aucune étape ne doit être sautée ni mélangée, afin de garantir la cohérence et la maintenabilité du projet.
 
----
-
-## Avancement de la refonte (mise à jour : 2024-08-01)
-
-- [x]   1. Nettoyage du code mort et des fichiers inutilisés (hooks CRUD, omitId.ts…)
-- [x]   2. Déplacement et centralisation des services profil (`userProfileService`, `userNameService`)
-- [ ]   3. Factorisation/Uniformisation des types et formulaires avec utilitaires génériques
-- [ ]   4. Migration vers structure par entité dans `/src/entities/{entity}`
-- [ ]   5. Refonte des hooks (UI/présentation séparés)
-- [ ]   6. Mise à jour des composants pour la nouvelle API métier
-- [ ]   7. Tests, lint, validation étape par étape
-- [ ]   8. Documentation finale de l’architecture cible dans le README
 
 **Dernière mise à jour :** 2024-08-01
 

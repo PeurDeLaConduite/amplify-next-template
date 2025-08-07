@@ -1,5 +1,5 @@
 "use client";
-
+import { useEffect } from "react";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 import EntitySection from "./shared/EntitySection";
@@ -12,7 +12,7 @@ import { useUserProfileManager } from "@src/entities";
 export default function UserProfileManager() {
     const { user } = useAuthenticator();
     const manager = useUserProfileManager();
-    if (!user) return null;
+    // if (!user) return null;
 
     const getIcon = (field: keyof MinimalProfile) => {
         switch (field) {
@@ -52,6 +52,13 @@ export default function UserProfileManager() {
             <p className="text-sm text-gray-400 italic">Information non disponible</p>
         );
     };
+    const { fetchData } = manager;
+
+    useEffect(() => {
+        void fetchData();
+    }, [user, fetchData]);
+
+    if (!user) return null;
 
     return (
         <EntitySection<MinimalProfile>
