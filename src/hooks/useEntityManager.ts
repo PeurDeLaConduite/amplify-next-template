@@ -74,8 +74,7 @@ export default function useEntityManager<T extends Record<string, string>>({
 
     useEffect(() => {
         fetchData();
-        // ici PAS BESOIN de fetchData dans deps, sauf si tu veux le relancer sur son changement
-        // Si tu veux VRAIMENT jamais de double appel, mets []
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // ...le reste inchangé
