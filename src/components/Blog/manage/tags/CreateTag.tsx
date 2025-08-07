@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import RequireAdmin from "../../../RequireAdmin";
-import { RefreshButton } from "@/src/components/buttons";
+import { RefreshButton } from "@components/buttons";
 
 import TagCrudManager from "../components/tag/TagManager";
 import TagsAssociationManager from "../components/tag/PostTagsManager";

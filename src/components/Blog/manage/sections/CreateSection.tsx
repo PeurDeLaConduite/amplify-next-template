@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import RequireAdmin from "@/src/components/RequireAdmin";
+import RequireAdmin from "@components/RequireAdmin";
 import SectionForm from "./SectionsForm";
 import SectionList from "./SectionList";
 import { sectionService, type SectionTypes } from "@src/entities";

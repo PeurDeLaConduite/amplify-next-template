@@ -1,4 +1,4 @@
-import { createModelForm } from "@/src/utils/createModelForm";
+import { createModelForm } from "@utils/createModelForm";
 import type { UserProfileType, UserProfileFormType } from "./types";
 
 export const { initialForm: initialUserProfileForm, toForm: toUserProfileForm } = createModelForm<

@@ -1,7 +1,7 @@
 // src/lib/userProfileService.ts
 
 import type { Schema } from "@/amplify/data/resource";
-import { client } from "@/src/services";
+import { client } from "@src/services";
 
 /** CREATE */
 export async function createUserProfile(

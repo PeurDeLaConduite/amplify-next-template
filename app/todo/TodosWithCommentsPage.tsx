@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import type { Schema } from "@/amplify/data/resource";
-import { client } from "@/src/services";
+import { client } from "@src/services";
 import "@aws-amplify/ui-react/styles.css";
 import { getCurrentUser } from "aws-amplify/auth";
 

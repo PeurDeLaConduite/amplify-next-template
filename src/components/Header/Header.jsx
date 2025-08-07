@@ -2,25 +2,27 @@
 
 import React, { useContext, useEffect, useState } from "react";
 import Link from "next/link";
-import { PowerButton } from "../buttons/Buttons";
 import { useAuthenticator } from "@aws-amplify/ui-react";
-import UserNameModal from "../Profile/UserNameModal";
+
+import { PowerButton } from "@src/components/buttons";
+import UserNameModal from "@src/components/Profile/UserNameModal";
 import { UserNameContext } from "@src/context/userName/UserNameContext";
 
 const Header = () => {
-    const { userName } = useContext(UserNameContext); // ← AJOUTE CETTE LIGNE
+    const { userName, refresh } = useContext(UserNameContext);
 
     const { user, signOut } = useAuthenticator();
     const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         if (user && !userName) {
+            refresh?.();
             setShowModal(true);
         }
         if (userName) {
             setShowModal(false);
         }
-    }, [user, userName]);
+    }, [user, userName, refresh]);
 
     return (
         <>
@@ -64,9 +66,9 @@ const Header = () => {
                         {user ? (
                             userName ? (
                                 <>
-                                    <p className="text-sm text-gray-700">
+                                    {/* <p className="text-sm text-gray-700">
                                         Connecté en tant que : <strong>{userName}</strong>
-                                    </p>
+                                    </p> */}
                                     <Link
                                         href="/connection"
                                         className="text-gray-700 hover:text-blue-600"

@@ -72,7 +72,7 @@ Quand tu génères du code, n’argumente pas sur la forme des imports ni sur l�
 
     Si j’ai un dossier (par exemple services) qui contient un fichier index.ts pour regrouper les exports, alors j’utilise l’alias :
     @src/services
-    (et pas @services ni @/src/services)
+    (et pas @services ni @src/services)
 
     Si je n’utilise pas d’index pour centraliser les exports dans un dossier, alors importe directement le module voulu, ex :
     @example/monComposant

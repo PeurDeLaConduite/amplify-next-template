@@ -1,4 +1,4 @@
-import { client } from "@/src/services";
+import { client } from "@src/services";
 import type { BlogData, Author, Post, Section } from "@src/types/blog";
 
 export async function fetchBlogData(): Promise<BlogData> {
@@ -85,7 +85,7 @@ export async function fetchBlogData(): Promise<BlogData> {
             post.tags.push(tagName);
         }
     });
-    
+
     const authors: Author[] = authorsRes.data.map((a) => ({
         authorJsonId: a.id,
         authorName: a.authorName ?? "",

@@ -1,8 +1,8 @@
 // app/blog/[slug]/page.tsx
-import { fetchBlogData } from "@/src/services";
+import { fetchBlogData } from "@src/services";
 import type { Metadata, ResolvingMetadata } from "next";
 import Blog from "@components/Blog/Blog";
-import { BackButton } from "@/src/components/buttons/Buttons";
+import { BackButton } from "@components/buttons";
 type Props = {
     params: Promise<{ slug: string }>;
     searchParams: Promise<Record<string, string | string[] | undefined>>;

@@ -1,11 +1,5 @@
 import React from "react";
-import {
-    AddButton,
-    EditButton,
-    DeleteButton,
-    SaveButton,
-    CancelButton,
-} from "@/src/components/buttons";
+import { AddButton, EditButton, DeleteButton, SaveButton, CancelButton } from "@components/buttons";
 
 export default function TagCrudManager({
     tags,

@@ -4,8 +4,8 @@
 import { useEffect, useState } from "react";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import type { Schema } from "@/amplify/data/resource";
-import { client } from "@/src/services";
-import type { MinimalProfile } from "@/src/components/Profile/utilsProfile";
+import { client } from "@src/services";
+import type { MinimalProfile } from "@components/Profile/utilsProfile";
 
 type UserProfile = Schema["UserProfile"]["type"];
 

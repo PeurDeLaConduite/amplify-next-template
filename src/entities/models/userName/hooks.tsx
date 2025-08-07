@@ -3,7 +3,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useAuthenticator } from "@aws-amplify/ui-react";
-import { client } from "@/src/services";
+import { client } from "@src/services";
 
 export function useUserName() {
     const { user } = useAuthenticator();

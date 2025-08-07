@@ -1,9 +1,9 @@
 // app/blog/BlogClientWrapper.tsx
 "use client";
 import React, { useEffect, useState } from "react";
-import Blog from "@/src/components/Blog/Blog";
-import { RefreshButton } from "@/src/components/buttons/Buttons";
-import { fetchBlogData } from "@/src/services";
+import Blog from "@components/Blog/Blog";
+import { RefreshButton } from "@components/buttons";
+import { fetchBlogData } from "@src/services";
 import type { BlogData } from "@src/types/blog";
 
 export default function BlogClientWrapper() {

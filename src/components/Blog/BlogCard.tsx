@@ -1,7 +1,7 @@
 // src/components/Blog/BlogCard.tsx
 import Link from "next/link";
 import VideoEmbed from "./VideoEmbed";
-import type { Post, Author } from "@/src/types/blog";
+import type { Post, Author } from "@myTypes/blog";
 
 type Props = {
     post: Post;

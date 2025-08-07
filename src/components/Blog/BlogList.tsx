@@ -1,6 +1,6 @@
 // src/components/Blog/BlogList.tsx
 import BlogCard from "./BlogCard";
-import type { Post, Author } from "@/src/types/blog";
+import type { Post, Author } from "@myTypes/blog";
 
 type Props = {
     posts: Post[];

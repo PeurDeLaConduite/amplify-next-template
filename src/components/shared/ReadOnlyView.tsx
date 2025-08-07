@@ -1,5 +1,5 @@
 import React from "react";
-import { EditButton, DeleteButton } from "@/src/components/buttons/Buttons";
+import { EditButton, DeleteButton } from "@components/buttons/Buttons";
 import { type FieldKey } from "@/src/hooks/useEntityManager";
 
 export type ReadOnlyViewProps<T extends Record<string, string>> = {

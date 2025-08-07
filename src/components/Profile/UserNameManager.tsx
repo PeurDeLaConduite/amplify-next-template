@@ -1,13 +1,20 @@
 "use client";
 import { Authenticator, useAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
-import EntitySection from "../shared/EntitySection";
+import { useContext } from "react";
+import EntitySection from "@src/components/shared/EntitySection";
 import PersonIcon from "@mui/icons-material/Person";
+import { UserNameContext } from "@src/context/userName/UserNameContext";
 import { createUserName, updateUserName, getUserName, deleteUserName } from "@src/entities";
-import { MinimalUserName, normalizeUserName, fieldLabel } from "./utilsUserName";
+import {
+    MinimalUserName,
+    normalizeUserName,
+    fieldLabel,
+} from "@src/components/Profile/utilsUserName";
 
 export default function UserNameManager() {
     const { user } = useAuthenticator();
+    const { refresh } = useContext(UserNameContext);
     const sub = user?.userId ?? user?.username;
     if (!user) return <Authenticator />;
 
@@ -31,14 +38,17 @@ export default function UserNameManager() {
             create={async (data) => {
                 if (!sub) return;
                 await createUserName(sub, data.userName);
+                await refresh();
             }}
             update={async (_entity, data) => {
                 if (!sub) return;
                 await updateUserName(sub, data.userName ?? "");
+                await refresh();
             }}
             remove={async () => {
                 if (!sub) return;
                 await deleteUserName(sub);
+                await refresh();
                 const after = await getUserName(sub);
                 console.log("Après suppression, record UserName:", after); // Doit être null si bien supprimé
             }}

@@ -1,5 +1,5 @@
 import React from "react";
-import ButtonBase from "@/src/components/buttons/ButtonBase";
+import ButtonBase from "@components/buttons/ButtonBase";
 
 export default function TagsAssociationManager({
     posts,

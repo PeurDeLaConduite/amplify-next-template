@@ -1,5 +1,5 @@
 import type { AuthorType, AuthorFormType } from "./types";
-import { createModelForm } from "@/src/utils/createModelForm";
+import { createModelForm } from "@utils/createModelForm";
 
 export const { initialForm: initialAuthorForm, toForm: toAuthorForm } = createModelForm<
     AuthorType,
