@@ -1,4 +1,5 @@
 // src/entities/user/hooks.ts
+import { useMemo, useCallback } from "react";
 import useEntityManager from "@/src/hooks/useEntityManager";
 import { getUserName, createUserName, updateUserName, deleteUserName } from "@src/entities";
 import { useAuthenticator } from "@aws-amplify/ui-react";
@@ -12,16 +13,16 @@ export function useUserNameManager() {
     const { user } = useAuthenticator();
     const sub = user?.userId ?? user?.username;
 
-    // Fetch UserName
-    const fetch = async () => {
+    // 1. Memoize fetch et tout ce qui ne doit pas changer
+    const fetch = useCallback(async () => {
         if (!sub) return null;
         const item = await getUserName(sub);
         if (!item) return null;
-        const data: MinimalUserName & { id?: string } = {
-            userName: item.userName ?? "",
-        };
-        return data;
-    };
+        return { userName: item.userName ?? "" };
+    }, [sub]);
+
+    const fields = useMemo(() => ["userName"], []);
+    const initialData = useMemo(() => normalizeUserName(), []);
 
     return useEntityManager<MinimalUserName>({
         fetch,
@@ -37,8 +38,8 @@ export function useUserNameManager() {
             if (!sub) return;
             await deleteUserName(sub);
         },
-        fields: ["userName"],
+        fields,
         labels: fieldLabel,
-        initialData: normalizeUserName(),
+        initialData,
     });
 }

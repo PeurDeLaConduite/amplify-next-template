@@ -34,10 +34,10 @@ export default function useEntityManager<T extends Record<string, string>>({
     const fetchData = useCallback(async () => {
         setLoading(true);
         try {
-            const data = await fetch(); // <--- C'est bien ta méthode get/unique
+            const data = await fetch();
             setEntity(data);
-            if (data && !editMode) {
-                const next = { ...formData };
+            if (data) {
+                const next = { ...initialData };
                 fields.forEach((f) => {
                     next[f] = data[f] ?? "";
                 });
@@ -49,20 +49,13 @@ export default function useEntityManager<T extends Record<string, string>>({
             setLoading(false);
             setEditMode(false);
         }
-    }, [fetch, editMode, fields, formData]);
+    }, [fetch, fields, initialData]);
 
-    // Chargement initial (et possible refresh)
     useEffect(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        let cancelled = false;
-        async function load() {
-            await fetchData();
-        }
-        load();
-        return () => {
-            cancelled = true;
-        };
-    }, [fetchData]);
+        fetchData();
+        // ici PAS BESOIN de fetchData dans deps, sauf si tu veux le relancer sur son changement
+        // Si tu veux VRAIMENT jamais de double appel, mets []
+    }, []);
 
     // ...le reste inchangé
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
