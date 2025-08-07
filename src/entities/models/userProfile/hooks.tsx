@@ -1,89 +1,66 @@
-// src/entities/profile/hooks.ts
+// @/src/hooks/useUserProfileManager.ts
 "use client";
-
-import { useEffect, useState } from "react";
 import { useAuthenticator } from "@aws-amplify/ui-react";
-import type { Schema } from "@/amplify/data/resource";
-import { client } from "@src/services";
-import type { MinimalProfile } from "@components/Profile/utilsProfile";
+import useEntityManager from "@/src/hooks/useEntityManager";
+import {
+    createUserProfile,
+    updateUserProfile,
+    deleteUserProfile,
+    getUserProfile,
+} from "@src/entities";
+import {
+    MinimalProfile,
+    normalizeFormData,
+    label as fieldLabel,
+} from "@src/components/Profile/utilsProfile";
 
-type UserProfile = Schema["UserProfile"]["type"];
-
-export function useUserProfile() {
+export function useUserProfileManager() {
     const { user } = useAuthenticator();
-    const [profile, setProfile] = useState<UserProfile | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<Error | null>(null);
+    const sub = user?.userId ?? user?.username;
 
-    useEffect(() => {
-        if (!user) return;
-
-        setLoading(true);
-        const subscription = client.models.UserProfile.observeQuery().subscribe({
-            next: ({ items }) => {
-                setProfile(items[0] ?? null);
-                setLoading(false);
-            },
-            error: (err) => {
-                console.error("Error fetching profile:", err);
-                setError(err);
-                setLoading(false);
-            },
-        });
-
-        return () => subscription.unsubscribe();
-    }, [user]);
-
-    const update = async (data: Partial<UserProfile>) => {
-        if (!profile) return;
-        try {
-            const { data: updated } = await client.models.UserProfile.update({
-                id: profile.id,
-                ...data,
-            });
-            setProfile(updated);
-            return updated;
-        } catch (err) {
-            setError(err as Error);
-            throw err;
-        }
+    // Fonction de récupération du profil
+    const fetch = async () => {
+        if (!sub) return null;
+        const item = await getUserProfile(sub);
+        if (!item) return null;
+        const data: MinimalProfile & { id?: string } = {
+            id: item.id,
+            firstName: item.firstName ?? "",
+            familyName: item.familyName ?? "",
+            address: item.address ?? "",
+            postalCode: item.postalCode ?? "",
+            city: item.city ?? "",
+            country: item.country ?? "",
+            phoneNumber: item.phoneNumber ?? "",
+        };
+        return data;
     };
 
-    const create = async (data: MinimalProfile) => {
-        try {
-            const input: Omit<UserProfile, "id"> = {
-                ...data,
-                owner: user?.username ?? "anonymous",
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-            };
-
-            const { data: created } = await client.models.UserProfile.create(input);
-            setProfile(created);
-            return created;
-        } catch (err) {
-            setError(err as Error);
-            throw err;
-        }
-    };
-
-    const remove = async () => {
-        if (!profile) return;
-        try {
-            await client.models.UserProfile.delete({ id: profile.id });
-            setProfile(null);
-        } catch (err) {
-            setError(err as Error);
-            throw err;
-        }
-    };
-
-    return {
-        profile,
-        loading,
-        error,
-        update,
-        create,
-        remove,
-    };
+    // Hook générique pour toute l’édition CRUD du profil
+    return useEntityManager<MinimalProfile>({
+        fetch,
+        create: async (data) => {
+            if (!sub) throw new Error("sub manquant");
+            await createUserProfile(sub, data);
+        },
+        update: async (entity, data) => {
+            if (!entity?.id) throw new Error("id manquant");
+            await updateUserProfile(entity.id, data);
+        },
+        remove: async (entity) => {
+            if (!entity?.id) return;
+            await deleteUserProfile(entity.id);
+        },
+        fields: [
+            "firstName",
+            "familyName",
+            "phoneNumber",
+            "address",
+            "postalCode",
+            "city",
+            "country",
+        ],
+        labels: fieldLabel,
+        initialData: normalizeFormData({}),
+    });
 }
