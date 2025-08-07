@@ -8,7 +8,7 @@ export type ReadOnlyViewProps<T extends Record<string, string>> = {
     /** Champs à afficher */
     fields: FieldKey<T>[];
     /** Libellé affiché pour chaque champ */
-    label: (field: FieldKey<T>) => string;
+    labels: (field: FieldKey<T>) => string;
     /** Callback sur le bouton d'édition */
     onEditField: (edit: { field: FieldKey<T>; value: string }) => void;
     /** Callback sur le bouton de suppression */
@@ -26,7 +26,7 @@ export type ReadOnlyViewProps<T extends Record<string, string>> = {
 export default function ReadOnlyView<T extends Record<string, string>>({
     data,
     fields,
-    label,
+    labels,
     onEditField,
     onClearField,
     title = "Gestion",
@@ -48,7 +48,7 @@ export default function ReadOnlyView<T extends Record<string, string>>({
                         >
                             <div className="flex items-center justify-between mb-2">
                                 <label className="text-gray-800 font-semibold flex items-center gap-2 select-none">
-                                    {renderIcon?.(field)} <span>{label(field)}</span>
+                                    {renderIcon?.(field)} <span>{labels(field)}</span>
                                 </label>
                                 <div className="flex gap-2">
                                     {extraButtons?.(field, value)}

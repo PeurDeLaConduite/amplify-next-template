@@ -7,7 +7,7 @@ import { type FieldKey } from "@/src/hooks/useEntityManager";
 type Props<T extends Record<string, string>> = {
     formData: Partial<T>;
     fields: FieldKey<T>[];
-    label: (field: FieldKey<T>) => string;
+    labels: (field: FieldKey<T>) => string;
     handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
     handleSubmit: () => void;
     isEdit: boolean;
@@ -18,7 +18,7 @@ type Props<T extends Record<string, string>> = {
 export default function EntityForm<T extends Record<string, string>>({
     formData,
     fields,
-    label,
+    labels,
     handleChange,
     handleSubmit,
     isEdit,
@@ -36,12 +36,12 @@ export default function EntityForm<T extends Record<string, string>>({
             {fields.map((field) => (
                 <div key={String(field)}>
                     <label htmlFor={String(field)} className="block mb-1 font-medium">
-                        {label(field)}
+                        {labels(field)}
                     </label>
                     <input
                         id={String(field)}
                         name={String(field)}
-                        placeholder={label(field)}
+                        placeholder={labels(field)}
                         value={formData[field] ?? ""}
                         onChange={handleChange}
                         className="w-full p-2 border rounded"

@@ -8,32 +8,32 @@ export type EditFieldProps<T extends Record<string, string>> = {
         React.SetStateAction<{ field: FieldKey<T>; value: string } | null>
     >;
     saveSingleField: () => void;
-    label: (field: FieldKey<T>) => string;
+    labels: (field: FieldKey<T>) => string;
 };
 
 export default function EditField<T extends Record<string, string>>({
     editModeField,
     setEditModeField,
     saveSingleField,
-    label,
+    labels,
 }: EditFieldProps<T>) {
     const { field, value } = editModeField;
 
     return (
         <fieldset className="my-6 p-4 border rounded-md bg-white shadow-sm max-w-md mx-auto">
             <legend className="font-semibold text-lg mb-4">
-                Modifier mon {label(field).toLowerCase()} :
+                Modifier mon {labels(field).toLowerCase()} :
             </legend>
 
             <label htmlFor="edit-field" className="sr-only">
-                {label(field)}
+                {labels(field)}
             </label>
             <input
                 id="edit-field"
                 className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
                 value={value}
-                placeholder={label(field)}
-                title={label(field)}
+                placeholder={labels(field)}
+                title={labels(field)}
                 onChange={(e) =>
                     setEditModeField((prev) => (prev ? { ...prev, value: e.target.value } : null))
                 }

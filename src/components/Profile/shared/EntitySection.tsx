@@ -90,7 +90,7 @@ export default function EntitySection<T extends Record<string, string>>({
                     title={title}
                     fields={fields}
                     data={formData}
-                    label={labels}
+                    labels={labels}
                     renderIcon={renderIcon}
                     renderValue={renderValue}
                     extraButtons={extraButtons}
@@ -104,7 +104,7 @@ export default function EntitySection<T extends Record<string, string>>({
                     editModeField={editModeField}
                     setEditModeField={setEditModeField}
                     saveSingleField={saveField}
-                    label={labels}
+                    labels={labels}
                 />
             )}
 
@@ -112,7 +112,7 @@ export default function EntitySection<T extends Record<string, string>>({
                 <EntityForm<T>
                     formData={formData}
                     fields={fields}
-                    label={labels}
+                    labels={labels}
                     handleChange={handleChange}
                     handleSubmit={save}
                     isEdit={!!entity}
