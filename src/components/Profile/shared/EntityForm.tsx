@@ -1,7 +1,7 @@
 // src/components/shared/EntityForm.tsx
 "use client";
 import React, { type ChangeEvent, FormEvent } from "react";
-import { SaveButton, AddButton, CancelButton } from "../buttons/Buttons";
+import { SaveButton, AddButton, CancelButton } from "../../buttons/Buttons";
 import { type FieldKey } from "@/src/hooks/useEntityManager";
 
 type Props<T extends Record<string, string>> = {

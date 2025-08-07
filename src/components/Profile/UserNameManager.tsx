@@ -1,7 +1,7 @@
 "use client";
 import { Authenticator, useAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
-import EntitySection from "../shared/EntitySection";
+import EntitySection from "./shared/EntitySection";
 import PersonIcon from "@mui/icons-material/Person";
 import { createUserName, updateUserName, getUserName, deleteUserName } from "@src/entities";
 import { MinimalUserName, normalizeUserName, fieldLabel } from "./utilsUserName";

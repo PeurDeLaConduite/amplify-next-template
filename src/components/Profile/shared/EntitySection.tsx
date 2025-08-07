@@ -7,7 +7,7 @@ import useEntityManager, {
 import ReadOnlyView from "./ReadOnlyView";
 import EditField from "./EditField";
 import EntityForm from "./EntityForm";
-import { DeleteButton } from "../buttons/Buttons";
+import { DeleteButton } from "../../buttons/Buttons";
 
 export type EntitySectionProps<T extends Record<string, string>> = UseEntityManagerOptions<T> & {
     /** Titre de la section */

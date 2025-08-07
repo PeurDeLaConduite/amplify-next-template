@@ -2,7 +2,7 @@
 
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
-import EntitySection from "../shared/EntitySection";
+import EntitySection from "./shared/EntitySection";
 import { label as fieldLabel, normalizeFormData, MinimalProfile } from "./utilsProfile";
 import PhoneIcon from "@mui/icons-material/Phone";
 import PersonIcon from "@mui/icons-material/Person";
@@ -14,7 +14,7 @@ import {
     getUserProfile,
 } from "@src/entities";
 
-export default function ProfileManager() {
+export default function UserProfileManager() {
     const { user } = useAuthenticator();
     const sub = user?.userId;
     if (!user) return null;
