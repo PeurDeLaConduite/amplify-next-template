@@ -1,15 +1,12 @@
 "use client";
 import React from "react";
-import useEntityManager, {
-    type UseEntityManagerOptions,
-    type FieldKey,
-} from "@/src/hooks/useEntityManager";
+import type { FieldKey, EntityManagerResult } from "@/src/hooks/useEntityManager";
 import ReadOnlyView from "./ReadOnlyView";
 import EditField from "./EditField";
 import EntityForm from "./EntityForm";
 import { DeleteButton } from "../../buttons/Buttons";
 
-export type EntitySectionProps<T extends Record<string, string>> = UseEntityManagerOptions<T> & {
+export type EntitySectionProps<T extends Record<string, string>> = {
     /** Titre de la section */
     title: string;
     /** Champs requis pour le formulaire */
@@ -26,6 +23,8 @@ export type EntitySectionProps<T extends Record<string, string>> = UseEntityMana
     className?: string;
     /** Personnalisation de l'effacement d'un champ */
     onClearField?: (field: FieldKey<T>, clear: (field: FieldKey<T>) => void) => void;
+    /** Gestionnaire de l'entité */
+    manager: EntityManagerResult<T>;
 };
 
 export default function EntitySection<T extends Record<string, string>>({
@@ -37,7 +36,7 @@ export default function EntitySection<T extends Record<string, string>>({
     deleteLabel,
     className,
     onClearField,
-    ...managerOptions
+    manager,
 }: EntitySectionProps<T>) {
     const {
         entity,
@@ -54,7 +53,8 @@ export default function EntitySection<T extends Record<string, string>>({
         deleteEntity,
         labels,
         fields,
-    } = useEntityManager<T>(managerOptions);
+        fetchData,
+    } = manager;
 
     const handleCancel = () => {
         setEditMode(false);
@@ -65,7 +65,7 @@ export default function EntitySection<T extends Record<string, string>>({
             });
             setFormData(reset as T);
         } else {
-            setFormData(managerOptions.initialData);
+            void fetchData();
         }
     };
 
