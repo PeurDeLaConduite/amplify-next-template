@@ -1,12 +1,12 @@
 "use client";
 import React from "react";
-import type { FieldKey, EntityManagerResult } from "@/src/hooks/useEntityManager";
+import type { FieldKey, EntityManagerResult } from "@src/hooks/useEntityManagerGeneral";
 import ReadOnlyView from "./ReadOnlyView";
 import EditField from "./EditField";
 import EntityForm from "./EntityForm";
 import { DeleteButton } from "../../buttons/Buttons";
 
-export type EntitySectionProps<T extends Record<string, string>> = {
+export type EntitySectionProps<T extends Record<string, unknown>> = {
     /** Titre de la section */
     title: string;
     /** Champs requis pour le formulaire */
@@ -27,7 +27,7 @@ export type EntitySectionProps<T extends Record<string, string>> = {
     manager: EntityManagerResult<T>;
 };
 
-export default function EntitySection<T extends Record<string, string>>({
+export default function EntitySection<T extends Record<string, unknown>>({
     title,
     requiredFields = [],
     renderIcon,
@@ -59,11 +59,11 @@ export default function EntitySection<T extends Record<string, string>>({
     const handleCancel = () => {
         setEditMode(false);
         if (entity) {
-            const reset = { ...formData } as Record<string, string>;
+            const reset = { ...formData } as T;
             fields.forEach((f) => {
-                reset[f] = entity[f] ?? "";
+                reset[f] = entity[f];
             });
-            setFormData(reset as T);
+            setFormData(reset);
         } else {
             void fetchData();
         }

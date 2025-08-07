@@ -2,9 +2,9 @@
 "use client";
 import React, { type ChangeEvent, FormEvent } from "react";
 import { SaveButton, AddButton, CancelButton } from "../../buttons/Buttons";
-import { type FieldKey } from "@/src/hooks/useEntityManager";
+import { type FieldKey } from "@src/hooks/useEntityManagerGeneral";
 
-type Props<T extends Record<string, string>> = {
+type Props<T extends Record<string, unknown>> = {
     formData: Partial<T>;
     fields: FieldKey<T>[];
     labels: (field: FieldKey<T>) => string;
@@ -15,7 +15,7 @@ type Props<T extends Record<string, string>> = {
     requiredFields: FieldKey<T>[];
 };
 
-export default function EntityForm<T extends Record<string, string>>({
+export default function EntityForm<T extends Record<string, unknown>>({
     formData,
     fields,
     labels,
@@ -42,7 +42,7 @@ export default function EntityForm<T extends Record<string, string>>({
                         id={String(field)}
                         name={String(field)}
                         placeholder={labels(field)}
-                        value={formData[field] ?? ""}
+                        value={String(formData[field] ?? "")}
                         onChange={handleChange}
                         className="w-full p-2 border rounded"
                         required={requiredFields.includes(field)}

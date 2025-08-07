@@ -1,8 +1,8 @@
 import React from "react";
 import { EditButton, DeleteButton } from "@components/buttons/Buttons";
-import { type FieldKey } from "@/src/hooks/useEntityManager";
+import { type FieldKey } from "@/src/hooks/useEntityManagerGeneral";
 
-export type ReadOnlyViewProps<T extends Record<string, string>> = {
+export type ReadOnlyViewProps<T extends Record<string, unknown>> = {
     /** Données partiellement définies */
     data: Partial<T>;
     /** Champs à afficher */
@@ -23,7 +23,7 @@ export type ReadOnlyViewProps<T extends Record<string, string>> = {
     renderValue?: (field: FieldKey<T>, value: string) => React.ReactNode;
 };
 
-export default function ReadOnlyView<T extends Record<string, string>>({
+export default function ReadOnlyView<T extends Record<string, unknown>>({
     data,
     fields,
     labels,

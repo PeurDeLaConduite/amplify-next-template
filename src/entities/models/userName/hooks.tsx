@@ -1,5 +1,5 @@
 // src/entities/user/hooks.ts
-import useEntityManager from "@/src/hooks/useEntityManager";
+import useEntityManager, { type FieldConfig } from "@src/hooks/useEntityManagerGeneral";
 import { getUserName, createUserName, updateUserName, deleteUserName } from "@src/entities";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import {
@@ -23,6 +23,14 @@ export function useUserNameManager() {
         return data;
     };
 
+    const config: FieldConfig<MinimalUserName> = {
+        userName: {
+            parse: (v: string) => v,
+            serialize: (v: string) => v,
+            emptyValue: "",
+        },
+    };
+
     return useEntityManager<MinimalUserName>({
         fetch,
         create: async (data) => {
@@ -40,5 +48,6 @@ export function useUserNameManager() {
         fields: ["userName"],
         labels: fieldLabel,
         initialData: normalizeUserName(),
+        config,
     });
 }

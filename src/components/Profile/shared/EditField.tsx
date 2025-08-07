@@ -1,8 +1,8 @@
 import { SaveButton, BackButton } from "@components/buttons/Buttons";
 import React from "react";
-import { type FieldKey } from "@/src/hooks/useEntityManager";
+import { type FieldKey } from "@/src/hooks/useEntityManagerGeneral";
 
-export type EditFieldProps<T extends Record<string, string>> = {
+export type EditFieldProps<T extends Record<string, unknown>> = {
     editModeField: { field: FieldKey<T>; value: string };
     setEditModeField: React.Dispatch<
         React.SetStateAction<{ field: FieldKey<T>; value: string } | null>
@@ -11,7 +11,7 @@ export type EditFieldProps<T extends Record<string, string>> = {
     labels: (field: FieldKey<T>) => string;
 };
 
-export default function EditField<T extends Record<string, string>>({
+export default function EditField<T extends Record<string, unknown>>({
     editModeField,
     setEditModeField,
     saveSingleField,

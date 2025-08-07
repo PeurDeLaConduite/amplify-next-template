@@ -1,7 +1,7 @@
 // @/src/hooks/useUserProfileManager.ts
 "use client";
 import { useAuthenticator } from "@aws-amplify/ui-react";
-import useEntityManager from "@/src/hooks/useEntityManager";
+import useEntityManager, { type FieldConfig } from "@/src/hooks/useEntityManagerGeneral";
 import {
     createUserProfile,
     updateUserProfile,
@@ -36,6 +36,44 @@ export function useUserProfileManager() {
         return data;
     };
 
+    const config: FieldConfig<MinimalProfile> = {
+        firstName: {
+            parse: (v: string) => v,
+            serialize: (v: string) => v,
+            emptyValue: "",
+        },
+        familyName: {
+            parse: (v: string) => v,
+            serialize: (v: string) => v,
+            emptyValue: "",
+        },
+        address: {
+            parse: (v: string) => v,
+            serialize: (v: string) => v,
+            emptyValue: "",
+        },
+        postalCode: {
+            parse: (v: string) => v,
+            serialize: (v: string) => v,
+            emptyValue: "",
+        },
+        city: {
+            parse: (v: string) => v,
+            serialize: (v: string) => v,
+            emptyValue: "",
+        },
+        country: {
+            parse: (v: string) => v,
+            serialize: (v: string) => v,
+            emptyValue: "",
+        },
+        phoneNumber: {
+            parse: (v: string) => v,
+            serialize: (v: string) => v,
+            emptyValue: "",
+        },
+    };
+
     // Hook générique pour toute l’édition CRUD du profil
     return useEntityManager<MinimalProfile>({
         fetch,
@@ -62,5 +100,6 @@ export function useUserProfileManager() {
         ],
         labels: fieldLabel,
         initialData: normalizeFormData({}),
+        config,
     });
 }
