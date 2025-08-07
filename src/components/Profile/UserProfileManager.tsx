@@ -3,20 +3,15 @@
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 import EntitySection from "./shared/EntitySection";
-import { label as fieldLabel, normalizeFormData, MinimalProfile } from "./utilsProfile";
+import { label as fieldLabel, MinimalProfile } from "./utilsProfile";
 import PhoneIcon from "@mui/icons-material/Phone";
 import PersonIcon from "@mui/icons-material/Person";
 import HomeIcon from "@mui/icons-material/Home";
-import {
-    createUserProfile,
-    updateUserProfile,
-    deleteUserProfile,
-    getUserProfile,
-} from "@src/entities";
+import { useUserProfileManager } from "@src/entities";
 
 export default function UserProfileManager() {
     const { user } = useAuthenticator();
-    const sub = user?.userId;
+    const manager = useUserProfileManager();
     if (!user) return null;
 
     const getIcon = (field: keyof MinimalProfile) => {
@@ -58,51 +53,9 @@ export default function UserProfileManager() {
         );
     };
 
-    // Fonction fetch unique, lecture profil via .get
-    const fetchProfile = async () => {
-        if (!sub) return null;
-        const item = await getUserProfile(sub);
-        if (!item) return null;
-        const data: MinimalProfile & { id?: string } = {
-            id: item.id,
-            firstName: item.firstName ?? "",
-            familyName: item.familyName ?? "",
-            address: item.address ?? "",
-            postalCode: item.postalCode ?? "",
-            city: item.city ?? "",
-            country: item.country ?? "",
-            phoneNumber: item.phoneNumber ?? "",
-        };
-        return data;
-    };
-
     return (
         <EntitySection<MinimalProfile>
             title="Mon profil"
-            fields={[
-                "firstName",
-                "familyName",
-                "phoneNumber",
-                "address",
-                "postalCode",
-                "city",
-                "country",
-            ]}
-            labels={fieldLabel}
-            initialData={normalizeFormData({})}
-            fetch={fetchProfile} // <= pattern fetchData via .get
-            create={async (data) => {
-                if (!sub) throw new Error("sub manquant");
-                await createUserProfile(sub, data);
-            }}
-            update={async (entity, data) => {
-                if (!entity?.id) throw new Error("id manquant");
-                await updateUserProfile(entity.id, data);
-            }}
-            remove={async (entity) => {
-                if (!entity?.id) return;
-                await deleteUserProfile(entity.id);
-            }}
             requiredFields={["firstName", "familyName"]}
             renderIcon={getIcon}
             renderValue={renderValue}
@@ -112,6 +65,7 @@ export default function UserProfileManager() {
                     void clear(field);
                 }
             }}
+            manager={manager}
         />
     );
 }
