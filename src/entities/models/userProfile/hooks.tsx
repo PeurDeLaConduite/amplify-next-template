@@ -1,105 +1,22 @@
 // @/src/hooks/useUserProfileManager.ts
-"use client";
-import { useAuthenticator } from "@aws-amplify/ui-react";
-import useEntityManager, { type FieldConfig } from "@/src/hooks/useEntityManagerGeneral";
+import { createEntityHooks } from "@src/entities/createEntityHooks";
+import { label as fieldLabel, MinimalProfile } from "@src/components/Profile/utilsProfile";
 import {
+    getUserProfile,
     createUserProfile,
     updateUserProfile,
     deleteUserProfile,
-    getUserProfile,
-} from "@src/entities";
-import {
-    MinimalProfile,
-    normalizeFormData,
-    label as fieldLabel,
-} from "@src/components/Profile/utilsProfile";
+} from "@src/entities/models/userProfile/service";
 
-export function useUserProfileManager() {
-    const { user } = useAuthenticator();
-    const sub = user?.userId ?? user?.username;
-
-    // Fonction de récupération du profil
-    const fetch = async () => {
-        if (!sub) return null;
-        const item = await getUserProfile(sub);
-        if (!item) return null;
-        const data: MinimalProfile & { id?: string } = {
-            id: item.id,
-            firstName: item.firstName ?? "",
-            familyName: item.familyName ?? "",
-            address: item.address ?? "",
-            postalCode: item.postalCode ?? "",
-            city: item.city ?? "",
-            country: item.country ?? "",
-            phoneNumber: item.phoneNumber ?? "",
-        };
-        return data;
-    };
-
-    const config: FieldConfig<MinimalProfile> = {
-        firstName: {
-            parse: (v: string) => v,
-            serialize: (v: string) => v,
-            emptyValue: "",
-        },
-        familyName: {
-            parse: (v: string) => v,
-            serialize: (v: string) => v,
-            emptyValue: "",
-        },
-        address: {
-            parse: (v: string) => v,
-            serialize: (v: string) => v,
-            emptyValue: "",
-        },
-        postalCode: {
-            parse: (v: string) => v,
-            serialize: (v: string) => v,
-            emptyValue: "",
-        },
-        city: {
-            parse: (v: string) => v,
-            serialize: (v: string) => v,
-            emptyValue: "",
-        },
-        country: {
-            parse: (v: string) => v,
-            serialize: (v: string) => v,
-            emptyValue: "",
-        },
-        phoneNumber: {
-            parse: (v: string) => v,
-            serialize: (v: string) => v,
-            emptyValue: "",
-        },
-    };
-
-    // Hook générique pour toute l’édition CRUD du profil
-    return useEntityManager<MinimalProfile>({
-        fetch,
-        create: async (data) => {
-            if (!sub) throw new Error("sub manquant");
-            await createUserProfile(sub, data);
-        },
-        update: async (entity, data) => {
-            if (!entity?.id) throw new Error("id manquant");
-            await updateUserProfile(entity.id, data);
-        },
-        remove: async (entity) => {
-            if (!entity?.id) return;
-            await deleteUserProfile(entity.id);
-        },
-        fields: [
-            "firstName",
-            "familyName",
-            "phoneNumber",
-            "address",
-            "postalCode",
-            "city",
-            "country",
-        ],
-        labels: fieldLabel,
-        initialData: normalizeFormData({}),
-        config,
-    });
-}
+export const useUserProfileManager = createEntityHooks<MinimalProfile>({
+    model: "UserProfile",
+    fields: ["firstName", "familyName", "phoneNumber", "address", "postalCode", "city", "country"],
+    labels: fieldLabel,
+    service: {
+        get: async (id) =>
+            (await getUserProfile(id)) as unknown as (MinimalProfile & { id?: string }) | null,
+        create: (id, data) => createUserProfile(id, data).then(() => {}),
+        update: (id, data) => updateUserProfile(id, data).then(() => {}),
+        delete: (id) => deleteUserProfile(id).then(() => {}),
+    },
+});
