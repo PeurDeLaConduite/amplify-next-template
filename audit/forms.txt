@@ -1,1 +1,11 @@
-
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\author\form.ts:4: export const { initialForm: initialAuthorForm, toForm: toAuthorForm } = createModelForm<
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\post\form.ts:5: export const { initialForm: initialPostForm, toForm: toPostForm } = createModelForm<
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\section\form.ts:5: export const { initialForm: initialSectionForm, toForm: toSectionForm } = createModelForm<
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\tag\form.ts:4: export const { initialForm: initialTagForm, toForm: toTagForm } = createModelForm<
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\userName\form.ts:4: export const { initialForm: initialUserNameForm, toForm: toUserNameForm } = createModelForm<
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\userProfile\form.ts:4: export const { initialForm: initialUserProfileForm, toForm: toUserProfileForm } = createModelForm<
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\utils\createModelForm.ts:24:  * Génère un couple { initialForm, toForm } pour un modèle spécifique.
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\utils\createModelForm.ts:28:     initialForm: F,
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\utils\createModelForm.ts:29:     toForm: (model: M, ...args: A) => F
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\utils\createModelForm.ts:32:         initialForm,
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\utils\createModelForm.ts:33:         toForm,

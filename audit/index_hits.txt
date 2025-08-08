@@ -1,1 +1,85 @@
-
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\components\Blog\manage\tags\useTagForm.ts:29:             // crudService("PostTag").list(),
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\components\Header\Header.jsx:7: import { useUserNameManager } from "@src/entities"; // <-- le hook générique qu'on vient de créer
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\components\Header\Header.jsx:16:     } = useUserNameManager();
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\components\Profile\UserNameManager.tsx:7: import { useUserNameManager } from "@src/entities";
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\components\Profile\UserNameManager.tsx:10: export default function UserNameManager() {
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\components\Profile\UserNameManager.tsx:12:     const baseManager = useUserNameManager();
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\components\Profile\UserNameModal.tsx:3: import UserNameManager from "./UserNameManager";
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\components\Profile\UserNameModal.tsx:13:             <UserNameManager />
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\components\Profile\UserProfileManager.tsx:10: import { useUserProfileManager } from "@src/entities";
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\components\Profile\UserProfileManager.tsx:12: export default function UserProfileManager() {
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\components\Profile\UserProfileManager.tsx:14:     const manager = useUserProfileManager();
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\components\Profile\UserProfileManager.tsx:15:     // const baseManager = useUserNameManager();
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\components\Profile\shared\EditField.tsx:3: import { type FieldKey } from "@/src/hooks/useEntityManagerGeneral";
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\components\Profile\shared\EntityForm.tsx:5: import { type FieldKey } from "@src/hooks/useEntityManagerGeneral";
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\components\Profile\shared\EntitySection.tsx:3: import type { FieldKey, EntityManagerResult } from "@src/hooks/useEntityManagerGeneral";
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\components\Profile\shared\ReadOnlyView.tsx:3: import { type FieldKey } from "@/src/hooks/useEntityManagerGeneral";
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\createEntityHooks.ts:3: import useEntityManager, { type FieldKey } from "@/src/hooks/useEntityManager";
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\createEntityHooks.ts:12: export interface CreateEntityHooksConfig<T extends Record<string, string>> {
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\createEntityHooks.ts:21: export function createEntityHooks<T extends Record<string, string>>(
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\createEntityHooks.ts:22:     config: CreateEntityHooksConfig<T>
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\createEntityHooks.ts:24:     return function useGeneratedEntityManager() {
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\createEntityHooks.ts:82:         const manager = useEntityManager<T>({
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\author\form.ts:2: import { createModelForm } from "@utils/createModelForm";
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\author\form.ts:4: export const { initialForm: initialAuthorForm, toForm: toAuthorForm } = createModelForm<
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\author\service.ts:1: import { crudService } from "@src/services";
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\author\service.ts:3: export const authorService = crudService("Author");
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\post\form.ts:2: import { createModelForm } from "@utils/createModelForm";
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\post\form.ts:5: export const { initialForm: initialPostForm, toForm: toPostForm } = createModelForm<
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\post\service.ts:1: import { crudService } from "@src/services";
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\post\service.ts:3: export const postService = crudService("Post");
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\section\form.ts:2: import { createModelForm } from "@utils/createModelForm";
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\section\form.ts:5: export const { initialForm: initialSectionForm, toForm: toSectionForm } = createModelForm<
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\section\service.ts:1: import { crudService } from "@src/services";
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\section\service.ts:3: export const sectionService = crudService("Section");
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\tag\form.ts:1: import { createModelForm } from "@utils/createModelForm";
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\tag\form.ts:4: export const { initialForm: initialTagForm, toForm: toTagForm } = createModelForm<
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\tag\service.ts:1: import { crudService } from "@src/services";
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\tag\service.ts:3: export const tagService = crudService("Tag");
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\userName\form.ts:1: import { createModelForm } from "@utils/createModelForm";
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\userName\form.ts:4: export const { initialForm: initialUserNameForm, toForm: toUserNameForm } = createModelForm<
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\userName\hooks.tsx:2: import { createEntityHooks } from "@src/entities/createEntityHooks";
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\userName\hooks.tsx:11: export const useUserNameManager = createEntityHooks<MinimalUserName>({
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\userName\service.ts:10:     return client.models.UserName.create({
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\userName\service.ts:23:     return client.models.UserName.update({
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\userName\service.ts:35:     const { data } = await client.models.UserName.get({ id: sub });
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\userName\service.ts:39:     return client.models.UserName.delete({ id: sub });
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\userName\service.ts:48:     return client.models.UserName.observeQuery({}).subscribe({
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\userProfile\form.ts:1: import { createModelForm } from "@utils/createModelForm";
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\userProfile\form.ts:4: export const { initialForm: initialUserProfileForm, toForm: toUserProfileForm } = createModelForm<
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\userProfile\hooks.tsx:1: // @/src/hooks/useUserProfileManager.ts
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\userProfile\hooks.tsx:2: import { createEntityHooks } from "@src/entities/createEntityHooks";
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\userProfile\hooks.tsx:11: export const useUserProfileManager = createEntityHooks<MinimalProfile>({
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\userProfile\service.ts:13:     return client.models.UserProfile.create({ id: sub, ...data });
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\userProfile\service.ts:18:     return client.models.UserProfile.update({ id: sub, ...data });
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\userProfile\service.ts:23:     return client.models.UserProfile.delete({ id: sub });
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\userProfile\service.ts:28:     const { data } = await client.models.UserProfile.get({ id: sub });
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\userProfile\service.ts:37:     return client.models.UserProfile.observeQuery({}).subscribe({
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\relations\postTag\service.ts:1: import { relationService } from "@src/services";
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\relations\postTag\service.ts:3: export const postTagService = relationService("PostTag", "postId", "tagId");
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\relations\sectionPost\service.ts:2: import { relationService } from "@services/relationService";
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\relations\sectionPost\service.ts:4: export const sectionPostService = relationService("SectionPost", "sectionId", "postId");
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\hooks\useEntityManager.ts:5: export interface UseEntityManagerOptions<T extends Record<string, string>> {
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\hooks\useEntityManager.ts:36: export default function useEntityManager<T extends Record<string, string>>({
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\hooks\useEntityManager.ts:44: }: UseEntityManagerOptions<T>): EntityManagerResult<T> {
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\hooks\useEntityManagerGeneral.ts:14: export interface UseEntityManagerOptions<T extends Record<string, unknown>> {
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\hooks\useEntityManagerGeneral.ts:46: export default function useEntityManager<T extends Record<string, unknown>>({
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\hooks\useEntityManagerGeneral.ts:55: }: UseEntityManagerOptions<T>): EntityManagerResult<T> {
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\services\blogDataService.ts:7:             client.models.Author.list({ authMode: "apiKey" }),
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\services\blogDataService.ts:8:             client.models.Section.list({ authMode: "apiKey" }),
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\services\blogDataService.ts:9:             client.models.Post.list({ authMode: "apiKey" }),
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\services\blogDataService.ts:10:             client.models.Tag.list({ authMode: "apiKey" }),
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\services\blogDataService.ts:11:             client.models.PostTag.list({ authMode: "apiKey" }),
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\services\blogDataService.ts:12:             client.models.SectionPost.list({ authMode: "apiKey" }),
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\services\crudService.ts:1: // @src/services/crudService.ts
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\services\crudService.ts:5: type ClientModelKey = keyof typeof client.models;
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\services\crudService.ts:27:     return client.models[key] as unknown as CrudModel<K>;
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\services\crudService.ts:33:  * @param key Nom d’un modèle présent dans `client.models`.
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\services\crudService.ts:36: export function crudService<K extends ClientModelKey>(key: K) {
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\services\index.ts:2: export { crudService } from "./crudService";
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\services\index.ts:3: export { relationService } from "./relationService";
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\services\relationService.ts:1: // src/services/relationService.ts
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\services\relationService.ts:4: type ModelKey = keyof typeof client.models;
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\services\relationService.ts:14:     return client.models[key] as unknown as RelationCrudModel<K>;
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\services\relationService.ts:17: export function relationService<
+C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\utils\createModelForm.ts:27: export function createModelForm<M, F, A extends unknown[] = unknown[]>(

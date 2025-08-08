@@ -19,33 +19,36 @@ function Search-ToFile {
     $results = @()
   
     foreach ($f in $files) {
-      $hit = Select-String -Path $f.FullName -Pattern $Pattern -SimpleMatch -ErrorAction SilentlyContinue
+      # REGEX mode (default) – NOT SimpleMatch
+      $hit = Select-String -Path $f.FullName -Pattern $Pattern -ErrorAction SilentlyContinue
       if ($hit) { $results += $hit }
     }
   
     if ($results.Count -eq 0) {
-      "" | Set-Content -NoNewline:$false -Path $OutFile
+      "" | Set-Content -Path $OutFile
     } else {
       $results | ForEach-Object { "$($_.Path):$($_.LineNumber): $($_.Line)" } | Set-Content -Path $OutFile
     }
   
-    Write-Host "→ $OutFile ($((Get-Content $OutFile | Measure-Object -Line).Lines) lignes)"
+    $lines = (Get-Content $OutFile | Measure-Object -Line).Lines
+    Write-Host "→ $OutFile ($lines lignes)"
   }
+  
+  Write-Host "==> 1) Index des occurrences clés"
+  Search-ToFile '(defineEntity|createEntityHooks|createModelForm|crudService|relationService|client\.models|useEntityManager|use[A-Z][A-Za-z]+Manager)' "$Out\index_hits.txt"
+  
+  Write-Host "==> 2) Tous les hooks exportés"
+  Search-ToFile '^(export\s+(const|function)\s+use[A-Z])' "$Out\hooks.txt"
+  
+  Write-Host "==> 3) Services (génériques & appels directs)"
+  Search-ToFile '(crudService\(|relationService\(|client\.models\.)' "$Out\Services.txt"
+  
+  Write-Host "==> 4) Formulaires / mapping / validation"
+  Search-ToFile '(createModelForm\(|\binitialForm\b|\btoForm\b|\btoInput\b|\bzod\b)' "$Out\forms.txt"
+  
+  Write-Host "==> 5) Auth côté client (owner/sub, groupes)"
+  Search-ToFile '(\bower\b|cognito:groups|ADMINS|withAuth|AuthContext|\bsub\b)' "$Out\auth.txt"
 
-Write-Host "==> 1) Index des occurrences clés"
-Search-ToFile 'defineEntity|createEntityHooks|createModelForm|crudService|relationService|client.models|useEntityManager|use[A-Z][A-Za-z]+Manager' "$Out\index_hits.txt"
-
-Write-Host "==> 2) Tous les hooks exportés"
-Search-ToFile '^export (const|function) use' "$Out\hooks.txt"
-
-Write-Host "==> 3) Services (génériques & appels directs)"
-Search-ToFile 'crudService(|relationService(|client.models.' "$Out\Services.txt"
-
-Write-Host "==> 4) Formulaires / mapping / validation"
-Search-ToFile 'createModelForm(|initialForm|toForm|toInput|zod' "$Out\forms.txt"
-
-Write-Host "==> 5) Auth côté client (owner/sub, groupes)"
-Search-ToFile 'owner|cognito:groups|ADMINS|withAuth|AuthContext' "$Out\auth.txt"
 
 Write-Host "==> 6) Dépendances circulaires (madge via npx)"
 try {

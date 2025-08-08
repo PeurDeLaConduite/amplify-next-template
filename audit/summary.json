@@ -1,0 +1,694 @@
+{
+  "generatedAt": "2025-08-08T14:00:46.838Z",
+  "totals": {
+    "entities": 9,
+    "hooks": 9,
+    "services": 23,
+    "forms": 11
+  },
+  "entities": [
+    {
+      "name": "unknown",
+      "files": [
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/components/Blog/manage/authors/useAuthorForm.ts",
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/components/Blog/manage/posts/usePostForm.ts",
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/components/Blog/manage/sections/useSectionForm.ts",
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/components/Blog/manage/tags/useTagForm.ts",
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/components/Header/Header.jsx",
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/components/Profile/UserNameManager.tsx",
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/components/Profile/UserNameModal.tsx",
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/components/Profile/UserProfileManager.tsx",
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/components/Profile/shared/EditField.tsx",
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/components/Profile/shared/EntityForm.tsx",
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/components/Profile/shared/EntitySection.tsx",
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/components/Profile/shared/ReadOnlyView.tsx",
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/components/Profile/utilsUserName.ts",
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/components/RequireAdmin.tsx",
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/hooks/useAutoGenFields.ts",
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/hooks/useEntityManager.ts",
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/hooks/useEntityManagerGeneral.ts",
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/services/blogDataService.ts",
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/services/crudService.ts",
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/services/index.ts",
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/services/relationService.ts",
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/utils/createModelForm.ts"
+      ],
+      "counts": {
+        "index": 40,
+        "forms": 5,
+        "services": 7,
+        "hooks": 6,
+        "authRefs": 2
+      },
+      "summary": {
+        "hasConfig": false,
+        "hasForm": false,
+        "hasService": true,
+        "hasHook": true
+      },
+      "redFlags": [
+        {
+          "kind": "service-bypass",
+          "message": "Appel direct à client.models.* au lieu de crudService",
+          "samples": [
+            {
+              "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/services/blogDataService.ts",
+              "line": 7,
+              "text": "            client.models.Author.list({ authMode: \"apiKey\" }),"
+            },
+            {
+              "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/services/blogDataService.ts",
+              "line": 8,
+              "text": "            client.models.Section.list({ authMode: \"apiKey\" }),"
+            },
+            {
+              "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/services/blogDataService.ts",
+              "line": 9,
+              "text": "            client.models.Post.list({ authMode: \"apiKey\" }),"
+            },
+            {
+              "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/services/blogDataService.ts",
+              "line": 10,
+              "text": "            client.models.Tag.list({ authMode: \"apiKey\" }),"
+            },
+            {
+              "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/services/blogDataService.ts",
+              "line": 11,
+              "text": "            client.models.PostTag.list({ authMode: \"apiKey\" }),"
+            }
+          ]
+        },
+        {
+          "kind": "ui-auth-leak",
+          "message": "Logique d'auth (owner/ADMINS) présente dans l'UI (à déplacer en service)",
+          "samples": [
+            {
+              "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/components/RequireAdmin.tsx",
+              "line": 18,
+              "text": "                const groups = session.tokens?.idToken?.payload[\"cognito:groups\"];"
+            },
+            {
+              "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/components/RequireAdmin.tsx",
+              "line": 20,
+              "text": "                if (Array.isArray(groups) && groups.includes(\"ADMINS\")) {"
+            }
+          ]
+        }
+      ],
+      "examples": {
+        "hooks": [
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/components/Blog/manage/authors/useAuthorForm.ts",
+            "line": 10,
+            "text": "export function useAuthorForm(setMessage: (msg: string) => void) {"
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/components/Blog/manage/posts/usePostForm.ts",
+            "line": 22,
+            "text": "export function usePostForm(post: PostType  | null, onSave: () => void) {"
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/components/Blog/manage/sections/useSectionForm.ts",
+            "line": 14,
+            "text": "export function useSectionForm(section: SectionTypes | null, onSave: () => void) {"
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/components/Blog/manage/tags/useTagForm.ts",
+            "line": 14,
+            "text": "export function useTagForm() {"
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/components/Profile/utilsUserName.ts",
+            "line": 12,
+            "text": "export const userNameLabel = (): string => fieldLabel(\"userName\");"
+          }
+        ],
+        "services": [
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/components/Blog/manage/tags/useTagForm.ts",
+            "line": 29,
+            "text": "            // crudService(\"PostTag\").list(),"
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/services/blogDataService.ts",
+            "line": 7,
+            "text": "            client.models.Author.list({ authMode: \"apiKey\" }),"
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/services/blogDataService.ts",
+            "line": 8,
+            "text": "            client.models.Section.list({ authMode: \"apiKey\" }),"
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/services/blogDataService.ts",
+            "line": 9,
+            "text": "            client.models.Post.list({ authMode: \"apiKey\" }),"
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/services/blogDataService.ts",
+            "line": 10,
+            "text": "            client.models.Tag.list({ authMode: \"apiKey\" }),"
+          }
+        ],
+        "forms": [
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/utils/createModelForm.ts",
+            "line": 24,
+            "text": " * G�n�re un couple { initialForm, toForm } pour un mod�le sp�cifique."
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/utils/createModelForm.ts",
+            "line": 28,
+            "text": "    initialForm: F,"
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/utils/createModelForm.ts",
+            "line": 29,
+            "text": "    toForm: (model: M, ...args: A) => F"
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/utils/createModelForm.ts",
+            "line": 32,
+            "text": "        initialForm,"
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/utils/createModelForm.ts",
+            "line": 33,
+            "text": "        toForm,"
+          }
+        ],
+        "auth": [
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/components/RequireAdmin.tsx",
+            "line": 18,
+            "text": "                const groups = session.tokens?.idToken?.payload[\"cognito:groups\"];"
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/components/RequireAdmin.tsx",
+            "line": 20,
+            "text": "                if (Array.isArray(groups) && groups.includes(\"ADMINS\")) {"
+          }
+        ]
+      }
+    },
+    {
+      "name": "createEntityHooks.ts",
+      "files": [
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/createEntityHooks.ts"
+      ],
+      "counts": {
+        "index": 6,
+        "forms": 0,
+        "services": 0,
+        "hooks": 0,
+        "authRefs": 10
+      },
+      "summary": {
+        "hasConfig": false,
+        "hasForm": false,
+        "hasService": false,
+        "hasHook": false
+      },
+      "redFlags": [],
+      "examples": {
+        "hooks": [],
+        "services": [],
+        "forms": [],
+        "auth": [
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/createEntityHooks.ts",
+            "line": 26,
+            "text": "        const sub = user?.userId ?? user?.username;"
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/createEntityHooks.ts",
+            "line": 30,
+            "text": "            if (!sub) return null;"
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/createEntityHooks.ts",
+            "line": 32,
+            "text": "                const item = await config.service.get(sub);"
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/createEntityHooks.ts",
+            "line": 35,
+            "text": "                    id: sub,"
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/createEntityHooks.ts",
+            "line": 46,
+            "text": "            if (!sub) throw new Error(\"id manquant\");"
+          }
+        ]
+      }
+    },
+    {
+      "name": "author",
+      "files": [
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/author/form.ts",
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/author/service.ts"
+      ],
+      "counts": {
+        "index": 4,
+        "forms": 1,
+        "services": 1,
+        "hooks": 0,
+        "authRefs": 0
+      },
+      "summary": {
+        "hasConfig": false,
+        "hasForm": true,
+        "hasService": true,
+        "hasHook": false
+      },
+      "redFlags": [],
+      "examples": {
+        "hooks": [],
+        "services": [
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/author/service.ts",
+            "line": 3,
+            "text": "export const authorService = crudService(\"Author\");"
+          }
+        ],
+        "forms": [
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/author/form.ts",
+            "line": 4,
+            "text": "export const { initialForm: initialAuthorForm, toForm: toAuthorForm } = createModelForm<"
+          }
+        ],
+        "auth": []
+      }
+    },
+    {
+      "name": "post",
+      "files": [
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/post/form.ts",
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/post/service.ts"
+      ],
+      "counts": {
+        "index": 4,
+        "forms": 1,
+        "services": 1,
+        "hooks": 0,
+        "authRefs": 0
+      },
+      "summary": {
+        "hasConfig": false,
+        "hasForm": true,
+        "hasService": true,
+        "hasHook": false
+      },
+      "redFlags": [],
+      "examples": {
+        "hooks": [],
+        "services": [
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/post/service.ts",
+            "line": 3,
+            "text": "export const postService = crudService(\"Post\");"
+          }
+        ],
+        "forms": [
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/post/form.ts",
+            "line": 5,
+            "text": "export const { initialForm: initialPostForm, toForm: toPostForm } = createModelForm<"
+          }
+        ],
+        "auth": []
+      }
+    },
+    {
+      "name": "section",
+      "files": [
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/section/form.ts",
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/section/service.ts"
+      ],
+      "counts": {
+        "index": 4,
+        "forms": 1,
+        "services": 1,
+        "hooks": 0,
+        "authRefs": 0
+      },
+      "summary": {
+        "hasConfig": false,
+        "hasForm": true,
+        "hasService": true,
+        "hasHook": false
+      },
+      "redFlags": [],
+      "examples": {
+        "hooks": [],
+        "services": [
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/section/service.ts",
+            "line": 3,
+            "text": "export const sectionService = crudService(\"Section\");"
+          }
+        ],
+        "forms": [
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/section/form.ts",
+            "line": 5,
+            "text": "export const { initialForm: initialSectionForm, toForm: toSectionForm } = createModelForm<"
+          }
+        ],
+        "auth": []
+      }
+    },
+    {
+      "name": "tag",
+      "files": [
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/tag/form.ts",
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/tag/service.ts"
+      ],
+      "counts": {
+        "index": 4,
+        "forms": 1,
+        "services": 1,
+        "hooks": 0,
+        "authRefs": 0
+      },
+      "summary": {
+        "hasConfig": false,
+        "hasForm": true,
+        "hasService": true,
+        "hasHook": false
+      },
+      "redFlags": [],
+      "examples": {
+        "hooks": [],
+        "services": [
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/tag/service.ts",
+            "line": 3,
+            "text": "export const tagService = crudService(\"Tag\");"
+          }
+        ],
+        "forms": [
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/tag/form.ts",
+            "line": 4,
+            "text": "export const { initialForm: initialTagForm, toForm: toTagForm } = createModelForm<"
+          }
+        ],
+        "auth": []
+      }
+    },
+    {
+      "name": "userName",
+      "files": [
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userName/form.ts",
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userName/hooks.tsx",
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userName/service.ts"
+      ],
+      "counts": {
+        "index": 9,
+        "forms": 1,
+        "services": 5,
+        "hooks": 2,
+        "authRefs": 16
+      },
+      "summary": {
+        "hasConfig": false,
+        "hasForm": true,
+        "hasService": true,
+        "hasHook": true
+      },
+      "redFlags": [
+        {
+          "kind": "service-bypass",
+          "message": "Appel direct à client.models.* au lieu de crudService",
+          "samples": [
+            {
+              "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userName/service.ts",
+              "line": 10,
+              "text": "    return client.models.UserName.create({"
+            },
+            {
+              "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userName/service.ts",
+              "line": 23,
+              "text": "    return client.models.UserName.update({"
+            },
+            {
+              "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userName/service.ts",
+              "line": 35,
+              "text": "    const { data } = await client.models.UserName.get({ id: sub });"
+            },
+            {
+              "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userName/service.ts",
+              "line": 39,
+              "text": "    return client.models.UserName.delete({ id: sub });"
+            },
+            {
+              "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userName/service.ts",
+              "line": 48,
+              "text": "    return client.models.UserName.observeQuery({}).subscribe({"
+            }
+          ]
+        }
+      ],
+      "examples": {
+        "hooks": [
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userName/hooks.tsx",
+            "line": 11,
+            "text": "export const useUserNameManager = createEntityHooks<MinimalUserName>({"
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userName/service.ts",
+            "line": 57,
+            "text": "export const userNameService = {"
+          }
+        ],
+        "services": [
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userName/service.ts",
+            "line": 10,
+            "text": "    return client.models.UserName.create({"
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userName/service.ts",
+            "line": 23,
+            "text": "    return client.models.UserName.update({"
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userName/service.ts",
+            "line": 35,
+            "text": "    const { data } = await client.models.UserName.get({ id: sub });"
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userName/service.ts",
+            "line": 39,
+            "text": "    return client.models.UserName.delete({ id: sub });"
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userName/service.ts",
+            "line": 48,
+            "text": "    return client.models.UserName.observeQuery({}).subscribe({"
+          }
+        ],
+        "forms": [
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userName/form.ts",
+            "line": 4,
+            "text": "export const { initialForm: initialUserNameForm, toForm: toUserNameForm } = createModelForm<"
+          }
+        ],
+        "auth": [
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userName/service.ts",
+            "line": 6,
+            "text": " * @param sub  Sub Cognito (id du user)"
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userName/service.ts",
+            "line": 9,
+            "text": "export async function createUserName(sub: string, name: string) {"
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userName/service.ts",
+            "line": 11,
+            "text": "        id: sub,"
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userName/service.ts",
+            "line": 13,
+            "text": "        owner: sub,"
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userName/service.ts",
+            "line": 19,
+            "text": " * @param sub  Sub Cognito (id du user)"
+          }
+        ]
+      }
+    },
+    {
+      "name": "userProfile",
+      "files": [
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userProfile/form.ts",
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userProfile/hooks.tsx",
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userProfile/service.ts"
+      ],
+      "counts": {
+        "index": 10,
+        "forms": 1,
+        "services": 5,
+        "hooks": 1,
+        "authRefs": 10
+      },
+      "summary": {
+        "hasConfig": false,
+        "hasForm": true,
+        "hasService": true,
+        "hasHook": true
+      },
+      "redFlags": [
+        {
+          "kind": "service-bypass",
+          "message": "Appel direct à client.models.* au lieu de crudService",
+          "samples": [
+            {
+              "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userProfile/service.ts",
+              "line": 13,
+              "text": "    return client.models.UserProfile.create({ id: sub, ...data });"
+            },
+            {
+              "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userProfile/service.ts",
+              "line": 18,
+              "text": "    return client.models.UserProfile.update({ id: sub, ...data });"
+            },
+            {
+              "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userProfile/service.ts",
+              "line": 23,
+              "text": "    return client.models.UserProfile.delete({ id: sub });"
+            },
+            {
+              "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userProfile/service.ts",
+              "line": 28,
+              "text": "    const { data } = await client.models.UserProfile.get({ id: sub });"
+            },
+            {
+              "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userProfile/service.ts",
+              "line": 37,
+              "text": "    return client.models.UserProfile.observeQuery({}).subscribe({"
+            }
+          ]
+        }
+      ],
+      "examples": {
+        "hooks": [
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userProfile/hooks.tsx",
+            "line": 11,
+            "text": "export const useUserProfileManager = createEntityHooks<MinimalProfile>({"
+          }
+        ],
+        "services": [
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userProfile/service.ts",
+            "line": 13,
+            "text": "    return client.models.UserProfile.create({ id: sub, ...data });"
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userProfile/service.ts",
+            "line": 18,
+            "text": "    return client.models.UserProfile.update({ id: sub, ...data });"
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userProfile/service.ts",
+            "line": 23,
+            "text": "    return client.models.UserProfile.delete({ id: sub });"
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userProfile/service.ts",
+            "line": 28,
+            "text": "    const { data } = await client.models.UserProfile.get({ id: sub });"
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userProfile/service.ts",
+            "line": 37,
+            "text": "    return client.models.UserProfile.observeQuery({}).subscribe({"
+          }
+        ],
+        "forms": [
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userProfile/form.ts",
+            "line": 4,
+            "text": "export const { initialForm: initialUserProfileForm, toForm: toUserProfileForm } = createModelForm<"
+          }
+        ],
+        "auth": [
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userProfile/service.ts",
+            "line": 7,
+            "text": "    sub: string,"
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userProfile/service.ts",
+            "line": 13,
+            "text": "    return client.models.UserProfile.create({ id: sub, ...data });"
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userProfile/service.ts",
+            "line": 17,
+            "text": "export async function updateUserProfile(sub: string, data: Partial<Schema[\"UserProfile\"][\"type\"]>) {"
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userProfile/service.ts",
+            "line": 18,
+            "text": "    return client.models.UserProfile.update({ id: sub, ...data });"
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/models/userProfile/service.ts",
+            "line": 22,
+            "text": "export async function deleteUserProfile(sub: string) {"
+          }
+        ]
+      }
+    },
+    {
+      "name": "relations",
+      "files": [
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/relations/postTag/service.ts",
+        "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/relations/sectionPost/service.ts"
+      ],
+      "counts": {
+        "index": 4,
+        "forms": 0,
+        "services": 2,
+        "hooks": 0,
+        "authRefs": 0
+      },
+      "summary": {
+        "hasConfig": false,
+        "hasForm": false,
+        "hasService": true,
+        "hasHook": false
+      },
+      "redFlags": [],
+      "examples": {
+        "hooks": [],
+        "services": [
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/relations/postTag/service.ts",
+            "line": 3,
+            "text": "export const postTagService = relationService(\"PostTag\", \"postId\", \"tagId\");"
+          },
+          {
+            "file": "C:/Users/super/Desktop/TEST BCK/peur-de-la-conduite/amplify-next-template/src/entities/relations/sectionPost/service.ts",
+            "line": 4,
+            "text": "export const sectionPostService = relationService(\"SectionPost\", \"sectionId\", \"postId\");"
+          }
+        ],
+        "forms": [],
+        "auth": []
+      }
+    }
+  ]
+}

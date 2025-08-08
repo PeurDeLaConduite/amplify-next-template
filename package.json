@@ -7,7 +7,8 @@
         "build": "next build",
         "start": "next start",
         "lint": "next lint",
-        "amplify": "amplify"
+        "amplify": "amplify",
+        "audit:summarize": "node scripts/summarize-audit.mjs"
     },
     "dependencies": {
         "@aws-amplify/auth": "^6.13.0",
