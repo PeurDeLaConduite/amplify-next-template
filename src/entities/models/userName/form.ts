@@ -1,12 +1,9 @@
-import {
-    type UserNameType,
-    type UserNameTypeUpdateInput,
-} from "@src/entities";
 import { createModelForm } from "@utils/createModelForm";
+import type { UserNameType, UserNameFormType } from "./types";
 
 export const { initialForm: initialUserNameForm, toForm: toUserNameForm } = createModelForm<
     UserNameType,
-    UserNameTypeUpdateInput
+    UserNameFormType
 >(
     {
         userName: "",
