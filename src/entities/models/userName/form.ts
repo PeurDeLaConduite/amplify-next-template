@@ -3,12 +3,17 @@ import type { UserNameType, UserNameFormType } from "./types";
 
 export const { initialForm: initialUserNameForm, toForm: toUserNameForm } = createModelForm<
     UserNameType,
-    UserNameFormType
+    UserNameFormType,
+    [string[], string[]]
 >(
     {
         userName: "",
+        commentsIds: [],
+        postCommentsIds: [],
     },
-    (userName) => ({
+    (userName, commentsIds: string[] = [], postCommentsIds: string[] = []) => ({
         userName: userName.userName ?? "",
+        commentsIds,
+        postCommentsIds,
     })
 );
