@@ -1,5 +1,5 @@
 import type { AuthorType, AuthorFormType } from "./types";
-import { createModelForm } from "@entities/core/createModelForm";
+import { createModelForm } from "@src/entities/core/createModelForm";
 
 export const { initialForm: initialAuthorForm, toForm: toAuthorForm } = createModelForm<
     AuthorType,

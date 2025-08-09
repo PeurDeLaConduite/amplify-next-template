@@ -1,5 +1,5 @@
 // @src/services/crudService.ts
-import { client, Schema } from "./amplifyClient";
+import { client, Schema } from "@src/entities/core";
 
 // 🔧 Types dynamiques
 type ClientModelKey = keyof typeof client.models;
