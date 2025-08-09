@@ -17,7 +17,7 @@ export const GEN = {
             `@src/entities/customTypes/${refType.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase()}/form`,
     },
     rules: {
-        includeIdInForm: true,
+        includeIdInForm: false,
         omitSystemFields: true,
         exposeHasManyIds: {} as Record<string, string[]>,
     },
