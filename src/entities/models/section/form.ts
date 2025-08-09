@@ -1,26 +1,34 @@
-import { type SectionTypes, type SectionFormTypes, toSeoForm } from "@src/entities";
-import { createModelForm } from "@utils/createModelForm";
-import { initialSeoForm } from "@/src/entities/customTypes/seo/form";
+// AUTO-GENERATED – DO NOT EDIT
+import type { SectionType, SectionFormType } from "./types";
+import { type ModelForm, createModelForm } from "@src/entities/core/createModelForm";
 
-export const { initialForm: initialSectionForm, toForm: toSectionForm } = createModelForm<
-    SectionTypes,
-    SectionFormTypes,
-    [string[]]
->(
-    {
-        slug: "",
-        title: "",
-        description: "",
-        order: 1,
-        seo: { ...initialSeoForm },
-        postIds: [],
-    },
-    (section, postIds: string[] = []) => ({
-        slug: section.slug ?? "",
-        title: section.title ?? "",
-        description: section.description ?? "",
-        order: section.order ?? 1,
-        seo: toSeoForm(section.seo),
-        postIds,
-    })
+import { initialSeoForm, toSeoForm } from "@src/entities/customTypes/seo/form";
+
+export const initialSectionForm: SectionFormType = {
+  id: "",
+  title: "",
+  slug: "",
+  description: "",
+  order: 0,
+  seo: { ...initialSeoForm },
+  postIds: [] as string[],
+};
+
+function toSectionForm(model: SectionType, postIds: string[] = []): SectionFormType {
+  return {
+  id: model.id ?? "",
+  title: model.title ?? "",
+  slug: model.slug ?? "",
+  description: model.description ?? "",
+  order: model.order ?? 0,
+  seo: toSeoForm(model.seo),
+  postIds,
+  };
+}
+
+export const sectionForm = createModelForm<SectionType, SectionFormType, [string[]]>(
+  initialSectionForm,
+  (model, postIds: string[] = []) => toSectionForm(model, postIds)
 );
+
+export { toSectionForm };

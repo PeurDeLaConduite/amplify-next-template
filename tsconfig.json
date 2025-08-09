@@ -25,7 +25,7 @@
             "@utils/*": ["src/utils/*"],
             "@services/*": ["src/services/*"],
             "@myTypes/*": ["src/types/*"],
-            "@entities/*": ["src/entities/*"],
+            "@entities/*": [".Help/entities/*"],
             "@public/*": ["public/*"]
         },
         "plugins": [
@@ -43,7 +43,7 @@
         "public/**/*.json",
         ".next/types/**/*.ts",
         "src/components/Blog/manage/components/EditableField.tsx",
-        "src/entities/models/userProfile/hooks.tsx",
+        ".Help/entities/models/userProfile/hooks.tsx",
         "src/components/Blog/manage/components/EditableField.tsx",
         "src/hooks/useEditableForm.js",
         "src/components/Blog/Create/components/ArticleEditForm.jsx",

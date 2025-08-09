@@ -1,38 +1,46 @@
-import { type PostType, type PostFormType, toSeoForm } from "@src/entities";
-import { createModelForm } from "@utils/createModelForm";
-import { initialSeoForm } from "@/src/entities/customTypes/seo/form";
+// AUTO-GENERATED – DO NOT EDIT
+import type { PostType, PostFormType } from "./types";
+import { type ModelForm, createModelForm } from "@src/entities/core/createModelForm";
 
-export const { initialForm: initialPostForm, toForm: toPostForm } = createModelForm<
-    PostType,
-    PostFormType,
-    [string[], string[]]
->(
-    {
-        slug: "",
-        title: "",
-        excerpt: "",
-        content: "",
-        status: "draft",
-        authorId: "",
-        order: 1,
-        videoUrl: "",
-        type: "",
-        seo: { ...initialSeoForm },
-        tagIds: [],
-        sectionIds: [],
-    },
-    (post, tagIds: string[] = [], sectionIds: string[] = []) => ({
-        slug: post.slug ?? "",
-        title: post.title ?? "",
-        excerpt: post.excerpt ?? "",
-        content: post.content ?? "",
-        status: (post.status as "draft" | "published") ?? "draft",
-        authorId: post.authorId ?? "",
-        order: post.order ?? 1,
-        videoUrl: post.videoUrl ?? "",
-        type: post.type ?? "",
-        seo: toSeoForm(post.seo),
-        tagIds,
-        sectionIds,
-    })
+import { initialSeoForm, toSeoForm } from "@src/entities/customTypes/seo/form";
+
+export const initialPostForm: PostFormType = {
+  id: "",
+  slug: "",
+  title: "",
+  excerpt: "",
+  content: "",
+  videoUrl: "",
+  authorId: "",
+  order: 0,
+  type: "",
+  status: "",
+  seo: { ...initialSeoForm },
+  tagIds: [] as string[],
+  sectionIds: [] as string[],
+};
+
+function toPostForm(model: PostType, tagIds: string[] = [], sectionIds: string[] = []): PostFormType {
+  return {
+  id: model.id ?? "",
+  slug: model.slug ?? "",
+  title: model.title ?? "",
+  excerpt: model.excerpt ?? "",
+  content: model.content ?? "",
+  videoUrl: model.videoUrl ?? "",
+  authorId: model.authorId ?? "",
+  order: model.order ?? 0,
+  type: model.type ?? "",
+  status: model.status ?? "",
+  seo: toSeoForm(model.seo),
+  tagIds,
+  sectionIds,
+  };
+}
+
+export const postForm = createModelForm<PostType, PostFormType, [string[], string[]]>(
+  initialPostForm,
+  (model, tagIds: string[] = [], sectionIds: string[] = []) => toPostForm(model, tagIds, sectionIds)
 );
+
+export { toPostForm };

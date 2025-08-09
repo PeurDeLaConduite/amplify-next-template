@@ -1,0 +1,472 @@
+[
+  {
+    "name": "Todo",
+    "type": "model",
+    "fields": [
+      {
+        "name": "id",
+        "kind": "id",
+        "required": true
+      },
+      {
+        "name": "content",
+        "kind": "string",
+        "required": false
+      }
+    ],
+    "assocs": [
+      {
+        "kind": "hasMany",
+        "target": "Comment",
+        "targetFk": "todoId"
+      }
+    ]
+  },
+  {
+    "name": "Comment",
+    "type": "model",
+    "fields": [
+      {
+        "name": "id",
+        "kind": "id",
+        "required": true
+      },
+      {
+        "name": "content",
+        "kind": "string",
+        "required": false
+      },
+      {
+        "name": "todoId",
+        "kind": "id",
+        "required": true
+      },
+      {
+        "name": "owner",
+        "kind": "string",
+        "required": false
+      },
+      {
+        "name": "userNameId",
+        "kind": "id",
+        "required": true
+      }
+    ],
+    "assocs": [
+      {
+        "kind": "belongsTo",
+        "target": "Todo",
+        "fk": "todoId"
+      },
+      {
+        "kind": "belongsTo",
+        "target": "UserName",
+        "fk": "userNameId"
+      }
+    ]
+  },
+  {
+    "name": "UserName",
+    "type": "model",
+    "fields": [
+      {
+        "name": "id",
+        "kind": "id",
+        "required": true
+      },
+      {
+        "name": "userName",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "owner",
+        "kind": "string",
+        "required": true
+      }
+    ],
+    "assocs": [
+      {
+        "kind": "hasMany",
+        "target": "Comment",
+        "targetFk": "userNameId"
+      },
+      {
+        "kind": "hasMany",
+        "target": "PostComment",
+        "targetFk": "userNameId"
+      }
+    ]
+  },
+  {
+    "name": "UserProfile",
+    "type": "model",
+    "fields": [
+      {
+        "name": "id",
+        "kind": "id",
+        "required": true
+      },
+      {
+        "name": "firstName",
+        "kind": "string",
+        "required": false
+      },
+      {
+        "name": "familyName",
+        "kind": "string",
+        "required": false
+      },
+      {
+        "name": "address",
+        "kind": "string",
+        "required": false
+      },
+      {
+        "name": "postalCode",
+        "kind": "string",
+        "required": false
+      },
+      {
+        "name": "city",
+        "kind": "string",
+        "required": false
+      },
+      {
+        "name": "country",
+        "kind": "string",
+        "required": false
+      },
+      {
+        "name": "phoneNumber",
+        "kind": "string",
+        "required": false
+      }
+    ],
+    "assocs": []
+  },
+  {
+    "name": "Author",
+    "type": "model",
+    "fields": [
+      {
+        "name": "id",
+        "kind": "id",
+        "required": true
+      },
+      {
+        "name": "authorName",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "bio",
+        "kind": "string",
+        "required": false
+      },
+      {
+        "name": "email",
+        "kind": "string",
+        "required": false
+      },
+      {
+        "name": "avatar",
+        "kind": "string",
+        "required": false
+      },
+      {
+        "name": "order",
+        "kind": "number",
+        "required": false
+      }
+    ],
+    "assocs": [
+      {
+        "kind": "hasMany",
+        "target": "Post",
+        "targetFk": "authorId"
+      }
+    ]
+  },
+  {
+    "name": "Seo",
+    "type": "customType",
+    "fields": [
+      {
+        "name": "title",
+        "kind": "string"
+      },
+      {
+        "name": "description",
+        "kind": "string"
+      },
+      {
+        "name": "image",
+        "kind": "string"
+      }
+    ],
+    "assocs": []
+  },
+  {
+    "name": "Section",
+    "type": "model",
+    "fields": [
+      {
+        "name": "id",
+        "kind": "id",
+        "required": true
+      },
+      {
+        "name": "title",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "slug",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "description",
+        "kind": "string",
+        "required": false
+      },
+      {
+        "name": "order",
+        "kind": "number",
+        "required": false
+      },
+      {
+        "name": "seo",
+        "kind": "custom",
+        "refType": "Seo",
+        "required": false
+      }
+    ],
+    "assocs": [
+      {
+        "kind": "hasMany",
+        "target": "SectionPost",
+        "targetFk": "sectionId"
+      }
+    ]
+  },
+  {
+    "name": "Post",
+    "type": "model",
+    "fields": [
+      {
+        "name": "id",
+        "kind": "id",
+        "required": true
+      },
+      {
+        "name": "slug",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "title",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "excerpt",
+        "kind": "string",
+        "required": false
+      },
+      {
+        "name": "content",
+        "kind": "string",
+        "required": false
+      },
+      {
+        "name": "videoUrl",
+        "kind": "string",
+        "required": false
+      },
+      {
+        "name": "authorId",
+        "kind": "id",
+        "required": true
+      },
+      {
+        "name": "order",
+        "kind": "number",
+        "required": false
+      },
+      {
+        "name": "type",
+        "kind": "string",
+        "required": false
+      },
+      {
+        "name": "status",
+        "kind": "enum",
+        "enumValues": [
+          "draft",
+          "published"
+        ],
+        "required": false
+      },
+      {
+        "name": "seo",
+        "kind": "custom",
+        "refType": "Seo",
+        "required": false
+      }
+    ],
+    "assocs": [
+      {
+        "kind": "belongsTo",
+        "target": "Author",
+        "fk": "authorId"
+      },
+      {
+        "kind": "hasMany",
+        "target": "PostComment",
+        "targetFk": "postId"
+      },
+      {
+        "kind": "hasMany",
+        "target": "SectionPost",
+        "targetFk": "postId"
+      },
+      {
+        "kind": "hasMany",
+        "target": "PostTag",
+        "targetFk": "postId"
+      }
+    ]
+  },
+  {
+    "name": "Tag",
+    "type": "model",
+    "fields": [
+      {
+        "name": "id",
+        "kind": "id",
+        "required": true
+      },
+      {
+        "name": "name",
+        "kind": "string",
+        "required": true
+      }
+    ],
+    "assocs": [
+      {
+        "kind": "hasMany",
+        "target": "PostTag",
+        "targetFk": "tagId"
+      }
+    ]
+  },
+  {
+    "name": "PostTag",
+    "type": "model",
+    "fields": [
+      {
+        "name": "postId",
+        "kind": "id",
+        "required": true
+      },
+      {
+        "name": "tagId",
+        "kind": "id",
+        "required": true
+      }
+    ],
+    "assocs": [
+      {
+        "kind": "belongsTo",
+        "target": "Post",
+        "fk": "postId"
+      },
+      {
+        "kind": "belongsTo",
+        "target": "Tag",
+        "fk": "tagId"
+      }
+    ],
+    "identifier": [
+      "postId",
+      "tagId"
+    ]
+  },
+  {
+    "name": "PostComment",
+    "type": "model",
+    "fields": [
+      {
+        "name": "id",
+        "kind": "id",
+        "required": true
+      },
+      {
+        "name": "content",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "owner",
+        "kind": "string",
+        "required": false
+      },
+      {
+        "name": "postId",
+        "kind": "id",
+        "required": true
+      },
+      {
+        "name": "userNameId",
+        "kind": "id",
+        "required": true
+      }
+    ],
+    "assocs": [
+      {
+        "kind": "belongsTo",
+        "target": "Post",
+        "fk": "postId"
+      },
+      {
+        "kind": "belongsTo",
+        "target": "UserName",
+        "fk": "userNameId"
+      }
+    ]
+  },
+  {
+    "name": "SectionPost",
+    "type": "model",
+    "fields": [
+      {
+        "name": "sectionId",
+        "kind": "id",
+        "required": true
+      },
+      {
+        "name": "postId",
+        "kind": "id",
+        "required": true
+      }
+    ],
+    "assocs": [
+      {
+        "kind": "belongsTo",
+        "target": "Section",
+        "fk": "sectionId"
+      },
+      {
+        "kind": "belongsTo",
+        "target": "Post",
+        "fk": "postId"
+      }
+    ],
+    "identifier": [
+      "sectionId",
+      "postId"
+    ]
+  }
+]
