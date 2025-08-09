@@ -64,7 +64,7 @@ export function renderModelForm(m: ModelMeta, relations: RelationsMap) {
 
     const content = `// AUTO-GENERATED – DO NOT EDIT
 import type { ${m.name}Type, ${m.name}FormType, ${m.name}CreateOmit } from "./types";
-import { type ModelForm, createModelForm } from "${GEN.paths.createModelForm}";
+import { createModelForm } from "${GEN.paths.createModelForm}";
 ${ctImports ? "\n" + ctImports : ""}
 
 export const initial${m.name}Form: ${m.name}FormType = {
