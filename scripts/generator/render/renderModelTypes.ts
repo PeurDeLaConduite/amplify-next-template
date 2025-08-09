@@ -31,7 +31,7 @@ import type { BaseModel, CreateOmit, UpdateInput, ModelForm } from "${GEN.paths.
 ${ctImports ? "\n" + ctImports : ""}
 
 export type ${m.name}Type = BaseModel<"${m.name}">;
-export type ${m.name}CreateOmit = CreateOmit<"${m.name}">;
+export type ${m.name}TypeOmit = CreateOmit<"${m.name}">;
 export type ${m.name}TypeUpdateInput = UpdateInput<"${m.name}">;
 
 ${ctMap}

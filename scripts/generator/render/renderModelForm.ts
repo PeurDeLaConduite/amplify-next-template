@@ -18,7 +18,7 @@ export function renderModelForm(m: ModelMeta, relations: RelationsMap) {
     const ctImports = custom
         .map(
             (cf) =>
-                `import { initial${cf.refType}Form, to${cf.refType}Form } from "${GEN.paths.customTypeFormDir(cf.refType)}";`
+                `import { initial${cf.refType}Form, to${cf.refType}Form, to${cf.refType}Input } from "${GEN.paths.customTypeFormDir(cf.refType)}";`
         )
         .join("\n");
 
@@ -63,41 +63,41 @@ export function renderModelForm(m: ModelMeta, relations: RelationsMap) {
     const low = m.name[0].toLowerCase() + m.name.slice(1);
 
     const content = `// AUTO-GENERATED – DO NOT EDIT
-import type { ${m.name}Type, ${m.name}FormType, ${m.name}CreateOmit } from "./types";
-import { createModelForm } from "${GEN.paths.createModelForm}";
-${ctImports ? "\n" + ctImports : ""}
-
-export const initial${m.name}Form: ${m.name}FormType = {
-${initLines.join("\n")}
-};
-
-function to${m.name}Form(model: ${m.name}Type${argsDecl}): ${m.name}FormType {
-  return {
-${toFormLines.join("\n")}
-  };
-}
-
-function to${m.name}Input(form: ${m.name}FormType): ${m.name}CreateOmit {
-${(() => {
-    const vars: string[] = [];
-    if (GEN.rules.includeIdInForm) vars.push("id");
-    for (const k of relKeysSingular) vars.push(`${k}Ids`);
-    if (vars.length) {
-        const destruct = vars.join(", ");
-        const voidLines = vars.map((v) => `  void ${v};`).join("\n");
-        return `  const { ${destruct}, ...rest } = form;\n${voidLines}\n  return rest as ${m.name}CreateOmit;`;
+    import type { ${m.name}Type, ${m.name}FormType, ${m.name}TypeOmit } from "./types";
+    import { createModelForm } from "${GEN.paths.createModelForm}";
+    ${ctImports ? "\n" + ctImports : ""}
+    
+    export const initial${m.name}Form: ${m.name}FormType = {
+    ${initLines.join("\n")}
+    };
+    
+    function to${m.name}Form(model: ${m.name}Type${argsDecl}): ${m.name}FormType {
+      return {
+    ${toFormLines.join("\n")}
+      };
     }
-    return `  return form as ${m.name}CreateOmit;`;
-})()}
-}
-
-export const ${low}Form = createModelForm<${m.name}Type, ${m.name}FormType, ${argsTupleType}, ${m.name}CreateOmit>(
-  initial${m.name}Form,
-  (model${argsDecl}) => to${m.name}Form(model${argsCall}),
-  to${m.name}Input
-);
-
-export { to${m.name}Form, to${m.name}Input };
-`;
+    
+    function to${m.name}Input(form: ${m.name}FormType): ${m.name}TypeOmit {
+    ${(() => {
+        const vars: string[] = [];
+        if (GEN.rules.includeIdInForm) vars.push("id");
+        for (const k of relKeysSingular) vars.push(`${k}Ids`);
+        if (vars.length) {
+            const destruct = vars.join(", ");
+            const voidLines = vars.map((v) => `  void ${v};`).join("\n");
+            return `  const { ${destruct}, ...rest } = form;\n${voidLines}\n  return rest as ${m.name}TypeOmit;`;
+        }
+        return `  return form as ${m.name}TypeOmit;`;
+    })()}
+    }
+    
+    export const ${low}Form = createModelForm<${m.name}Type, ${m.name}FormType, ${argsTupleType}, ${m.name}TypeOmit>(
+      initial${m.name}Form,
+      (model${argsDecl}) => to${m.name}Form(model${argsCall}),
+      to${m.name}Input
+    );
+    
+    export { to${m.name}Form, to${m.name}Input };
+    `;
     safeWrite(path.join(dir, "form.ts"), content);
 }
