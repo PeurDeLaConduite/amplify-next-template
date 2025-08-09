@@ -1,5 +1,5 @@
 // AUTO-GENERATED – DO NOT EDIT
-import type { UserNameType, UserNameFormType, UserNameCreateInput } from "./types";
+import type { UserNameType, UserNameFormType, UserNameCreateOmit } from "./types";
 import { type ModelForm, createModelForm } from "@src/entities/core/createModelForm";
 
 
@@ -16,11 +16,11 @@ function toUserNameForm(model: UserNameType): UserNameFormType {
   };
 }
 
-function toUserNameInput(form: UserNameFormType): UserNameCreateInput {
-  return form as UserNameCreateInput;
+function toUserNameInput(form: UserNameFormType): UserNameCreateOmit {
+  return form as UserNameCreateOmit;
 }
 
-export const userNameForm = createModelForm<UserNameType, UserNameFormType, [], UserNameCreateInput>(
+export const userNameForm = createModelForm<UserNameType, UserNameFormType, [], UserNameCreateOmit>(
   initialUserNameForm,
   (model) => toUserNameForm(model),
   toUserNameInput

@@ -1,5 +1,5 @@
 // AUTO-GENERATED – DO NOT EDIT
-import type { CommentType, CommentFormType, CommentCreateInput } from "./types";
+import type { CommentType, CommentFormType, CommentCreateOmit } from "./types";
 import { type ModelForm, createModelForm } from "@src/entities/core/createModelForm";
 
 
@@ -20,11 +20,11 @@ function toCommentForm(model: CommentType): CommentFormType {
   };
 }
 
-function toCommentInput(form: CommentFormType): CommentCreateInput {
-  return form as CommentCreateInput;
+function toCommentInput(form: CommentFormType): CommentCreateOmit {
+  return form as CommentCreateOmit;
 }
 
-export const commentForm = createModelForm<CommentType, CommentFormType, [], CommentCreateInput>(
+export const commentForm = createModelForm<CommentType, CommentFormType, [], CommentCreateOmit>(
   initialCommentForm,
   (model) => toCommentForm(model),
   toCommentInput

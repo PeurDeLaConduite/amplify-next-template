@@ -1,5 +1,5 @@
 // AUTO-GENERATED – DO NOT EDIT
-import type { TodoType, TodoFormType, TodoCreateInput } from "./types";
+import type { TodoType, TodoFormType, TodoCreateOmit } from "./types";
 import { type ModelForm, createModelForm } from "@src/entities/core/createModelForm";
 
 
@@ -14,11 +14,11 @@ function toTodoForm(model: TodoType): TodoFormType {
   };
 }
 
-function toTodoInput(form: TodoFormType): TodoCreateInput {
-  return form as TodoCreateInput;
+function toTodoInput(form: TodoFormType): TodoCreateOmit {
+  return form as TodoCreateOmit;
 }
 
-export const todoForm = createModelForm<TodoType, TodoFormType, [], TodoCreateInput>(
+export const todoForm = createModelForm<TodoType, TodoFormType, [], TodoCreateOmit>(
   initialTodoForm,
   (model) => toTodoForm(model),
   toTodoInput

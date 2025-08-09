@@ -1,5 +1,5 @@
 import path from "node:path";
-import { modelOutDir, isCustomField, singular, safeWrite, GEN, kebab } from "./common";
+import { modelOutDir, isCustomField, safeWrite, GEN } from "./common";
 import type { ModelMeta, RelationsMap } from "../types";
 
 export function renderModelForm(m: ModelMeta, relations: RelationsMap) {
@@ -63,7 +63,7 @@ export function renderModelForm(m: ModelMeta, relations: RelationsMap) {
     const low = m.name[0].toLowerCase() + m.name.slice(1);
 
     const content = `// AUTO-GENERATED – DO NOT EDIT
-import type { ${m.name}Type, ${m.name}FormType, ${m.name}CreateInput } from "./types";
+import type { ${m.name}Type, ${m.name}FormType, ${m.name}CreateOmit } from "./types";
 import { type ModelForm, createModelForm } from "${GEN.paths.createModelForm}";
 ${ctImports ? "\n" + ctImports : ""}
 
@@ -77,7 +77,7 @@ ${toFormLines.join("\n")}
   };
 }
 
-function to${m.name}Input(form: ${m.name}FormType): ${m.name}CreateInput {
+function to${m.name}Input(form: ${m.name}FormType): ${m.name}CreateOmit {
 ${(() => {
     const vars: string[] = [];
     if (GEN.rules.includeIdInForm) vars.push("id");
@@ -85,13 +85,13 @@ ${(() => {
     if (vars.length) {
         const destruct = vars.join(", ");
         const voidLines = vars.map((v) => `  void ${v};`).join("\n");
-        return `  const { ${destruct}, ...rest } = form;\n${voidLines}\n  return rest as ${m.name}CreateInput;`;
+        return `  const { ${destruct}, ...rest } = form;\n${voidLines}\n  return rest as ${m.name}CreateOmit;`;
     }
-    return `  return form as ${m.name}CreateInput;`;
+    return `  return form as ${m.name}CreateOmit;`;
 })()}
 }
 
-export const ${low}Form = createModelForm<${m.name}Type, ${m.name}FormType, ${argsTupleType}, ${m.name}CreateInput>(
+export const ${low}Form = createModelForm<${m.name}Type, ${m.name}FormType, ${argsTupleType}, ${m.name}CreateOmit>(
   initial${m.name}Form,
   (model${argsDecl}) => to${m.name}Form(model${argsCall}),
   to${m.name}Input

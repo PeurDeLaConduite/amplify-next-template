@@ -1,9 +1,9 @@
 // AUTO-GENERATED – DO NOT EDIT
-import type { BaseModel, CreateInput, UpdateInput, ModelForm } from "@myTypes/amplifyBaseTypes";
+import type { BaseModel, CreateOmit, UpdateInput, ModelForm } from "@myTypes/amplifyBaseTypes";
 
 
 export type UserNameType = BaseModel<"UserName">;
-export type UserNameCreateInput = CreateInput<"UserName">;
+export type UserNameCreateOmit = CreateOmit<"UserName">;
 export type UserNameTypeUpdateInput = UpdateInput<"UserName">;
 
 type CTMap = Record<string, never>;

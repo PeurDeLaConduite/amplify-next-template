@@ -1,5 +1,5 @@
 // AUTO-GENERATED – DO NOT EDIT
-import type { UserProfileType, UserProfileFormType, UserProfileCreateInput } from "./types";
+import type { UserProfileType, UserProfileFormType, UserProfileCreateOmit } from "./types";
 import { type ModelForm, createModelForm } from "@src/entities/core/createModelForm";
 
 
@@ -26,11 +26,11 @@ function toUserProfileForm(model: UserProfileType): UserProfileFormType {
   };
 }
 
-function toUserProfileInput(form: UserProfileFormType): UserProfileCreateInput {
-  return form as UserProfileCreateInput;
+function toUserProfileInput(form: UserProfileFormType): UserProfileCreateOmit {
+  return form as UserProfileCreateOmit;
 }
 
-export const userProfileForm = createModelForm<UserProfileType, UserProfileFormType, [], UserProfileCreateInput>(
+export const userProfileForm = createModelForm<UserProfileType, UserProfileFormType, [], UserProfileCreateOmit>(
   initialUserProfileForm,
   (model) => toUserProfileForm(model),
   toUserProfileInput

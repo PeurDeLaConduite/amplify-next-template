@@ -1,5 +1,5 @@
 import path from "node:path";
-import { modelOutDir, isCustomField, singular, safeWrite, GEN, kebab } from "./common";
+import { modelOutDir, isCustomField, safeWrite, GEN } from "./common";
 import type { ModelMeta, RelationsMap } from "../types";
 
 export function renderModelTypes(m: ModelMeta, relations: RelationsMap) {
@@ -27,11 +27,11 @@ export function renderModelTypes(m: ModelMeta, relations: RelationsMap) {
         : `type CTMap = Record<string, never>;`;
 
     const content = `// AUTO-GENERATED – DO NOT EDIT
-import type { BaseModel, CreateInput, UpdateInput, ModelForm } from "${GEN.paths.myTypes}";
+import type { BaseModel, CreateOmit, UpdateInput, ModelForm } from "${GEN.paths.myTypes}";
 ${ctImports ? "\n" + ctImports : ""}
 
 export type ${m.name}Type = BaseModel<"${m.name}">;
-export type ${m.name}CreateInput = CreateInput<"${m.name}">;
+export type ${m.name}CreateOmit = CreateOmit<"${m.name}">;
 export type ${m.name}TypeUpdateInput = UpdateInput<"${m.name}">;
 
 ${ctMap}

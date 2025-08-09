@@ -1,5 +1,5 @@
 // AUTO-GENERATED – DO NOT EDIT
-import type { PostCommentType, PostCommentFormType, PostCommentCreateInput } from "./types";
+import type { PostCommentType, PostCommentFormType, PostCommentCreateOmit } from "./types";
 import { type ModelForm, createModelForm } from "@src/entities/core/createModelForm";
 
 
@@ -20,11 +20,11 @@ function toPostCommentForm(model: PostCommentType): PostCommentFormType {
   };
 }
 
-function toPostCommentInput(form: PostCommentFormType): PostCommentCreateInput {
-  return form as PostCommentCreateInput;
+function toPostCommentInput(form: PostCommentFormType): PostCommentCreateOmit {
+  return form as PostCommentCreateOmit;
 }
 
-export const postCommentForm = createModelForm<PostCommentType, PostCommentFormType, [], PostCommentCreateInput>(
+export const postCommentForm = createModelForm<PostCommentType, PostCommentFormType, [], PostCommentCreateOmit>(
   initialPostCommentForm,
   (model) => toPostCommentForm(model),
   toPostCommentInput

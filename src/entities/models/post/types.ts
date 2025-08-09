@@ -1,10 +1,10 @@
 // AUTO-GENERATED – DO NOT EDIT
-import type { BaseModel, CreateInput, UpdateInput, ModelForm } from "@myTypes/amplifyBaseTypes";
+import type { BaseModel, CreateOmit, UpdateInput, ModelForm } from "@myTypes/amplifyBaseTypes";
 
 import type { SeoForm } from "@src/entities/customTypes/seo/form";
 
 export type PostType = BaseModel<"Post">;
-export type PostCreateInput = CreateInput<"Post">;
+export type PostCreateOmit = CreateOmit<"Post">;
 export type PostTypeUpdateInput = UpdateInput<"Post">;
 
 type CTMap = { Seo: SeoForm };

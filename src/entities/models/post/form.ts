@@ -1,5 +1,5 @@
 // AUTO-GENERATED – DO NOT EDIT
-import type { PostType, PostFormType, PostCreateInput } from "./types";
+import type { PostType, PostFormType, PostCreateOmit } from "./types";
 import { type ModelForm, createModelForm } from "@src/entities/core/createModelForm";
 
 import { initialSeoForm, toSeoForm } from "@src/entities/customTypes/seo/form";
@@ -37,14 +37,14 @@ function toPostForm(model: PostType, tagIds: string[] = [], sectionIds: string[]
   };
 }
 
-function toPostInput(form: PostFormType): PostCreateInput {
+function toPostInput(form: PostFormType): PostCreateOmit {
   const { tagIds, sectionIds, ...rest } = form;
   void tagIds;
   void sectionIds;
-  return rest as PostCreateInput;
+  return rest as PostCreateOmit;
 }
 
-export const postForm = createModelForm<PostType, PostFormType, [string[], string[]], PostCreateInput>(
+export const postForm = createModelForm<PostType, PostFormType, [string[], string[]], PostCreateOmit>(
   initialPostForm,
   (model, tagIds: string[] = [], sectionIds: string[] = []) => toPostForm(model, tagIds, sectionIds),
   toPostInput

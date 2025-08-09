@@ -1,5 +1,5 @@
 // AUTO-GENERATED – DO NOT EDIT
-import type { AuthorType, AuthorFormType, AuthorCreateInput } from "./types";
+import type { AuthorType, AuthorFormType, AuthorCreateOmit } from "./types";
 import { type ModelForm, createModelForm } from "@src/entities/core/createModelForm";
 
 
@@ -22,11 +22,11 @@ function toAuthorForm(model: AuthorType): AuthorFormType {
   };
 }
 
-function toAuthorInput(form: AuthorFormType): AuthorCreateInput {
-  return form as AuthorCreateInput;
+function toAuthorInput(form: AuthorFormType): AuthorCreateOmit {
+  return form as AuthorCreateOmit;
 }
 
-export const authorForm = createModelForm<AuthorType, AuthorFormType, [], AuthorCreateInput>(
+export const authorForm = createModelForm<AuthorType, AuthorFormType, [], AuthorCreateOmit>(
   initialAuthorForm,
   (model) => toAuthorForm(model),
   toAuthorInput

@@ -1,9 +1,9 @@
 // AUTO-GENERATED – DO NOT EDIT
-import type { BaseModel, CreateInput, UpdateInput, ModelForm } from "@myTypes/amplifyBaseTypes";
+import type { BaseModel, CreateOmit, UpdateInput, ModelForm } from "@myTypes/amplifyBaseTypes";
 
 
 export type TodoType = BaseModel<"Todo">;
-export type TodoCreateInput = CreateInput<"Todo">;
+export type TodoCreateOmit = CreateOmit<"Todo">;
 export type TodoTypeUpdateInput = UpdateInput<"Todo">;
 
 type CTMap = Record<string, never>;

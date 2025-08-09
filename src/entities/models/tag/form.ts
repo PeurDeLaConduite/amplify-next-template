@@ -1,5 +1,5 @@
 // AUTO-GENERATED – DO NOT EDIT
-import type { TagType, TagFormType, TagCreateInput } from "./types";
+import type { TagType, TagFormType, TagCreateOmit } from "./types";
 import { type ModelForm, createModelForm } from "@src/entities/core/createModelForm";
 
 
@@ -16,13 +16,13 @@ function toTagForm(model: TagType, postIds: string[] = []): TagFormType {
   };
 }
 
-function toTagInput(form: TagFormType): TagCreateInput {
+function toTagInput(form: TagFormType): TagCreateOmit {
   const { postIds, ...rest } = form;
   void postIds;
-  return rest as TagCreateInput;
+  return rest as TagCreateOmit;
 }
 
-export const tagForm = createModelForm<TagType, TagFormType, [string[]], TagCreateInput>(
+export const tagForm = createModelForm<TagType, TagFormType, [string[]], TagCreateOmit>(
   initialTagForm,
   (model, postIds: string[] = []) => toTagForm(model, postIds),
   toTagInput
