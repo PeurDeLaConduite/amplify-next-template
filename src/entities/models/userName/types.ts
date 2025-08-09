@@ -3,7 +3,7 @@ import type { BaseModel, CreateOmit, UpdateInput, ModelForm } from "@myTypes/amp
 
 
 export type UserNameType = BaseModel<"UserName">;
-export type UserNameCreateOmit = CreateOmit<"UserName">;
+export type UserNameTypeOmit = CreateOmit<"UserName">;
 export type UserNameTypeUpdateInput = UpdateInput<"UserName">;
 
 type CTMap = Record<string, never>;

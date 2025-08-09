@@ -3,7 +3,7 @@ import type { BaseModel, CreateOmit, UpdateInput, ModelForm } from "@myTypes/amp
 
 
 export type TodoType = BaseModel<"Todo">;
-export type TodoCreateOmit = CreateOmit<"Todo">;
+export type TodoTypeOmit = CreateOmit<"Todo">;
 export type TodoTypeUpdateInput = UpdateInput<"Todo">;
 
 type CTMap = Record<string, never>;

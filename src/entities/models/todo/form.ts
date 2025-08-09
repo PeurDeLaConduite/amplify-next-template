@@ -1,26 +1,28 @@
 // AUTO-GENERATED – DO NOT EDIT
-import type { TodoType, TodoFormType, TodoCreateOmit } from "./types";
-import { createModelForm } from "@/src/entities/core/utils/createModelForm";
-
-export const initialTodoForm: TodoFormType = {
-    id: "",
-    content: "",
-};
-
-function toTodoForm(model: TodoType): TodoFormType {
-    return {
-        content: model.content ?? "",
+    import type { TodoType, TodoFormType, TodoTypeOmit } from "./types";
+    import { createModelForm } from "@src/entities/core/createModelForm";
+    
+    
+    export const initialTodoForm: TodoFormType = {
+      id: "",
+  content: "",
     };
-}
-
-function toTodoInput(form: TodoFormType): TodoCreateOmit {
-    return form as TodoCreateOmit;
-}
-
-export const todoForm = createModelForm<TodoType, TodoFormType, [], TodoCreateOmit>(
-    initialTodoForm,
-    (model) => toTodoForm(model),
-    toTodoInput
-);
-
-export { toTodoForm, toTodoInput };
+    
+    function toTodoForm(model: TodoType): TodoFormType {
+      return {
+      content: model.content ?? "",
+      };
+    }
+    
+    function toTodoInput(form: TodoFormType): TodoTypeOmit {
+      return form as TodoTypeOmit;
+    }
+    
+    export const todoForm = createModelForm<TodoType, TodoFormType, [], TodoTypeOmit>(
+      initialTodoForm,
+      (model) => toTodoForm(model),
+      toTodoInput
+    );
+    
+    export { toTodoForm, toTodoInput };
+    

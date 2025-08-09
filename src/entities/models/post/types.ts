@@ -4,7 +4,7 @@ import type { BaseModel, CreateOmit, UpdateInput, ModelForm } from "@myTypes/amp
 import type { SeoForm } from "@src/entities/customTypes/seo/form";
 
 export type PostType = BaseModel<"Post">;
-export type PostCreateOmit = CreateOmit<"Post">;
+export type PostTypeOmit = CreateOmit<"Post">;
 export type PostTypeUpdateInput = UpdateInput<"Post">;
 
 type CTMap = { Seo: SeoForm };

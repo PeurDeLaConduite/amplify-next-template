@@ -3,7 +3,7 @@ import type { BaseModel, CreateOmit, UpdateInput, ModelForm } from "@myTypes/amp
 
 
 export type CommentType = BaseModel<"Comment">;
-export type CommentCreateOmit = CreateOmit<"Comment">;
+export type CommentTypeOmit = CreateOmit<"Comment">;
 export type CommentTypeUpdateInput = UpdateInput<"Comment">;
 
 type CTMap = Record<string, never>;
