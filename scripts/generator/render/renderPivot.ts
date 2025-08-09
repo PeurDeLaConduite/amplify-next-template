@@ -2,12 +2,8 @@ import path from "node:path";
 import { safeWrite, GEN } from "./common";
 import type { ModelMeta } from "../types";
 
-export function renderPivot(m: ModelMeta) {
-    const dir = path.join(
-        process.cwd(),
-        GEN.out.relations,
-        m.name.charAt(0).toLowerCase() + m.name.slice(1)
-    );
+export function renderPivot(m: ModelMeta, relationsDir: string) {
+    const dir = path.join(relationsDir, m.name.charAt(0).toLowerCase() + m.name.slice(1));
     const low = m.name.charAt(0).toLowerCase() + m.name.slice(1);
 
     const [assocA, assocB] = m.assocs.filter((a) => a.kind === "belongsTo") as any[];
