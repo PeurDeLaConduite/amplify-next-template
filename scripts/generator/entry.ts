@@ -15,7 +15,8 @@ async function main() {
         tsconfigRel: GEN.tsconfigRel,
         debug: false,
     });
-
+    await ensureDir(path.join(ROOT, GEN.out.introspection));
+    await writeJSON(path.join(ROOT, GEN.out.introspection, "schema.json"), metas);
     // Inject implicit id for non-composite models
     for (const m of metas) {
         if (m.type !== "model") continue;
