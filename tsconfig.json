@@ -25,7 +25,7 @@
             "@utils/*": ["src/utils/*"],
             "@services/*": ["src/services/*"],
             "@myTypes/*": ["src/types/*"],
-            "@entities/*": [".Help/entities/*"],
+            "@entities/*": ["src/entities/*"],
             "@public/*": ["public/*"]
         },
         "plugins": [
@@ -52,6 +52,6 @@
         "src/components/Blog/Create/PostsForm.jsx",
         "src/components/Blog/manage/sections/SectionsForm.tsx",
         "src/components/Blog/manage/components/ItemSelector.tsx"
-, ".Help/examples/useCrudManager.ts", ".Help/examples/createEntityTypes.ts"    ],
+    ],
     "exclude": ["node_modules", "amplify", ".Help/examples"]
 }
