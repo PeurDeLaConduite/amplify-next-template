@@ -73,7 +73,8 @@ export default function useEntityManager<T extends Record<string, unknown>>({
             if (data) {
                 const next = { ...initialData } as T;
                 fields.forEach((f) => {
-                    next[f] = data[f];
+                    const raw = (data as Record<string, unknown>)[f];
+                    next[f] = config[f].parse(String(raw ?? ""));
                 });
                 setFormData(next);
             }
@@ -83,7 +84,7 @@ export default function useEntityManager<T extends Record<string, unknown>>({
             setLoading(false);
             setEditMode(false);
         }
-    }, [fetch, fields, initialData]);
+    }, [fetch, fields, initialData, config]);
 
     useEffect(() => {
         fetchData();
@@ -103,9 +104,13 @@ export default function useEntityManager<T extends Record<string, unknown>>({
         setLoading(true);
         try {
             const serialized = { ...formData } as T;
-            fields.forEach((f) => {
-                serialized[f] = config[f].serialize(formData[f]);
-            });
+            for (const f of fields) {
+                const value = formData[f];
+                if (config[f].validate && !config[f].validate(value)) {
+                    return;
+                }
+                serialized[f] = config[f].serialize(value);
+            }
             if (entity) {
                 await update(entity, serialized);
                 await fetchData();
