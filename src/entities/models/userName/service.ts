@@ -1,5 +1,5 @@
 // src/entities/models/userName/service.ts
-import { client } from "@src/services";
+import { client } from "@src/entities/core/services";
 import type { UserNameType } from "./types";
 /**
  * Crée un nouveau record UserName pour l'utilisateur
