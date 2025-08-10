@@ -2,27 +2,17 @@ import { useEffect, useState, useCallback } from "react";
 
 export type FieldKey<T> = keyof T & string;
 
-export interface SingleFieldConfig<V> {
-    parse: (input: string) => V;
-    serialize: (value: V) => V;
-    validate?: (value: V) => boolean;
-    emptyValue: V;
-}
-
-export type FieldConfig<T> = { [K in FieldKey<T>]: SingleFieldConfig<T[K]> };
-
-export interface UseEntityManagerOptions<T extends Record<string, unknown>> {
+export interface UseEntityManagerOptions<T extends Record<string, string>> {
     fetch: () => Promise<(T & { id?: string }) | null>;
     create: (data: T) => Promise<void>;
-    update: (entity: (T & { id?: string }) | null, data: Partial<T>) => Promise<void>;
+    update: (entity: (T & { id?: string }) | null, data: Record<string, string>) => Promise<void>;
     remove: (entity: (T & { id?: string }) | null) => Promise<void>;
     labels: (field: FieldKey<T>) => string;
     fields: FieldKey<T>[];
     initialData: T;
-    config: FieldConfig<T>;
 }
 
-export interface EntityManagerResult<T extends Record<string, unknown>> {
+export interface EntityManagerResult<T extends Record<string, string>> {
     entity: (T & { id?: string }) | null;
     formData: T;
     setFormData: React.Dispatch<React.SetStateAction<T>>;
@@ -43,7 +33,7 @@ export interface EntityManagerResult<T extends Record<string, unknown>> {
     fetchData: () => Promise<void>;
 }
 
-export default function useEntityManager<T extends Record<string, unknown>>({
+export default function useEntityManager<T extends Record<string, string>>({
     fetch,
     create,
     update,
@@ -51,7 +41,6 @@ export default function useEntityManager<T extends Record<string, unknown>>({
     labels,
     fields,
     initialData,
-    config,
 }: UseEntityManagerOptions<T>): EntityManagerResult<T> {
     const [entity, setEntity] = useState<(T & { id?: string }) | null>(null);
     const [formData, setFormData] = useState<T>(initialData);
@@ -71,7 +60,7 @@ export default function useEntityManager<T extends Record<string, unknown>>({
             if (data) {
                 const next = { ...initialData };
                 fields.forEach((f) => {
-                    next[f] = data[f];
+                    next[f] = data[f] ?? "";
                 });
                 setFormData(next);
             }
@@ -91,26 +80,22 @@ export default function useEntityManager<T extends Record<string, unknown>>({
     // ...le reste inchangé
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        const field = name as FieldKey<T>;
-        const parsed = config[field].parse(value);
-        if (config[field].validate && !config[field].validate(parsed)) return;
-        setFormData((f) => ({ ...f, [field]: parsed }));
+        setFormData((f) => ({ ...f, [name]: value }));
     };
 
     const save = async () => {
         setLoading(true);
         try {
-            const serialized = { ...formData } as T;
-            fields.forEach((f) => {
-                serialized[f] = config[f].serialize(formData[f]);
-            });
             if (entity) {
-                await update(entity, serialized);
+                await update(entity, formData);
                 await fetchData();
             } else {
-                await create(serialized);
+                await create(formData);
                 await fetchData();
             }
+
+            // Optionnel : refresh après save si besoin
+            // await fetchData();
         } finally {
             setLoading(false);
             setEditMode(false);
@@ -122,12 +107,11 @@ export default function useEntityManager<T extends Record<string, unknown>>({
         setLoading(true);
         try {
             const { field, value } = editModeField;
-            const parsed = config[field].parse(value);
-            if (config[field].validate && !config[field].validate(parsed)) return;
-            const serialized = config[field].serialize(parsed);
-            await update(entity, { [field]: serialized } as Partial<T>);
-            setFormData((f) => ({ ...f, [field]: parsed }));
+            await update(entity, { [field]: value });
+            setFormData((f) => ({ ...f, [field]: value }));
             setEditModeField(null);
+            // Optionnel : refresh après saveField si besoin
+            // await fetchData();
         } finally {
             setLoading(false);
         }
@@ -136,10 +120,10 @@ export default function useEntityManager<T extends Record<string, unknown>>({
     const clearField = async (field: FieldKey<T>) => {
         setLoading(true);
         try {
-            const empty = config[field].emptyValue;
-            const serialized = config[field].serialize(empty);
-            await update(entity, { [field]: serialized } as Partial<T>);
-            setFormData((f) => ({ ...f, [field]: empty }));
+            await update(entity, { [field]: "" });
+            setFormData((f) => ({ ...f, [field]: "" }));
+            // Optionnel : refresh après clearField si besoin
+            // await fetchData();
         } finally {
             setLoading(false);
         }

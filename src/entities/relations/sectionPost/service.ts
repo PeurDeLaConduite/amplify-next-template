@@ -1,3 +1,4 @@
-// AUTO-GENERATED – DO NOT EDIT
-import { relationService } from "@src/entities/core/services/relationService";
+// services/sectionPostService.ts
+import { relationService } from "@services/relationService";
+
 export const sectionPostService = relationService("SectionPost", "sectionId", "postId");

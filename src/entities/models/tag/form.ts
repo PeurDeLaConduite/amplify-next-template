@@ -1,32 +1,17 @@
-// AUTO-GENERATED – DO NOT EDIT
-    import type { TagType, TagFormType, TagTypeOmit } from "./types";
-    import { createModelForm } from "@src/entities/core/createModelForm";
-    
-    
-    export const initialTagForm: TagFormType = {
-      id: "",
-  name: "",
-  postIds: [] as string[],
-    };
-    
-    function toTagForm(model: TagType, postIds: string[] = []): TagFormType {
-      return {
-      name: model.name ?? "",
-  postIds,
-      };
-    }
-    
-    function toTagInput(form: TagFormType): TagTypeOmit {
-      const { postIds, ...rest } = form;
-  void postIds;
-  return rest as TagTypeOmit;
-    }
-    
-    export const tagForm = createModelForm<TagType, TagFormType, [string[]], TagTypeOmit>(
-      initialTagForm,
-      (model, postIds: string[] = []) => toTagForm(model, postIds),
-      toTagInput
-    );
-    
-    export { toTagForm, toTagInput };
-    
+import { createModelForm } from "@utils/createModelForm";
+import { type TagType, type TagFormType } from "@src/entities";
+
+export const { initialForm: initialTagForm, toForm: toTagForm } = createModelForm<
+    TagType,
+    TagFormType,
+    [string[]]
+>(
+    {
+        name: "",
+        postIds: [],
+    },
+    (tag, postIds: string[] = []) => ({
+        name: tag.name ?? "",
+        postIds,
+    })
+);

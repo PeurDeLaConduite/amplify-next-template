@@ -1,3 +1,3 @@
-// AUTO-GENERATED – DO NOT EDIT
-import { relationService } from "@src/entities/core/services/relationService";
+import { relationService } from "@src/services";
+
 export const postTagService = relationService("PostTag", "postId", "tagId");

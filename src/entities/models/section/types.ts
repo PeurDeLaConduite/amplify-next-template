@@ -1,19 +1,11 @@
-// AUTO-GENERATED – DO NOT EDIT
 import type { BaseModel, CreateOmit, UpdateInput, ModelForm } from "@myTypes/amplifyBaseTypes";
+import { type SeoTypeOmit } from "@src/entities";
 
-import type { SeoForm } from "@src/entities/customTypes/seo/form";
 
-export type SectionType = BaseModel<"Section">;
-export type SectionTypeOmit = CreateOmit<"Section">;
-export type SectionTypeUpdateInput = UpdateInput<"Section">;
+export type SectionTypes = BaseModel<"Section">;
+export type SectionTypesOmit = CreateOmit<"Section">;
+export type SectionTypesUpdateInput = UpdateInput<"Section">;
 
-type CTMap = { Seo: SeoForm };
-type RelKeys = "post";
+type PostCustomTypes = { seo: SeoTypeOmit };
 
-export type SectionFormType = ModelForm<
-  "Section",
-  never,
-  RelKeys,
-  CTMap,
-  "Seo"
->;
+export type SectionFormTypes = ModelForm<"Section", "posts", "post", PostCustomTypes, "seo">;
