@@ -1,4 +1,4 @@
-// utils/amplifyUiConfig.ts
+// src/entities/core/utils/amplifyUiConfig.ts
 import { I18n } from "aws-amplify/utils";
 
 export const configureI18n = () => {
@@ -34,8 +34,7 @@ export const configureI18n = () => {
             "Enter your given name": "Saisissez votre prénom",
             "Enter your address": "Saisissez votre adresse",
             "Confirm your password": "Confirmez votre mot de passe",
-            "Enter your verification code":
-                "Saisissez votre code de vérification",
+            "Enter your verification code": "Saisissez votre code de vérification",
         },
     });
 };

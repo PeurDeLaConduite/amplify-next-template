@@ -1,4 +1,4 @@
-import type { BaseModel, CreateOmit, UpdateInput, ModelForm } from "@myTypes/amplifyBaseTypes";
+import type { BaseModel, CreateOmit, UpdateInput, ModelForm } from "@entities/core";
 
 export type AuthorType = BaseModel<"Author">;
 export type AuthorTypeOmit = CreateOmit<"Author">;

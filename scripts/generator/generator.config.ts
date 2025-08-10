@@ -8,8 +8,8 @@ export const GEN = {
         relations: "src/entities/relations",
     },
     paths: {
-        myTypes: "@myTypes/amplifyBaseTypes",
-        createModelForm: "@src/entities/core/createModelForm",
+        myTypes: "@entities/core",
+        createModelForm: "@entities/core",
         crudService: "@src/entities/core/services",
         relationService: "@src/entities/core/services",
         createEntityHooks: "@src/entities/core/createEntityHooks",

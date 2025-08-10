@@ -1,4 +1,4 @@
-import { createModelForm } from "@utils/createModelForm";
+import { createModelForm } from "@entities/core";
 import { type TagType, type TagFormType } from "@src/entities";
 
 export const { initialForm: initialTagForm, toForm: toTagForm } = createModelForm<

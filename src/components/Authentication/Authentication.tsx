@@ -3,7 +3,7 @@
 import React from "react";
 import { Authenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
-import { configureI18n, formFields } from "@utils/amplifyUiConfig";
+import { configureI18n, formFields } from "@entities/core";
 
 // Configure i18n uniquement
 configureI18n();
