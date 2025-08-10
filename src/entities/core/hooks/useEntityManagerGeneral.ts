@@ -1,4 +1,7 @@
+// src/entities/core/hooks/useEntityManagerGeneral.ts
+"use client";
 import { useEffect, useState, useCallback } from "react";
+
 
 export type FieldKey<T> = keyof T & string;
 
