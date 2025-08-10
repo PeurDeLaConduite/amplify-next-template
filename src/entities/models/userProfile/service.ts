@@ -1,6 +1,6 @@
 // src/lib/userProfileService.ts
 
-import { type Schema, client } from "@src/services";
+import { type Schema, client } from "@src/entities/core/services";
 
 /** CREATE */
 export async function createUserProfile(

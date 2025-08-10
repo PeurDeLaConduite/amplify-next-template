@@ -1,3 +1,3 @@
-import { crudService } from "@src/services";
+import { crudService } from "@src/entities/core/services";
 
 export const sectionService = crudService("Section");

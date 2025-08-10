@@ -1,4 +1,4 @@
-// src/services/relationService.ts
+// src/entities/core/services/relationService.ts
 import { client, Schema } from "./amplifyClient";
 
 type ModelKey = keyof typeof client.models;

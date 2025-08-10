@@ -1,4 +1,4 @@
-// @src/services/crudService.ts
+// src/entities/core/services/crudService.ts
 import { client, Schema } from "./amplifyClient";
 
 // 🔧 Types dynamiques
