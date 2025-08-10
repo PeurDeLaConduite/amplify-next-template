@@ -1,7 +1,7 @@
 // PostForm.tsx
 "use client";
 import React, { forwardRef } from "react";
-import { usePostForm } from "./usePostForm";
+import { usePostForm } from "@src/entities/models/post/hooks";
 import EditableField from "../components/EditableField";
 import EditableTextArea from "../components/EditableTextArea";
 import SeoFields from "../components/SeoFields";

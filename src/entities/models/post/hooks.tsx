@@ -8,7 +8,7 @@ import {
     sectionService,
     tagService,
     authorService,
-    type PostType ,
+    type PostType,
     type PostFormType,
     type SectionTypes,
     type TagType,
@@ -19,7 +19,7 @@ import {
     initialSeoForm,
 } from "@src/entities";
 
-export function usePostForm(post: PostType  | null, onSave: () => void) {
+export function usePostForm(post: PostType | null, onSave: () => void) {
     const [form, setForm] = useState<PostFormType>({ ...initialPostForm });
     const [seo, setSeo] = useState<SeoFormType>({ ...initialSeoForm });
 
@@ -157,7 +157,7 @@ export function usePostForm(post: PostType  | null, onSave: () => void) {
         setSections(sectionData.data ?? []);
     }
 
-    async function loadPostData(post: PostType ) {
+    async function loadPostData(post: PostType) {
         const [tagIds, sectionIds] = await Promise.all([
             postTagService.listByParent(post.id),
             sectionPostService.listByChild(post.id),
