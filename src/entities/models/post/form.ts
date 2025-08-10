@@ -1,5 +1,5 @@
 import { type PostType, type PostFormType, toSeoForm } from "@src/entities";
-import { createModelForm } from "@utils/createModelForm";
+import { createModelForm } from "@entities/core";
 import { initialSeoForm } from "@/src/entities/customTypes/seo/form";
 
 export const { initialForm: initialPostForm, toForm: toPostForm } = createModelForm<
