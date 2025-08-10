@@ -1,5 +1,0 @@
-# Conserver les fins de ligne LF dans le lockfile Yarn
-yarn.lock text eol=lf
-
-# (facultatif) ne touche pas aux archives Yarn Zero-Install
-*.zip -text

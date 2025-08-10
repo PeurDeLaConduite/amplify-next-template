@@ -1,9 +1,0 @@
-C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\components\Blog\manage\authors\useAuthorForm.ts:10: export function useAuthorForm(setMessage: (msg: string) => void) {
-C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\components\Blog\manage\posts\usePostForm.ts:22: export function usePostForm(post: PostType  | null, onSave: () => void) {
-C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\components\Blog\manage\sections\useSectionForm.ts:14: export function useSectionForm(section: SectionTypes | null, onSave: () => void) {
-C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\components\Blog\manage\tags\useTagForm.ts:14: export function useTagForm() {
-C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\components\Profile\utilsUserName.ts:12: export const userNameLabel = (): string => fieldLabel("userName");
-C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\userName\hooks.tsx:11: export const useUserNameManager = createEntityHooks<MinimalUserName>({
-C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\userName\service.ts:57: export const userNameService = {
-C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\entities\models\userProfile\hooks.tsx:11: export const useUserProfileManager = createEntityHooks<MinimalProfile>({
-C:\Users\super\Desktop\TEST BCK\peur-de-la-conduite\amplify-next-template\src\hooks\useAutoGenFields.ts:19: export function useAutoGenFields({ configs }: UseAutoGenFieldsProps) {
