@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuthenticator } from "@aws-amplify/ui-react";
-import { useEntityManager, type FieldKey } from "@src/entities/core/hooks";
+import { useEntityManager, type FieldKey, type FieldConfig } from "@src/entities/core/hooks";
 
 interface EntityService<T extends Record<string, string>> {
     get: (id: string) => Promise<(T & { id?: string }) | null>;
@@ -52,15 +52,12 @@ export function createEntityHooks<T extends Record<string, string>>(
             }
         };
 
-        const update = async (
-            _entity: (T & { id?: string }) | null,
-            data: Record<string, string>
-        ) => {
+        const update = async (_entity: (T & { id?: string }) | null, data: Partial<T>) => {
             void _entity;
             if (!sub) throw new Error("id manquant");
             try {
                 setError(null);
-                await config.service.update(sub, data as Partial<T>);
+                await config.service.update(sub, data);
             } catch (e) {
                 setError(e as Error);
             }
@@ -79,6 +76,18 @@ export function createEntityHooks<T extends Record<string, string>>(
 
         const initialData = config.fields.reduce((acc, f) => ({ ...acc, [f]: "" }), {} as T);
 
+        const fieldConfig: FieldConfig<T> = config.fields.reduce(
+            (acc, f) => ({
+                ...acc,
+                [f]: {
+                    parse: (v: string) => v,
+                    serialize: (v: string) => v,
+                    emptyValue: "",
+                },
+            }),
+            {} as FieldConfig<T>
+        );
+
         const manager = useEntityManager<T>({
             fetch,
             create,
@@ -87,6 +96,7 @@ export function createEntityHooks<T extends Record<string, string>>(
             labels: config.labels,
             fields: config.fields,
             initialData,
+            config: fieldConfig,
         });
 
         return { ...manager, error };

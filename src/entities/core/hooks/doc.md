@@ -2,7 +2,7 @@
 
 ## useEntityManager
 
-Hook utilitaire pour gérer une entité simple composée de champs `string`.
+Hook utilitaire pour gérer une entité. Il prend en charge des champs `string` ou typés via une configuration.
 
 ### Paramètres clés
 
@@ -13,6 +13,7 @@ Hook utilitaire pour gérer une entité simple composée de champs `string`.
 - `labels` : retourne un libellé lisible pour chaque champ.
 - `fields` : liste des clés gérées.
 - `initialData` : valeurs initiales du formulaire.
+- `config` : décrit pour chaque champ `parse`, `serialize`, `validate` (optionnel) et `emptyValue`.
 
 ### Valeurs de retour
 
@@ -26,40 +27,12 @@ Hook utilitaire pour gérer une entité simple composée de champs `string`.
 - `loading` : indique qu'une opération est en cours.
 - `fetchData` : déclenche manuellement la récupération.
 
-### Exemple basique
+### Exemple
 
 ```ts
 import { useEntityManager } from "@src/entities/core/hooks";
 
 const { formData, handleChange, save } = useEntityManager({
-    fetch: async () => null,
-    create: async (data) => {},
-    update: async (entity, data) => {},
-    remove: async (entity) => {},
-    labels: (field) => field,
-    fields: ["name", "email"],
-    initialData: { name: "", email: "" },
-});
-```
-
-## useEntityManagerGeneral
-
-Variante avancée permettant de typer chaque champ et de définir des règles de validation.
-
-### Paramètres supplémentaires
-
-- `config` : décrit pour chaque champ `parse`, `serialize`, `validate` et `emptyValue`.
-
-### Valeurs de retour
-
-Identiques à `useEntityManager`.
-
-### Exemple avancé
-
-```ts
-import { useEntityManagerGeneral } from "@src/entities/core/hooks";
-
-const { formData, handleChange, save } = useEntityManagerGeneral({
     fetch: async () => null,
     create: async (data) => {},
     update: async (entity, data) => {},
