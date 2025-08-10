@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import type { FieldKey, EntityManagerResult } from "@src/hooks/useEntityManagerGeneral";
+import type { FieldKey, EntityManagerResult } from "@entities/core/hooks";
 import ReadOnlyView from "./ReadOnlyView";
 import EditField from "./EditField";
 import EntityForm from "./EntityForm";
