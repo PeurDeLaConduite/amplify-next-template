@@ -1,5 +1,5 @@
 import { initialPostForm, toPostForm } from "./form";
-import type { PostFormType, PostTypeOmit, PostTypeUpdateInput } from "./types";
+import type { PostFormType, PostTypeUpdateInput } from "./types";
 
 export const postConfig = {
     auth: "admin",
@@ -18,7 +18,7 @@ export const postConfig = {
     ],
     relations: ["author", "tags", "sections", "comments"],
     toForm: toPostForm,
-    toCreate: (form: PostFormType): PostTypeOmit => {
+    toCreate: (form: PostFormType): PostTypeUpdateInput => {
         const { tagIds, sectionIds, ...values } = form;
         void tagIds;
         void sectionIds;

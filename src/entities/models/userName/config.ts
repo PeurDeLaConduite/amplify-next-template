@@ -1,5 +1,5 @@
 import { initialUserNameForm, toUserNameForm } from "./form";
-import type { UserNameFormType, UserNameTypeOmit, UserNameTypeUpdateInput } from "./types";
+import type { UserNameFormType, UserNameTypeUpdateInput } from "./types";
 
 export const userNameConfig = {
     auth: "owner",
@@ -7,7 +7,7 @@ export const userNameConfig = {
     fields: ["userName"],
     relations: ["comments", "postComments"],
     toForm: toUserNameForm,
-    toCreate: (form: UserNameFormType): UserNameTypeOmit => {
+    toCreate: (form: UserNameFormType): UserNameTypeUpdateInput => {
         const { commentsIds, postCommentsIds, ...values } = form;
         void commentsIds;
         void postCommentsIds;

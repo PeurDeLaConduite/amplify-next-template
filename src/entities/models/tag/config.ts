@@ -1,5 +1,5 @@
 import { initialTagForm, toTagForm } from "./form";
-import type { TagFormType, TagTypeOmit, TagTypeUpdateInput } from "./types";
+import type { TagFormType,  TagTypeUpdateInput } from "./types";
 
 export const tagConfig = {
     auth: "admin",
@@ -7,7 +7,7 @@ export const tagConfig = {
     fields: ["name"],
     relations: ["posts"],
     toForm: toTagForm,
-    toCreate: (form: TagFormType): TagTypeOmit => {
+    toCreate: (form: TagFormType): TagTypeUpdateInput => {
         const { postIds, ...values } = form;
         void postIds;
         return values;

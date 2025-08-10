@@ -1,5 +1,5 @@
 import { initialAuthorForm, toAuthorForm } from "./form";
-import type { AuthorFormType, AuthorTypeOmit, AuthorTypeUpdateInput } from "./types";
+import type { AuthorFormType, AuthorTypeUpdateInput } from "./types";
 
 export const authorConfig = {
     auth: "admin",
@@ -7,7 +7,7 @@ export const authorConfig = {
     fields: ["authorName", "bio", "email", "avatar", "order"],
     relations: ["posts"],
     toForm: toAuthorForm,
-    toCreate: (form: AuthorFormType): AuthorTypeOmit => {
+    toCreate: (form: AuthorFormType): AuthorTypeUpdateInput => {
         const { postIds, ...values } = form;
         void postIds;
         return values;

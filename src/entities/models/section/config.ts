@@ -1,5 +1,5 @@
 import { initialSectionForm, toSectionForm } from "./form";
-import type { SectionFormTypes, SectionTypesOmit, SectionTypesUpdateInput } from "./types";
+import type { SectionFormTypes, SectionTypesUpdateInput } from "./types";
 
 export const sectionConfig = {
     auth: "admin",
@@ -7,7 +7,7 @@ export const sectionConfig = {
     fields: ["slug", "title", "description", "order", "seo"],
     relations: ["posts"],
     toForm: toSectionForm,
-    toCreate: (form: SectionFormTypes): SectionTypesOmit => {
+    toCreate: (form: SectionFormTypes): SectionTypesUpdateInput => {
         const { postIds, ...values } = form;
         void postIds;
         return values;
