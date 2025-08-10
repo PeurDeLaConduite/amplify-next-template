@@ -18,7 +18,7 @@ export const postConfig = {
     ],
     relations: ["author", "tags", "sections", "comments"],
     toForm: toPostForm,
-    toCreate: (form: PostFormType): PostTypeOmit => {
+    toCreate: (form: PostFormType): PostTypeUpdateInput => {
         const { tagIds, sectionIds, ...values } = form;
         void tagIds;
         void sectionIds;

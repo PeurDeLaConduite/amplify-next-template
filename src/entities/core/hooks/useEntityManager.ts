@@ -75,7 +75,7 @@ export default function useEntityManager<T extends Record<string, string>>({
     useEffect(() => {
         fetchData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [editMode]);
 
     // ...le reste inchangé
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

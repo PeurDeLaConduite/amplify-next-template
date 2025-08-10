@@ -1,6 +1,5 @@
 export * from "./types";
 export * from "./form";
-export * from "./hooks";
 export { authorService } from "./service";
-
+export * from "./hooks";
 export { authorConfig } from "./config";
