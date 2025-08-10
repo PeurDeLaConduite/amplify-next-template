@@ -84,6 +84,6 @@ export function useAuthorForm(setMessage: (msg: string) => void) {
         handleCancel,
         handleSave,
         handleDelete,
-        fetchData, 
+        fetchData,
     };
 }
