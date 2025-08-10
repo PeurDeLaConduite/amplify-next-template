@@ -8,10 +8,10 @@ export const GEN = {
         relations: "src/entities/relations",
     },
     paths: {
-        myTypes: "@entities/core",
-        createModelForm: "@entities/core",
-        crudService: "@src/entities/core/services",
-        relationService: "@src/entities/core/services",
+        myTypes: "@src/entities/core",
+        createModelForm: "@src/entities/core",
+        crudService: "@src/entities/core",
+        relationService: "@src/entities/core",
         createEntityHooks: "@src/entities/core/createEntityHooks",
         customTypeFormDir: (refType: string) =>
             `@src/entities/customTypes/${refType.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase()}/form`,

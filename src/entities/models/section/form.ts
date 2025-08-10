@@ -1,5 +1,5 @@
 import { type SectionTypes, type SectionFormTypes, toSeoForm } from "@src/entities";
-import { createModelForm } from "@entities/core";
+import { createModelForm } from "@src/entities/core";
 import { initialSeoForm } from "@/src/entities/customTypes/seo/form";
 
 export const { initialForm: initialSectionForm, toForm: toSectionForm } = createModelForm<

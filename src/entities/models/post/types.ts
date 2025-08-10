@@ -1,4 +1,4 @@
-import type { BaseModel, CreateOmit, UpdateInput, ModelForm } from "@entities/core";
+import type { BaseModel, CreateOmit, UpdateInput, ModelForm } from "@src/entities/core";
 import { type SeoTypeOmit } from "@src/entities";
 
 export type PostType = BaseModel<"Post">;
