@@ -1,4 +1,4 @@
-import { createModelForm } from "@entities/core";
+import { createModelForm } from "@src/entities/core";
 import type { UserNameType, UserNameFormType } from "./types";
 
 export const { initialForm: initialUserNameForm, toForm: toUserNameForm } = createModelForm<

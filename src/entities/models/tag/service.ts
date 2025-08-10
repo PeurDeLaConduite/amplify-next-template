@@ -1,3 +1,3 @@
-import { crudService } from "@src/entities/core/services";
+import { crudService } from "@src/entities/core";
 
 export const tagService = crudService("Tag");

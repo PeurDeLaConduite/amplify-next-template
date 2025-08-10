@@ -1,4 +1,4 @@
-import { client } from "@src/entities/core/services";
+import { client } from "@src/entities/core";
 import type { BlogData, Author, Post, Section } from "@src/types/blog";
 
 export async function fetchBlogData(): Promise<BlogData> {
