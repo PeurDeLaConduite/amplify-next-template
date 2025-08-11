@@ -3,18 +3,18 @@ import { useEffect } from "react";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 import EntitySection from "./shared/EntitySection";
-import { label as fieldLabel, MinimalProfile } from "./utilsProfile";
+import { label as fieldLabel } from "./utilsUserProfile";
 import PhoneIcon from "@mui/icons-material/Phone";
 import PersonIcon from "@mui/icons-material/Person";
 import HomeIcon from "@mui/icons-material/Home";
-import { useUserProfileManager } from "@src/entities";
+import { useUserProfileManager, UserProfileMinimalType } from "@src/entities";
 
 export default function UserProfileManager() {
     const { user } = useAuthenticator();
     const manager = useUserProfileManager();
     // const baseManager = useUserNameManager();
 
-    const getIcon = (field: keyof MinimalProfile) => {
+    const getIcon = (field: keyof UserProfileMinimalType) => {
         switch (field) {
             case "phoneNumber":
                 return <PhoneIcon fontSize="small" className="text-gray-800" />;
@@ -36,7 +36,7 @@ export default function UserProfileManager() {
         return number.replace(/(\d{2})(?=\d)/g, "$1 ").trim();
     }
 
-    const renderValue = (field: keyof MinimalProfile, value: string) => {
+    const renderValue = (field: keyof UserProfileMinimalType, value: string) => {
         if (field === "phoneNumber") {
             return value ? (
                 <a href={`tel:${value}`} className="text-base text-gray-900 hover:underline">
@@ -62,7 +62,7 @@ export default function UserProfileManager() {
     if (!user) return null;
 
     return (
-        <EntitySection<MinimalProfile>
+        <EntitySection<UserProfileMinimalType>
             title="Mon profil"
             requiredFields={["firstName", "familyName"]}
             renderIcon={getIcon}

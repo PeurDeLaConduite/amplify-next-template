@@ -2,13 +2,14 @@
 import { useState } from "react";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import { useEntityManager, type FieldConfig } from "@src/entities/core/hooks";
-import { label as fieldLabel, type MinimalProfile } from "@src/components/Profile/utilsProfile";
+import { label as fieldLabel } from "@/src/components/Profile/utilsUserProfile";
 import {
     getUserProfile,
     createUserProfile,
     updateUserProfile,
     deleteUserProfile,
-} from "@src/entities/models/userProfile/service";
+    type UserProfileMinimalType,
+} from "@src/entities/models/userProfile";
 
 export function useUserProfileManager() {
     const { user } = useAuthenticator();
@@ -20,7 +21,7 @@ export function useUserProfileManager() {
         try {
             const item = await getUserProfile(sub);
             if (!item) return null;
-            const data: MinimalProfile & { id?: string } = {
+            const data: UserProfileMinimalType & { id?: string } = {
                 id: sub,
                 firstName: item.firstName ?? "",
                 familyName: item.familyName ?? "",
@@ -37,7 +38,7 @@ export function useUserProfileManager() {
         }
     };
 
-    const create = async (data: MinimalProfile) => {
+    const create = async (data: UserProfileMinimalType) => {
         if (!sub) throw new Error("id manquant");
         try {
             setError(null);
@@ -48,8 +49,8 @@ export function useUserProfileManager() {
     };
 
     const update = async (
-        _entity: (MinimalProfile & { id?: string }) | null,
-        data: Partial<MinimalProfile>
+        _entity: (UserProfileMinimalType & { id?: string }) | null,
+        data: Partial<UserProfileMinimalType>
     ) => {
         void _entity;
         if (!sub) throw new Error("id manquant");
@@ -61,7 +62,7 @@ export function useUserProfileManager() {
         }
     };
 
-    const remove = async (_entity: (MinimalProfile & { id?: string }) | null) => {
+    const remove = async (_entity: (UserProfileMinimalType & { id?: string }) | null) => {
         void _entity;
         if (!sub) return;
         try {
@@ -72,7 +73,7 @@ export function useUserProfileManager() {
         }
     };
 
-    const initialData: MinimalProfile = {
+    const initialData: UserProfileMinimalType = {
         firstName: "",
         familyName: "",
         phoneNumber: "",
@@ -82,7 +83,7 @@ export function useUserProfileManager() {
         country: "",
     };
 
-    const fieldConfig: FieldConfig<MinimalProfile> = {
+    const fieldConfig: FieldConfig<UserProfileMinimalType> = {
         firstName: { parse: (v: string) => v, serialize: (v: string) => v, emptyValue: "" },
         familyName: { parse: (v: string) => v, serialize: (v: string) => v, emptyValue: "" },
         phoneNumber: { parse: (v: string) => v, serialize: (v: string) => v, emptyValue: "" },
@@ -92,7 +93,7 @@ export function useUserProfileManager() {
         country: { parse: (v: string) => v, serialize: (v: string) => v, emptyValue: "" },
     };
 
-    const manager = useEntityManager<MinimalProfile>({
+    const manager = useEntityManager<UserProfileMinimalType>({
         fetch,
         create,
         update,
