@@ -1,11 +1,29 @@
+import { z, type ZodType } from "zod";
 import { createModelForm } from "@src/entities/core";
-import type { UserProfileType, UserProfileFormType } from "./types";
+import type { UserProfileType, UserProfileFormType, UserProfileTypeUpdateInput } from "./types";
 
-export const { initialForm: initialUserProfileForm, toForm: toUserProfileForm } = createModelForm<
+export const {
+    zodSchema: userProfileSchema,
+    initialForm: initialUserProfileForm,
+    toForm: toUserProfileForm,
+    toCreate: toUserProfileCreate,
+    toUpdate: toUserProfileUpdate,
+} = createModelForm<
     UserProfileType,
-    UserProfileFormType
->(
-    {
+    UserProfileFormType,
+    UserProfileTypeUpdateInput,
+    UserProfileTypeUpdateInput
+>({
+    zodSchema: z.object({
+        firstName: z.string(),
+        familyName: z.string(),
+        address: z.string(),
+        postalCode: z.string(),
+        city: z.string(),
+        country: z.string(),
+        phoneNumber: z.string(),
+    }) as ZodType<UserProfileFormType>,
+    initialForm: {
         firstName: "",
         familyName: "",
         address: "",
@@ -14,7 +32,7 @@ export const { initialForm: initialUserProfileForm, toForm: toUserProfileForm } 
         country: "",
         phoneNumber: "",
     },
-    (profile) => ({
+    toForm: (profile) => ({
         firstName: profile.firstName ?? "",
         familyName: profile.familyName ?? "",
         address: profile.address ?? "",
@@ -22,5 +40,11 @@ export const { initialForm: initialUserProfileForm, toForm: toUserProfileForm } 
         city: profile.city ?? "",
         country: profile.country ?? "",
         phoneNumber: profile.phoneNumber ?? "",
-    })
-);
+    }),
+    toCreate: (form: UserProfileFormType): UserProfileTypeUpdateInput => ({
+        ...form,
+    }),
+    toUpdate: (form: UserProfileFormType): UserProfileTypeUpdateInput => ({
+        ...form,
+    }),
+});

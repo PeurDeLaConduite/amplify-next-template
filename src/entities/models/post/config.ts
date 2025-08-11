@@ -1,5 +1,4 @@
-import { initialPostForm, toPostForm } from "./form";
-import type { PostFormType, PostTypeUpdateInput } from "./types";
+import { postSchema, initialPostForm, toPostForm, toPostCreate, toPostUpdate } from "./form";
 
 export const postConfig = {
     auth: "admin",
@@ -17,18 +16,9 @@ export const postConfig = {
         "seo",
     ],
     relations: ["author", "tags", "sections", "comments"],
+    zodSchema: postSchema,
     toForm: toPostForm,
-    toCreate: (form: PostFormType): PostTypeUpdateInput => {
-        const { tagIds, sectionIds, ...values } = form;
-        void tagIds;
-        void sectionIds;
-        return values;
-    },
-    toUpdate: (form: PostFormType): PostTypeUpdateInput => {
-        const { tagIds, sectionIds, ...values } = form;
-        void tagIds;
-        void sectionIds;
-        return values;
-    },
+    toCreate: toPostCreate,
+    toUpdate: toPostUpdate,
     initialForm: initialPostForm,
 };

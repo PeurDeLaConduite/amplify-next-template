@@ -9,11 +9,15 @@ Ce module centralise la configuration de l'interface d'authentification d'AWS Am
 
 ## `createModelForm`
 
-`createModelForm` génère un objet `{ initialForm, toForm }` permettant de convertir un modèle en valeurs de formulaire.
+`createModelForm` génère un objet `{ zodSchema, initialForm, toForm, toCreate, toUpdate }`
+permettant de centraliser la transformation des modèles, la validation et la
+conversion vers les formats de création ou de mise à jour.
 
 ### Exemple
 
 ```ts
+import { z } from "zod";
+
 interface Utilisateur {
     id: string;
     email: string;
@@ -26,13 +30,24 @@ interface FormulaireUtilisateur {
     nomComplet: string;
 }
 
-const utilisateurForm = createModelForm<Utilisateur, FormulaireUtilisateur>(
-    { email: "", nomComplet: "" },
-    (user) => ({
+const utilisateurForm = createModelForm<
+    Utilisateur,
+    FormulaireUtilisateur,
+    FormulaireUtilisateur,
+    FormulaireUtilisateur
+>({
+    zodSchema: z.object({
+        email: z.string(),
+        nomComplet: z.string(),
+    }),
+    initialForm: { email: "", nomComplet: "" },
+    toForm: (user) => ({
         email: user.email,
         nomComplet: `${user.prenom} ${user.nom}`,
-    })
-);
+    }),
+    toCreate: (form) => form,
+    toUpdate: (form) => form,
+});
 
 const exemple: Utilisateur = {
     id: "42",

@@ -1,21 +1,19 @@
-import { initialSectionForm, toSectionForm } from "./form";
-import type { SectionFormTypes, SectionTypesUpdateInput } from "./types";
+import {
+    sectionSchema,
+    initialSectionForm,
+    toSectionForm,
+    toSectionCreate,
+    toSectionUpdate,
+} from "./form";
 
 export const sectionConfig = {
     auth: "admin",
     identifier: "id",
     fields: ["slug", "title", "description", "order", "seo"],
     relations: ["posts"],
+    zodSchema: sectionSchema,
     toForm: toSectionForm,
-    toCreate: (form: SectionFormTypes): SectionTypesUpdateInput => {
-        const { postIds, ...values } = form;
-        void postIds;
-        return values;
-    },
-    toUpdate: (form: SectionFormTypes): SectionTypesUpdateInput => {
-        const { postIds, ...values } = form;
-        void postIds;
-        return values;
-    },
+    toCreate: toSectionCreate,
+    toUpdate: toSectionUpdate,
     initialForm: initialSectionForm,
 };

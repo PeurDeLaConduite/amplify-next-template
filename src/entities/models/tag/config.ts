@@ -1,21 +1,13 @@
-import { initialTagForm, toTagForm } from "./form";
-import type { TagFormType,  TagTypeUpdateInput } from "./types";
+import { tagSchema, initialTagForm, toTagForm, toTagCreate, toTagUpdate } from "./form";
 
 export const tagConfig = {
     auth: "admin",
     identifier: "id",
     fields: ["name"],
     relations: ["posts"],
+    zodSchema: tagSchema,
     toForm: toTagForm,
-    toCreate: (form: TagFormType): TagTypeUpdateInput => {
-        const { postIds, ...values } = form;
-        void postIds;
-        return values;
-    },
-    toUpdate: (form: TagFormType): TagTypeUpdateInput => {
-        const { postIds, ...values } = form;
-        void postIds;
-        return values;
-    },
+    toCreate: toTagCreate,
+    toUpdate: toTagUpdate,
     initialForm: initialTagForm,
 };
