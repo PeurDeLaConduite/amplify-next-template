@@ -25,6 +25,7 @@ export default function UserNameManager() {
             title="Mon pseudo public"
             manager={manager}
             requiredFields={["userName"]}
+            deleteLabel="Supprimer le pseudo"
             renderIcon={() => <PersonIcon fontSize="small" className="text-gray-800" />}
             onClearField={(field, clear) => {
                 if (confirm(`Supprimer le contenu du champ "${fieldLabel(field)}" ?`)) {
