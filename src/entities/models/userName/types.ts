@@ -8,3 +8,4 @@ export type UserNameFormType = ModelForm<
     "owner" | "comments" | "postComments",
     "comments" | "postComments"
 >;
+export type UserNameMinimalType = { userName: string };

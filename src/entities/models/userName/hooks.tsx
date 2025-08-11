@@ -2,13 +2,14 @@
 import { useState } from "react";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import { useEntityManager, type FieldConfig } from "@src/entities/core/hooks";
-import { label, type MinimalUserName } from "@src/components/Profile/utilsUserName";
+import { label } from "@src/components/Profile/utilsUserName";
 import {
     getUserName,
     createUserName,
     updateUserName,
     deleteUserName,
-} from "@src/entities/models/userName/service";
+    type UserNameMinimalType,
+} from "@src/entities/models/userName";
 
 export function useUserNameManager() {
     const { user } = useAuthenticator();
@@ -27,7 +28,7 @@ export function useUserNameManager() {
         }
     };
 
-    const create = async (data: MinimalUserName) => {
+    const create = async (data: UserNameMinimalType) => {
         if (!sub) throw new Error("id manquant");
         try {
             setError(null);
@@ -38,8 +39,8 @@ export function useUserNameManager() {
     };
 
     const update = async (
-        _entity: (MinimalUserName & { id?: string }) | null,
-        data: Partial<MinimalUserName>
+        _entity: (UserNameMinimalType & { id?: string }) | null,
+        data: Partial<UserNameMinimalType>
     ) => {
         void _entity;
         if (!sub) throw new Error("id manquant");
@@ -51,7 +52,7 @@ export function useUserNameManager() {
         }
     };
 
-    const remove = async (_entity: (MinimalUserName & { id?: string }) | null) => {
+    const remove = async (_entity: (UserNameMinimalType & { id?: string }) | null) => {
         void _entity;
         if (!sub) return;
         try {
@@ -62,9 +63,9 @@ export function useUserNameManager() {
         }
     };
 
-    const initialData: MinimalUserName = { userName: "" };
+    const initialData: UserNameMinimalType = { userName: "" };
 
-    const fieldConfig: FieldConfig<MinimalUserName> = {
+    const fieldConfig: FieldConfig<UserNameMinimalType> = {
         userName: {
             parse: (v: string) => v,
             serialize: (v: string) => v,
@@ -72,7 +73,7 @@ export function useUserNameManager() {
         },
     };
 
-    const manager = useEntityManager<MinimalUserName>({
+    const manager = useEntityManager<UserNameMinimalType>({
         fetch,
         create,
         update,

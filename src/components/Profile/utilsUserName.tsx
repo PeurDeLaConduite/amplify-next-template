@@ -1,8 +1,7 @@
-import { toUserNameForm } from "@src/entities";
+import { toUserNameForm } from "@entities/models/userName/form";
+import { type UserNameTypeUpdateInput } from "@entities/models/userName/types";
 
-export type MinimalUserName = { userName: string };
-
-export const label = (field: keyof MinimalUserName): string => {
+export const label = (field: keyof UserNameTypeUpdateInput): string => {
     switch (field) {
         case "userName":
             return "Pseudo public";
