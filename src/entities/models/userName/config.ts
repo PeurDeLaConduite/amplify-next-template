@@ -1,17 +1,19 @@
-import { initialUserNameForm, toUserNameForm } from "./form";
-import type { UserNameFormType, UserNameTypeUpdateInput } from "./types";
+import {
+    userNameSchema,
+    initialUserNameForm,
+    toUserNameForm,
+    toUserNameCreate,
+    toUserNameUpdate,
+} from "./form";
 
 export const userNameConfig = {
     auth: "owner",
     identifier: "id",
     fields: ["userName"],
     relations: ["comments", "postComments"],
+    zodSchema: userNameSchema,
     toForm: toUserNameForm,
-    toCreate: (form: UserNameFormType): UserNameTypeUpdateInput => ({
-        ...form,
-    }),
-    toUpdate: (form: UserNameFormType): UserNameTypeUpdateInput => ({
-        ...form,
-    }),
+    toCreate: toUserNameCreate,
+    toUpdate: toUserNameUpdate,
     initialForm: initialUserNameForm,
 };

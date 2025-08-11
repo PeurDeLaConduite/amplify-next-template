@@ -1,13 +1,41 @@
-import { type PostType, type PostFormType, toSeoForm } from "@src/entities";
+import { z, type ZodType } from "zod";
+import {
+    type PostType,
+    type PostFormType,
+    type PostTypeUpdateInput,
+    toSeoForm,
+} from "@src/entities";
 import { createModelForm } from "@src/entities/core";
 import { initialSeoForm } from "@/src/entities/customTypes/seo/form";
 
-export const { initialForm: initialPostForm, toForm: toPostForm } = createModelForm<
+export const {
+    zodSchema: postSchema,
+    initialForm: initialPostForm,
+    toForm: toPostForm,
+    toCreate: toPostCreate,
+    toUpdate: toPostUpdate,
+} = createModelForm<
     PostType,
     PostFormType,
+    PostTypeUpdateInput,
+    PostTypeUpdateInput,
     [string[], string[]]
->(
-    {
+>({
+    zodSchema: z.object({
+        slug: z.string(),
+        title: z.string(),
+        excerpt: z.string(),
+        content: z.string(),
+        status: z.string(),
+        authorId: z.string(),
+        order: z.number(),
+        videoUrl: z.string(),
+        type: z.string(),
+        seo: z.any(),
+        tagIds: z.array(z.string()),
+        sectionIds: z.array(z.string()),
+    }) as ZodType<PostFormType>,
+    initialForm: {
         slug: "",
         title: "",
         excerpt: "",
@@ -21,7 +49,7 @@ export const { initialForm: initialPostForm, toForm: toPostForm } = createModelF
         tagIds: [],
         sectionIds: [],
     },
-    (post, tagIds: string[] = [], sectionIds: string[] = []) => ({
+    toForm: (post, tagIds: string[] = [], sectionIds: string[] = []) => ({
         slug: post.slug ?? "",
         title: post.title ?? "",
         excerpt: post.excerpt ?? "",
@@ -34,5 +62,17 @@ export const { initialForm: initialPostForm, toForm: toPostForm } = createModelF
         seo: toSeoForm(post.seo),
         tagIds,
         sectionIds,
-    })
-);
+    }),
+    toCreate: (form: PostFormType): PostTypeUpdateInput => {
+        const { tagIds, sectionIds, ...values } = form;
+        void tagIds;
+        void sectionIds;
+        return values;
+    },
+    toUpdate: (form: PostFormType): PostTypeUpdateInput => {
+        const { tagIds, sectionIds, ...values } = form;
+        void tagIds;
+        void sectionIds;
+        return values;
+    },
+});

@@ -1,21 +1,19 @@
-import { initialAuthorForm, toAuthorForm } from "./form";
-import type { AuthorFormType, AuthorTypeUpdateInput } from "./types";
+import {
+    authorSchema,
+    initialAuthorForm,
+    toAuthorForm,
+    toAuthorCreate,
+    toAuthorUpdate,
+} from "./form";
 
 export const authorConfig = {
     auth: "admin",
     identifier: "id",
     fields: ["authorName", "bio", "email", "avatar", "order"],
     relations: ["posts"],
+    zodSchema: authorSchema,
     toForm: toAuthorForm,
-    toCreate: (form: AuthorFormType): AuthorTypeUpdateInput => {
-        const { postIds, ...values } = form;
-        void postIds;
-        return values;
-    },
-    toUpdate: (form: AuthorFormType): AuthorTypeUpdateInput => {
-        const { postIds, ...values } = form;
-        void postIds;
-        return values;
-    },
+    toCreate: toAuthorCreate,
+    toUpdate: toAuthorUpdate,
     initialForm: initialAuthorForm,
 };
