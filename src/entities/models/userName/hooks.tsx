@@ -8,8 +8,8 @@ import {
     createUserName,
     updateUserName,
     deleteUserName,
-    type UserNameMinimalType,
-} from "@src/entities/models/userName";
+} from "@src/entities/models/userName/service";
+import { type UserNameMinimalType } from "@src/entities/models/userName/types";
 
 export function useUserNameManager() {
     const { user } = useAuthenticator();

@@ -3,10 +3,9 @@ import {
     type SectionTypes,
     type SectionFormTypes,
     type SectionTypesUpdateInput,
-    toSeoForm,
-} from "@src/entities";
+} from "@src/entities/models/section/types";
+import { toSeoForm, initialSeoForm } from "@src/entities/customTypes/seo/form";
 import { createModelForm } from "@src/entities/core";
-import { initialSeoForm } from "@/src/entities/customTypes/seo/form";
 
 export const {
     zodSchema: sectionSchema,

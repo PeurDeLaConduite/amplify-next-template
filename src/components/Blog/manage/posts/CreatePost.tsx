@@ -2,11 +2,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import PostList from "./PostList";
 import PostForm from "./PostForm";
-import { postService, type PostType  } from "@src/entities";
+import { postService } from "@src/entities/models/post/service";
+import { type PostType } from "@src/entities/models/post/types";
 import RequireAdmin from "../../../RequireAdmin";
 export default function PostManagerPage() {
-    const [posts, setPosts] = useState<PostType []>([]);
-    const [editingPost, setEditingPost] = useState<PostType  | null>(null);
+    const [posts, setPosts] = useState<PostType[]>([]);
+    const [editingPost, setEditingPost] = useState<PostType | null>(null);
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
     const formRef = useRef<HTMLFormElement>(null);
 
