@@ -15,7 +15,8 @@ export default function UserNameManager() {
         if (user) {
             manager.fetchData();
         }
-    }, [user, manager]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user]);
 
     if (!user) return <Authenticator />;
 
