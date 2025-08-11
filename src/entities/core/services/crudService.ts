@@ -1,5 +1,7 @@
 // src/entities/core/services/crudService.ts
 import { client, Schema } from "./amplifyClient";
+import { canAccess } from "../auth";
+import type { AuthRule } from "../types";
 
 // 🔧 Types dynamiques
 type ClientModelKey = keyof typeof client.models;
@@ -33,11 +35,25 @@ function getModelClient<K extends ClientModelKey>(key: K): CrudModel<K> {
  * @param key Nom d’un modèle présent dans `client.models`.
  *            Les customTypes n’y figurent pas, donc TypeScript refusera "Seo", "Address", etc.
  */
-export function crudService<K extends ClientModelKey>(key: K) {
+export function crudService<K extends ClientModelKey>(
+    key: K,
+    rules: AuthRule[] = [{ allow: "public" }]
+) {
     const model = getModelClient(key);
     return {
-        list: model.list,
-        get: model.get,
+        async list() {
+            const { data } = await model.list();
+            return {
+                data: data.filter((item) => canAccess(null, item, rules)),
+            };
+        },
+        async get(args: { id: string }) {
+            const res = await model.get(args);
+            if (res.data && !canAccess(null, res.data, rules)) {
+                return { data: undefined };
+            }
+            return res;
+        },
         create: model.create,
         update: model.update,
         delete: model.delete,
