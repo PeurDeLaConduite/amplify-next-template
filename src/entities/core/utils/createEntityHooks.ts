@@ -4,7 +4,7 @@
 
 import { useState } from "react";
 import { useAuthenticator } from "@aws-amplify/ui-react";
-import { useEntityManager, type FieldKey, type FieldConfig } from "@src/entities/core/hooks";
+import { useEntityManager, type FieldKey, type FieldConfig } from "@entities/core/hooks";
 
 interface EntityService<T extends Record<string, string>> {
     get: (id: string) => Promise<(T & { id?: string }) | null>;

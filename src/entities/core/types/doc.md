@@ -25,7 +25,7 @@ Générique puissant destiné aux formulaires. Il part de `CreateOmit` et permet
 ### Exemple
 
 ```ts
-import type { ModelForm } from "@src/entities/core";
+import type { ModelForm } from "@entities/core";
 
 type PostForm = ModelForm<
     "Post",

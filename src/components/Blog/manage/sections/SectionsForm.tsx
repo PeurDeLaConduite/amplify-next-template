@@ -5,7 +5,7 @@ import EditableTextArea from "../components/EditableTextArea";
 import SeoFields from "../components/SeoFields";
 import OrderSelector from "../components/OrderSelector";
 import ItemSelector from "../components/ItemSelector";
-import { useSectionForm } from "@src/entities/models/section/hooks";
+import { useSectionForm } from "@entities/models/section/hooks";
 import { type SectionTypes } from "@/src/entities/models/section";
 
 interface Props {

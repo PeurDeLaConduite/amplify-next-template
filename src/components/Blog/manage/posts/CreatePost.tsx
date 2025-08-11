@@ -2,8 +2,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import PostList from "./PostList";
 import PostForm from "./PostForm";
-import { postService } from "@src/entities/models/post/service";
-import { type PostType } from "@src/entities/models/post/types";
+import { postService } from "@entities/models/post/service";
+import { type PostType } from "@entities/models/post/types";
 import RequireAdmin from "../../../RequireAdmin";
 export default function PostManagerPage() {
     const [posts, setPosts] = useState<PostType[]>([]);

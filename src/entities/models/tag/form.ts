@@ -1,10 +1,10 @@
 import { z, type ZodType } from "zod";
-import { createModelForm } from "@src/entities/core";
+import { createModelForm } from "@entities/core";
 import {
     type TagType,
     type TagFormType,
     type TagTypeUpdateInput,
-} from "@src/entities/models/tag/types";
+} from "@entities/models/tag/types";
 
 export const {
     zodSchema: tagSchema,

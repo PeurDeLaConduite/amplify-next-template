@@ -5,7 +5,7 @@ import { RefreshButton } from "@components/buttons";
 
 import TagCrudManager from "../components/tag/TagManager";
 import TagsAssociationManager from "../components/tag/PostTagsManager";
-import { useTagForm } from "@src/entities/models/tag/hooks";
+import { useTagForm } from "@entities/models/tag/hooks";
 
 export default function PostsTagsManagerPage() {
     const {

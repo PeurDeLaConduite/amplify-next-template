@@ -1,6 +1,6 @@
 import { z, type ZodType } from "zod";
 import type { AuthorType, AuthorFormType, AuthorTypeUpdateInput } from "./types";
-import { createModelForm } from "@src/entities/core";
+import { createModelForm } from "@entities/core";
 
 export const {
     zodSchema: authorSchema,

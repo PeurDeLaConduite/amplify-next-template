@@ -21,7 +21,7 @@ Cette configuration permet de générer un client fortement typé (`Schema`) pou
 `crudService` fournit des opérations CRUD génériques pour n'importe quel modèle défini dans `client.models`.
 
 ```ts
-import { crudService } from "@src/entities/core/services";
+import { crudService } from "@entities/core/services";
 
 const posts = crudService("Post");
 await posts.create({ title: "Hello" });
@@ -33,7 +33,7 @@ const { data } = await posts.list();
 `relationService` facilite la gestion des tables de relation (many-to-many).
 
 ```ts
-import { relationService } from "@src/entities/core/services";
+import { relationService } from "@entities/core/services";
 
 const postsTags = relationService("PostsTags", "postId", "tagId");
 await postsTags.create("post-1", "tag-1");

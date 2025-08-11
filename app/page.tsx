@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { client } from "@src/entities/core";
+import { client } from "@entities/core";
 import type { Schema } from "@/amplify/data/resource";
 import "@aws-amplify/ui-react/styles.css";
 import "./../app/app.css";

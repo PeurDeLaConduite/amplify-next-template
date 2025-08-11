@@ -1,19 +1,19 @@
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 
 import { useAutoGenFields, slugify } from "@/src/hooks/useAutoGenFields";
-import { postTagService } from "@src/entities/relations/postTag/service";
-import { sectionPostService } from "@src/entities/relations/sectionPost/service";
-import { postService } from "@src/entities/models/post/service";
-import { sectionService } from "@src/entities/models/section/service";
-import { tagService } from "@src/entities/models/tag/service";
-import { authorService } from "@src/entities/models/author/service";
-import { type PostType, type PostFormType } from "@src/entities/models/post/types";
-import { type SectionTypes } from "@src/entities/models/section/types";
-import { type TagType } from "@src/entities/models/tag/types";
-import { type AuthorType } from "@src/entities/models/author/types";
-import { type SeoFormType } from "@src/entities/customTypes/seo/types";
-import { initialPostForm, toPostForm } from "@src/entities/models/post/form";
-import { initialSeoForm } from "@src/entities/customTypes/seo/form";
+import { postTagService } from "@entities/relations/postTag/service";
+import { sectionPostService } from "@entities/relations/sectionPost/service";
+import { postService } from "@entities/models/post/service";
+import { sectionService } from "@entities/models/section/service";
+import { tagService } from "@entities/models/tag/service";
+import { authorService } from "@entities/models/author/service";
+import { type PostType, type PostFormType } from "@entities/models/post/types";
+import { type SectionTypes } from "@entities/models/section/types";
+import { type TagType } from "@entities/models/tag/types";
+import { type AuthorType } from "@entities/models/author/types";
+import { type SeoFormType } from "@entities/customTypes/seo/types";
+import { initialPostForm, toPostForm } from "@entities/models/post/form";
+import { initialSeoForm } from "@entities/customTypes/seo/form";
 
 export function usePostForm(post: PostType | null, onSave: () => void) {
     const [form, setForm] = useState<PostFormType>({ ...initialPostForm });

@@ -1,4 +1,4 @@
-import type { BaseModel, CreateOmit, UpdateInput, ModelForm } from "@src/entities/core";
+import type { BaseModel, CreateOmit, UpdateInput, ModelForm } from "@entities/core";
 
 export type UserNameType = BaseModel<"UserName">;
 export type UserNameTypeOmit = CreateOmit<"UserName">;

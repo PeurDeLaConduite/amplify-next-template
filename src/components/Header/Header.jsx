@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import { PowerButton } from "@src/components/buttons";
-import { useUserNameManager } from "@src/entities/models/userName/hooks"; // <-- le hook générique qu'on vient de créer
+import { useUserNameManager } from "@entities/models/userName/hooks"; // <-- le hook générique qu'on vient de créer
 import UserNameModal from "@src/components/Profile/UserNameModal";
 
 const Header = () => {

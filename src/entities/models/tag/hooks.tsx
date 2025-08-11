@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback, type ChangeEvent } from "react";
 
-import { postService } from "@src/entities/models/post/service";
-import { tagService } from "@src/entities/models/tag/service";
-import { postTagService } from "@src/entities/relations/postTag/service";
-import { type TagFormType, type TagType } from "@src/entities/models/tag/types";
-import { type PostType } from "@src/entities/models/post/types";
-import { type PostTagType } from "@src/entities/relations/postTag/types";
-import { initialTagForm } from "@src/entities/models/tag/form";
+import { postService } from "@entities/models/post/service";
+import { tagService } from "@entities/models/tag/service";
+import { postTagService } from "@entities/relations/postTag/service";
+import { type TagFormType, type TagType } from "@entities/models/tag/types";
+import { type PostType } from "@entities/models/post/types";
+import { type PostTagType } from "@entities/relations/postTag/types";
+import { initialTagForm } from "@entities/models/tag/form";
 
 export function useTagForm() {
     const [tags, setTags] = useState<TagType[]>([]);

@@ -30,7 +30,7 @@ Hook utilitaire pour gérer une entité. Il prend en charge des champs `string` 
 ### Exemple
 
 ```ts
-import { useEntityManager } from "@src/entities/core/hooks";
+import { useEntityManager } from "@entities/core/hooks";
 
 const { formData, handleChange, save } = useEntityManager({
     fetch: async () => null,

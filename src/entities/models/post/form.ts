@@ -3,9 +3,9 @@ import {
     type PostType,
     type PostFormType,
     type PostTypeUpdateInput,
-} from "@src/entities/models/post/types";
-import { toSeoForm, initialSeoForm } from "@src/entities/customTypes/seo/form";
-import { createModelForm } from "@src/entities/core";
+} from "@entities/models/post/types";
+import { toSeoForm, initialSeoForm } from "@entities/customTypes/seo/form";
+import { createModelForm } from "@entities/core";
 
 export const {
     zodSchema: postSchema,

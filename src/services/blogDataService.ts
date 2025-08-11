@@ -1,4 +1,5 @@
 import { client, canAccess, type AuthRule } from "@src/entities/core";
+
 import type { BlogData, Author, Post, Section } from "@src/types/blog";
 
 export async function fetchBlogData(): Promise<BlogData> {

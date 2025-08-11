@@ -1,15 +1,15 @@
 // src/entities/models/userProfile/hooks.tsx
 import { useState } from "react";
 import { useAuthenticator } from "@aws-amplify/ui-react";
-import { useEntityManager, type FieldConfig } from "@src/entities/core/hooks";
+import { useEntityManager, type FieldConfig } from "@entities/core/hooks";
 import { label as fieldLabel } from "@/src/components/Profile/utilsUserProfile";
 import {
     getUserProfile,
     createUserProfile,
     updateUserProfile,
     deleteUserProfile,
-} from "@src/entities/models/userProfile/service";
-import { type UserProfileMinimalType } from "@src/entities/models/userProfile/types";
+} from "@entities/models/userProfile/service";
+import { type UserProfileMinimalType } from "@entities/models/userProfile/types";
 
 export function useUserProfileManager() {
     const { user } = useAuthenticator();

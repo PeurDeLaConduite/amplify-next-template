@@ -4,8 +4,8 @@ import React, { useEffect, useState, useRef } from "react";
 import RequireAdmin from "@components/RequireAdmin";
 import SectionForm from "./SectionsForm";
 import SectionList from "./SectionList";
-import { sectionService } from "@src/entities/models/section/service";
-import { type SectionTypes } from "@src/entities/models/section/types";
+import { sectionService } from "@entities/models/section/service";
+import { type SectionTypes } from "@entities/models/section/types";
 
 export default function SectionManagerPage() {
     const [sections, setSections] = useState<SectionTypes[]>([]);

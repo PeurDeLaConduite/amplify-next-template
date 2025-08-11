@@ -1,5 +1,5 @@
 import { z, type ZodType } from "zod";
-import { createModelForm } from "@src/entities/core";
+import { createModelForm } from "@entities/core";
 import type { UserProfileType, UserProfileFormType, UserProfileTypeUpdateInput } from "./types";
 
 export const {
