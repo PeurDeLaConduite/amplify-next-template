@@ -1,3 +1,5 @@
+import { fieldLabel, type MinimalProfile } from "@src/entities/models/userProfile";
+
 export type Profile = {
     firstName: string | null;
     familyName: string | null;
@@ -6,37 +8,6 @@ export type Profile = {
     city: string | null;
     country: string | null;
     phoneNumber: string | null;
-};
-
-export const label = (field: keyof Profile): string => {
-    switch (field) {
-        case "firstName":
-            return "Prénom";
-        case "familyName":
-            return "Nom";
-        case "address":
-            return "Adresse";
-        case "postalCode":
-            return "Code postal";
-        case "city":
-            return "Ville";
-        case "country":
-            return "Pays";
-        case "phoneNumber":
-            return "Téléphone";
-        default:
-            return field;
-    }
-};
-
-export type MinimalProfile = {
-    firstName: string;
-    familyName: string;
-    address: string;
-    postalCode: string;
-    city: string;
-    country: string;
-    phoneNumber: string;
 };
 
 export const normalizeFormData = (data: Partial<MinimalProfile>) => ({
@@ -48,3 +19,5 @@ export const normalizeFormData = (data: Partial<MinimalProfile>) => ({
     country: data.country ?? "",
     phoneNumber: data.phoneNumber ?? "",
 });
+
+export { fieldLabel };

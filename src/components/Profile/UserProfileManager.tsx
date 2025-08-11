@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 import EntitySection from "./shared/EntitySection";
-import { label as fieldLabel, MinimalProfile } from "./utilsProfile";
+import { fieldLabel, MinimalProfile } from "@src/entities/models/userProfile";
 import PhoneIcon from "@mui/icons-material/Phone";
 import PersonIcon from "@mui/icons-material/Person";
 import HomeIcon from "@mui/icons-material/Home";

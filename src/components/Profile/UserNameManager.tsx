@@ -5,7 +5,7 @@ import "@aws-amplify/ui-react/styles.css";
 import EntitySection from "./shared/EntitySection";
 import PersonIcon from "@mui/icons-material/Person";
 import { useUserNameManager } from "@src/entities";
-import { MinimalUserName } from "./utilsUserName";
+import { MinimalUserName } from "@src/entities/models/userName";
 
 export default function UserNameManager() {
     const { user } = useAuthenticator();

@@ -8,3 +8,13 @@ export type UserNameFormType = ModelForm<
     "owner" | "comments" | "postComments",
     "comments" | "postComments"
 >;
+
+export type MinimalUserName = {
+    userName: string;
+};
+
+const labels: Record<keyof MinimalUserName, string> = {
+    userName: "Pseudo public",
+};
+
+export const fieldLabel = (k: keyof MinimalUserName): string => labels[k];

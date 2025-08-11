@@ -1,4 +1,4 @@
-export type MinimalUserName = { userName: string };
+import { fieldLabel, type MinimalUserName } from "@src/entities/models/userName";
 
 export type SingleFieldUserName = {
     field: keyof MinimalUserName;
@@ -10,8 +10,5 @@ export const normalizeUserName = (d: Partial<MinimalUserName> = {}): MinimalUser
 });
 
 export const userNameLabel = (): string => fieldLabel("userName");
-const labels: Record<keyof MinimalUserName, string> = {
-    userName: "Pseudo public",
-};
 
-export const fieldLabel = (k: keyof MinimalUserName): string => labels[k];
+export { fieldLabel };

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import { useEntityManager, type FieldConfig } from "@src/entities/core/hooks";
-import { fieldLabel, type MinimalUserName } from "@src/components/Profile/utilsUserName";
+import { fieldLabel, type MinimalUserName } from "@src/entities/models/userName";
 import {
     getUserName,
     createUserName,
