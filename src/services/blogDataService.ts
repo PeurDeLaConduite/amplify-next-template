@@ -1,4 +1,4 @@
-import { client } from "@src/entities/core";
+import { client, canAccess, type AuthRule } from "@src/entities/core";
 import type { BlogData, Author, Post, Section } from "@src/types/blog";
 
 export async function fetchBlogData(): Promise<BlogData> {
@@ -12,12 +12,18 @@ export async function fetchBlogData(): Promise<BlogData> {
             client.models.SectionPost.list({ authMode: "apiKey" }),
         ]);
 
+    const publicRule: AuthRule[] = [{ allow: "public" }];
+
+    const authorData = authorsRes.data.filter((a) => canAccess(null, a, publicRule));
+    const sectionData = sectionsRes.data.filter((s) => canAccess(null, s, publicRule));
+    const postData = postsRes.data.filter((p) => canAccess(null, p, publicRule));
+
     const tagsById: Record<string, string> = {};
     tagsRes.data.forEach((t) => {
         tagsById[t.id] = t.name;
     });
 
-    const posts: Post[] = postsRes.data.map((p) => ({
+    const posts: Post[] = postData.map((p) => ({
         postJsonId: p.id,
         title: p.title ?? "",
         slug: p.slug ?? "",
@@ -44,7 +50,7 @@ export async function fetchBlogData(): Promise<BlogData> {
         postsById[p.postJsonId] = p;
     });
 
-    const sections: Section[] = sectionsRes.data.map((s) => ({
+    const sections: Section[] = sectionData.map((s) => ({
         sectionJsonId: s.id,
         title: s.title ?? "",
         slug: s.slug ?? "",
@@ -86,7 +92,7 @@ export async function fetchBlogData(): Promise<BlogData> {
         }
     });
 
-    const authors: Author[] = authorsRes.data.map((a) => ({
+    const authors: Author[] = authorData.map((a) => ({
         authorJsonId: a.id,
         authorName: a.authorName ?? "",
         avatar: a.avatar ?? "",
