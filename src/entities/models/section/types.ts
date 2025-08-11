@@ -1,5 +1,5 @@
 import type { BaseModel, CreateOmit, UpdateInput, ModelForm } from "@src/entities/core";
-import { type SeoTypeOmit } from "@src/entities";
+import { type SeoTypeOmit } from "@src/entities/customTypes/seo/types";
 
 export type SectionTypes = BaseModel<"Section">;
 export type SectionTypesOmit = CreateOmit<"Section">;

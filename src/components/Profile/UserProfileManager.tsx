@@ -7,7 +7,8 @@ import { label as fieldLabel } from "./utilsUserProfile";
 import PhoneIcon from "@mui/icons-material/Phone";
 import PersonIcon from "@mui/icons-material/Person";
 import HomeIcon from "@mui/icons-material/Home";
-import { useUserProfileManager, UserProfileMinimalType } from "@src/entities";
+import { useUserProfileManager } from "@src/entities/models/userProfile/hooks";
+import { type UserProfileMinimalType } from "@src/entities/models/userProfile/types";
 
 export default function UserProfileManager() {
     const { user } = useAuthenticator();

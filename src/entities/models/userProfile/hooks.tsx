@@ -8,8 +8,8 @@ import {
     createUserProfile,
     updateUserProfile,
     deleteUserProfile,
-    type UserProfileMinimalType,
-} from "@src/entities/models/userProfile";
+} from "@src/entities/models/userProfile/service";
+import { type UserProfileMinimalType } from "@src/entities/models/userProfile/types";
 
 export function useUserProfileManager() {
     const { user } = useAuthenticator();

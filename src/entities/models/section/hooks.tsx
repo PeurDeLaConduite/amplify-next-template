@@ -1,14 +1,10 @@
 import { useState, useEffect, ChangeEvent } from "react";
-import {
-    postService,
-    sectionService,
-    sectionPostService,
-    type PostType,
-    type SectionFormTypes,
-    type SectionTypes,
-    initialSectionForm,
-    toSectionForm,
-} from "@src/entities";
+import { postService } from "@src/entities/models/post/service";
+import { sectionService } from "@src/entities/models/section/service";
+import { sectionPostService } from "@src/entities/relations/sectionPost/service";
+import { type PostType } from "@src/entities/models/post/types";
+import { type SectionFormTypes, type SectionTypes } from "@src/entities/models/section/types";
+import { initialSectionForm, toSectionForm } from "@src/entities/models/section/form";
 import { useAutoGenFields, slugify } from "@/src/hooks/useAutoGenFields";
 
 export function useSectionForm(section: SectionTypes | null, onSave: () => void) {
