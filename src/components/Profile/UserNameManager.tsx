@@ -3,40 +3,33 @@ import { useEffect } from "react";
 import { Authenticator, useAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 import EntitySection from "./shared/EntitySection";
+import { label as fieldLabel } from "./utilsUserName";
 import PersonIcon from "@mui/icons-material/Person";
-import { useUserNameManager } from "@src/entities";
-import { MinimalUserName } from "./utilsUserName";
+import { useUserNameManager, type UserNameMinimalType } from "@src/entities";
 
 export default function UserNameManager() {
     const { user } = useAuthenticator();
-    const baseManager = useUserNameManager();
-    const manager = {
-        ...baseManager,
-        save: async () => {
-            await baseManager.save();
-            await baseManager.fetchData();
-        },
-        saveField: async () => {
-            await baseManager.saveField();
-            await baseManager.fetchData();
-        },
-    };
+    const manager = useUserNameManager();
 
     useEffect(() => {
         if (user) {
-            baseManager.fetchData();
+            manager.fetchData();
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user]);
+    }, [user, manager]);
 
     if (!user) return <Authenticator />;
 
     return (
-        <EntitySection<MinimalUserName>
+        <EntitySection<UserNameMinimalType>
             title="Mon pseudo public"
             manager={manager}
             requiredFields={["userName"]}
             renderIcon={() => <PersonIcon fontSize="small" className="text-gray-800" />}
+            onClearField={(field, clear) => {
+                if (confirm(`Supprimer le contenu du champ "${fieldLabel(field)}" ?`)) {
+                    void clear(field);
+                }
+            }}
         />
     );
 }
