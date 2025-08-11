@@ -7,17 +7,11 @@ export const userNameConfig = {
     fields: ["userName"],
     relations: ["comments", "postComments"],
     toForm: toUserNameForm,
-    toCreate: (form: UserNameFormType): UserNameTypeUpdateInput => {
-        const { commentsIds, postCommentsIds, ...values } = form;
-        void commentsIds;
-        void postCommentsIds;
-        return values;
-    },
-    toUpdate: (form: UserNameFormType): UserNameTypeUpdateInput => {
-        const { commentsIds, postCommentsIds, ...values } = form;
-        void commentsIds;
-        void postCommentsIds;
-        return values;
-    },
+    toCreate: (form: UserNameFormType): UserNameTypeUpdateInput => ({
+        ...form,
+    }),
+    toUpdate: (form: UserNameFormType): UserNameTypeUpdateInput => ({
+        ...form,
+    }),
     initialForm: initialUserNameForm,
 };
