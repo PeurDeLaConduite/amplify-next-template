@@ -1,3 +1,5 @@
+"use client";
+
 /* src/entities/createEntityHooks.ts  */
 
 import { useState } from "react";
