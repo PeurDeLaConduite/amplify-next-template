@@ -21,12 +21,14 @@ export interface UseModelFormResult<F, E> {
     dirty: boolean;
     saving: boolean;
     error: unknown;
+    message: string | null;
     handleChange: <K extends keyof F>(field: K, value: F[K]) => void;
     submit: () => Promise<void>;
     reset: () => void;
     setForm: React.Dispatch<React.SetStateAction<F>>;
     setExtras: React.Dispatch<React.SetStateAction<E>>;
     setMode: React.Dispatch<React.SetStateAction<FormMode>>;
+    setMessage: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 function deepEqual(a: unknown, b: unknown) {
@@ -57,6 +59,7 @@ export default function useModelForm<
     const [mode, setMode] = useState<FormMode>(initialMode);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState<unknown>(null);
+    const [message, setMessage] = useState<string | null>(null);
 
     const dirty = useMemo(() => !deepEqual(form, initialRef.current), [form]);
 
@@ -101,11 +104,13 @@ export default function useModelForm<
         dirty,
         saving,
         error,
+        message,
         handleChange,
         submit,
         reset,
         setForm,
         setExtras,
         setMode,
+        setMessage,
     };
 }

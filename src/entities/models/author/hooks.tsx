@@ -3,11 +3,12 @@ import { authorService } from "@entities/models/author/service";
 import { type AuthorType, type AuthorFormType } from "@entities/models/author/types";
 import { initialAuthorForm, toAuthorForm } from "@entities/models/author/form";
 
-export function useAuthorForm(setMessage: (msg: string) => void) {
+export function useAuthorForm() {
     const [authors, setAuthors] = useState<AuthorType[]>([]);
     const [form, setForm] = useState<AuthorFormType>({ ...initialAuthorForm });
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
     const [loading, setLoading] = useState(true);
+    const [message, setMessage] = useState<string | null>(null);
 
     // -------- Chargement initial --------
     useEffect(() => {
@@ -81,5 +82,5 @@ export function useAuthorForm(setMessage: (msg: string) => void) {
         fetchData,
     };
 
-    return { ...modelForm, submit, reset };
+    return { ...modelForm, submit, reset, message, setMessage };
 }

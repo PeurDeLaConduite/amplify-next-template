@@ -4,11 +4,7 @@ import EditableTextArea from "../components/EditableTextArea";
 import FormActionButtons from "../components/FormActionButtons";
 import { useAuthorForm } from "@entities/models/author/hooks";
 
-interface Props {
-    setMessage: (msg: string) => void;
-}
-
-export default function AuthorsForm({ setMessage }: Props) {
+export default function AuthorsForm() {
     const {
         authors,
         form,
@@ -19,7 +15,8 @@ export default function AuthorsForm({ setMessage }: Props) {
         reset,
         submit,
         handleDelete,
-    } = useAuthorForm(setMessage);
+        message,
+    } = useAuthorForm();
 
     return (
         <div className="mb-6">
@@ -94,6 +91,15 @@ export default function AuthorsForm({ setMessage }: Props) {
                     </button>
                 )}
             </form>
+            {message && (
+                <p
+                    className={`mt-2 text-sm ${
+                        message.startsWith("Erreur") ? "text-red-600" : "text-green-600"
+                    }`}
+                >
+                    {message}
+                </p>
+            )}
         </div>
     );
 }
