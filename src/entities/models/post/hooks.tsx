@@ -22,8 +22,6 @@ export function usePostForm(post: PostType | null, onSave: () => void) {
     const [authors, setAuthors] = useState<AuthorType[]>([]);
     const [tags, setTags] = useState<TagType[]>([]);
     const [sections, setSections] = useState<SectionTypes[]>([]);
-    const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
-    const [selectedSectionIds, setSelectedSectionIds] = useState<string[]>([]);
     const [saving] = useState(false);
 
     const { handleSourceFocus, handleSourceBlur, handleManualEdit } = useAutoGenFields({
@@ -98,26 +96,32 @@ export function usePostForm(post: PostType | null, onSave: () => void) {
     }
 
     function toggleTag(tagId: string) {
-        setSelectedTagIds((prev) =>
-            prev.includes(tagId) ? prev.filter((id) => id !== tagId) : [...prev, tagId]
-        );
+        setForm((prev) => ({
+            ...prev,
+            tagIds: prev.tagIds.includes(tagId)
+                ? prev.tagIds.filter((id) => id !== tagId)
+                : [...prev.tagIds, tagId],
+        }));
     }
 
     function toggleSection(sectionId: string) {
-        setSelectedSectionIds((prev) =>
-            prev.includes(sectionId) ? prev.filter((id) => id !== sectionId) : [...prev, sectionId]
-        );
+        setForm((prev) => ({
+            ...prev,
+            sectionIds: prev.sectionIds.includes(sectionId)
+                ? prev.sectionIds.filter((id) => id !== sectionId)
+                : [...prev.sectionIds, sectionId],
+        }));
     }
 
     // ----------- Service Relations ------------
 
     async function syncRelations(postId: string) {
         const currentTagIds = await postTagService.listByParent(postId);
-        const tagsToAdd = selectedTagIds.filter((id) => !currentTagIds.includes(id));
-        const tagsToRemove = currentTagIds.filter((id) => !selectedTagIds.includes(id));
+        const tagsToAdd = form.tagIds.filter((id) => !currentTagIds.includes(id));
+        const tagsToRemove = currentTagIds.filter((id) => !form.tagIds.includes(id));
         const currentSectionIds = await sectionPostService.listByChild(postId);
-        const sectionsToAdd = selectedSectionIds.filter((id) => !currentSectionIds.includes(id));
-        const sectionsToRemove = currentSectionIds.filter((id) => !selectedSectionIds.includes(id));
+        const sectionsToAdd = form.sectionIds.filter((id) => !currentSectionIds.includes(id));
+        const sectionsToRemove = currentSectionIds.filter((id) => !form.sectionIds.includes(id));
         await Promise.all([
             ...tagsToAdd.map((tagId) => postTagService.create(postId, tagId)),
             ...tagsToRemove.map((tagId) => postTagService.delete(postId, tagId)),
@@ -161,8 +165,6 @@ export function usePostForm(post: PostType | null, onSave: () => void) {
         const formData = toPostForm(post, tagIds, sectionIds);
         setForm(formData);
         setSeo(formData.seo);
-        setSelectedTagIds(tagIds);
-        setSelectedSectionIds(sectionIds);
     }
 
     async function savePost(isUpdate: boolean): Promise<string> {
@@ -188,8 +190,6 @@ export function usePostForm(post: PostType | null, onSave: () => void) {
     function resetForm() {
         setForm({ ...initialPostForm });
         setSeo({ ...initialSeoForm });
-        setSelectedTagIds([]);
-        setSelectedSectionIds([]);
     }
 
     return {
@@ -198,8 +198,6 @@ export function usePostForm(post: PostType | null, onSave: () => void) {
         authors,
         tags,
         sections,
-        selectedTagIds,
-        selectedSectionIds,
         saving,
         handlePostChange,
         handleTitleFocus,
