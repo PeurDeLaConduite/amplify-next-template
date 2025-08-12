@@ -42,7 +42,6 @@
         "public/**/*.json",
         ".next/types/**/*.ts",
         "src/components/Blog/manage/components/EditableField.tsx",
-        ".Help/entities/models/userProfile/hooks.tsx",
         "src/components/Blog/manage/components/EditableField.tsx",
         "src/hooks/useEditableForm.js",
         "src/components/Blog/Create/components/ArticleEditForm.jsx",
