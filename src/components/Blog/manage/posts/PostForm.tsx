@@ -10,6 +10,7 @@ import OrderSelector from "../components/OrderSelector";
 import SelectField from "../components/SelectField";
 import { type PostType } from "@/src/entities/models/post";
 import { type SeoFormType } from "@entities/customTypes/seo/types";
+import { type PostFormType } from "@entities/models/post/types";
 
 interface Props {
     post: PostType | null;
@@ -25,19 +26,22 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
         form,
         extras: { authors, tags, sections },
         submit,
-        setForm,
+        handleChange,
+        dirty,
+        saving,
+        reset,
         toggleTag,
         toggleSection,
     } = usePostForm(post);
 
-    const { handleSourceFocus, handleSourceBlur, handleManualEdit } = useAutoGenFields({
+    const { handleSourceFocus, handleManualEdit } = useAutoGenFields({
         configs: [
             {
                 editingKey: "title",
                 source: form.title ?? "",
                 current: form.slug ?? "",
                 target: "slug",
-                setter: (v) => setForm((f) => ({ ...f, slug: slugify(v ?? "") })),
+                setter: (v) => handleChange("slug", slugify(v ?? "")),
                 transform: slugify,
             },
             {
@@ -46,10 +50,10 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
                 current: form.seo.title ?? "",
                 target: "seo.title",
                 setter: (v) =>
-                    setForm((f) => ({
-                        ...f,
-                        seo: { ...f.seo, title: v ?? "" },
-                    })),
+                    handleChange("seo", {
+                        ...form.seo,
+                        title: v ?? "",
+                    }),
             },
             {
                 editingKey: "excerpt",
@@ -57,10 +61,10 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
                 current: form.seo.description ?? "",
                 target: "seo.description",
                 setter: (v) =>
-                    setForm((f) => ({
-                        ...f,
-                        seo: { ...f.seo, description: v ?? "" },
-                    })),
+                    handleChange("seo", {
+                        ...form.seo,
+                        description: v ?? "",
+                    }),
             },
         ],
     });
@@ -69,22 +73,20 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
         e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
     ) {
         const { name, value } = e.target;
+        if (name === "title" || name === "excerpt") {
+            handleSourceFocus(name);
+        }
         if (name.startsWith("seo.")) {
             const key = name.split(".")[1] as keyof SeoFormType;
-            setForm((f) => ({ ...f, seo: { ...f.seo, [key]: value } }));
+            handleChange("seo", { ...form.seo, [key]: value });
             handleManualEdit(`seo.${key}`);
         } else if (name === "slug") {
-            setForm((f) => ({ ...f, slug: slugify(value) }));
+            handleChange("slug", slugify(value));
             handleManualEdit("slug");
         } else {
-            setForm((f) => ({ ...f, [name]: value }));
+            handleChange(name as keyof PostFormType, value as never);
         }
     }
-
-    const handleTitleFocus = () => handleSourceFocus("title");
-    const handleTitleBlur = () => handleSourceBlur("title");
-    const handleExcerptFocus = () => handleSourceFocus("excerpt");
-    const handleExcerptBlur = () => handleSourceBlur("excerpt");
 
     async function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -99,8 +101,6 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
                 label="Titre"
                 value={form.title}
                 onChange={handlePostChange}
-                onFocus={handleTitleFocus}
-                onBlur={handleTitleBlur}
                 readOnly={false}
             />
             <EditableTextArea
@@ -108,8 +108,6 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
                 label="Résumé"
                 value={form.excerpt ?? ""}
                 onChange={handlePostChange}
-                onFocus={handleExcerptFocus}
-                onBlur={handleExcerptBlur}
                 readOnly={false}
             />
             <EditableField
@@ -159,9 +157,7 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
                 sections={posts} // tu passes la bonne liste ici
                 currentIndex={posts.findIndex((p) => p.id === post?.id)}
                 value={form.order ?? 1}
-                onReorder={(_: number, newOrder: number) =>
-                    setForm((f) => ({ ...f, order: newOrder }))
-                }
+                onReorder={(_: number, newOrder: number) => handleChange("order", newOrder)}
             />
             <fieldset className="border p-2 space-y-2">
                 <legend className="font-semibold">Tags</legend>
@@ -193,9 +189,23 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
                         </label>
                     ))}
             </fieldset>
-            <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
-                {post ? "Mettre à jour" : "Créer"}
-            </button>
+            <div className="flex space-x-2">
+                <button
+                    type="button"
+                    onClick={reset}
+                    disabled={!dirty || saving}
+                    className="bg-gray-300 text-gray-700 px-4 py-2 rounded"
+                >
+                    Réinitialiser
+                </button>
+                <button
+                    type="submit"
+                    disabled={saving}
+                    className="bg-blue-500 text-white px-4 py-2 rounded"
+                >
+                    {post ? "Mettre à jour" : "Créer"}
+                </button>
+            </div>
         </form>
     );
 });
