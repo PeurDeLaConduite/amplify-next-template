@@ -16,8 +16,8 @@ export default function AuthorsForm({ setMessage }: Props) {
         loading,
         handleFormChange,
         handleEdit,
-        handleCancel,
-        handleSave,
+        reset,
+        submit,
         handleDelete,
     } = useAuthorForm(setMessage);
 
@@ -45,8 +45,8 @@ export default function AuthorsForm({ setMessage }: Props) {
                                 editingIndex={editingIndex}
                                 currentIndex={idx}
                                 onEdit={() => handleEdit(idx)}
-                                onSave={handleSave}
-                                onCancel={handleCancel}
+                                onSave={submit}
+                                onCancel={reset}
                                 onDelete={() => handleDelete(idx)}
                                 isFormNew={false}
                             />
@@ -87,7 +87,7 @@ export default function AuthorsForm({ setMessage }: Props) {
                 {editingIndex === null && (
                     <button
                         type="button"
-                        onClick={handleSave}
+                        onClick={submit}
                         className="bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition"
                     >
                         Ajouter un auteur

@@ -32,12 +32,12 @@ export function useAuthorForm(setMessage: (msg: string) => void) {
         setForm(toAuthorForm(authors[idx], []));
     };
 
-    const handleCancel = () => {
+    function reset() {
         setEditingIndex(null);
         setForm({ ...initialAuthorForm });
-    };
+    }
 
-    const handleSave = async () => {
+    async function submit() {
         if (!form.authorName) return;
         try {
             const { postIds, ...authorInput } = form;
@@ -50,12 +50,12 @@ export function useAuthorForm(setMessage: (msg: string) => void) {
                 setMessage("Auteur mis à jour !");
             }
             await fetchData(); // Refresh list after change
-            handleCancel();
+            reset();
         } catch (err) {
             const msg = err instanceof Error ? err.message : String(err);
             setMessage(`Erreur : ${msg}`);
         }
-    };
+    }
 
     const handleDelete = async (idx: number) => {
         if (!authors[idx]?.id) return;
@@ -70,16 +70,16 @@ export function useAuthorForm(setMessage: (msg: string) => void) {
         }
     };
 
-    return {
+    const modelForm = {
         authors,
         form,
         editingIndex,
         loading,
         handleFormChange,
         handleEdit,
-        handleCancel,
-        handleSave,
         handleDelete,
         fetchData,
     };
+
+    return { ...modelForm, submit, reset };
 }
