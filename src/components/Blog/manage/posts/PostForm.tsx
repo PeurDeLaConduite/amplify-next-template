@@ -29,6 +29,7 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
         handleChange,
         toggleTag,
         toggleSection,
+        reset: resetForm,
     } = usePostForm(post);
 
     const { handleSourceFocus, handleManualEdit } = useAutoGenFields({
@@ -87,7 +88,12 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
 
     async function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
+        if (!form.authorId) {
+            alert("Veuillez sélectionner un auteur.");
+            return;
+        }
         await submit();
+        resetForm();
         onSave();
     }
 
