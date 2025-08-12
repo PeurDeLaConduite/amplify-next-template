@@ -1,10 +1,10 @@
 "use client";
 import React, { forwardRef } from "react";
-import EditableField from "../components/EditableField";
-import EditableTextArea from "../components/EditableTextArea";
-import SeoFields from "../components/SeoFields";
-import OrderSelector from "../components/OrderSelector";
-import ItemSelector from "../components/ItemSelector";
+import EditableField from "@components/forms/EditableField";
+import EditableTextArea from "@components/forms/EditableTextArea";
+import SeoFields from "@components/forms/SeoFields";
+import OrderSelector from "@components/forms/OrderSelector";
+import ItemSelector from "@components/forms/ItemSelector";
 import { useSectionForm } from "@entities/models/section/hooks";
 import { type SectionTypes } from "@/src/entities/models/section";
 

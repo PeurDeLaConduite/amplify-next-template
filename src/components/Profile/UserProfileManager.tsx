@@ -2,7 +2,7 @@
 import { useEffect } from "react";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
-import EntitySection from "./shared/EntitySection";
+import EntityEditor from "@components/forms/EntityEditor";
 import { label as fieldLabel } from "./utilsUserProfile";
 import PhoneIcon from "@mui/icons-material/Phone";
 import PersonIcon from "@mui/icons-material/Person";
@@ -63,7 +63,7 @@ export default function UserProfileManager() {
     if (!user) return null;
 
     return (
-        <EntitySection<UserProfileMinimalType>
+        <EntityEditor<UserProfileMinimalType>
             title="Mon profil"
             requiredFields={["firstName", "familyName"]}
             renderIcon={getIcon}

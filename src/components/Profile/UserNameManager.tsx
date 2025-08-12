@@ -2,7 +2,7 @@
 import { useEffect } from "react";
 import { Authenticator, useAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
-import EntitySection from "./shared/EntitySection";
+import EntityEditor from "@components/forms/EntityEditor";
 import { label as fieldLabel } from "./utilsUserName";
 import PersonIcon from "@mui/icons-material/Person";
 import { useUserNameManager } from "@entities/models/userName/hooks";
@@ -22,7 +22,7 @@ export default function UserNameManager() {
     if (!user) return <Authenticator />;
 
     return (
-        <EntitySection<UserNameMinimalType>
+        <EntityEditor<UserNameMinimalType>
             title="Mon pseudo public"
             manager={manager}
             requiredFields={["userName"]}
