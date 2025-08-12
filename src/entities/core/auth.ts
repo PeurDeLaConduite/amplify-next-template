@@ -1,8 +1,9 @@
-import type { AuthRule } from "./types";
+import type { AuthRule, UserProfile } from "./types";
 
 export interface AuthUser {
     username?: string;
     groups?: string[];
+    profile?: UserProfile;
 }
 
 export function canAccess(
@@ -26,6 +27,19 @@ export function canAccess(
             case "groups": {
                 if (user?.groups && rule.groups.some((g) => user.groups?.includes(g))) {
                     return true;
+                }
+                break;
+            }
+            case "profile": {
+                const value = user?.profile?.[rule.field];
+                if (Array.isArray(value)) {
+                    if (rule.values.some((v) => (value as unknown[]).includes(v))) {
+                        return true;
+                    }
+                } else if (value !== undefined) {
+                    if (rule.values.includes(value as never)) {
+                        return true;
+                    }
                 }
                 break;
             }
