@@ -1,13 +1,15 @@
 // PostForm.tsx
 "use client";
-import React, { forwardRef } from "react";
+import React, { forwardRef, type ChangeEvent, type FormEvent } from "react";
 import { usePostForm } from "@entities/models/post/hooks";
+import { useAutoGenFields, slugify } from "@hooks/useAutoGenFields";
 import EditableField from "../components/EditableField";
 import EditableTextArea from "../components/EditableTextArea";
 import SeoFields from "../components/SeoFields";
 import OrderSelector from "../components/OrderSelector";
 import SelectField from "../components/SelectField";
 import { type PostType } from "@/src/entities/models/post";
+import { type SeoFormType } from "@entities/customTypes/seo/types";
 
 interface Props {
     post: PostType | null;
@@ -21,29 +23,77 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
 ) {
     const {
         form,
-        seo,
-        authors,
-        tags,
-        sections,
-        handlePostChange,
-        handleTitleFocus,
-        handleTitleBlur,
-        handleExcerptFocus,
-        handleExcerptBlur,
+        extras: { authors, tags, sections },
+        submit,
+        setForm,
         toggleTag,
         toggleSection,
-        handleSubmit,
-        setForm, // Récupère-la bien ici aussi
-    } = usePostForm(post, onSave);
+    } = usePostForm(post);
+
+    const { handleSourceFocus, handleSourceBlur, handleManualEdit } = useAutoGenFields({
+        configs: [
+            {
+                editingKey: "title",
+                source: form.title ?? "",
+                current: form.slug ?? "",
+                target: "slug",
+                setter: (v) => setForm((f) => ({ ...f, slug: slugify(v ?? "") })),
+                transform: slugify,
+            },
+            {
+                editingKey: "title",
+                source: form.title ?? "",
+                current: form.seo.title ?? "",
+                target: "seo.title",
+                setter: (v) =>
+                    setForm((f) => ({
+                        ...f,
+                        seo: { ...f.seo, title: v ?? "" },
+                    })),
+            },
+            {
+                editingKey: "excerpt",
+                source: form.excerpt ?? "",
+                current: form.seo.description ?? "",
+                target: "seo.description",
+                setter: (v) =>
+                    setForm((f) => ({
+                        ...f,
+                        seo: { ...f.seo, description: v ?? "" },
+                    })),
+            },
+        ],
+    });
+
+    function handlePostChange(
+        e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    ) {
+        const { name, value } = e.target;
+        if (name.startsWith("seo.")) {
+            const key = name.split(".")[1] as keyof SeoFormType;
+            setForm((f) => ({ ...f, seo: { ...f.seo, [key]: value } }));
+            handleManualEdit(`seo.${key}`);
+        } else if (name === "slug") {
+            setForm((f) => ({ ...f, slug: slugify(value) }));
+            handleManualEdit("slug");
+        } else {
+            setForm((f) => ({ ...f, [name]: value }));
+        }
+    }
+
+    const handleTitleFocus = () => handleSourceFocus("title");
+    const handleTitleBlur = () => handleSourceBlur("title");
+    const handleExcerptFocus = () => handleSourceFocus("excerpt");
+    const handleExcerptBlur = () => handleSourceBlur("excerpt");
+
+    async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        await submit();
+        onSave();
+    }
 
     return (
-        <form
-            ref={ref}
-            onSubmit={(e) => {
-                handleSubmit(e);
-            }}
-            className="mb-4 space-y-2"
-        >
+        <form ref={ref} onSubmit={handleSubmit} className="mb-4 space-y-2">
             <EditableField
                 name="title"
                 label="Titre"
@@ -71,9 +121,9 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
             />
             <SeoFields
                 seo={{
-                    title: seo.title ?? "",
-                    description: seo.description ?? "",
-                    image: seo.image ?? "",
+                    title: form.seo.title ?? "",
+                    description: form.seo.description ?? "",
+                    image: form.seo.image ?? "",
                 }}
                 onChange={handlePostChange}
                 readOnly={false}
