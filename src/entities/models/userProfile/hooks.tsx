@@ -84,13 +84,13 @@ export function useUserProfileManager() {
     };
 
     const fieldConfig: FieldConfig<UserProfileMinimalType> = {
-        firstName: { parse: (v: string) => v, serialize: (v: string) => v, emptyValue: "" },
-        familyName: { parse: (v: string) => v, serialize: (v: string) => v, emptyValue: "" },
-        phoneNumber: { parse: (v: string) => v, serialize: (v: string) => v, emptyValue: "" },
-        address: { parse: (v: string) => v, serialize: (v: string) => v, emptyValue: "" },
-        postalCode: { parse: (v: string) => v, serialize: (v: string) => v, emptyValue: "" },
-        city: { parse: (v: string) => v, serialize: (v: string) => v, emptyValue: "" },
-        country: { parse: (v: string) => v, serialize: (v: string) => v, emptyValue: "" },
+        firstName: { parse: (v) => String(v), serialize: (v: string) => v, emptyValue: "" },
+        familyName: { parse: (v) => String(v), serialize: (v: string) => v, emptyValue: "" },
+        phoneNumber: { parse: (v) => String(v), serialize: (v: string) => v, emptyValue: "" },
+        address: { parse: (v) => String(v), serialize: (v: string) => v, emptyValue: "" },
+        postalCode: { parse: (v) => String(v), serialize: (v: string) => v, emptyValue: "" },
+        city: { parse: (v) => String(v), serialize: (v: string) => v, emptyValue: "" },
+        country: { parse: (v) => String(v), serialize: (v: string) => v, emptyValue: "" },
     };
 
     const manager = useEntityManager<UserProfileMinimalType>({

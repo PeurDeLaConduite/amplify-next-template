@@ -1,6 +1,6 @@
 // src/components/shared/EntityForm.tsx
 "use client";
-import React, { type ChangeEvent, FormEvent } from "react";
+import React, { type FormEvent } from "react";
 import { SaveButton, AddButton, CancelButton } from "../../buttons/Buttons";
 import { type FieldKey } from "@entities/core/hooks";
 
@@ -8,7 +8,7 @@ type Props<T extends Record<string, unknown>> = {
     formData: Partial<T>;
     fields: FieldKey<T>[];
     labels: (field: FieldKey<T>) => string;
-    handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
+    handleChange: (field: FieldKey<T>, value: unknown) => void;
     handleSubmit: () => void;
     isEdit: boolean;
     onCancel: () => void;
@@ -43,7 +43,7 @@ export default function EntityForm<T extends Record<string, unknown>>({
                         name={String(field)}
                         placeholder={labels(field)}
                         value={String(formData[field] ?? "")}
-                        onChange={handleChange}
+                        onChange={(e) => handleChange(field, e.target.value)}
                         className="w-full p-2 border rounded"
                         required={requiredFields.includes(field)}
                     />

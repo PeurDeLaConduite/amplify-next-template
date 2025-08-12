@@ -67,7 +67,7 @@ export function useUserNameManager() {
 
     const fieldConfig: FieldConfig<UserNameMinimalType> = {
         userName: {
-            parse: (v: string) => v,
+            parse: (v) => String(v),
             serialize: (v: string) => v,
             emptyValue: "",
         },
