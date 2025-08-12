@@ -1,6 +1,6 @@
 import React from "react";
-import EditableField from "../components/EditableField";
-import EditableTextArea from "../components/EditableTextArea";
+import EditableField from "@components/forms/EditableField";
+import EditableTextArea from "@components/forms/EditableTextArea";
 import FormActionButtons from "../components/FormActionButtons";
 import { useAuthorForm } from "@entities/models/author/hooks";
 

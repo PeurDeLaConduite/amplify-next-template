@@ -4,9 +4,9 @@ import type { FieldKey, EntityManagerResult } from "@entities/core/hooks";
 import ReadOnlyView from "./ReadOnlyView";
 import EditField from "./EditField";
 import EntityForm from "./EntityForm";
-import { DeleteButton } from "../../buttons/Buttons";
+import { DeleteButton } from "@components/buttons";
 
-export type EntitySectionProps<T extends Record<string, unknown>> = {
+export type EntityEditorProps<T extends Record<string, unknown>> = {
     /** Titre de la section */
     title: string;
     /** Champs requis pour le formulaire */
@@ -27,7 +27,7 @@ export type EntitySectionProps<T extends Record<string, unknown>> = {
     manager: EntityManagerResult<T>;
 };
 
-export default function EntitySection<T extends Record<string, unknown>>({
+export default function EntityEditor<T extends Record<string, unknown>>({
     title,
     requiredFields = [],
     renderIcon,
@@ -37,7 +37,7 @@ export default function EntitySection<T extends Record<string, unknown>>({
     className,
     onClearField,
     manager,
-}: EntitySectionProps<T>) {
+}: EntityEditorProps<T>) {
     const {
         entity,
         formData,

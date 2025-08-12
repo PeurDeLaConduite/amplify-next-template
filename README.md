@@ -14,7 +14,7 @@ This template equips you with a foundational Next.js application integrated with
 
 ## Examples
 
-Des exemples d'utilisation du composant `EntitySection` sont disponibles :
+Des exemples d'utilisation du composant `EntityEditor` sont disponibles :
 
 - [UserProfileExample.tsx](src/examples/UserProfileExample.tsx)
 - [UserNameExample.tsx](src/examples/UserNameExample.tsx)
