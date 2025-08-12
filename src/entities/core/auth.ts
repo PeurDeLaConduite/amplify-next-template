@@ -1,8 +1,14 @@
 import type { AuthRule } from "./types";
 
+export interface UserProfile {
+    roles?: string[];
+    [key: string]: unknown;
+}
+
 export interface AuthUser {
     username?: string;
     groups?: string[];
+    profile?: UserProfile;
 }
 
 export function canAccess(
@@ -25,6 +31,21 @@ export function canAccess(
             }
             case "groups": {
                 if (user?.groups && rule.groups.some((g) => user.groups?.includes(g))) {
+                    return true;
+                }
+                break;
+            }
+            case "profile": {
+                const attr = rule.attribute;
+                const value = user?.profile?.[attr];
+                if (Array.isArray(value)) {
+                    if (value.some((v) => rule.values.includes(v as string | number | boolean))) {
+                        return true;
+                    }
+                } else if (
+                    value !== undefined &&
+                    rule.values.includes(value as string | number | boolean)
+                ) {
                     return true;
                 }
                 break;

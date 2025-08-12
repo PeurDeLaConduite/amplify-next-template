@@ -6,6 +6,7 @@
 export type AuthRule =
     | { allow: "owner"; ownerField?: string }
     | { allow: "groups"; groups: string[] }
+    | { allow: "profile"; attribute: string; values: (string | number | boolean)[] }
     | { allow: "public" }
     | { allow: "private" };
 

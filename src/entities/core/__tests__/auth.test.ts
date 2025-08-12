@@ -38,6 +38,24 @@ describe("canAccess", () => {
         expect(canAccess(restrictedUser, entity, rules)).toBe(true);
     });
 
+    it("autorise selon un rôle de profil", () => {
+        const rules: AuthRule[] = [{ allow: "profile", attribute: "roles", values: ["admin"] }];
+        const profiledUser = {
+            username: "alice",
+            profile: { roles: ["admin"] },
+        };
+        expect(canAccess(profiledUser, entity, rules)).toBe(true);
+    });
+
+    it("refuse si le rôle de profil ne correspond pas", () => {
+        const rules: AuthRule[] = [{ allow: "profile", attribute: "roles", values: ["admin"] }];
+        const profiledUser = {
+            username: "bob",
+            profile: { roles: ["user"] },
+        };
+        expect(canAccess(profiledUser, entity, rules)).toBe(false);
+    });
+
     it("autorise l'accès public", () => {
         const rules: AuthRule[] = [{ allow: "public" }];
         expect(canAccess(null, entity, rules)).toBe(true);
