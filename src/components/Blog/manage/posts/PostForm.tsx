@@ -27,9 +27,6 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
         extras: { authors, tags, sections },
         submit,
         handleChange,
-        dirty,
-        saving,
-        reset,
         toggleTag,
         toggleSection,
     } = usePostForm(post);
