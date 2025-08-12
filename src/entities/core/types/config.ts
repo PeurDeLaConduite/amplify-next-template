@@ -1,6 +1,6 @@
 // src/entities/core/types/config.ts
 
-import type { ProfileRule } from "./auth";
+import type { ProfileRule } from "@entities/core/types";
 
 /**
  * Règles d'authentification appliquées à une entité.

@@ -1,6 +1,6 @@
 // src/entities/core/types/form.ts
 
-import type { EntityConfig } from "@entities/core/types/config";
+import type { EntityConfig } from "@entities/core/types";
 
 /**
  * Représentation générique d'un formulaire basé sur une configuration d'entité.
