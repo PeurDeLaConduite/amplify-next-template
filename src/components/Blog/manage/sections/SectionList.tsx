@@ -5,16 +5,16 @@ import FormActionButtons from "../components/FormActionButtons";
 
 interface Props {
     sections: SectionTypes[];
-    editingIndex: number | null;
-    onEdit: (idx: number) => void;
+    editingId: string | null;
+    onEdit: (id: string) => void;
     onSave: () => void;
     onCancel: () => void;
-    onDelete: (idx: number) => void;
+    onDelete: (id: string) => void;
 }
 
 export default function SectionList({
     sections,
-    editingIndex,
+    editingId,
     onEdit,
     onSave,
     onCancel,
@@ -24,8 +24,8 @@ export default function SectionList({
         <ul className="mt-6 space-y-2">
             {sections
                 .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-                .map((section, idx) => {
-                    const active = editingIndex === idx;
+                .map((section) => {
+                    const active = editingId === section.id;
                     return (
                         <li
                             key={section.id}
@@ -37,12 +37,12 @@ export default function SectionList({
                                 <strong>{section.title}</strong> (ordre : {section.order})
                             </div>
                             <FormActionButtons
-                                editingIndex={editingIndex}
-                                currentIndex={idx}
-                                onEdit={() => onEdit(idx)}
+                                editingId={editingId}
+                                currentId={section.id}
+                                onEdit={() => onEdit(section.id)}
                                 onSave={onSave}
                                 onCancel={onCancel}
-                                onDelete={() => onDelete(idx)}
+                                onDelete={() => onDelete(section.id)}
                                 isFormNew={false}
                             />
                         </li>

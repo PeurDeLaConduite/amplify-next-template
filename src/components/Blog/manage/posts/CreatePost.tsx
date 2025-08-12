@@ -8,7 +8,6 @@ import RequireAdmin from "../../../RequireAdmin";
 export default function PostManagerPage() {
     const [posts, setPosts] = useState<PostType[]>([]);
     const [editingPost, setEditingPost] = useState<PostType | null>(null);
-    const [editingIndex, setEditingIndex] = useState<number | null>(null);
     const formRef = useRef<HTMLFormElement>(null);
 
     const fetchPosts = async () => {
@@ -21,14 +20,13 @@ export default function PostManagerPage() {
     }, []);
 
     // Edition par index (comme SectionManagerPage)
-    const handleEdit = (idx: number) => {
-        setEditingPost(posts[idx]);
-        setEditingIndex(idx);
+    const handleEdit = (id: string) => {
+        const post = posts.find((p) => p.id === id) ?? null;
+        setEditingPost(post);
     };
 
-    const handleDelete = async (idx: number) => {
+    const handleDelete = async (id: string) => {
         if (!confirm("Supprimer ce post ?")) return;
-        const id = posts[idx].id;
         await postService.delete({ id });
         await fetchPosts();
     };
@@ -36,12 +34,10 @@ export default function PostManagerPage() {
     const handleSave = () => {
         fetchPosts();
         setEditingPost(null);
-        setEditingIndex(null);
     };
 
     const handleCancel = () => {
         setEditingPost(null);
-        setEditingIndex(null);
     };
 
     return (
@@ -51,7 +47,7 @@ export default function PostManagerPage() {
                 <PostForm ref={formRef} post={editingPost} posts={posts} onSave={handleSave} />
                 <PostList
                     posts={posts}
-                    editingIndex={editingIndex}
+                    editingId={editingPost?.id ?? null}
                     onEdit={handleEdit}
                     onSave={() => {
                         // Appelle le submit du formulaire via la ref

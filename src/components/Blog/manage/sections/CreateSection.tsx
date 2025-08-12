@@ -10,7 +10,6 @@ import { type SectionTypes } from "@entities/models/section/types";
 export default function SectionManagerPage() {
     const [sections, setSections] = useState<SectionTypes[]>([]);
     const [editingSection, setEditingSection] = useState<SectionTypes | null>(null);
-    const [editingIndex, setEditingIndex] = useState<number | null>(null);
     const formRef = useRef<HTMLFormElement>(null);
     const fetchSections = async () => {
         const { data } = await sectionService.list();
@@ -21,14 +20,13 @@ export default function SectionManagerPage() {
         fetchSections();
     }, []);
 
-    const handleEdit = (idx: number) => {
-        setEditingSection(sections[idx]);
-        setEditingIndex(idx);
+    const handleEdit = (id: string) => {
+        const section = sections.find((s) => s.id === id) ?? null;
+        setEditingSection(section);
     };
 
-    const handleDelete = async (idx: number) => {
+    const handleDelete = async (id: string) => {
         if (!confirm("Supprimer cette section ?")) return;
-        const id = sections[idx].id;
         await sectionService.delete({ id });
         await fetchSections();
     };
@@ -36,12 +34,10 @@ export default function SectionManagerPage() {
     const handleSave = () => {
         fetchSections();
         setEditingSection(null);
-        setEditingIndex(null);
     };
 
     const handleCancel = () => {
         setEditingSection(null);
-        setEditingIndex(null);
     };
 
     return (
@@ -56,7 +52,7 @@ export default function SectionManagerPage() {
                 />
                 <SectionList
                     sections={sections}
-                    editingIndex={editingIndex}
+                    editingId={editingSection?.id ?? null}
                     onEdit={handleEdit}
                     onSave={() => {
                         // Appelle le submit du formulaire via la ref

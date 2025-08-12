@@ -7,5 +7,9 @@ export type {
     UseEntityManagerOptions,
     EntityManagerResult,
 } from "./useEntityManager";
-export { default as useModelForm } from "./useModelForm";
-export type { FormMode, UseModelFormOptions, UseModelFormResult } from "./useModelForm";
+export { default as useEntityFormManager } from "./useEntityFormManager";
+export type {
+    FormMode,
+    UseEntityFormManagerOptions,
+    UseEntityFormManagerResult,
+} from "./useEntityFormManager";

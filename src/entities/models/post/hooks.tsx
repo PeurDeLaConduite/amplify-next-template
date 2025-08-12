@@ -1,6 +1,6 @@
 // src/entities/models/post/hooks.tsx
 import { useEffect } from "react";
-import { useModelForm } from "@entities/core/hooks";
+import { useEntityFormManager } from "@entities/core/hooks";
 import { postService } from "@entities/models/post/service";
 import { postTagService } from "@entities/relations/postTag/service";
 import { sectionPostService } from "@entities/relations/sectionPost/service";
@@ -21,7 +21,7 @@ interface Extras extends Record<string, unknown> {
 }
 
 export function usePostForm(post: PostType | null) {
-    const modelForm = useModelForm<PostFormType, Extras>({
+    const modelForm = useEntityFormManager<PostFormType, Extras>({
         initialForm: initialPostForm,
         initialExtras: { authors: [], tags: [], sections: [] },
         create: async (form) => {
@@ -72,7 +72,7 @@ export function usePostForm(post: PostType | null) {
         },
     });
 
-    const { setForm, setExtras, setMode } = modelForm;
+    const { setForm, setExtras, startEdit, startCreate } = modelForm;
 
     useEffect(() => {
         void (async () => {
@@ -96,14 +96,12 @@ export function usePostForm(post: PostType | null) {
                     postTagService.listByParent(post.id),
                     sectionPostService.listByChild(post.id),
                 ]);
-                setForm(toPostForm(post, tagIds, sectionIds));
-                setMode("edit");
+                startEdit(toPostForm(post, tagIds, sectionIds));
             } else {
-                setForm(initialPostForm);
-                setMode("create");
+                startCreate();
             }
         })();
-    }, [post, setForm, setMode]);
+    }, [post, startEdit, startCreate]);
 
     function toggleTag(tagId: string) {
         setForm((prev) => ({
