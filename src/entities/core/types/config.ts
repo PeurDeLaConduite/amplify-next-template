@@ -1,11 +1,14 @@
 // src/entities/core/types/config.ts
 
+import type { ProfileRule } from "./auth";
+
 /**
  * Règles d'authentification appliquées à une entité.
  */
 export type AuthRule =
     | { allow: "owner"; ownerField?: string }
     | { allow: "groups"; groups: string[] }
+    | ProfileRule
     | { allow: "public" }
     | { allow: "private" };
 
