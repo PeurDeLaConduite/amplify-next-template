@@ -39,8 +39,8 @@ export default function AuthorsForm() {
                                 <strong>{author.authorName}</strong> — {author.email}
                             </div>
                             <FormActionButtons
-                                editingIndex={editingIndex}
-                                currentIndex={idx}
+                                editingId={editingIndex !== null ? authors[editingIndex].id : null}
+                                currentId={author.id}
                                 onEdit={() => handleEdit(idx)}
                                 onSave={submit}
                                 onCancel={reset}
