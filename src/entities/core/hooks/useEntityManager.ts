@@ -5,8 +5,8 @@ import { useEffect, useState, useCallback } from "react";
 export type FieldKey<T> = keyof T & string;
 
 export interface SingleFieldConfig<V> {
-    parse: (input: string) => V;
-    serialize: (value: V) => V;
+    parse: (input: unknown) => V;
+    serialize: (value: V) => unknown;
     validate?: (value: V) => boolean;
     emptyValue: V;
 }
@@ -22,6 +22,8 @@ export interface UseEntityManagerOptions<T extends Record<string, unknown>> {
     fields: FieldKey<T>[];
     initialData: T;
     config: FieldConfig<T>;
+    preSave?: (data: T, entity: (T & { id?: string }) | null) => Promise<T | void>;
+    postSave?: (data: T, entity: (T & { id?: string }) | null) => Promise<void>;
 }
 
 export interface EntityManagerResult<T extends Record<string, unknown>> {
@@ -34,7 +36,7 @@ export interface EntityManagerResult<T extends Record<string, unknown>> {
     setEditModeField: React.Dispatch<
         React.SetStateAction<{ field: FieldKey<T>; value: string } | null>
     >;
-    handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    handleChange: (field: FieldKey<T>, value: unknown) => void;
     save: () => Promise<void>;
     saveField: () => Promise<void>;
     clearField: (field: FieldKey<T>) => Promise<void>;
@@ -42,7 +44,7 @@ export interface EntityManagerResult<T extends Record<string, unknown>> {
     labels: (field: FieldKey<T>) => string;
     fields: FieldKey<T>[];
     loading: boolean;
-    fetchData: () => Promise<void>;
+    fetchData: () => Promise<(T & { id?: string }) | null>;
 }
 
 export default function useEntityManager<T extends Record<string, unknown>>({
@@ -54,6 +56,8 @@ export default function useEntityManager<T extends Record<string, unknown>>({
     fields,
     initialData,
     config,
+    preSave,
+    postSave,
 }: UseEntityManagerOptions<T>): EntityManagerResult<T> {
     const [entity, setEntity] = useState<(T & { id?: string }) | null>(null);
     const [formData, setFormData] = useState<T>(initialData);
@@ -74,12 +78,14 @@ export default function useEntityManager<T extends Record<string, unknown>>({
                 const next = { ...initialData } as T;
                 fields.forEach((f) => {
                     const raw = (data as Record<string, unknown>)[f];
-                    next[f] = config[f].parse(String(raw ?? ""));
+                    next[f] = config[f].parse(raw);
                 });
                 setFormData(next);
             }
+            return data;
         } catch (e) {
             console.error(e);
+            return null;
         } finally {
             setLoading(false);
             setEditMode(false);
@@ -92,9 +98,7 @@ export default function useEntityManager<T extends Record<string, unknown>>({
     }, [editMode]);
 
     // ...le reste inchangé
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        const field = name as FieldKey<T>;
+    const handleChange = (field: FieldKey<T>, value: unknown) => {
         const parsed = config[field].parse(value);
         if (config[field].validate && !config[field].validate(parsed)) return;
         setFormData((f) => ({ ...f, [field]: parsed }));
@@ -103,21 +107,22 @@ export default function useEntityManager<T extends Record<string, unknown>>({
     const save = async () => {
         setLoading(true);
         try {
-            const serialized = { ...formData } as T;
+            let serialized = { ...formData } as T;
             for (const f of fields) {
                 const value = formData[f];
                 if (config[f].validate && !config[f].validate(value)) {
                     return;
                 }
-                serialized[f] = config[f].serialize(value);
+                serialized[f] = config[f].serialize(value) as T[FieldKey<T>];
             }
+            serialized = (await preSave?.(serialized, entity)) ?? serialized;
             if (entity) {
                 await update(entity, serialized);
-                await fetchData();
             } else {
                 await create(serialized);
-                await fetchData();
             }
+            const updated = await fetchData();
+            await postSave?.(serialized, updated);
         } finally {
             setLoading(false);
             setEditMode(false);

@@ -84,7 +84,7 @@ export function createEntityHooks<T extends Record<string, string>>(
             (acc, f) => ({
                 ...acc,
                 [f]: {
-                    parse: (v: string) => v,
+                    parse: (v) => String(v),
                     serialize: (v: string) => v,
                     emptyValue: "",
                 },
