@@ -1,6 +1,6 @@
 // src/entities/core/services/crudService.ts
 import { client, Schema } from "./amplifyClient";
-import { canAccess } from "../auth";
+import { canAccess, type AuthUser } from "../auth";
 import type { AuthRule } from "../types";
 
 // 🔧 Types dynamiques
@@ -37,6 +37,7 @@ function getModelClient<K extends ClientModelKey>(key: K): CrudModel<K> {
  */
 export function crudService<K extends ClientModelKey>(
     key: K,
+    user: AuthUser | null,
     rules: AuthRule[] = [{ allow: "public" }]
 ) {
     const model = getModelClient(key);
@@ -44,18 +45,35 @@ export function crudService<K extends ClientModelKey>(
         async list() {
             const { data } = await model.list();
             return {
-                data: data.filter((item) => canAccess(null, item, rules)),
+                data: data.filter((item) => canAccess(user, item, rules)),
             };
         },
         async get(args: { id: string }) {
             const res = await model.get(args);
-            if (res.data && !canAccess(null, res.data, rules)) {
+            if (res.data && !canAccess(user, res.data, rules)) {
                 return { data: undefined };
             }
             return res;
         },
-        create: model.create,
-        update: model.update,
-        delete: model.delete,
+        async create(data: Partial<CreateData<K>>) {
+            if (!canAccess(user, data as Record<string, unknown>, rules)) {
+                throw new Error("Not authorized");
+            }
+            return model.create(data);
+        },
+        async update(data: UpdateData<K>) {
+            const current = await model.get({ id: data.id });
+            if (current.data && !canAccess(user, current.data, rules)) {
+                throw new Error("Not authorized");
+            }
+            return model.update(data);
+        },
+        async delete(args: { id: string }) {
+            const current = await model.get({ id: args.id });
+            if (current.data && !canAccess(user, current.data, rules)) {
+                throw new Error("Not authorized");
+            }
+            return model.delete(args);
+        },
     };
 }
