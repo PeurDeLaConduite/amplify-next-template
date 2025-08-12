@@ -25,8 +25,6 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
         authors,
         tags,
         sections,
-        selectedTagIds,
-        selectedSectionIds,
         handlePostChange,
         handleTitleFocus,
         handleTitleBlur,
@@ -121,7 +119,7 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
                     <label key={tag.id} className="block">
                         <input
                             type="checkbox"
-                            checked={selectedTagIds.includes(tag.id)}
+                            checked={form.tagIds.includes(tag.id)}
                             onChange={() => toggleTag(tag.id)}
                         />
                         <span className="ml-2">{tag.name}</span>
@@ -137,7 +135,7 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
                         <label key={section.id} className="block">
                             <input
                                 type="checkbox"
-                                checked={selectedSectionIds.includes(section.id)}
+                                checked={form.sectionIds.includes(section.id)}
                                 onChange={() => toggleSection(section.id)}
                             />
                             <span className="ml-2">{section.title}</span>
