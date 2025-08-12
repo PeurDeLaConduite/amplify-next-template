@@ -2,6 +2,7 @@
 "use client";
 import React, { forwardRef, type ChangeEvent, type FormEvent } from "react";
 import { usePostForm } from "@entities/models/post/hooks";
+import { initialPostForm } from "@entities/models/post/form";
 import { useAutoGenFields, slugify } from "@hooks/useAutoGenFields";
 import EditableField from "../components/EditableField";
 import EditableTextArea from "../components/EditableTextArea";
@@ -29,7 +30,8 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
         handleChange,
         toggleTag,
         toggleSection,
-        reset: resetForm,
+        setForm,
+        setMode,
     } = usePostForm(post);
 
     const { handleSourceFocus, handleManualEdit } = useAutoGenFields({
@@ -93,7 +95,8 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
             return;
         }
         await submit();
-        resetForm();
+        setMode("create");
+        setForm(initialPostForm);
         onSave();
     }
 
