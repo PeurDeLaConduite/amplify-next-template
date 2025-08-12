@@ -83,6 +83,8 @@ export default function useEntityFormManager<
         setError(null);
         initialRef.current = initialForm;
     }, [initialForm]);
+    
+    const cancelEdit = startCreate;
 
     const startEdit = useCallback((data: F) => {
         setForm(data);
@@ -90,13 +92,6 @@ export default function useEntityFormManager<
         setError(null);
         initialRef.current = data;
     }, []);
-
-    const cancelEdit = useCallback(() => {
-        setForm(initialForm);
-        setMode("create");
-        setError(null);
-        initialRef.current = initialForm;
-    }, [initialForm]);
 
     const submit = useCallback(async () => {
         setSaving(true);
