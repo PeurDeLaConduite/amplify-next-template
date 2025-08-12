@@ -1,135 +1,84 @@
-import { useState, useEffect, useCallback, type ChangeEvent } from "react";
-
-import { postService } from "@entities/models/post/service";
+import { useEffect, useState } from "react";
+import { useEntityManager, type FieldConfig } from "@entities/core/hooks";
 import { tagService } from "@entities/models/tag/service";
+import { postService } from "@entities/models/post/service";
 import { postTagService } from "@entities/relations/postTag/service";
-import { type TagFormType, type TagType } from "@entities/models/tag/types";
-import { type PostType } from "@entities/models/post/types";
-import { type PostTagType } from "@entities/relations/postTag/types";
-import { initialTagForm } from "@entities/models/tag/form";
+import { initialTagForm, toTagForm, toTagCreate, toTagUpdate } from "@entities/models/tag/form";
+import type { TagFormType } from "@entities/models/tag/types";
+import type { PostType } from "@entities/models/post/types";
 import { syncManyToMany } from "@entities/core/utils/syncManyToMany";
 
-export function useTagForm() {
-    const [tags, setTags] = useState<TagType[]>([]);
+export function useTagForm(id?: string) {
     const [posts, setPosts] = useState<PostType[]>([]);
-    const [postTags, setPostTags] = useState<PostTagType[]>([]);
-    const [loading, setLoading] = useState(true);
-
-    const [form, setForm] = useState<TagFormType>(initialTagForm);
-    const [editingIndex, setEditingIndex] = useState<number | null>(null);
-
-    const fetchAll = useCallback(async () => {
-        setLoading(true);
-        const [tagsData, postsData, postTagsData] = await Promise.all([
-            tagService.list(),
-            postService.list(),
-            postTagService.list(),
-            // crudService("PostTag").list(),
-        ]);
-        setTags(tagsData.data ?? []);
-        setPosts(postsData.data ?? []);
-        setPostTags(postTagsData.data ?? []);
-        setLoading(false);
-    }, []);
 
     useEffect(() => {
-        void fetchAll();
-    }, [fetchAll]);
+        postService.list().then(({ data }) => setPosts(data ?? []));
+    }, []);
 
-    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setForm((f) => ({ ...f, [name]: value }));
+    const fieldConfig: FieldConfig<TagFormType> = Object.keys(initialTagForm).reduce(
+        (acc, key) => ({
+            ...acc,
+            [key]: {
+                parse: (v) => v as TagFormType[keyof TagFormType],
+                serialize: (v) => v as unknown,
+                emptyValue: initialTagForm[key as keyof TagFormType],
+            },
+        }),
+        {} as FieldConfig<TagFormType>
+    );
+
+    const fetch = async () => {
+        if (!id) return null;
+        const { data } = await tagService.get({ id });
+        if (!data) return null;
+        const postIds = await postTagService.listByChild(id);
+        return { id, ...toTagForm(data, postIds) };
     };
 
-    const handleEdit = async (idx: number) => {
-        const tag = tags[idx];
-        const postIds = await postTagService.listByChild(tag.id);
-        setForm({ name: tag.name ?? "", postIds });
-        setEditingIndex(idx);
-    };
-
-    const handleCancel = () => {
-        setEditingIndex(null);
-        setForm({ name: "", postIds: [] });
-    };
-
-    async function syncRelations(tagId: string) {
-        const current = await postTagService.listByChild(tagId);
-        await syncManyToMany(
-            current,
-            form.postIds,
-            (postId) => postTagService.create(postId, tagId),
-            (postId) => postTagService.delete(postId, tagId)
-        );
-    }
-
-    const handleSubmit = async () => {
-        if (!form.name.trim()) return;
-
-        if (editingIndex === null) {
-            const { data } = await tagService.create({ name: form.name });
-            if (data) await syncRelations(data.id);
-        } else {
-            const tag = tags[editingIndex];
-            await tagService.update({ id: tag.id, name: form.name });
-            await syncRelations(tag.id);
+    const create = async (form: TagFormType) => {
+        const { data } = await tagService.create(toTagCreate(form));
+        if (data) {
+            await syncManyToMany(
+                [],
+                form.postIds,
+                (postId) => postTagService.create(postId, data.id),
+                () => Promise.resolve()
+            );
         }
-
-        await fetchAll();
-        handleCancel();
     };
 
-    const handleDelete = async (idx: number) => {
-        const tag = tags[idx];
-        if (!window.confirm("Supprimer ce tag ?")) return;
-        const linkedPosts = await postTagService.listByChild(tag.id);
-        await Promise.all(linkedPosts.map((p) => postTagService.delete(p, tag.id)));
-        await tagService.delete({ id: tag.id });
-        await fetchAll();
+    const update = async (entity: (TagFormType & { id?: string }) | null, form: TagFormType) => {
+        if (!entity?.id) return;
+        await tagService.update({ id: entity.id, ...toTagUpdate(form) });
+        await syncManyToMany(
+            await postTagService.listByChild(entity.id),
+            form.postIds,
+            (postId) => postTagService.create(postId, entity.id!),
+            (postId) => postTagService.delete(postId, entity.id!)
+        );
     };
 
-    const handleAddPostTag = async (postId: string, tagId: string) => {
-        await postTagService.create(postId, tagId);
-        setPostTags((prev) => [...prev, { postId, tagId } as PostTagType]);
+    const remove = async (entity: (TagFormType & { id?: string }) | null) => {
+        if (!entity?.id) return;
+        await tagService.delete({ id: entity.id });
     };
 
-    const handleRemovePostTag = async (postId: string, tagId: string) => {
-        await postTagService.delete(postId, tagId);
-        setPostTags((prev) => prev.filter((pt) => !(pt.postId === postId && pt.tagId === tagId)));
-    };
-
-    const tagsForPost = useCallback(
-        (postId: string) => {
-            const tagIds = postTags.filter((pt) => pt.postId === postId).map((pt) => pt.tagId);
-            return tags.filter((t) => tagIds.includes(t.id));
-        },
-        [postTags, tags]
-    );
-
-    const isTagLinked = useCallback(
-        (postId: string, tagId: string) =>
-            postTags.some((pt) => pt.postId === postId && pt.tagId === tagId),
-        [postTags]
-    );
+    const manager = useEntityManager<TagFormType>({
+        fetch,
+        create,
+        update,
+        remove,
+        labels: (f) => f,
+        fields: Object.keys(initialTagForm) as (keyof TagFormType)[],
+        initialData: initialTagForm,
+        config: fieldConfig,
+    });
 
     return {
-        tags,
+        form: manager.formData,
         posts,
-        form,
-        editingIndex,
-        loading,
-        setForm,
-        handleChange,
-        handleEdit,
-        handleCancel,
-        handleSubmit,
-        handleDelete,
-        handleAddPostTag,
-        handleRemovePostTag,
-        tagsForPost,
-        isTagLinked,
-        fetchAll,
+        loading: manager.loading,
+        save: manager.save,
+        delete: manager.deleteEntity,
     };
 }
-
-export type UseTagFormReturn = ReturnType<typeof useTagForm>;

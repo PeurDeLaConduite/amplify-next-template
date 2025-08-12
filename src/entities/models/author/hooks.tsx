@@ -1,85 +1,65 @@
-import { useState, useEffect, type ChangeEvent } from "react";
+import { useEntityManager, type FieldConfig } from "@entities/core/hooks";
 import { authorService } from "@entities/models/author/service";
-import { type AuthorType, type AuthorFormType } from "@entities/models/author/types";
-import { initialAuthorForm, toAuthorForm } from "@entities/models/author/form";
+import {
+    initialAuthorForm,
+    toAuthorForm,
+    toAuthorCreate,
+    toAuthorUpdate,
+} from "@entities/models/author/form";
+import type { AuthorFormType } from "@entities/models/author/types";
 
-export function useAuthorForm(setMessage: (msg: string) => void) {
-    const [authors, setAuthors] = useState<AuthorType[]>([]);
-    const [form, setForm] = useState<AuthorFormType>({ ...initialAuthorForm });
-    const [editingIndex, setEditingIndex] = useState<number | null>(null);
-    const [loading, setLoading] = useState(true);
+export function useAuthorForm(id?: string) {
+    const fieldConfig: FieldConfig<AuthorFormType> = Object.keys(initialAuthorForm).reduce(
+        (acc, key) => ({
+            ...acc,
+            [key]: {
+                parse: (v) => v as AuthorFormType[keyof AuthorFormType],
+                serialize: (v) => v as unknown,
+                emptyValue: initialAuthorForm[key as keyof AuthorFormType],
+            },
+        }),
+        {} as FieldConfig<AuthorFormType>
+    );
 
-    // -------- Chargement initial --------
-    useEffect(() => {
-        fetchData();
-    }, []);
-
-    const fetchData = async () => {
-        setLoading(true);
-        const { data } = await authorService.list();
-        setAuthors(data ?? []);
-        setLoading(false);
+    const fetch = async () => {
+        if (!id) return null;
+        const { data } = await authorService.get({ id });
+        if (!data) return null;
+        return { id, ...toAuthorForm(data, []) };
     };
 
-    // --------- Handlers ---------
-    const handleFormChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setForm((f) => ({ ...f, [name]: value }));
+    const create = async (form: AuthorFormType) => {
+        await authorService.create(toAuthorCreate(form));
     };
 
-    const handleEdit = (idx: number) => {
-        setEditingIndex(idx);
-        setForm(toAuthorForm(authors[idx], []));
+    const update = async (
+        entity: (AuthorFormType & { id?: string }) | null,
+        form: AuthorFormType
+    ) => {
+        if (!entity?.id) return;
+        await authorService.update({ id: entity.id, ...toAuthorUpdate(form) });
     };
 
-    const handleCancel = () => {
-        setEditingIndex(null);
-        setForm({ ...initialAuthorForm });
+    const remove = async (entity: (AuthorFormType & { id?: string }) | null) => {
+        if (!entity?.id) return;
+        await authorService.delete({ id: entity.id });
     };
 
-    const handleSave = async () => {
-        if (!form.authorName) return;
-        try {
-            const { postIds, ...authorInput } = form;
-            void postIds;
-            if (editingIndex === null) {
-                await authorService.create(authorInput);
-                setMessage("Auteur ajouté !");
-            } else {
-                await authorService.update({ id: authors[editingIndex].id, ...authorInput });
-                setMessage("Auteur mis à jour !");
-            }
-            await fetchData(); // Refresh list after change
-            handleCancel();
-        } catch (err) {
-            const msg = err instanceof Error ? err.message : String(err);
-            setMessage(`Erreur : ${msg}`);
-        }
-    };
-
-    const handleDelete = async (idx: number) => {
-        if (!authors[idx]?.id) return;
-        if (!window.confirm("Supprimer cet auteur ?")) return;
-        try {
-            await authorService.delete({ id: authors[idx].id });
-            setMessage("Auteur supprimé !");
-            await fetchData(); // Refresh après suppression
-        } catch (err) {
-            const msg = err instanceof Error ? err.message : String(err);
-            setMessage(`Erreur : ${msg}`);
-        }
-    };
+    const manager = useEntityManager<AuthorFormType>({
+        fetch,
+        create,
+        update,
+        remove,
+        labels: (f) => f,
+        fields: Object.keys(initialAuthorForm) as (keyof AuthorFormType)[],
+        initialData: initialAuthorForm,
+        config: fieldConfig,
+    });
 
     return {
-        authors,
-        form,
-        editingIndex,
-        loading,
-        handleFormChange,
-        handleEdit,
-        handleCancel,
-        handleSave,
-        handleDelete,
-        fetchData,
+        form: manager.formData,
+        loading: manager.loading,
+        save: manager.save,
+        delete: manager.deleteEntity,
     };
 }

@@ -1,132 +1,92 @@
-import { useState, useEffect, ChangeEvent } from "react";
-import { postService } from "@entities/models/post/service";
+import { useEffect, useState } from "react";
+import { useEntityManager, type FieldConfig } from "@entities/core/hooks";
 import { sectionService } from "@entities/models/section/service";
+import { postService } from "@entities/models/post/service";
 import { sectionPostService } from "@entities/relations/sectionPost/service";
-import { type PostType } from "@entities/models/post/types";
-import { type SectionFormTypes, type SectionTypes } from "@entities/models/section/types";
-import { initialSectionForm, toSectionForm } from "@entities/models/section/form";
-import { useAutoGenFields, slugify } from "@/src/hooks/useAutoGenFields";
+import {
+    initialSectionForm,
+    toSectionForm,
+    toSectionCreate,
+    toSectionUpdate,
+} from "@entities/models/section/form";
+import type { SectionFormTypes } from "@entities/models/section/types";
+import type { PostType } from "@entities/models/post/types";
 import { syncManyToMany } from "@entities/core/utils/syncManyToMany";
 
-export function useSectionForm(section: SectionTypes | null, onSave: () => void) {
-    const [form, setForm] = useState<SectionFormTypes>(initialSectionForm);
+export function useSectionForm(id?: string) {
     const [posts, setPosts] = useState<PostType[]>([]);
-    const [saving, setSaving] = useState(false);
-
-    // HOOK d'auto-génération : slug & seo.title depuis title, seo.description depuis description
-    const { handleSourceFocus, handleSourceBlur, handleManualEdit } = useAutoGenFields({
-        configs: [
-            {
-                editingKey: "title",
-                source: form.title ?? "",
-                current: form.slug ?? "",
-                target: "slug",
-                setter: (v) => setForm((f) => ({ ...f, slug: v ?? "" })),
-                transform: slugify,
-            },
-            {
-                editingKey: "title",
-                source: form.title ?? "",
-                current: form.seo.title ?? "",
-                target: "seo.title",
-                setter: (v) => setForm((f) => ({ ...f, seo: { ...f.seo, title: v ?? "" } })),
-            },
-            {
-                editingKey: "description",
-                source: form.description ?? "",
-                current: form.seo.description ?? "",
-                target: "seo.description",
-                setter: (v) => setForm((f) => ({ ...f, seo: { ...f.seo, description: v ?? "" } })),
-            },
-        ],
-    });
 
     useEffect(() => {
-        loadPosts();
-        if (section) loadSection(section);
-        else setForm(initialSectionForm);
-    }, [section]);
+        postService.list().then(({ data }) => setPosts(data ?? []));
+    }, []);
 
-    async function loadPosts() {
-        const { data } = await postService.list();
-        setPosts(data ?? []);
-    }
+    const fieldConfig: FieldConfig<SectionFormTypes> = Object.keys(initialSectionForm).reduce(
+        (acc, key) => ({
+            ...acc,
+            [key]: {
+                parse: (v) => v as SectionFormTypes[keyof SectionFormTypes],
+                serialize: (v) => v as unknown,
+                emptyValue: initialSectionForm[key as keyof SectionFormTypes],
+            },
+        }),
+        {} as FieldConfig<SectionFormTypes>
+    );
 
-    async function loadSection(section: SectionTypes) {
-        const postIds = await sectionPostService.listByParent(section.id);
-        setForm(toSectionForm(section, postIds));
-        // Ici tu pourrais aussi remettre à true tous les autoFlags si tu veux "réinitialiser" l'autogen à chaque changement de section.
-    }
+    const fetch = async () => {
+        if (!id) return null;
+        const { data } = await sectionService.get({ id });
+        if (!data) return null;
+        const postIds = await sectionPostService.listByParent(id);
+        return { id, ...toSectionForm(data, postIds) };
+    };
 
-    function handleChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-        const { name, value } = e.target;
-        if (name.startsWith("seo.")) {
-            const key = name.split(".")[1];
-            setForm((f) => ({ ...f, seo: { ...f.seo, [key]: value } }));
-            handleManualEdit(`seo.${key}`);
-        } else if (name === "slug") {
-            setForm((f) => ({ ...f, slug: slugify(value) }));
-            handleManualEdit("slug");
-        } else {
-            setForm((f) => ({ ...f, [name]: value }));
-            if (name === "slug") handleManualEdit("slug");
-        }
-    }
-
-    const handleSubmit = async () => {
-        setSaving(true);
-        if (!form.title) {
-            alert("Le titre est obligatoire !");
-            setSaving(false);
-            return;
-        }
-
-        const { postIds, ...sectionInput } = form;
-        void postIds;
-        const isUpdate = Boolean(section?.id);
-
-        try {
-            const result = isUpdate
-                ? await sectionService.update({ id: section!.id, ...sectionInput })
-                : await sectionService.create(sectionInput);
-
-            if (!result.data) {
-                throw new Error(
-                    result.errors?.map((e) => e.message).join(", ") || "Aucune donnée retournée"
-                );
-            }
-
-            const sectionId = result.data.id;
-            await syncRelations(sectionId);
-            setForm(initialSectionForm);
-            onSave();
-        } catch (err) {
-            const message = err instanceof Error ? err.message : String(err);
-            alert(`Erreur lors de la sauvegarde : ${message}`);
-            console.error(err);
-        } finally {
-            setSaving(false);
+    const create = async (form: SectionFormTypes) => {
+        const { data } = await sectionService.create(toSectionCreate(form));
+        if (data) {
+            await syncManyToMany(
+                [],
+                form.postIds,
+                (postId) => sectionPostService.create(data.id, postId),
+                () => Promise.resolve()
+            );
         }
     };
 
-    async function syncRelations(sectionId: string) {
-        const currentPostIds = await sectionPostService.listByParent(sectionId);
+    const update = async (
+        entity: (SectionFormTypes & { id?: string }) | null,
+        form: SectionFormTypes
+    ) => {
+        if (!entity?.id) return;
+        await sectionService.update({ id: entity.id, ...toSectionUpdate(form) });
         await syncManyToMany(
-            currentPostIds,
+            await sectionPostService.listByParent(entity.id),
             form.postIds,
-            (postId) => sectionPostService.create(sectionId, postId),
-            (postId) => sectionPostService.delete(sectionId, postId)
+            (postId) => sectionPostService.create(entity.id!, postId),
+            (postId) => sectionPostService.delete(entity.id!, postId)
         );
-    }
+    };
+
+    const remove = async (entity: (SectionFormTypes & { id?: string }) | null) => {
+        if (!entity?.id) return;
+        await sectionService.delete({ id: entity.id });
+    };
+
+    const manager = useEntityManager<SectionFormTypes>({
+        fetch,
+        create,
+        update,
+        remove,
+        labels: (f) => f,
+        fields: Object.keys(initialSectionForm) as (keyof SectionFormTypes)[],
+        initialData: initialSectionForm,
+        config: fieldConfig,
+    });
 
     return {
-        form,
+        form: manager.formData,
         posts,
-        saving,
-        handleChange,
-        handleSubmit,
-        handleTitleFocus: (key: string) => handleSourceFocus(key),
-        handleTitleBlur: (key: string) => handleSourceBlur(key),
-        setForm,
+        loading: manager.loading,
+        save: manager.save,
+        delete: manager.deleteEntity,
     };
 }
