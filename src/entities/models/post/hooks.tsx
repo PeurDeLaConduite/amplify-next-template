@@ -14,6 +14,7 @@ import { type AuthorType } from "@entities/models/author/types";
 import { type SeoFormType } from "@entities/customTypes/seo/types";
 import { initialPostForm, toPostForm } from "@entities/models/post/form";
 import { initialSeoForm } from "@entities/customTypes/seo/form";
+import { syncManyToMany } from "@entities/core/utils/syncManyToMany";
 
 export function usePostForm(post: PostType | null, onSave: () => void) {
     const [form, setForm] = useState<PostFormType>({ ...initialPostForm });
@@ -116,17 +117,23 @@ export function usePostForm(post: PostType | null, onSave: () => void) {
     // ----------- Service Relations ------------
 
     async function syncRelations(postId: string) {
-        const currentTagIds = await postTagService.listByParent(postId);
-        const tagsToAdd = form.tagIds.filter((id) => !currentTagIds.includes(id));
-        const tagsToRemove = currentTagIds.filter((id) => !form.tagIds.includes(id));
-        const currentSectionIds = await sectionPostService.listByChild(postId);
-        const sectionsToAdd = form.sectionIds.filter((id) => !currentSectionIds.includes(id));
-        const sectionsToRemove = currentSectionIds.filter((id) => !form.sectionIds.includes(id));
+        const [currentTagIds, currentSectionIds] = await Promise.all([
+            postTagService.listByParent(postId),
+            sectionPostService.listByChild(postId),
+        ]);
         await Promise.all([
-            ...tagsToAdd.map((tagId) => postTagService.create(postId, tagId)),
-            ...tagsToRemove.map((tagId) => postTagService.delete(postId, tagId)),
-            ...sectionsToAdd.map((sectionId) => sectionPostService.create(sectionId, postId)),
-            ...sectionsToRemove.map((sectionId) => sectionPostService.delete(sectionId, postId)),
+            syncManyToMany(
+                currentTagIds,
+                form.tagIds,
+                (tagId) => postTagService.create(postId, tagId),
+                (tagId) => postTagService.delete(postId, tagId)
+            ),
+            syncManyToMany(
+                currentSectionIds,
+                form.sectionIds,
+                (sectionId) => sectionPostService.create(sectionId, postId),
+                (sectionId) => sectionPostService.delete(sectionId, postId)
+            ),
         ]);
     }
 

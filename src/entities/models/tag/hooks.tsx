@@ -7,6 +7,7 @@ import { type TagFormType, type TagType } from "@entities/models/tag/types";
 import { type PostType } from "@entities/models/post/types";
 import { type PostTagType } from "@entities/relations/postTag/types";
 import { initialTagForm } from "@entities/models/tag/form";
+import { syncManyToMany } from "@entities/core/utils/syncManyToMany";
 
 export function useTagForm() {
     const [tags, setTags] = useState<TagType[]>([]);
@@ -54,12 +55,12 @@ export function useTagForm() {
 
     async function syncRelations(tagId: string) {
         const current = await postTagService.listByChild(tagId);
-        const toAdd = form.postIds.filter((id) => !current.includes(id));
-        const toRemove = current.filter((id) => !form.postIds.includes(id));
-        await Promise.all([
-            ...toAdd.map((postId) => postTagService.create(postId, tagId)),
-            ...toRemove.map((postId) => postTagService.delete(postId, tagId)),
-        ]);
+        await syncManyToMany(
+            current,
+            form.postIds,
+            (postId) => postTagService.create(postId, tagId),
+            (postId) => postTagService.delete(postId, tagId)
+        );
     }
 
     const handleSubmit = async () => {

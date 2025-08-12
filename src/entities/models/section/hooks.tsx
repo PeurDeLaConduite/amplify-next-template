@@ -6,6 +6,7 @@ import { type PostType } from "@entities/models/post/types";
 import { type SectionFormTypes, type SectionTypes } from "@entities/models/section/types";
 import { initialSectionForm, toSectionForm } from "@entities/models/section/form";
 import { useAutoGenFields, slugify } from "@/src/hooks/useAutoGenFields";
+import { syncManyToMany } from "@entities/core/utils/syncManyToMany";
 
 export function useSectionForm(section: SectionTypes | null, onSave: () => void) {
     const [form, setForm] = useState<SectionFormTypes>(initialSectionForm);
@@ -110,12 +111,12 @@ export function useSectionForm(section: SectionTypes | null, onSave: () => void)
 
     async function syncRelations(sectionId: string) {
         const currentPostIds = await sectionPostService.listByParent(sectionId);
-        const idsToAdd = form.postIds.filter((id) => !currentPostIds.includes(id));
-        const idsToRemove = currentPostIds.filter((id) => !form.postIds.includes(id));
-        await Promise.all([
-            ...idsToAdd.map((postId) => sectionPostService.create(sectionId, postId)),
-            ...idsToRemove.map((postId) => sectionPostService.delete(sectionId, postId)),
-        ]);
+        await syncManyToMany(
+            currentPostIds,
+            form.postIds,
+            (postId) => sectionPostService.create(sectionId, postId),
+            (postId) => sectionPostService.delete(sectionId, postId)
+        );
     }
 
     return {
