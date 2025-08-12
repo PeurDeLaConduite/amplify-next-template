@@ -1,0 +1,111 @@
+// src/entities/core/hooks/useModelForm.ts
+"use client";
+import { useCallback, useMemo, useRef, useState } from "react";
+
+export type FormMode = "create" | "edit";
+
+export interface UseModelFormOptions<F, E = Record<string, unknown>> {
+    initialForm: F;
+    initialExtras?: E;
+    mode?: FormMode;
+    validate?: (form: F) => Promise<boolean> | boolean;
+    create: (form: F) => Promise<string>;
+    update: (form: F) => Promise<string>;
+    syncRelations?: (id: string, form: F) => Promise<void>;
+}
+
+export interface UseModelFormResult<F, E> {
+    form: F;
+    extras: E;
+    mode: FormMode;
+    dirty: boolean;
+    saving: boolean;
+    error: unknown;
+    handleChange: <K extends keyof F>(field: K, value: F[K]) => void;
+    submit: () => Promise<void>;
+    reset: () => void;
+    setForm: React.Dispatch<React.SetStateAction<F>>;
+    setExtras: React.Dispatch<React.SetStateAction<E>>;
+    setMode: React.Dispatch<React.SetStateAction<FormMode>>;
+}
+
+function deepEqual(a: unknown, b: unknown) {
+    try {
+        return JSON.stringify(a) === JSON.stringify(b);
+    } catch {
+        return false;
+    }
+}
+
+export default function useModelForm<
+    F extends Record<string, unknown>,
+    E extends Record<string, unknown> = Record<string, unknown>,
+>(options: UseModelFormOptions<F, E>): UseModelFormResult<F, E> {
+    const {
+        initialForm,
+        initialExtras,
+        mode: initialMode = "create",
+        validate,
+        create,
+        update,
+        syncRelations,
+    } = options;
+
+    const initialRef = useRef(initialForm);
+    const [form, setForm] = useState<F>(initialForm);
+    const [extras, setExtras] = useState<E>((initialExtras as E) ?? ({} as E));
+    const [mode, setMode] = useState<FormMode>(initialMode);
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState<unknown>(null);
+
+    const dirty = useMemo(() => !deepEqual(form, initialRef.current), [form]);
+
+    const handleChange = useCallback(<K extends keyof F>(field: K, value: F[K]) => {
+        setForm((f) => ({ ...f, [field]: value }));
+    }, []);
+
+    const reset = useCallback(() => {
+        setForm(initialRef.current);
+        setMode(initialMode);
+        setError(null);
+    }, [initialMode]);
+
+    const submit = useCallback(async () => {
+        setSaving(true);
+        setError(null);
+        try {
+            if (validate) {
+                const valid = await validate(form);
+                if (!valid) {
+                    setSaving(false);
+                    return;
+                }
+            }
+            const id = mode === "create" ? await create(form) : await update(form);
+            if (syncRelations) {
+                await syncRelations(id, form);
+            }
+            setMode("edit");
+            initialRef.current = form;
+        } catch (e) {
+            setError(e);
+        } finally {
+            setSaving(false);
+        }
+    }, [form, mode, validate, create, update, syncRelations]);
+
+    return {
+        form,
+        extras,
+        mode,
+        dirty,
+        saving,
+        error,
+        handleChange,
+        submit,
+        reset,
+        setForm,
+        setExtras,
+        setMode,
+    };
+}
