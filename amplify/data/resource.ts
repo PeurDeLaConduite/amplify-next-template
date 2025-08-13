@@ -47,6 +47,7 @@ const schema = a.schema({
 
     UserProfile: a
         .model({
+            id: a.id().required(),
             firstName: a.string(),
             familyName: a.string(),
             address: a.string(),

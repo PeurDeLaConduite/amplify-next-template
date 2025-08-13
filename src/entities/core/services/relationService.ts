@@ -43,7 +43,7 @@ export function relationService<
 >(
     modelName: K,
     user: AuthUser | null,
-    rules: AuthRule[] = [{ allow: "public", operations: [READ] }],
+    rules: AuthRule[] ,
     parentIdKey: ParentIdKey,
     childIdKey: ChildIdKey
 ) {
