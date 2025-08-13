@@ -1,15 +1,13 @@
 // src/entities/models/userName/service.ts
-import { crudService } from "@entities/core";
-import { expandPolicy } from "@entities/core/auth";
-import type { AuthUser, SimplePolicy } from "@entities/core/types";
+import { crudService, type AuthUser, type SimplePolicy, expandPolicy } from "@entities/core";
 
-const userNamePolicy: SimplePolicy = {
-    read: ["public", "private", { owner: true, ownerField: "owner" }],
-    create: "private",
-    update: { owner: true, ownerField: "owner" },
-    delete: ["private", { owner: true, ownerField: "owner" }],
+const policy: SimplePolicy = {
+    read: { owner: true },
+    create: { owner: true },
+    update: { owner: true },
+    delete: { owner: true },
 };
-const userNameRules = expandPolicy(userNamePolicy);
+const rules = expandPolicy(policy);
 
 export const userNameService = (user: AuthUser | null) =>
-    crudService("UserName", user, userNameRules, { autoOwnerField: "owner" });
+    crudService("UserName", user, rules, { autoOwnerField: "owner" });

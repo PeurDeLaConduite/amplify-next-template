@@ -1,25 +1,32 @@
 // src/entities/models/userName/hooks.tsx
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import { useEntityManager, type FieldConfig } from "@entities/core/hooks";
-import { label } from "@src/components/Profile/utilsUserName";
-import {
-    getUserName,
-    createUserName,
-    updateUserName,
-    deleteUserName,
-} from "@entities/models/userName/service";
+import { label as fieldLabel } from "@/src/components/Profile/utilsUserName";
+import { userNameService as userNameServiceFactory } from "@entities/models/userName/service";
+import { extractGroups, type AuthUser } from "@entities/core";
 import { type UserNameMinimalType } from "@entities/models/userName/types";
 
 export function useUserNameManager() {
     const { user } = useAuthenticator();
-    const sub = user?.userId ?? user?.username;
+
+    const authUser = useMemo<AuthUser | null>(() => {
+        if (!user) return null;
+        const username =
+            (user as unknown as { userId?: string })?.userId ??
+            (user as unknown as { username?: string })?.username ??
+            undefined;
+        return { username, groups: extractGroups(user) };
+    }, [user]);
+
+    const svc = useMemo(() => userNameServiceFactory(authUser), [authUser]);
+    const sub = authUser?.username;
     const [error, setError] = useState<Error | null>(null);
 
     const fetch = async () => {
         if (!sub) return null;
         try {
-            const item = await getUserName(sub);
+            const { data: item } = await svc.get({ id: sub });
             if (!item) return null;
             return { id: sub, userName: item.userName ?? "" };
         } catch (e) {
@@ -32,7 +39,7 @@ export function useUserNameManager() {
         if (!sub) throw new Error("id manquant");
         try {
             setError(null);
-            await createUserName(sub, data.userName);
+            await svc.create({ id: sub, ...data });
         } catch (e) {
             setError(e as Error);
         }
@@ -46,7 +53,7 @@ export function useUserNameManager() {
         if (!sub) throw new Error("id manquant");
         try {
             setError(null);
-            await updateUserName(sub, data.userName ?? "");
+            await svc.update({ id: sub, ...data });
         } catch (e) {
             setError(e as Error);
         }
@@ -57,7 +64,7 @@ export function useUserNameManager() {
         if (!sub) return;
         try {
             setError(null);
-            await deleteUserName(sub);
+            await svc.delete({ id: sub });
         } catch (e) {
             setError(e as Error);
         }
@@ -78,7 +85,7 @@ export function useUserNameManager() {
         create,
         update,
         remove,
-        labels: label,
+        labels: fieldLabel,
         fields: ["userName"],
         initialData,
         config: fieldConfig,
