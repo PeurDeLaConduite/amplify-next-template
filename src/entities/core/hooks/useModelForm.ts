@@ -29,6 +29,8 @@ export interface UseModelFormResult<F, E> {
     setExtras: React.Dispatch<React.SetStateAction<E>>;
     setMode: React.Dispatch<React.SetStateAction<FormMode>>;
     setMessage: React.Dispatch<React.SetStateAction<string | null>>;
+    /** ⬇️ nouveau : fixe baseline + mode d’un coup */
+    adoptInitial: (next: F, mode?: FormMode) => void;
 }
 
 function deepEqual(a: unknown, b: unknown) {
@@ -73,6 +75,14 @@ export default function useModelForm<
         setError(null);
     }, [initialMode]);
 
+    const adoptInitial = useCallback((next: F, nextMode: FormMode = "edit") => {
+        initialRef.current = next;
+        setForm(next);
+        setMode(nextMode);
+        setError(null);
+        setMessage(null);
+    }, []);
+
     const submit = useCallback(async () => {
         setSaving(true);
         setError(null);
@@ -89,12 +99,13 @@ export default function useModelForm<
                 await syncRelations(id, form);
             }
             setMode("edit");
-            initialRef.current = form;
+            initialRef.current = form; // baseline = dernier form sauvegardé
         } catch (e) {
             setError(e);
         } finally {
             setSaving(false);
         }
+        // ⬇️ retire adoptInitial (non utilisé)
     }, [form, mode, validate, create, update, syncRelations]);
 
     return {
@@ -112,5 +123,6 @@ export default function useModelForm<
         setExtras,
         setMode,
         setMessage,
+        adoptInitial,
     };
 }

@@ -6,15 +6,20 @@ import { tagService } from "@entities/models/tag/service";
 import { postTagService } from "@entities/relations/postTag/service";
 import { type TagFormType, type TagType } from "@entities/models/tag/types";
 import { type PostType } from "@entities/models/post/types";
-import { type PostTagType } from "@entities/relations/postTag/types";
 import { initialTagForm, toTagForm } from "@entities/models/tag/form";
 import { syncManyToMany } from "@entities/core/utils/syncManyToMany";
 
+// Pivot léger côté UI
+type PostTagLink = { postId: string; tagId: string };
+
 interface Extras extends Record<string, unknown> {
+    index?: string; // purement UI, optionnel
     tags: TagType[];
     posts: PostType[];
-    postTags: PostTagType[];
+    postTags: PostTagLink[]; // ⚠️ paires d'IDs uniquement côté UI
 }
+
+const initialExtras: Extras = { index: "", tags: [], posts: [], postTags: [] };
 
 export function useTagForm() {
     const currentId = useRef<string | null>(null);
@@ -22,30 +27,29 @@ export function useTagForm() {
 
     const modelForm = useModelForm<TagFormType, Extras>({
         initialForm: initialTagForm,
-        initialExtras: { tags: [], posts: [], postTags: [] },
+        initialExtras,
         create: async (form) => {
             const { data } = await tagService.create({ name: form.name });
             if (!data) throw new Error("Erreur lors de la création du tag");
             return data.id;
         },
         update: async (form) => {
-            if (!currentId.current) {
-                throw new Error("ID du tag manquant pour la mise à jour");
-            }
-            const { data } = await tagService.update({
-                id: currentId.current,
-                name: form.name,
-            });
+            if (!currentId.current) throw new Error("ID du tag manquant pour la mise à jour");
+            const { data } = await tagService.update({ id: currentId.current, name: form.name });
             if (!data) throw new Error("Erreur lors de la mise à jour du tag");
             return data.id;
         },
-        syncRelations: async (id, form) => {
-            const current = await postTagService.listByChild(id);
+        syncRelations: async (tagId, form) => {
+            // 🔁 compare des IDs (postIds actuels vs désirés)
+            const currentPostIds = await postTagService.listByChild(tagId); // idéal: string[]
+            // Si ton service renvoie des objets, décommente la normalisation :
+            // const currentPostIds = (await postTagService.listByChild(tagId)).map(x => x.postId);
+
             await syncManyToMany(
-                current,
+                currentPostIds,
                 form.postIds,
-                (postId) => postTagService.create(postId, id),
-                (postId) => postTagService.delete(postId, id)
+                (postId) => postTagService.create(postId, tagId),
+                (postId) => postTagService.delete(postId, tagId)
             );
         },
     });
@@ -54,17 +58,23 @@ export function useTagForm() {
 
     const fetchAll = useCallback(async () => {
         setLoading(true);
-        const [t, p, pt] = await Promise.all([
-            tagService.list(),
-            postService.list(),
-            postTagService.list(),
-        ]);
-        setExtras({
-            tags: t.data ?? [],
-            posts: p.data ?? [],
-            postTags: pt.data ?? [],
-        });
-        setLoading(false);
+        try {
+            const [t, p, pt] = await Promise.all([
+                tagService.list(),
+                postService.list(),
+                postTagService.list(), // renvoie PostTagType[]
+            ]);
+
+            // ✅ Normalise les pivots en paires d’IDs pour l’UI
+            setExtras((prev) => ({
+                ...prev,
+                tags: t.data ?? [],
+                posts: p.data ?? [],
+                postTags: (pt.data ?? []).map(({ postId, tagId }) => ({ postId, tagId })),
+            }));
+        } finally {
+            setLoading(false);
+        }
     }, [setExtras]);
 
     useEffect(() => {
@@ -74,7 +84,9 @@ export function useTagForm() {
     const edit = useCallback(
         async (idx: number) => {
             const tag = extras.tags[idx];
-            const postIds = await postTagService.listByChild(tag.id);
+            if (!tag) return;
+            const postIds = await postTagService.listByChild(tag.id); // idéal: string[]
+            // Si objets -> normalise : const postIds = (await postTagService.listByChild(tag.id)).map(x => x.postId);
             currentId.current = tag.id;
             setForm(toTagForm(tag, postIds));
             setMode("edit");
@@ -91,9 +103,11 @@ export function useTagForm() {
     const remove = useCallback(
         async (idx: number) => {
             const tag = extras.tags[idx];
-            if (!window.confirm("Supprimer ce tag ?")) return;
-            const linkedPosts = await postTagService.listByChild(tag.id);
-            await Promise.all(linkedPosts.map((p) => postTagService.delete(p, tag.id)));
+            if (!tag) return;
+            if (!window.confirm("Supprimer ce tag ?")) return;
+            const linkedPostIds = await postTagService.listByChild(tag.id);
+            // Si objets -> normalise : const linkedPostIds = (await postTagService.listByChild(tag.id)).map(x => x.postId);
+            await Promise.all(linkedPostIds.map((postId) => postTagService.delete(postId, tag.id)));
             await tagService.delete({ id: tag.id });
             await fetchAll();
         },
@@ -115,13 +129,14 @@ export function useTagForm() {
                 await postTagService.create(postId, tagId);
                 setExtras((prev) => ({
                     ...prev,
-                    postTags: [...prev.postTags, { postId, tagId } as PostTagType],
+                    postTags: [...prev.postTags, { postId, tagId }],
                 }));
             }
         },
         [extras.postTags, setExtras]
     );
 
+    // Sélecteurs utilitaires
     const tagsForPost = useCallback(
         (postId: string) => {
             const tagIds = extras.postTags

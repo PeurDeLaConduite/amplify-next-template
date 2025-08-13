@@ -25,9 +25,8 @@ export function useAuthorForm() {
             return data.id;
         },
         update: async (form) => {
-            if (editingIndex.current === null) {
+            if (editingIndex.current === null)
                 throw new Error("Auteur à mettre à jour non sélectionné");
-            }
             const id = authorsRef.current[editingIndex.current]?.id;
             if (!id) throw new Error("ID auteur introuvable");
             const { postIds, ...authorInput } = form;
@@ -38,12 +37,18 @@ export function useAuthorForm() {
         },
     });
 
+    const { setExtras, adoptInitial, setMessage } = modelForm;
+
     const fetchAuthors = useCallback(async () => {
-        modelForm.setExtras((prev) => ({ ...prev, loading: true }));
-        const { data } = await authorService.list();
-        authorsRef.current = data ?? [];
-        modelForm.setExtras({ authors: authorsRef.current, loading: false });
-    }, [modelForm]);
+        setExtras((prev) => ({ ...prev, loading: true })); // conserve d’éventuels champs futurs
+        try {
+            const { data } = await authorService.list();
+            authorsRef.current = data ?? [];
+            setExtras((prev) => ({ ...prev, authors: authorsRef.current, loading: false }));
+        } catch {
+            setExtras((prev) => ({ ...prev, loading: false }));
+        }
+    }, [setExtras]);
 
     useEffect(() => {
         void fetchAuthors();
@@ -53,8 +58,8 @@ export function useAuthorForm() {
         const author = authorsRef.current[idx];
         if (!author) return;
         editingIndex.current = idx;
-        modelForm.setForm(toAuthorForm(author, []));
-        modelForm.setMode("edit");
+        // ⬇️ baseline = form dérivé + mode edit
+        adoptInitial(toAuthorForm(author, []), "edit");
     };
 
     const remove = async (idx: number) => {
@@ -64,10 +69,10 @@ export function useAuthorForm() {
         try {
             await authorService.delete({ id: author.id });
             await fetchAuthors();
-            modelForm.setMessage("Auteur supprimé !");
+            setMessage("Auteur supprimé !");
         } catch (err) {
             const msg = err instanceof Error ? err.message : String(err);
-            modelForm.setMessage(`Erreur : ${msg}`);
+            setMessage(`Erreur : ${msg}`);
         }
     };
 
@@ -75,20 +80,18 @@ export function useAuthorForm() {
         try {
             await modelForm.submit();
             await fetchAuthors();
-            modelForm.setMessage(
-                editingIndex.current === null ? "Auteur ajouté !" : "Auteur mis à jour !"
-            );
+            setMessage(editingIndex.current === null ? "Auteur ajouté !" : "Auteur mis à jour !");
             resetForm();
         } catch (err) {
             const msg = err instanceof Error ? err.message : String(err);
-            modelForm.setMessage(`Erreur : ${msg}`);
+            setMessage(`Erreur : ${msg}`);
         }
     }
 
     function resetForm() {
         editingIndex.current = null;
-        modelForm.setMode("create");
-        modelForm.reset();
+        // ⬇️ baseline = formulaire vide + mode create (au lieu de reset() qui repart sur la baseline courante)
+        adoptInitial(initialAuthorForm, "create");
     }
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
