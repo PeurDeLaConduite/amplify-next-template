@@ -6,8 +6,7 @@ export default function TagsAssociationManager({
     tags,
     tagsForPost,
     isTagLinked,
-    onAdd,
-    onRemove,
+    onToggle,
     loading,
 }) {
     return (
@@ -43,11 +42,7 @@ export default function TagsAssociationManager({
                                     <ButtonBase
                                         key={tag.id}
                                         label={tag.name}
-                                        onClick={() =>
-                                            isTagLinked(post.id, tag.id)
-                                                ? onRemove(post.id, tag.id)
-                                                : onAdd(post.id, tag.id)
-                                        }
+                                        onClick={() => onToggle(post.id, tag.id)}
                                         color={isTagLinked(post.id, tag.id) ? "primary" : "inherit"}
                                         variant={
                                             isTagLinked(post.id, tag.id) ? "contained" : "outlined"
