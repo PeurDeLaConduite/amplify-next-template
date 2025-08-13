@@ -1,4 +1,4 @@
-import { useEffect, type ChangeEvent } from "react";
+import { useCallback, useEffect } from "react";
 import { useModelForm } from "@entities/core/hooks";
 import { postService } from "@entities/models/post/service";
 import { sectionService } from "@entities/models/section/service";
@@ -6,15 +6,14 @@ import { sectionPostService } from "@entities/relations/sectionPost/service";
 import { initialSectionForm, toSectionForm } from "@entities/models/section/form";
 import { type SectionFormTypes, type SectionTypes } from "@entities/models/section/types";
 import { type PostType } from "@entities/models/post/types";
-import { useAutoGenFields, slugify } from "@hooks/useAutoGenFields";
 import { syncManyToMany } from "@entities/core/utils/syncManyToMany";
 
-type Extras = { posts: PostType[] };
+type Extras = { posts: PostType[]; sections: SectionTypes[] };
 
-export function useSectionForm(section: SectionTypes | null, onSave: () => void) {
+export function useSectionForm(section: SectionTypes | null) {
     const modelForm = useModelForm<SectionFormTypes, Extras>({
         initialForm: initialSectionForm,
-        initialExtras: { posts: [] },
+        initialExtras: { posts: [], sections: [] },
         create: async (form) => {
             const { postIds, ...sectionInput } = form;
             void postIds;
@@ -46,49 +45,20 @@ export function useSectionForm(section: SectionTypes | null, onSave: () => void)
         },
     });
 
-    const { form, extras, setForm, setExtras, setMode, submit, saving } = modelForm;
+    const { setForm, setExtras, setMode } = modelForm;
 
-    const { handleSourceFocus, handleSourceBlur, handleManualEdit } = useAutoGenFields({
-        configs: [
-            {
-                editingKey: "title",
-                source: form.title ?? "",
-                current: form.slug ?? "",
-                target: "slug",
-                setter: (v) => setForm((f) => ({ ...f, slug: v ?? "" })),
-                transform: slugify,
-            },
-            {
-                editingKey: "title",
-                source: form.title ?? "",
-                current: form.seo.title ?? "",
-                target: "seo.title",
-                setter: (v) =>
-                    setForm((f) => ({
-                        ...f,
-                        seo: { ...f.seo, title: v ?? "" },
-                    })),
-            },
-            {
-                editingKey: "description",
-                source: form.description ?? "",
-                current: form.seo.description ?? "",
-                target: "seo.description",
-                setter: (v) =>
-                    setForm((f) => ({
-                        ...f,
-                        seo: { ...f.seo, description: v ?? "" },
-                    })),
-            },
-        ],
-    });
+    const fetchSections = useCallback(async () => {
+        const { data } = await sectionService.list();
+        setExtras((e) => ({ ...e, sections: data ?? [] }));
+    }, [setExtras]);
 
     useEffect(() => {
         void (async () => {
             const { data } = await postService.list();
-            setExtras({ posts: data ?? [] });
+            setExtras((e) => ({ ...e, posts: data ?? [] }));
         })();
-    }, [setExtras]);
+        void fetchSections();
+    }, [setExtras, fetchSections]);
 
     useEffect(() => {
         void (async () => {
@@ -103,36 +73,5 @@ export function useSectionForm(section: SectionTypes | null, onSave: () => void)
         })();
     }, [section, setForm, setMode]);
 
-    function handleChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-        const { name, value } = e.target;
-        if (name.startsWith("seo.")) {
-            const key = name.split(".")[1] as keyof SectionFormTypes["seo"];
-            setForm((f) => ({ ...f, seo: { ...f.seo, [key]: value } }));
-            handleManualEdit(`seo.${key}`);
-        } else if (name === "slug") {
-            setForm((f) => ({ ...f, slug: slugify(value) }));
-            handleManualEdit("slug");
-        } else {
-            setForm((f) => ({ ...f, [name]: value }));
-            if (name === "slug") handleManualEdit("slug");
-        }
-    }
-
-    async function handleSubmit() {
-        await submit();
-        setMode("create");
-        setForm(initialSectionForm);
-        onSave();
-    }
-
-    return {
-        form,
-        posts: extras.posts,
-        saving,
-        handleChange,
-        handleSubmit,
-        handleTitleFocus: handleSourceFocus,
-        handleTitleBlur: handleSourceBlur,
-        setForm,
-    };
+    return { ...modelForm, fetchSections };
 }

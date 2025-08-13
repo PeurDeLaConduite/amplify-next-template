@@ -5,21 +5,23 @@ import RequireAdmin from "@components/RequireAdmin";
 import SectionForm from "./SectionsForm";
 import SectionList from "./SectionList";
 import { sectionService } from "@entities/models/section/service";
-import { type SectionTypes } from "@entities/models/section/types";
+import { type SectionTypes, initialSectionForm, useSectionForm } from "@entities/models/section";
 
 export default function SectionManagerPage() {
-    const [sections, setSections] = useState<SectionTypes[]>([]);
     const [editingSection, setEditingSection] = useState<SectionTypes | null>(null);
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
     const formRef = useRef<HTMLFormElement>(null);
-    const fetchSections = async () => {
-        const { data } = await sectionService.list();
-        setSections(data ?? []);
-    };
+    const manager = useSectionForm(editingSection);
+    const {
+        extras: { sections },
+        fetchSections,
+        setForm,
+        setMode,
+    } = manager;
 
     useEffect(() => {
         fetchSections();
-    }, []);
+    }, [fetchSections]);
 
     const handleEdit = (idx: number) => {
         setEditingSection(sections[idx]);
@@ -33,8 +35,8 @@ export default function SectionManagerPage() {
         await fetchSections();
     };
 
-    const handleSave = () => {
-        fetchSections();
+    const handleSave = async () => {
+        await fetchSections();
         setEditingSection(null);
         setEditingIndex(null);
     };
@@ -42,6 +44,8 @@ export default function SectionManagerPage() {
     const handleCancel = () => {
         setEditingSection(null);
         setEditingIndex(null);
+        setMode("create");
+        setForm(initialSectionForm);
     };
 
     return (
@@ -50,8 +54,8 @@ export default function SectionManagerPage() {
                 <h1 className="text-2xl font-bold">Gestion des Sections</h1>
                 <SectionForm
                     ref={formRef}
-                    section={editingSection}
-                    sections={sections}
+                    manager={manager}
+                    editingIndex={editingIndex}
                     onSave={handleSave}
                 />
                 <SectionList
@@ -59,7 +63,6 @@ export default function SectionManagerPage() {
                     editingIndex={editingIndex}
                     onEdit={handleEdit}
                     onSave={() => {
-                        // Appelle le submit du formulaire via la ref
                         formRef.current?.requestSubmit();
                     }}
                     onCancel={handleCancel}
