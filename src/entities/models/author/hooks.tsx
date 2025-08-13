@@ -2,7 +2,7 @@
 import { useState, useEffect, useMemo, useCallback, type ChangeEvent } from "react";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import { authorService as authorServiceFactory } from "@entities/models/author/service";
-import type { AuthorType, AuthorFormType, } from "@entities/models/author/types";
+import type { AuthorType, AuthorFormType } from "@entities/models/author/types";
 import { initialAuthorForm, toAuthorForm } from "@entities/models/author/form";
 import type { AuthUser } from "@entities/core/types";
 
@@ -12,8 +12,9 @@ export function useAuthorForm() {
     // Map simple -> AuthUser (ajuste si tu as déjà un util pour récupérer les groups)
     const authUser = useMemo<AuthUser | null>(() => {
         if (!user) return null;
+        const u = user as { userId?: string; username?: string };
         return {
-            username: (user as any)?.userId ?? (user as any)?.username,
+            username: u.userId ?? u.username,
             // groups: [...], // TODO: renseigner si tu veux que CREATE/UPDATE/DELETE passent les règles ADMINS
         };
     }, [user]);
