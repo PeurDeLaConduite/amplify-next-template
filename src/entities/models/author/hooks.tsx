@@ -7,7 +7,7 @@ import type { AuthorType, AuthorFormType } from "@entities/models/author/types";
 import { initialAuthorForm, toAuthorForm } from "@entities/models/author/form";
 import type { AuthUser } from "@entities/core/types";
 import { extractGroups } from "@entities/core/auth"; // ← util sans any
-
+import { authorService as authorServiceFactory } from "@entities/models/author/service";
 export function useAuthorForm() {
     const { user } = useAuthenticator();
 
@@ -23,7 +23,7 @@ export function useAuthorForm() {
     }, [user]);
 
     // Service instancié avec l'utilisateur courant
-    const svc = useMemo(() => makeAuthorService(authUser), [authUser]);
+    const svc = useMemo(() => authorServiceFactory(authUser), [authUser]);
 
     const [authors, setAuthors] = useState<AuthorType[]>([]);
     const [form, setForm] = useState<AuthorFormType>({ ...initialAuthorForm });
