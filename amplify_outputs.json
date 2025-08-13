@@ -440,6 +440,12 @@
                             "properties": {}
                         },
                         {
+                            "type": "key",
+                            "properties": {
+                                "fields": ["id"]
+                            }
+                        },
+                        {
                             "type": "auth",
                             "properties": {
                                 "rules": [

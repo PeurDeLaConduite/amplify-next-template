@@ -1,19 +1,53 @@
-import { useState, useEffect, ChangeEvent } from "react";
+import { useEffect, type ChangeEvent } from "react";
+import { useModelForm } from "@entities/core/hooks";
 import { postService } from "@entities/models/post/service";
 import { sectionService } from "@entities/models/section/service";
 import { sectionPostService } from "@entities/relations/sectionPost/service";
-import { type PostType } from "@entities/models/post/types";
-import { type SectionFormTypes, type SectionTypes } from "@entities/models/section/types";
 import { initialSectionForm, toSectionForm } from "@entities/models/section/form";
-import { useAutoGenFields, slugify } from "@/src/hooks/useAutoGenFields";
+import { type SectionFormTypes, type SectionTypes } from "@entities/models/section/types";
+import { type PostType } from "@entities/models/post/types";
+import { useAutoGenFields, slugify } from "@hooks/useAutoGenFields";
 import { syncManyToMany } from "@entities/core/utils/syncManyToMany";
 
-export function useSectionForm(section: SectionTypes | null, onSave: () => void) {
-    const [form, setForm] = useState<SectionFormTypes>(initialSectionForm);
-    const [posts, setPosts] = useState<PostType[]>([]);
-    const [saving, setSaving] = useState(false);
+type Extras = { posts: PostType[] };
 
-    // HOOK d'auto-génération : slug & seo.title depuis title, seo.description depuis description
+export function useSectionForm(section: SectionTypes | null, onSave: () => void) {
+    const modelForm = useModelForm<SectionFormTypes, Extras>({
+        initialForm: initialSectionForm,
+        initialExtras: { posts: [] },
+        create: async (form) => {
+            const { postIds, ...sectionInput } = form;
+            void postIds;
+            const { data } = await sectionService.create(sectionInput);
+            if (!data) throw new Error("Erreur lors de la création de la section");
+            return data.id;
+        },
+        update: async (form) => {
+            if (!section?.id) {
+                throw new Error("ID de la section manquant pour la mise à jour");
+            }
+            const { postIds, ...sectionInput } = form;
+            void postIds;
+            const { data } = await sectionService.update({
+                id: section.id,
+                ...sectionInput,
+            });
+            if (!data) throw new Error("Erreur lors de la mise à jour de la section");
+            return data.id;
+        },
+        syncRelations: async (id, form) => {
+            const currentPostIds = await sectionPostService.listByParent(id);
+            await syncManyToMany(
+                currentPostIds,
+                form.postIds,
+                (postId) => sectionPostService.create(id, postId),
+                (postId) => sectionPostService.delete(id, postId)
+            );
+        },
+    });
+
+    const { form, extras, setForm, setExtras, setMode, submit, saving } = modelForm;
+
     const { handleSourceFocus, handleSourceBlur, handleManualEdit } = useAutoGenFields({
         configs: [
             {
@@ -29,39 +63,50 @@ export function useSectionForm(section: SectionTypes | null, onSave: () => void)
                 source: form.title ?? "",
                 current: form.seo.title ?? "",
                 target: "seo.title",
-                setter: (v) => setForm((f) => ({ ...f, seo: { ...f.seo, title: v ?? "" } })),
+                setter: (v) =>
+                    setForm((f) => ({
+                        ...f,
+                        seo: { ...f.seo, title: v ?? "" },
+                    })),
             },
             {
                 editingKey: "description",
                 source: form.description ?? "",
                 current: form.seo.description ?? "",
                 target: "seo.description",
-                setter: (v) => setForm((f) => ({ ...f, seo: { ...f.seo, description: v ?? "" } })),
+                setter: (v) =>
+                    setForm((f) => ({
+                        ...f,
+                        seo: { ...f.seo, description: v ?? "" },
+                    })),
             },
         ],
     });
 
     useEffect(() => {
-        loadPosts();
-        if (section) loadSection(section);
-        else setForm(initialSectionForm);
-    }, [section]);
+        void (async () => {
+            const { data } = await postService.list();
+            setExtras({ posts: data ?? [] });
+        })();
+    }, [setExtras]);
 
-    async function loadPosts() {
-        const { data } = await postService.list();
-        setPosts(data ?? []);
-    }
-
-    async function loadSection(section: SectionTypes) {
-        const postIds = await sectionPostService.listByParent(section.id);
-        setForm(toSectionForm(section, postIds));
-        // Ici tu pourrais aussi remettre à true tous les autoFlags si tu veux "réinitialiser" l'autogen à chaque changement de section.
-    }
+    useEffect(() => {
+        void (async () => {
+            if (section) {
+                const postIds = await sectionPostService.listByParent(section.id);
+                setForm(toSectionForm(section, postIds));
+                setMode("edit");
+            } else {
+                setForm(initialSectionForm);
+                setMode("create");
+            }
+        })();
+    }, [section, setForm, setMode]);
 
     function handleChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         const { name, value } = e.target;
         if (name.startsWith("seo.")) {
-            const key = name.split(".")[1];
+            const key = name.split(".")[1] as keyof SectionFormTypes["seo"];
             setForm((f) => ({ ...f, seo: { ...f.seo, [key]: value } }));
             handleManualEdit(`seo.${key}`);
         } else if (name === "slug") {
@@ -73,60 +118,21 @@ export function useSectionForm(section: SectionTypes | null, onSave: () => void)
         }
     }
 
-    const handleSubmit = async () => {
-        setSaving(true);
-        if (!form.title) {
-            alert("Le titre est obligatoire !");
-            setSaving(false);
-            return;
-        }
-
-        const { postIds, ...sectionInput } = form;
-        void postIds;
-        const isUpdate = Boolean(section?.id);
-
-        try {
-            const result = isUpdate
-                ? await sectionService.update({ id: section!.id, ...sectionInput })
-                : await sectionService.create(sectionInput);
-
-            if (!result.data) {
-                throw new Error(
-                    result.errors?.map((e) => e.message).join(", ") || "Aucune donnée retournée"
-                );
-            }
-
-            const sectionId = result.data.id;
-            await syncRelations(sectionId);
-            setForm(initialSectionForm);
-            onSave();
-        } catch (err) {
-            const message = err instanceof Error ? err.message : String(err);
-            alert(`Erreur lors de la sauvegarde : ${message}`);
-            console.error(err);
-        } finally {
-            setSaving(false);
-        }
-    };
-
-    async function syncRelations(sectionId: string) {
-        const currentPostIds = await sectionPostService.listByParent(sectionId);
-        await syncManyToMany(
-            currentPostIds,
-            form.postIds,
-            (postId) => sectionPostService.create(sectionId, postId),
-            (postId) => sectionPostService.delete(sectionId, postId)
-        );
+    async function handleSubmit() {
+        await submit();
+        setMode("create");
+        setForm(initialSectionForm);
+        onSave();
     }
 
     return {
         form,
-        posts,
+        posts: extras.posts,
         saving,
         handleChange,
         handleSubmit,
-        handleTitleFocus: (key: string) => handleSourceFocus(key),
-        handleTitleBlur: (key: string) => handleSourceBlur(key),
+        handleTitleFocus: handleSourceFocus,
+        handleTitleBlur: handleSourceBlur,
         setForm,
     };
 }
