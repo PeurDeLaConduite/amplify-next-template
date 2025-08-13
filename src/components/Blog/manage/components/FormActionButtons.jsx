@@ -2,8 +2,8 @@ import ActionButtons from "./buttons/ActionButtons";
 import { EditButton, DeleteButton } from "@components/buttons";
 
 export default function FormActionButtons({
-    editingId,
-    currentId,
+    editingIndex,
+    currentIndex,
     onEdit,
     onSave,
     onCancel,
@@ -12,7 +12,7 @@ export default function FormActionButtons({
     addButtonLabel = "Ajouter",
     className = "",
 }) {
-    if (isFormNew && editingId === null) {
+    if (isFormNew && editingIndex === null) {
         return (
             <button
                 type="button"
@@ -24,7 +24,7 @@ export default function FormActionButtons({
         );
     }
 
-    if (editingId === currentId) {
+    if (editingIndex === currentIndex) {
         return (
             <ActionButtons
                 isEditing={true}

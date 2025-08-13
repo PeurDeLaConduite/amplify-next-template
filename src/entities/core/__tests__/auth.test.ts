@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { canAccess } from "@/src/entities/core/auth/authAccess";
+import { canAccess } from "@src/entities/core/auth";
 import type { AuthRule } from "@src/entities/core/types";
 
 const entity = { owner: "alice", authorId: "alice" };
@@ -47,18 +47,6 @@ describe("canAccess", () => {
         const rules: AuthRule[] = [{ allow: "private" }];
         expect(canAccess(user, entity, rules)).toBe(true);
         expect(canAccess(null, entity, rules)).toBe(false);
-    });
-
-    it("autorise selon un rôle du profil", () => {
-        const rules: AuthRule[] = [{ allow: "profile", field: "roles", values: ["admin"] }];
-        const profileUser = { profile: { roles: ["admin"] } };
-        expect(canAccess(profileUser, entity, rules)).toBe(true);
-    });
-
-    it("refuse si le rôle du profil ne correspond pas", () => {
-        const rules: AuthRule[] = [{ allow: "profile", field: "roles", values: ["admin"] }];
-        const profileUser = { profile: { roles: ["user"] } };
-        expect(canAccess(profileUser, entity, rules)).toBe(false);
     });
 
     it("refuse pour une règle inconnue", () => {

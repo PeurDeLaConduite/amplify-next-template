@@ -1,11 +1,10 @@
-// src/entities/core/hooks/useEntityFormManager.ts
+// src/entities/core/hooks/useModelForm.ts
 "use client";
 import { useCallback, useMemo, useRef, useState } from "react";
-import type React from "react";
 
 export type FormMode = "create" | "edit";
 
-export interface UseEntityFormManagerOptions<F, E = Record<string, unknown>> {
+export interface UseModelFormOptions<F, E = Record<string, unknown>> {
     initialForm: F;
     initialExtras?: E;
     mode?: FormMode;
@@ -15,7 +14,7 @@ export interface UseEntityFormManagerOptions<F, E = Record<string, unknown>> {
     syncRelations?: (id: string, form: F) => Promise<void>;
 }
 
-export interface UseEntityFormManagerResult<F, E> {
+export interface UseModelFormResult<F, E> {
     form: F;
     extras: E;
     mode: FormMode;
@@ -30,9 +29,6 @@ export interface UseEntityFormManagerResult<F, E> {
     setExtras: React.Dispatch<React.SetStateAction<E>>;
     setMode: React.Dispatch<React.SetStateAction<FormMode>>;
     setMessage: React.Dispatch<React.SetStateAction<string | null>>;
-    startCreate: () => void;
-    startEdit: (data: F) => void;
-    cancelEdit: () => void;
 }
 
 function deepEqual(a: unknown, b: unknown) {
@@ -43,10 +39,10 @@ function deepEqual(a: unknown, b: unknown) {
     }
 }
 
-export default function useEntityFormManager<
+export default function useModelForm<
     F extends Record<string, unknown>,
     E extends Record<string, unknown> = Record<string, unknown>,
->(options: UseEntityFormManagerOptions<F, E>): UseEntityFormManagerResult<F, E> {
+>(options: UseModelFormOptions<F, E>): UseModelFormResult<F, E> {
     const {
         initialForm,
         initialExtras,
@@ -76,22 +72,6 @@ export default function useEntityFormManager<
         setMode(initialMode);
         setError(null);
     }, [initialMode]);
-
-    const startCreate = useCallback(() => {
-        setForm(initialForm);
-        setMode("create");
-        setError(null);
-        initialRef.current = initialForm;
-    }, [initialForm]);
-    
-    const cancelEdit = startCreate;
-
-    const startEdit = useCallback((data: F) => {
-        setForm(data);
-        setMode("edit");
-        setError(null);
-        initialRef.current = data;
-    }, []);
 
     const submit = useCallback(async () => {
         setSaving(true);
@@ -132,8 +112,5 @@ export default function useEntityFormManager<
         setExtras,
         setMode,
         setMessage,
-        startCreate,
-        startEdit,
-        cancelEdit,
     };
 }

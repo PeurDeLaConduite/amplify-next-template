@@ -1,13 +1,63 @@
 // src/entities/models/userName/service.ts
-import { crudService, type AuthUser, type SimplePolicy, expandPolicy } from "@entities/core";
+import { client } from "@entities/core";
+import type { UserNameType } from "./types";
+/**
+ * Crée un nouveau record UserName pour l'utilisateur
+ * @param sub  Sub Cognito (id du user)
+ * @param name Le pseudo à créer
+ */
+export async function createUserName(sub: string, name: string) {
+    return client.models.UserName.create({
+        id: sub,
+        userName: name,
+        owner: sub,
+    });
+}
 
-const policy: SimplePolicy = {
-    read: "public",
-    create: { owner: true },
-    update: { owner: true },
-    delete: { owner: true },
+/**
+ * Met à jour le record UserName existant
+ * @param sub  Sub Cognito (id du user)
+ * @param name Le pseudo à mettre à jour
+ */
+export async function updateUserName(sub: string, name: string) {
+    return client.models.UserName.update({
+        id: sub,
+        userName: name,
+        owner: sub,
+    });
+}
+
+/**
+ * Récupère le pseudo courant (ou renvoie null)
+ * @param sub Sub Cognito
+ */
+export async function getUserName(sub: string) {
+    const { data } = await client.models.UserName.get({ id: sub });
+    return data ?? null;
+}
+export async function deleteUserName(sub: string) {
+    return client.models.UserName.delete({ id: sub });
+}
+
+/**
+ * Observe en temps réel le pseudo utilisateur
+ * @param sub Sub Cognito
+ * @param onChange Callback appelé à chaque changement
+ */
+export function observeUserName(sub: string, onChange: (item: UserNameType | null) => void) {
+    return client.models.UserName.observeQuery({}).subscribe({
+        next: ({ items }) => {
+            const item = items.find((u) => u.id === sub) ?? null;
+            onChange(item as UserNameType | null);
+        },
+        error: console.error,
+    });
+}
+
+export const userNameService = {
+    create: createUserName,
+    update: updateUserName,
+    get: getUserName,
+    observe: observeUserName,
+    delete: deleteUserName,
 };
-const rules = expandPolicy(policy);
-
-export const userNameService = (user: AuthUser | null) =>
-    crudService("UserName", user, rules, { autoOwnerField: "owner" });

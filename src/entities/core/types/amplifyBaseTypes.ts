@@ -1,29 +1,31 @@
 // src/entities/core/types/amplifyBaseTypes.ts
+
 import type { Schema } from "@/amplify/data/resource";
 
-/** Clé de modèle côté Amplify */
-export type ModelKey = keyof Schema;
+/**
+ * Utilitaire générique pour tous les types basés sur un modèle Schema
+ */
+export type BaseModel<K extends keyof Schema> = Schema[K]["type"];
 
-/** Modèle “brut” tel que défini par Amplify */
-export type BaseModel<K extends ModelKey> = Schema[K]["type"];
+export type CreateOmit<K extends keyof Schema> = Omit<
+    BaseModel<K>,
+    "id" | "createdAt" | "updatedAt"
+>;
 
-/** Données “créables” (sans id/createdAt/updatedAt) */
-export type CreateOmit<K extends ModelKey> = Omit<BaseModel<K>, "id" | "createdAt" | "updatedAt">;
-
-/** Alias conviviaux (optionnels) */
-export type CreateData<K extends ModelKey> = CreateOmit<K>;
-export type UpdateInput<K extends ModelKey> = Partial<CreateOmit<K>>;
-/** Payload d’update côté API (avec id) */
-export type UpdateDataWithId<K extends ModelKey> = UpdateInput<K> & { id: string };
+export type UpdateInput<K extends keyof Schema> = Partial<CreateOmit<K>>;
 
 /**
- * Type générique de formulaire pour un modèle :
- * - O : champs exclus du form
- * - R : relations converties en *Ids: string[]
- * - CTMap/CT : mapping de CustomTypes (CTMap[P] remplace P)
+ * Type générique représentant la structure d'un formulaire basé sur un modèle,
+ * avec un mapping dynamique pour gérer les CustomTypes.
+ *
+ * @typeParam K - Modèle Amplify.
+ * @typeParam O - Champs du modèle à exclure.
+ * @typeParam R - Relations converties en identifiants.
+ * @typeParam CTMap - Mapping injecté des CustomTypes.
+ * @typeParam CT - Clés sélectionnées dans CTMap.
  */
 export type ModelForm<
-    K extends ModelKey,
+    K extends keyof Schema,
     O extends keyof CreateOmit<K> = never,
     R extends string = never,
     CTMap extends Record<string, unknown> = Record<string, never>,

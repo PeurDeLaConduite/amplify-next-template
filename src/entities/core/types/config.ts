@@ -1,5 +1,13 @@
 // src/entities/core/types/config.ts
-import type { AuthRule } from "./auth";
+
+/**
+ * Règles d'authentification appliquées à une entité.
+ */
+export type AuthRule =
+    | { allow: "owner"; ownerField?: string }
+    | { allow: "groups"; groups: string[] }
+    | { allow: "public" }
+    | { allow: "private" };
 
 /**
  * Nature d'un champ au sein d'une entité.
