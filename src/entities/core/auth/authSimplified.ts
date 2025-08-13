@@ -10,13 +10,11 @@ export function expandPolicy(p: SimplePolicy): AuthRule[] {
         allow: AuthRule["allow"],
         operations: AuthRule["operations"],
         extra?: Partial<AuthRule>
-    ) => {
-        out.push({ allow, operations, ...extra });
-    };
+    ) => out.push({ allow, operations, ...extra });
 
     const add = (op: "read" | "create" | "update" | "delete", access: SimpleAccess) => {
         if (access === "public") return push("public", [op]);
-        if (access === "private") return push("private", [op]);
+        if (access === "private" || access === "authenticated") return push("private", [op]);
         if ("groups" in access) return push("groups", [op], { groups: access.groups });
         if ("owner" in access || "ownerField" in access)
             return push("owner", [op], { ownerField: access.ownerField ?? "owner" });

@@ -1,18 +1,5 @@
 // src/entities/core/types/config.ts
-
-export type Operation = "read" | "create" | "update" | "delete";
-export type AuthAllow = "public" | "private" | "owner" | "groups" | "profile";
-/**
- * Règles d'authentification appliquées à une entité.
- */
-export interface AuthRule {
-    allow: AuthAllow;
-    operations: Operation[];
-    ownerField?: string;
-    groups?: string[];
-    field?: string;
-    values?: (string | number | boolean)[];
-}
+import type { AuthRule } from "./auth";
 
 /**
  * Nature d'un champ au sein d'une entité.

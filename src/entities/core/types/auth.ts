@@ -23,7 +23,8 @@ export interface AuthRule {
 // Interface simplifiée
 export type SimpleAccess =
     | "public"
-    | "private"
+    | "private" // alias d'authenticated
+    | "authenticated" // nouvel alias clair
     | { groups: string[] }
     | { owner?: true; ownerField?: string }
     | { profile: { field: string; values: (string | number | boolean)[] } };

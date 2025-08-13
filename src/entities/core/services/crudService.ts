@@ -8,8 +8,8 @@ import type {
     BaseModel,
     CreateData,
     UpdateDataWithId,
-} from "../types";
-import { canAccessOp } from "../auth/authAccess";
+} from "@entities/core/types";
+import { canAccessOp } from "../auth";
 
 // Clé client (doit coïncider avec ModelKey)
 type ClientModelKey = keyof typeof client.models;
@@ -48,7 +48,7 @@ const DELETE: Operation = "delete";
 export function crudService<K extends ModelClientKey>(
     key: K,
     user: AuthUser | null,
-    rules: AuthRule[] = [{ allow: "public", operations: [READ] }],
+    rules: AuthRule[],
     opts: CrudOptions = {}
 ) {
     const model = getModelClient(key);

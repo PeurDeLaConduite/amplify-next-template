@@ -2,7 +2,7 @@
 import { crudService, type AuthUser, type SimplePolicy, expandPolicy } from "@entities/core";
 
 const policy: SimplePolicy = {
-    read: { owner: true },
+    read: "public",
     create: { owner: true },
     update: { owner: true },
     delete: { owner: true },

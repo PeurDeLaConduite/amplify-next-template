@@ -1,5 +1,5 @@
 // src/entities/core/auth/access.ts
-import type { AuthRule, AuthUser, Operation } from "../types";
+import type { AuthRule, AuthUser, Operation } from "@entities/core/types";
 
 export function canAccessOp(
     user: AuthUser | null,
