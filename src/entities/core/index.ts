@@ -3,4 +3,4 @@ export * from "./services";
 export * from "./utils";
 export * from "./types";
 export * from "./hooks";
-export * from "./auth";
+export * from "./auth/authAccess";

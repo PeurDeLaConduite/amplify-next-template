@@ -1,3 +1,5 @@
+// src/entities/core/types/index.ts
+
 export * from "./amplifyBaseTypes";
 export * from "./config";
 export * from "./form";

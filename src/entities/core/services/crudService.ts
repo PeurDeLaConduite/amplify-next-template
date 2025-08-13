@@ -1,15 +1,21 @@
 // src/entities/core/services/crudService.ts
-import { client, Schema } from "./amplifyClient";
-import { canAccess, type AuthUser } from "../auth";
-import type { AuthRule } from "../types";
+import { client } from "./amplifyClient";
+import type {
+    AuthRule,
+    AuthUser,
+    Operation,
+    ModelKey,
+    BaseModel,
+    CreateData,
+    UpdateDataWithId,
+} from "../types";
+import { canAccessOp } from "../auth/authAccess";
 
-// 🔧 Types dynamiques
+// Clé client (doit coïncider avec ModelKey)
 type ClientModelKey = keyof typeof client.models;
-type BaseModel<K extends ClientModelKey> = Schema[K]["type"];
-type CreateData<K extends ClientModelKey> = Omit<BaseModel<K>, "id" | "createdAt" | "updatedAt">;
-type UpdateData<K extends ClientModelKey> = Partial<CreateData<K>> & { id: string };
+// On force K à exister dans les deux espaces (Schema et client.models)
+type ModelClientKey = ClientModelKey & ModelKey;
 
-// ✅ Interface CRUD enrichie avec un champ `errors` optionnel
 interface CrudModel<K extends ClientModelKey> {
     list: () => Promise<{ data: BaseModel<K>[] }>;
     get: (args: { id: string }) => Promise<{ data?: BaseModel<K> }>;
@@ -17,62 +23,82 @@ interface CrudModel<K extends ClientModelKey> {
         data: Partial<CreateData<K>>
     ) => Promise<{ data: BaseModel<K>; errors?: { message: string }[] }>;
     update: (
-        data: UpdateData<K>
+        data: UpdateDataWithId<K>
     ) => Promise<{ data: BaseModel<K>; errors?: { message: string }[] }>;
     delete: (args: {
         id: string;
     }) => Promise<{ data: BaseModel<K>; errors?: { message: string }[] }>;
 }
 
-// ✅ Récupère le client typé
 function getModelClient<K extends ClientModelKey>(key: K): CrudModel<K> {
     return client.models[key] as unknown as CrudModel<K>;
 }
 
-/**
- * CRUD générique pour les *modèles* (❌ pas pour les customTypes).
- *
- * @param key Nom d’un modèle présent dans `client.models`.
- *            Les customTypes n’y figurent pas, donc TypeScript refusera "Seo", "Address", etc.
- */
-export function crudService<K extends ClientModelKey>(
+type CrudOptions = {
+    /** Injecte automatiquement l'owner à la création si absent (ex: "owner") */
+    autoOwnerField?: string;
+};
+
+const READ: Operation = "read";
+const CREATE: Operation = "create";
+const UPDATE: Operation = "update";
+const DELETE: Operation = "delete";
+
+/** CRUD générique pour modèles Amplify (pas pour customTypes) */
+export function crudService<K extends ModelClientKey>(
     key: K,
     user: AuthUser | null,
-    rules: AuthRule[] = [{ allow: "public" }]
+    rules: AuthRule[] = [{ allow: "public", operations: [READ] }],
+    opts: CrudOptions = {}
 ) {
     const model = getModelClient(key);
+
     return {
         async list() {
             const { data } = await model.list();
             return {
-                data: data.filter((item) => canAccess(user, item, rules)),
+                data: data.filter((item) =>
+                    canAccessOp(user, item as Record<string, unknown>, rules, READ)
+                ),
             };
         },
+
         async get(args: { id: string }) {
             const res = await model.get(args);
-            if (res.data && !canAccess(user, res.data, rules)) {
-                return { data: undefined };
-            }
-            return res;
+            if (!res.data) return { data: undefined };
+            const ok = canAccessOp(user, res.data as Record<string, unknown>, rules, READ);
+            return ok ? res : { data: undefined };
         },
+
         async create(data: Partial<CreateData<K>>) {
-            if (!canAccess(user, data as Record<string, unknown>, rules)) {
-                throw new Error("Not authorized");
+            if (
+                opts.autoOwnerField &&
+                user?.username &&
+                data[opts.autoOwnerField as keyof typeof data] == null
+            ) {
+                (data as Record<string, unknown>)[opts.autoOwnerField] = user.username;
+            }
+            if (!canAccessOp(user, data as Record<string, unknown>, rules, CREATE)) {
+                throw new Error("Not authorized (create)");
             }
             return model.create(data);
         },
-        async update(data: UpdateData<K>) {
+
+        async update(data: UpdateDataWithId<K>) {
             const current = await model.get({ id: data.id });
-            if (current.data && !canAccess(user, current.data, rules)) {
-                throw new Error("Not authorized");
-            }
+            const allowed =
+                current.data &&
+                canAccessOp(user, current.data as Record<string, unknown>, rules, UPDATE);
+            if (!allowed) throw new Error("Not authorized (update)");
             return model.update(data);
         },
+
         async delete(args: { id: string }) {
             const current = await model.get({ id: args.id });
-            if (current.data && !canAccess(user, current.data, rules)) {
-                throw new Error("Not authorized");
-            }
+            const allowed =
+                current.data &&
+                canAccessOp(user, current.data as Record<string, unknown>, rules, DELETE);
+            if (!allowed) throw new Error("Not authorized (delete)");
             return model.delete(args);
         },
     };

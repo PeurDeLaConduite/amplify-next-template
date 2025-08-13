@@ -47,6 +47,6 @@
         "src/components/Blog/Create/components/TagPostManager.tsx",
         "src/components/Blog/Create/PostsForm.jsx",
         "src/components/Blog/manage/sections/SectionsForm.tsx"
-    ],
+, ".Help/useEntityManager2.ts"    ],
     "exclude": ["node_modules", "amplify", ".Help/examples"]
 }

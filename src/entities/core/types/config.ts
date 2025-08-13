@@ -1,16 +1,18 @@
 // src/entities/core/types/config.ts
 
-import type { ProfileRule } from "@entities/core/types";
-
+export type Operation = "read" | "create" | "update" | "delete";
+export type AuthAllow = "public" | "private" | "owner" | "groups" | "profile";
 /**
  * Règles d'authentification appliquées à une entité.
  */
-export type AuthRule =
-    | { allow: "owner"; ownerField?: string }
-    | { allow: "groups"; groups: string[] }
-    | ProfileRule
-    | { allow: "public" }
-    | { allow: "private" };
+export interface AuthRule {
+    allow: AuthAllow;
+    operations: Operation[];
+    ownerField?: string;
+    groups?: string[];
+    field?: string;
+    values?: (string | number | boolean)[];
+}
 
 /**
  * Nature d'un champ au sein d'une entité.

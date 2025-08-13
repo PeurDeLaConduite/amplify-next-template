@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { canAccess } from "@src/entities/core/auth";
+import { canAccess } from "@/src/entities/core/auth/authAccess";
 import type { AuthRule } from "@src/entities/core/types";
 
 const entity = { owner: "alice", authorId: "alice" };

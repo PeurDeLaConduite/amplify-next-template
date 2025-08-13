@@ -1,9 +1,26 @@
-import { useState, useEffect, type ChangeEvent } from "react";
-import { authorService } from "@entities/models/author/service";
-import { type AuthorType, type AuthorFormType } from "@entities/models/author/types";
+// src/entities/models/author/hooks.tsx (ou où est ton hook)
+import { useState, useEffect, useMemo, useCallback, type ChangeEvent } from "react";
+import { useAuthenticator } from "@aws-amplify/ui-react";
+import { authorService as authorServiceFactory } from "@entities/models/author/service";
+import type { AuthorType, AuthorFormType, } from "@entities/models/author/types";
 import { initialAuthorForm, toAuthorForm } from "@entities/models/author/form";
+import type { AuthUser } from "@entities/core/types";
 
 export function useAuthorForm() {
+    const { user } = useAuthenticator();
+
+    // Map simple -> AuthUser (ajuste si tu as déjà un util pour récupérer les groups)
+    const authUser = useMemo<AuthUser | null>(() => {
+        if (!user) return null;
+        return {
+            username: (user as any)?.userId ?? (user as any)?.username,
+            // groups: [...], // TODO: renseigner si tu veux que CREATE/UPDATE/DELETE passent les règles ADMINS
+        };
+    }, [user]);
+
+    // Instancie le service avec l'utilisateur courant
+    const authorService = useMemo(() => authorServiceFactory(authUser), [authUser]);
+
     const [authors, setAuthors] = useState<AuthorType[]>([]);
     const [form, setForm] = useState<AuthorFormType>({ ...initialAuthorForm });
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
@@ -11,16 +28,16 @@ export function useAuthorForm() {
     const [message, setMessage] = useState<string | null>(null);
 
     // -------- Chargement initial --------
-    useEffect(() => {
-        fetchData();
-    }, []);
-
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         setLoading(true);
         const { data } = await authorService.list();
         setAuthors(data ?? []);
         setLoading(false);
-    };
+    }, [authorService]);
+
+    useEffect(() => {
+        void fetchData();
+    }, [fetchData]);
 
     // --------- Handlers ---------
     const handleFormChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -43,14 +60,16 @@ export function useAuthorForm() {
         try {
             const { postIds, ...authorInput } = form;
             void postIds;
+
             if (editingIndex === null) {
-                await authorService.create(authorInput);
+                await authorService.create(authorInput); // factory instanciée
                 setMessage("Auteur ajouté !");
             } else {
                 await authorService.update({ id: authors[editingIndex].id, ...authorInput });
                 setMessage("Auteur mis à jour !");
             }
-            await fetchData(); // Refresh list after change
+
+            await fetchData();
             reset();
         } catch (err) {
             const msg = err instanceof Error ? err.message : String(err);
@@ -64,14 +83,14 @@ export function useAuthorForm() {
         try {
             await authorService.delete({ id: authors[idx].id });
             setMessage("Auteur supprimé !");
-            await fetchData(); // Refresh après suppression
+            await fetchData();
         } catch (err) {
             const msg = err instanceof Error ? err.message : String(err);
             setMessage(`Erreur : ${msg}`);
         }
     };
 
-    const modelForm = {
+    return {
         authors,
         form,
         editingIndex,
@@ -80,7 +99,9 @@ export function useAuthorForm() {
         handleEdit,
         handleDelete,
         fetchData,
+        submit,
+        reset,
+        message,
+        setMessage,
     };
-
-    return { ...modelForm, submit, reset, message, setMessage };
 }
