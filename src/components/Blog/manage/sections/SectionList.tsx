@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { type SectionTypes } from "@/src/entities/models/section";
+import { type SectionTypes } from "@entities/models/section";
 import FormActionButtons from "../components/FormActionButtons";
 
 interface Props {
