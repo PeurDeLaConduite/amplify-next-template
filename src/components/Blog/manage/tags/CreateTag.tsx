@@ -4,25 +4,22 @@ import RequireAdmin from "../../../RequireAdmin";
 import { RefreshButton } from "@components/buttons";
 
 import TagCrudManager from "../components/tag/TagManager";
-import TagsAssociationManager from "../components/tag/PostTagsManager";
+import PostTagsManager from "../components/tag/PostTagsManager";
 import { useTagForm } from "@entities/models/tag/hooks";
 
 export default function PostsTagsManagerPage() {
+    const tagForm = useTagForm();
     const {
-        form,
         extras: { tags, posts },
-        mode,
         loading,
-        handleChange,
         edit,
         cancel,
-        save,
         remove,
         toggle,
         tagsForPost,
         isTagLinked,
         fetchAll,
-    } = useTagForm();
+    } = tagForm;
 
     return (
         <RequireAdmin>
@@ -33,10 +30,8 @@ export default function PostsTagsManagerPage() {
                 </div>
                 <TagCrudManager
                     tags={tags}
-                    mode={mode}
-                    formName={form.name}
-                    onChangeName={(v) => handleChange("name", v)}
-                    onSubmit={save}
+                    modelForm={tagForm}
+                    fetchAll={fetchAll}
                     onEdit={(id: string) => {
                         const idx = tags.findIndex((t) => t.id === id);
                         if (idx !== -1) void edit(idx);
@@ -47,12 +42,12 @@ export default function PostsTagsManagerPage() {
                         if (idx !== -1) void remove(idx);
                     }}
                 />
-                <TagsAssociationManager
+                <PostTagsManager
                     posts={posts}
                     tags={tags}
                     tagsForPost={tagsForPost}
                     isTagLinked={isTagLinked}
-                    onToggle={toggle}
+                    toggle={toggle}
                     loading={loading}
                 />
             </div>
