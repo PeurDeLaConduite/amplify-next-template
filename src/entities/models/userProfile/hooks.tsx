@@ -3,12 +3,7 @@ import { useState } from "react";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import { useEntityManager, type FieldConfig } from "@entities/core/hooks";
 import { label as fieldLabel } from "@/src/components/Profile/utilsUserProfile";
-import {
-    getUserProfile,
-    createUserProfile,
-    updateUserProfile,
-    deleteUserProfile,
-} from "@entities/models/userProfile/service";
+import { userProfileService } from "@entities/models/userProfile/service";
 import { type UserProfileMinimalType } from "@entities/models/userProfile/types";
 
 export function useUserProfileManager() {
@@ -19,7 +14,7 @@ export function useUserProfileManager() {
     const fetch = async () => {
         if (!sub) return null;
         try {
-            const item = await getUserProfile(sub);
+            const { data: item } = await userProfileService.get({ id: sub });
             if (!item) return null;
             const data: UserProfileMinimalType & { id?: string } = {
                 id: sub,
@@ -42,7 +37,9 @@ export function useUserProfileManager() {
         if (!sub) throw new Error("id manquant");
         try {
             setError(null);
-            await createUserProfile(sub, data);
+            await userProfileService.create({ id: sub, ...data } as unknown as Parameters<
+                typeof userProfileService.create
+            >[0]);
         } catch (e) {
             setError(e as Error);
         }
@@ -56,7 +53,7 @@ export function useUserProfileManager() {
         if (!sub) throw new Error("id manquant");
         try {
             setError(null);
-            await updateUserProfile(sub, data);
+            await userProfileService.update({ id: sub, ...data });
         } catch (e) {
             setError(e as Error);
         }
@@ -67,7 +64,7 @@ export function useUserProfileManager() {
         if (!sub) return;
         try {
             setError(null);
-            await deleteUserProfile(sub);
+            await userProfileService.delete({ id: sub });
         } catch (e) {
             setError(e as Error);
         }
