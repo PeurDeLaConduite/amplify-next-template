@@ -1,25 +1,32 @@
 // src/entities/models/userProfile/hooks.tsx
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import { useEntityManager, type FieldConfig } from "@entities/core/hooks";
 import { label as fieldLabel } from "@/src/components/Profile/utilsUserProfile";
-import {
-    getUserProfile,
-    createUserProfile,
-    updateUserProfile,
-    deleteUserProfile,
-} from "@entities/models/userProfile/service";
+import { userProfileService as userProfileServiceFactory } from "@entities/models/userProfile/service";
+import { extractGroups, type AuthUser } from "@entities/core";
 import { type UserProfileMinimalType } from "@entities/models/userProfile/types";
 
 export function useUserProfileManager() {
     const { user } = useAuthenticator();
-    const sub = user?.userId ?? user?.username;
+
+    const authUser = useMemo<AuthUser | null>(() => {
+        if (!user) return null;
+        const username =
+            (user as unknown as { userId?: string })?.userId ??
+            (user as unknown as { username?: string })?.username ??
+            undefined;
+        return { username, groups: extractGroups(user) };
+    }, [user]);
+
+    const svc = useMemo(() => userProfileServiceFactory(authUser), [authUser]);
+    const sub = authUser?.username;
     const [error, setError] = useState<Error | null>(null);
 
     const fetch = async () => {
         if (!sub) return null;
         try {
-            const item = await getUserProfile(sub);
+            const { data: item } = await svc.get({ id: sub });
             if (!item) return null;
             const data: UserProfileMinimalType & { id?: string } = {
                 id: sub,
@@ -42,7 +49,7 @@ export function useUserProfileManager() {
         if (!sub) throw new Error("id manquant");
         try {
             setError(null);
-            await createUserProfile(sub, data);
+            await svc.create({ id: sub, ...data });
         } catch (e) {
             setError(e as Error);
         }
@@ -56,7 +63,7 @@ export function useUserProfileManager() {
         if (!sub) throw new Error("id manquant");
         try {
             setError(null);
-            await updateUserProfile(sub, data);
+            await svc.update({ id: sub, ...data });
         } catch (e) {
             setError(e as Error);
         }
@@ -67,7 +74,7 @@ export function useUserProfileManager() {
         if (!sub) return;
         try {
             setError(null);
-            await deleteUserProfile(sub);
+            await svc.delete({ id: sub });
         } catch (e) {
             setError(e as Error);
         }
