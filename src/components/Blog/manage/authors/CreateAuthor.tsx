@@ -1,5 +1,5 @@
-import RequireAdmin from "../../../RequireAdmin";
-import AuthorsForm from "./AuthorsForm";
+import RequireAdmin from "@components/RequireAdmin";
+import AuthorsForm from "@components/Blog/manage/authors/AuthorsForm";
 
 export default function CreateAuthor() {
     return (
