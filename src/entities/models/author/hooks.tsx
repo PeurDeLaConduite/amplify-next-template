@@ -1,26 +1,29 @@
-// src/entities/models/author/hooks.tsx (ou où est ton hook)
+// src/entities/models/author/hooks.tsx
+"use client";
+
 import { useState, useEffect, useMemo, useCallback, type ChangeEvent } from "react";
 import { useAuthenticator } from "@aws-amplify/ui-react";
-import { authorService as authorServiceFactory } from "@entities/models/author/service";
 import type { AuthorType, AuthorFormType } from "@entities/models/author/types";
 import { initialAuthorForm, toAuthorForm } from "@entities/models/author/form";
 import type { AuthUser } from "@entities/core/types";
+import { extractGroups } from "@entities/core/auth"; // ← util sans any
 
 export function useAuthorForm() {
     const { user } = useAuthenticator();
 
-    // Map simple -> AuthUser (ajuste si tu as déjà un util pour récupérer les groups)
+    // Map Amplify user -> AuthUser (username + groups)
     const authUser = useMemo<AuthUser | null>(() => {
         if (!user) return null;
-        const u = user as { userId?: string; username?: string };
-        return {
-            username: u.userId ?? u.username,
-            // groups: [...], // TODO: renseigner si tu veux que CREATE/UPDATE/DELETE passent les règles ADMINS
-        };
+
+        const username =
+            (user as unknown as { userId?: string })?.userId ??
+            (user as unknown as { username?: string })?.username ??
+            undefined;
+        return { username, groups: extractGroups(user) };
     }, [user]);
 
-    // Instancie le service avec l'utilisateur courant
-    const authorService = useMemo(() => authorServiceFactory(authUser), [authUser]);
+    // Service instancié avec l'utilisateur courant
+    const svc = useMemo(() => makeAuthorService(authUser), [authUser]);
 
     const [authors, setAuthors] = useState<AuthorType[]>([]);
     const [form, setForm] = useState<AuthorFormType>({ ...initialAuthorForm });
@@ -28,19 +31,24 @@ export function useAuthorForm() {
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState<string | null>(null);
 
-    // -------- Chargement initial --------
+    const isAdmin = authUser?.groups?.includes("ADMINS") ?? false;
+
+    // Chargement initial / refresh
     const fetchData = useCallback(async () => {
         setLoading(true);
-        const { data } = await authorService.list();
-        setAuthors(data ?? []);
-        setLoading(false);
-    }, [authorService]);
+        try {
+            const { data } = await svc.list();
+            setAuthors(data ?? []);
+        } finally {
+            setLoading(false);
+        }
+    }, [svc]);
 
     useEffect(() => {
         void fetchData();
     }, [fetchData]);
 
-    // --------- Handlers ---------
+    // Handlers
     const handleFormChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setForm((f) => ({ ...f, [name]: value }));
@@ -59,14 +67,18 @@ export function useAuthorForm() {
     async function submit() {
         if (!form.authorName) return;
         try {
-            const { postIds, ...authorInput } = form;
+            if (!isAdmin) {
+                setMessage("Action interdite : réservé au groupe ADMINS.");
+                return;
+            }
+            const { postIds, ...authorInput } = form; // postIds géré à part via relations
             void postIds;
 
             if (editingIndex === null) {
-                await authorService.create(authorInput); // factory instanciée
+                await svc.create(authorInput);
                 setMessage("Auteur ajouté !");
             } else {
-                await authorService.update({ id: authors[editingIndex].id, ...authorInput });
+                await svc.update({ id: authors[editingIndex].id, ...authorInput });
                 setMessage("Auteur mis à jour !");
             }
 
@@ -82,7 +94,11 @@ export function useAuthorForm() {
         if (!authors[idx]?.id) return;
         if (!window.confirm("Supprimer cet auteur ?")) return;
         try {
-            await authorService.delete({ id: authors[idx].id });
+            if (!isAdmin) {
+                setMessage("Action interdite : réservé au groupe ADMINS.");
+                return;
+            }
+            await svc.delete({ id: authors[idx].id });
             setMessage("Auteur supprimé !");
             await fetchData();
         } catch (err) {
@@ -104,5 +120,6 @@ export function useAuthorForm() {
         reset,
         message,
         setMessage,
+        isAdmin,
     };
 }
