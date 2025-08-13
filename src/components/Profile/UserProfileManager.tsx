@@ -7,12 +7,12 @@ import { label as fieldLabel } from "./utilsUserProfile";
 import PhoneIcon from "@mui/icons-material/Phone";
 import PersonIcon from "@mui/icons-material/Person";
 import HomeIcon from "@mui/icons-material/Home";
-import { useUserProfileManager } from "@entities/models/userProfile/hooks";
+import { useUserProfileForm } from "@entities/models/userProfile/hooks";
 import { type UserProfileMinimalType } from "@entities/models/userProfile/types";
 
 export default function UserProfileManager() {
     const { user } = useAuthenticator();
-    const manager = useUserProfileManager();
+    const profile = useUserProfileForm();
     // const baseManager = useUserNameManager();
 
     const getIcon = (field: keyof UserProfileMinimalType) => {
@@ -55,7 +55,7 @@ export default function UserProfileManager() {
     };
     useEffect(() => {
         if (user) {
-            manager.fetchData();
+            void profile.fetchProfile();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
@@ -74,7 +74,23 @@ export default function UserProfileManager() {
                     void clear(field);
                 }
             }}
-            manager={manager}
+            form={profile.form}
+            mode={profile.mode}
+            dirty={profile.dirty}
+            handleChange={
+                profile.handleChange as (
+                    field: keyof UserProfileMinimalType,
+                    value: unknown
+                ) => void
+            }
+            submit={profile.submit}
+            reset={profile.reset}
+            setForm={profile.setForm}
+            fields={profile.fields}
+            labels={profile.labels}
+            saveField={profile.saveField}
+            clearField={profile.clearField}
+            deleteEntity={profile.deleteProfile}
         />
     );
 }

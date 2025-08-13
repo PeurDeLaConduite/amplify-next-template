@@ -24,7 +24,6 @@ export default function UserNameManager() {
     return (
         <EntityEditor<UserNameMinimalType>
             title="Mon pseudo public"
-            manager={manager}
             requiredFields={["userName"]}
             deleteLabel="Supprimer le pseudo"
             renderIcon={() => <PersonIcon fontSize="small" className="text-gray-800" />}
@@ -33,6 +32,21 @@ export default function UserNameManager() {
                     void clear(field);
                 }
             }}
+            form={manager.formData}
+            mode={manager.entity ? "edit" : "create"}
+            dirty={false}
+            handleChange={manager.handleChange}
+            submit={manager.save}
+            reset={() => manager.fetchData()}
+            setForm={manager.setFormData}
+            fields={manager.fields}
+            labels={manager.labels}
+            saveField={(field, value) => {
+                manager.setEditModeField({ field, value });
+                return manager.saveField();
+            }}
+            clearField={manager.clearField}
+            deleteEntity={manager.deleteEntity}
         />
     );
 }
