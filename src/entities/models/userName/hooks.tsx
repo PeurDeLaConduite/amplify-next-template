@@ -1,88 +1,69 @@
 // src/entities/models/userName/hooks.tsx
-import { useState } from "react";
 import { useAuthenticator } from "@aws-amplify/ui-react";
-import { useEntityManager, type FieldConfig } from "@entities/core/hooks";
-import { label } from "@src/components/Profile/utilsUserName";
+import { useModelForm } from "@entities/core/hooks";
+import { userNameService } from "@entities/models/userName/service";
 import {
-    getUserName,
-    createUserName,
-    updateUserName,
-    deleteUserName,
-} from "@entities/models/userName/service";
-import { type UserNameMinimalType } from "@entities/models/userName/types";
+    initialUserNameForm,
+    toUserNameForm,
+    toUserNameCreate,
+    toUserNameUpdate,
+} from "@entities/models/userName/form";
+import { type UserNameFormType } from "@entities/models/userName/types";
 
-export function useUserNameManager() {
+export function useUserNameForm() {
     const { user } = useAuthenticator();
     const sub = user?.userId ?? user?.username;
-    const [error, setError] = useState<Error | null>(null);
 
-    const fetch = async () => {
+    const modelForm = useModelForm<UserNameFormType>({
+        initialForm: initialUserNameForm,
+        create: async (form) => {
+            if (!sub) throw new Error("id manquant");
+            const { data } = await userNameService.create({
+                id: sub,
+                ...toUserNameCreate(form),
+            } as unknown as Parameters<typeof userNameService.create>[0]);
+            if (!data) throw new Error("Erreur lors de la création du pseudo");
+            return data.id;
+        },
+        update: async (form) => {
+            if (!sub) throw new Error("id manquant");
+            const { data } = await userNameService.update({
+                id: sub,
+                ...toUserNameUpdate(form),
+            });
+            if (!data) throw new Error("Erreur lors de la mise à jour du pseudo");
+            return data.id;
+        },
+    });
+
+    const { adoptInitial, setMessage } = modelForm;
+
+    const fetchUserName = async (): Promise<UserNameFormType | null> => {
         if (!sub) return null;
         try {
-            const item = await getUserName(sub);
-            if (!item) return null;
-            return { id: sub, userName: item.userName ?? "" };
-        } catch (e) {
-            setError(e as Error);
+            const { data } = await userNameService.get({ id: sub });
+            if (!data) {
+                adoptInitial(initialUserNameForm, "create");
+                return null;
+            }
+            const form = toUserNameForm(data);
+            adoptInitial(form, "edit");
+            return form;
+        } catch (err) {
+            setMessage(err instanceof Error ? err.message : String(err));
             return null;
         }
     };
 
-    const create = async (data: UserNameMinimalType) => {
-        if (!sub) throw new Error("id manquant");
-        try {
-            setError(null);
-            await createUserName(sub, data.userName);
-        } catch (e) {
-            setError(e as Error);
-        }
-    };
-
-    const update = async (
-        _entity: (UserNameMinimalType & { id?: string }) | null,
-        data: Partial<UserNameMinimalType>
-    ) => {
-        void _entity;
-        if (!sub) throw new Error("id manquant");
-        try {
-            setError(null);
-            await updateUserName(sub, data.userName ?? "");
-        } catch (e) {
-            setError(e as Error);
-        }
-    };
-
-    const remove = async (_entity: (UserNameMinimalType & { id?: string }) | null) => {
-        void _entity;
+    const remove = async () => {
         if (!sub) return;
         try {
-            setError(null);
-            await deleteUserName(sub);
-        } catch (e) {
-            setError(e as Error);
+            await userNameService.delete({ id: sub });
+            adoptInitial(initialUserNameForm, "create");
+        } catch (err) {
+            setMessage(err instanceof Error ? err.message : String(err));
         }
     };
 
-    const initialData: UserNameMinimalType = { userName: "" };
-
-    const fieldConfig: FieldConfig<UserNameMinimalType> = {
-        userName: {
-            parse: (v) => String(v),
-            serialize: (v: string) => v,
-            emptyValue: "",
-        },
-    };
-
-    const manager = useEntityManager<UserNameMinimalType>({
-        fetch,
-        create,
-        update,
-        remove,
-        labels: label,
-        fields: ["userName"],
-        initialData,
-        config: fieldConfig,
-    });
-
-    return { ...manager, error };
+    return { ...modelForm, fetchUserName, remove };
 }

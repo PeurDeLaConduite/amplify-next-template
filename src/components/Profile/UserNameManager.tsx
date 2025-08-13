@@ -5,24 +5,26 @@ import "@aws-amplify/ui-react/styles.css";
 import EntityEditor from "@components/forms/EntityEditor";
 import { label as fieldLabel } from "./utilsUserName";
 import PersonIcon from "@mui/icons-material/Person";
-import { useUserNameManager } from "@entities/models/userName/hooks";
-import { type UserNameMinimalType } from "@entities/models/userName/types";
+import { useUserNameForm } from "@entities/models/userName/hooks";
+import { type UserNameFormType } from "@entities/models/userName/types";
+
+const fields: (keyof UserNameFormType)[] = ["userName"];
 
 export default function UserNameManager() {
     const { user } = useAuthenticator();
-    const manager = useUserNameManager();
+    const manager = useUserNameForm();
+    const { fetchUserName } = manager;
 
     useEffect(() => {
         if (user) {
-            manager.fetchData();
+            void fetchUserName();
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user]);
+    }, [user, fetchUserName]);
 
     if (!user) return <Authenticator />;
 
     return (
-        <EntityEditor<UserNameMinimalType>
+        <EntityEditor<UserNameFormType>
             title="Mon pseudo public"
             requiredFields={["userName"]}
             deleteLabel="Supprimer le pseudo"
@@ -32,21 +34,26 @@ export default function UserNameManager() {
                     void clear(field);
                 }
             }}
-            form={manager.formData}
-            mode={manager.entity ? "edit" : "create"}
-            dirty={false}
-            handleChange={manager.handleChange}
-            submit={manager.save}
-            reset={() => manager.fetchData()}
-            setForm={manager.setFormData}
-            fields={manager.fields}
-            labels={manager.labels}
-            saveField={(field, value) => {
-                manager.setEditModeField({ field, value });
-                return manager.saveField();
+            form={manager.form}
+            mode={manager.mode}
+            dirty={manager.dirty}
+            handleChange={
+                manager.handleChange as (field: keyof UserNameFormType, value: unknown) => void
+            }
+            submit={manager.submit}
+            reset={manager.reset}
+            setForm={manager.setForm}
+            fields={fields}
+            labels={fieldLabel as (field: keyof UserNameFormType) => string}
+            saveField={async (field, value) => {
+                manager.handleChange(field, value as never);
+                await manager.submit();
             }}
-            clearField={manager.clearField}
-            deleteEntity={manager.deleteEntity}
+            clearField={async (field) => {
+                manager.handleChange(field, "" as never);
+                await manager.submit();
+            }}
+            deleteEntity={manager.remove}
         />
     );
 }
