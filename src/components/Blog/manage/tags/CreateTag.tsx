@@ -9,42 +9,20 @@ import { useTagForm } from "@entities/models/tag/hooks";
 
 export default function PostsTagsManagerPage() {
     const {
-        tags,
-        posts,
         form,
-        editingIndex,
+        extras: { tags, posts },
+        mode,
         loading,
-        setForm,
-        handleEdit,
-        handleCancel,
-        handleSubmit,
-        handleDelete,
-        handleAddPostTag,
-        handleRemovePostTag,
+        handleChange,
+        edit,
+        cancel,
+        save,
+        remove,
+        toggle,
         tagsForPost,
         isTagLinked,
         fetchAll,
     } = useTagForm();
-
-    const newTag = editingIndex === null ? form.name : "";
-    const editTagId = editingIndex !== null ? tags[editingIndex].id : null;
-    const editTagName = editingIndex !== null ? form.name : "";
-
-    function setNewTag(value: string) {
-        if (editingIndex === null) setForm({ ...form, name: value });
-    }
-
-    function setEditTagId(id: string | null) {
-        if (id === null) handleCancel();
-        else {
-            const idx = tags.findIndex((t) => t.id === id);
-            if (idx !== -1) handleEdit(idx);
-        }
-    }
-
-    function setEditTagName(value: string) {
-        if (editingIndex !== null) setForm({ ...form, name: value });
-    }
 
     return (
         <RequireAdmin>
@@ -55,17 +33,18 @@ export default function PostsTagsManagerPage() {
                 </div>
                 <TagCrudManager
                     tags={tags}
-                    newTag={newTag}
-                    editTagId={editTagId}
-                    editTagName={editTagName}
-                    setNewTag={setNewTag}
-                    setEditTagId={setEditTagId}
-                    setEditTagName={setEditTagName}
-                    onCreate={handleSubmit}
-                    onUpdate={handleSubmit}
+                    mode={mode}
+                    formName={form.name}
+                    onChangeName={(v) => handleChange("name", v)}
+                    onSubmit={save}
+                    onEdit={(id: string) => {
+                        const idx = tags.findIndex((t) => t.id === id);
+                        if (idx !== -1) void edit(idx);
+                    }}
+                    onCancel={cancel}
                     onDelete={(id: string) => {
                         const idx = tags.findIndex((t) => t.id === id);
-                        if (idx !== -1) handleDelete(idx);
+                        if (idx !== -1) void remove(idx);
                     }}
                 />
                 <TagsAssociationManager
@@ -73,8 +52,7 @@ export default function PostsTagsManagerPage() {
                     tags={tags}
                     tagsForPost={tagsForPost}
                     isTagLinked={isTagLinked}
-                    onAdd={handleAddPostTag}
-                    onRemove={handleRemovePostTag}
+                    onToggle={toggle}
                     loading={loading}
                 />
             </div>
