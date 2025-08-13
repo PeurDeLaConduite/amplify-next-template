@@ -1,12 +1,12 @@
 import React from "react";
 import ButtonBase from "@components/buttons/ButtonBase";
 
-export default function TagsAssociationManager({
+export default function PostTagsManager({
     posts,
     tags,
     tagsForPost,
     isTagLinked,
-    onToggle,
+    toggle,
     loading,
 }) {
     return (
@@ -42,7 +42,7 @@ export default function TagsAssociationManager({
                                     <ButtonBase
                                         key={tag.id}
                                         label={tag.name}
-                                        onClick={() => onToggle(post.id, tag.id)}
+                                        onClick={() => toggle(post.id, tag.id)}
                                         color={isTagLinked(post.id, tag.id) ? "primary" : "inherit"}
                                         variant={
                                             isTagLinked(post.id, tag.id) ? "contained" : "outlined"

@@ -1,16 +1,15 @@
 import React from "react";
 import { AddButton, EditButton, DeleteButton, SaveButton, CancelButton } from "@components/buttons";
 
-export default function TagCrudManager({
-    tags,
-    mode,
-    formName,
-    onChangeName,
-    onSubmit,
-    onEdit,
-    onCancel,
-    onDelete,
-}) {
+export default function TagCrudManager({ tags, modelForm, onEdit, onCancel, onDelete, fetchAll }) {
+    const { form, mode, setForm, submit } = modelForm;
+
+    async function handleSubmit() {
+        await submit();
+        await fetchAll();
+        onCancel();
+    }
+
     return (
         <fieldset className="border p-4 rounded-md mt-4">
             <legend className="text-md font-medium text-gray-700">
@@ -19,17 +18,17 @@ export default function TagCrudManager({
             <div className="flex flex-wrap gap-2 items-center mb-2">
                 <input
                     type="text"
-                    value={formName}
-                    onChange={(e) => onChangeName(e.target.value)}
+                    value={form.name}
+                    onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                     placeholder="Nom du tag"
                     className="border rounded p-2 flex-1 bg-white"
                 />
 
                 {mode === "create" ? (
-                    <AddButton label="Ajouter" onClick={onSubmit} />
+                    <AddButton label="Ajouter" onClick={handleSubmit} />
                 ) : (
                     <>
-                        <SaveButton label="Enregistrer" onClick={onSubmit} />
+                        <SaveButton label="Enregistrer" onClick={handleSubmit} />
                         <CancelButton label="Annuler" onClick={onCancel} />
                     </>
                 )}

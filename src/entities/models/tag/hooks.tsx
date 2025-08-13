@@ -10,7 +10,7 @@ import { type PostTagType } from "@entities/relations/postTag/types";
 import { initialTagForm, toTagForm } from "@entities/models/tag/form";
 import { syncManyToMany } from "@entities/core/utils/syncManyToMany";
 
-interface Extras {
+interface Extras extends Record<string, unknown> {
     tags: TagType[];
     posts: PostType[];
     postTags: PostTagType[];
@@ -115,7 +115,7 @@ export function useTagForm() {
                 await postTagService.create(postId, tagId);
                 setExtras((prev) => ({
                     ...prev,
-                    postTags: [...prev.postTags, { postId, tagId }],
+                    postTags: [...prev.postTags, { postId, tagId } as PostTagType],
                 }));
             }
         },
