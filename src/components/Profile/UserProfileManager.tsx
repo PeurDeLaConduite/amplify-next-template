@@ -13,7 +13,7 @@ import { type UserProfileMinimalType } from "@entities/models/userProfile/types"
 export default function UserProfileManager() {
     const { user } = useAuthenticator();
     const profile = useUserProfileForm();
-    // const baseManager = useUserNameManager();
+    // const baseManager = useUserNameForm();
 
     const getIcon = (field: keyof UserProfileMinimalType) => {
         switch (field) {
