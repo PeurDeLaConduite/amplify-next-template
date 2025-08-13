@@ -38,72 +38,70 @@ export function useAuthorForm() {
         },
     });
 
-    const { setForm, setExtras, setMode, setMessage, submit, reset, handleChange } = modelForm;
-
     const fetchAuthors = useCallback(async () => {
-        setExtras((prev) => ({ ...prev, loading: true }));
+        modelForm.setExtras((prev) => ({ ...prev, loading: true }));
         const { data } = await authorService.list();
         authorsRef.current = data ?? [];
-        setExtras({ authors: authorsRef.current, loading: false });
-    }, [setExtras]);
+        modelForm.setExtras({ authors: authorsRef.current, loading: false });
+    }, [modelForm]);
 
     useEffect(() => {
         void fetchAuthors();
     }, [fetchAuthors]);
 
-    const handleEdit = (idx: number) => {
+    const edit = (idx: number) => {
         const author = authorsRef.current[idx];
         if (!author) return;
         editingIndex.current = idx;
-        setForm(toAuthorForm(author, []));
-        setMode("edit");
+        modelForm.setForm(toAuthorForm(author, []));
+        modelForm.setMode("edit");
     };
 
-    const handleDelete = async (idx: number) => {
+    const remove = async (idx: number) => {
         const author = authorsRef.current[idx];
         if (!author?.id) return;
         if (!window.confirm("Supprimer cet auteur ?")) return;
         try {
             await authorService.delete({ id: author.id });
             await fetchAuthors();
-            setMessage("Auteur supprimé !");
+            modelForm.setMessage("Auteur supprimé !");
         } catch (err) {
             const msg = err instanceof Error ? err.message : String(err);
-            setMessage(`Erreur : ${msg}`);
+            modelForm.setMessage(`Erreur : ${msg}`);
         }
     };
 
     async function submitForm() {
         try {
-            await submit();
+            await modelForm.submit();
             await fetchAuthors();
-            setMessage(editingIndex.current === null ? "Auteur ajouté !" : "Auteur mis à jour !");
+            modelForm.setMessage(
+                editingIndex.current === null ? "Auteur ajouté !" : "Auteur mis à jour !"
+            );
             resetForm();
         } catch (err) {
             const msg = err instanceof Error ? err.message : String(err);
-            setMessage(`Erreur : ${msg}`);
+            modelForm.setMessage(`Erreur : ${msg}`);
         }
     }
 
     function resetForm() {
         editingIndex.current = null;
-        setMode("create");
-        reset();
+        modelForm.setMode("create");
+        modelForm.reset();
     }
 
-    const handleFormChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        handleChange(name as keyof AuthorFormType, value as never);
+        modelForm.handleChange(name as keyof AuthorFormType, value as never);
     };
 
     return {
         ...modelForm,
-        authors: modelForm.extras.authors,
-        loading: modelForm.extras.loading,
         editingIndex: editingIndex.current,
-        handleEdit,
-        handleDelete,
-        handleFormChange,
+        handleChange,
+        edit,
+        remove,
         submit: submitForm,
         reset: resetForm,
     };
