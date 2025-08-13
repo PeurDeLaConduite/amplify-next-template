@@ -36,7 +36,7 @@ export function useUserNameForm() {
         },
     });
 
-    const { adoptInitial, setMessage } = modelForm;
+    const { adoptInitial, setMessage, setForm } = modelForm;
 
     const fetchUserName = async (): Promise<UserNameFormType | null> => {
         if (!sub) return null;
@@ -46,13 +46,28 @@ export function useUserNameForm() {
                 adoptInitial(initialUserNameForm, "create");
                 return null;
             }
-            const form = toUserNameForm(data);
+            const form = toUserNameForm(data, [], []);
             adoptInitial(form, "edit");
             return form;
         } catch (err) {
             setMessage(err instanceof Error ? err.message : String(err));
             return null;
         }
+    };
+
+    const saveField = async (field: keyof UserNameFormType, value: string): Promise<void> => {
+        if (!sub) return;
+        try {
+            setMessage(null);
+            await userNameService.update({ id: sub, [field]: value });
+            setForm((f) => ({ ...f, [field]: value as never }));
+        } catch (err) {
+            setMessage(err instanceof Error ? err.message : String(err));
+        }
+    };
+
+    const clearField = async (field: keyof UserNameFormType): Promise<void> => {
+        await saveField(field, "");
     };
 
     const remove = async () => {
@@ -65,5 +80,5 @@ export function useUserNameForm() {
         }
     };
 
-    return { ...modelForm, fetchUserName, remove };
+    return { ...modelForm, fetchUserName, saveField, clearField, remove };
 }

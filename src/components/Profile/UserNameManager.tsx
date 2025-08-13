@@ -6,7 +6,10 @@ import EntityEditor from "@components/forms/EntityEditor";
 import { label as fieldLabel } from "./utilsUserName";
 import PersonIcon from "@mui/icons-material/Person";
 import { useUserNameForm } from "@entities/models/userName/hooks";
-import { type UserNameFormType } from "@entities/models/userName/types";
+import {
+    type UserNameFormType,
+    type UserNameTypeUpdateInput,
+} from "@entities/models/userName/types";
 
 const fields: (keyof UserNameFormType)[] = ["userName"];
 
@@ -30,7 +33,13 @@ export default function UserNameManager() {
             deleteLabel="Supprimer le pseudo"
             renderIcon={() => <PersonIcon fontSize="small" className="text-gray-800" />}
             onClearField={(field, clear) => {
-                if (confirm(`Supprimer le contenu du champ "${fieldLabel(field)}" ?`)) {
+                if (
+                    confirm(
+                        `Supprimer le contenu du champ "${fieldLabel(
+                            field as keyof UserNameTypeUpdateInput
+                        )}" ?`
+                    )
+                ) {
                     void clear(field);
                 }
             }}
@@ -45,14 +54,8 @@ export default function UserNameManager() {
             setForm={manager.setForm}
             fields={fields}
             labels={fieldLabel as (field: keyof UserNameFormType) => string}
-            saveField={async (field, value) => {
-                manager.handleChange(field, value as never);
-                await manager.submit();
-            }}
-            clearField={async (field) => {
-                manager.handleChange(field, "" as never);
-                await manager.submit();
-            }}
+            saveField={manager.saveField}
+            clearField={manager.clearField}
             deleteEntity={manager.remove}
         />
     );
