@@ -9,6 +9,7 @@ type CommentWithTodoId = {
     content?: string | null;
     createdAt: string;
     todoId?: string;
+    postId?: string;
 };
 
 export default function TodosWithCommentsPage() {

@@ -15,11 +15,15 @@ const schema = a.schema({
     Comment: a
         .model({
             id: a.id().required(),
-            content: a.string(),
-            todoId: a.id().required(),
+            content: a.string().required(),
+
+            // ⬇️ optionnels : un commentaire cible EITHER Todo OR Post
+            todoId: a.id(),
             todo: a.belongsTo("Todo", "todoId"),
-            postId: a.id().required(),
+
+            postId: a.id(),
             post: a.belongsTo("Post", "postId"),
+
             userNameId: a.id().required(),
             userName: a.belongsTo("UserName", "userNameId"),
         })
