@@ -17,18 +17,12 @@ export function useUserNameForm() {
 
     const modelForm = useModelForm<UserNameFormType>({
         initialForm: initialUserNameForm,
-        // 🔄 Charge la vérité serveur (ou null si inexistant)
-        load: async () => {
-            if (!sub) return null;
-            const { data } = await userNameService.get({ id: sub });
-            if (!data) return null;
-            return toUserNameForm(data, [], []);
-        },
         create: async (form) => {
             if (!sub) throw new Error("id manquant");
+            // ✅ plus de cast, et pas de 'owner'
             const { data, errors } = await userNameService.create({
                 id: sub,
-                ...toUserNameCreate(form),
+                ...toUserNameCreate(form), // doit retourner { userName }
             } as unknown as Parameters<typeof userNameService.create>[0]);
             if (!data) throw new Error(errors?.[0]?.message ?? "Erreur création pseudo");
             return data.id;
@@ -37,34 +31,36 @@ export function useUserNameForm() {
             if (!sub) throw new Error("id manquant");
             const { data, errors } = await userNameService.update({
                 id: sub,
-                ...toUserNameUpdate(form),
+                ...toUserNameUpdate(form), // doit retourner { userName }
             });
             if (!data) throw new Error(errors?.[0]?.message ?? "Erreur mise à jour pseudo");
             return data.id;
         },
     });
 
-    const { adoptInitial, setMessage, setForm, refresh, submit } = modelForm;
+    const { adoptInitial, setMessage, setForm } = modelForm;
 
-    // Au montage (ou changement d'utilisateur), on essaie de charger l'état
+    const fetchUserName = useCallback(async (): Promise<UserNameFormType | null> => {
+        if (!sub) return null;
+        try {
+            const { data } = await userNameService.get({ id: sub });
+            if (!data) {
+                adoptInitial(initialUserNameForm, "create");
+                return null;
+            }
+            const form = toUserNameForm(data, [], []);
+            adoptInitial(form, "edit");
+            return form;
+        } catch (err) {
+            setMessage(err instanceof Error ? err.message : String(err));
+            return null;
+        }
+    }, [sub, adoptInitial, setMessage]);
+
+    // 🔁 charge l'état (create vs edit) au montage
     useEffect(() => {
-        if (!sub) return;
-        (async () => {
-            const form = await (async () => {
-                const { data } = await userNameService.get({ id: sub });
-                return data ? toUserNameForm(data, [], []) : null;
-            })();
-            if (form) adoptInitial(form, "edit");
-            else adoptInitial(initialUserNameForm, "create");
-        })();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [sub]);
-
-    // On wrap submit pour s'assurer du refresh après l'opération
-    const submitAndRefresh = useCallback(async () => {
-        await submit();
-        await refresh();
-    }, [submit, refresh]);
+        void fetchUserName();
+    }, [fetchUserName]);
 
     const saveField = async (field: keyof UserNameFormType, value: string): Promise<void> => {
         if (!sub) return;
@@ -72,9 +68,7 @@ export function useUserNameForm() {
             setMessage(null);
             const { errors } = await userNameService.update({ id: sub, [field]: value } as never);
             if (errors?.length) throw new Error(errors[0].message);
-            // Optimiste + re-fetch pour la vérité serveur
             setForm((f) => ({ ...f, [field]: value as never }));
-            await refresh();
         } catch (err) {
             setMessage(err instanceof Error ? err.message : String(err));
         }
@@ -90,18 +84,10 @@ export function useUserNameForm() {
             const { errors } = await userNameService.delete({ id: sub });
             if (errors?.length) throw new Error(errors[0].message);
             adoptInitial(initialUserNameForm, "create");
-            await refresh(); // par sécurité
         } catch (err) {
             setMessage(err instanceof Error ? err.message : String(err));
         }
     };
 
-    return {
-        ...modelForm,
-        submit: submitAndRefresh, // ⬅️ expose la version qui refetch
-        refresh,
-        saveField,
-        clearField,
-        remove,
-    };
+    return { ...modelForm, fetchUserName, saveField, clearField, remove };
 }

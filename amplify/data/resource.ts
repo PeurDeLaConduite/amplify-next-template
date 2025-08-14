@@ -29,7 +29,6 @@ const schema = a.schema({
         })
         .authorization((allow) => [
             allow.publicApiKey().to(["read"]),
-            allow.authenticated().to(["read"]),
             allow.group("ADMINS").to(["create", "update", "delete", "read"]),
             allow.owner().to(["create", "update", "delete", "read"]),
         ]),
@@ -41,8 +40,8 @@ const schema = a.schema({
             comments: a.hasMany("Comment", "userNameId"),
         })
         .authorization((allow) => [
-            allow.publicApiKey().to(["read"]), // lecture publique
-            allow.owner(),
+            allow.publicApiKey().to(["read"]),
+            allow.owner().to(["create", "read", "update", "delete"]),
         ]),
 
     UserProfile: a

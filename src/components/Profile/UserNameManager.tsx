@@ -1,3 +1,4 @@
+// src/app/profile/UserNameManager.tsx
 "use client";
 import { useEffect } from "react";
 import { Authenticator, useAuthenticator } from "@aws-amplify/ui-react";
@@ -16,13 +17,12 @@ const fields: (keyof UserNameFormType)[] = ["userName"];
 export default function UserNameManager() {
     const { user } = useAuthenticator();
     const manager = useUserNameForm();
-    const { fetchUserName } = manager;
 
     useEffect(() => {
         if (user) {
-            void fetchUserName();
+            void manager.refresh(); // 🔄 charge/rafraîchit au montage et quand l'user change
         }
-    }, [user, fetchUserName]);
+    }, [user, manager.refresh]);
 
     if (!user) return <Authenticator />;
 
@@ -49,14 +49,14 @@ export default function UserNameManager() {
             handleChange={
                 manager.handleChange as (field: keyof UserNameFormType, value: unknown) => void
             }
-            submit={manager.submit}
+            submit={manager.submit} // ⬅️ version qui refetch
             reset={manager.reset}
             setForm={manager.setForm}
             fields={fields}
             labels={fieldLabel as (field: keyof UserNameFormType) => string}
-            saveField={manager.saveField}
+            saveField={manager.saveField} // ⬅️ refetch inclus
             clearField={manager.clearField}
-            deleteEntity={manager.remove}
+            deleteEntity={manager.remove} // ⬅️ refetch inclus
         />
     );
 }

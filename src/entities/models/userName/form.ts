@@ -30,10 +30,16 @@ export const {
         commentsIds,
         postCommentsIds,
     }),
-    toCreate: (form: UserNameFormType): UserNameTypeUpdateInput => ({
-        ...form,
-    }),
-    toUpdate: (form: UserNameFormType): UserNameTypeUpdateInput => ({
-        ...form,
-    }),
+    toCreate: (form: UserNameFormType): UserNameTypeUpdateInput => {
+        const { commentsIds, postCommentsIds, ...values } = form;
+        void commentsIds;
+        void postCommentsIds;
+        return values;
+    },
+    toUpdate: (form: UserNameFormType): UserNameTypeUpdateInput => {
+        const { commentsIds, postCommentsIds, ...values } = form;
+        void commentsIds;
+        void postCommentsIds;
+        return values;
+    },
 });

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import { PowerButton } from "@src/components/buttons";
@@ -9,24 +9,28 @@ import UserNameModal from "@src/components/Profile/UserNameModal";
 
 const Header = () => {
     const { user, signOut } = useAuthenticator();
+
+    // ⬇️ le hook expose maintenant `refresh`
     const {
         form: { userName },
-        fetchUserName,
+        refresh,
     } = useUserNameForm();
-    const [showModal, setShowModal] = React.useState(false);
 
-    React.useEffect(() => {
-        // Optionnel : fetch userName à l’ouverture du Header ou quand user change
-        void fetchUserName();
-    }, [user, fetchUserName]);
+    const [showModal, setShowModal] = useState(false);
 
-    React.useEffect(() => {
-        if (user && !userName) {
-            setShowModal(true);
+    // Rafraîchir quand l'utilisateur change (login/logout)
+    useEffect(() => {
+        if (user) {
+            void refresh();
+        } else {
+            setShowModal(false); // ferme le modal si déconnexion
         }
-        if (userName) {
-            setShowModal(false);
-        }
+    }, [user, refresh]);
+
+    // Ouvrir/fermer le modal selon présence du userName
+    useEffect(() => {
+        if (user && !userName) setShowModal(true);
+        if (userName) setShowModal(false);
     }, [user, userName]);
 
     return (
@@ -34,16 +38,6 @@ const Header = () => {
             <header className="bg-white shadow-md">
                 <nav className="max-w-6xl mx-auto flex items-center justify-between p-4">
                     <div className="flex gap-6">
-                        {/* <Link href="/comment" className="text-gray-700 hover:text-blue-600">
-                        Commentaires
-                    </Link>
-
-                    <Link href="/" className="text-gray-700 hover:text-blue-600">
-                        Home
-                    </Link>
-                    <Link href="/uploadPage" className="text-gray-700 hover:text-blue-600">
-                        Upload Page
-                    </Link> */}
                         <Link href="/todo" className="text-gray-700 hover:text-blue-600">
                             Todo
                         </Link>
@@ -58,7 +52,7 @@ const Header = () => {
                         </Link>
                         <Link href="/createArticle" className="text-gray-700 hover:text-blue-600">
                             Create Article
-                        </Link>{" "}
+                        </Link>
                         <Link href="/blog" className="text-gray-700 hover:text-blue-600">
                             Blog
                         </Link>
@@ -100,6 +94,7 @@ const Header = () => {
                     </div>
                 </nav>
             </header>
+
             <UserNameModal isOpen={showModal} onClose={() => setShowModal(false)} />
         </>
     );

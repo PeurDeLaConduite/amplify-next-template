@@ -6,8 +6,15 @@ import type { AuthRule } from "../types";
 // 🔧 Types dynamiques
 type ClientModelKey = keyof typeof client.models;
 type BaseModel<K extends ClientModelKey> = Schema[K]["type"];
-type CreateData<K extends ClientModelKey> = Omit<BaseModel<K>, "id" | "createdAt" | "updatedAt">;
-type UpdateData<K extends ClientModelKey> = Partial<CreateData<K>> & { id: string };
+
+// ⬇️ IMPORTANT: autoriser un `id` fourni au create (ex: id = sub)
+//    et ignorer les timestamps gérés par le backend.
+type WithoutTimestamps<T> = Omit<T, "createdAt" | "updatedAt">;
+type CreateData<K extends ClientModelKey> = Partial<Pick<BaseModel<K>, "id">> &
+    WithoutTimestamps<BaseModel<K>>;
+type UpdateData<K extends ClientModelKey> = Partial<WithoutTimestamps<BaseModel<K>>> & {
+    id: string;
+};
 
 // Modes d'auth usuels
 export type AuthMode = "apiKey" | "userPool" | "identityPool" | "iam" | "lambda";
@@ -17,14 +24,14 @@ type CrudAuth = {
     write?: AuthMode | AuthMode[]; // create/update/delete
 };
 
-// ✅ Options « sûres » pour les opérations Amplify (évite any)
+// ✅ Options « sûres » pour les opérations Amplify
 type AmplifyOpOptions = { authMode?: AuthMode } & Record<string, unknown>;
 
 interface CrudModel<K extends ClientModelKey> {
     list: (opts?: AmplifyOpOptions) => Promise<{ data: BaseModel<K>[] }>;
     get: (args: { id: string }, opts?: AmplifyOpOptions) => Promise<{ data?: BaseModel<K> }>;
     create: (
-        data: Partial<CreateData<K>>,
+        data: CreateData<K>,
         opts?: AmplifyOpOptions
     ) => Promise<{ data: BaseModel<K>; errors?: { message: string }[] }>;
     update: (
@@ -101,7 +108,7 @@ export function crudService<K extends ClientModelKey>(
             return res;
         },
 
-        async create(data: Partial<CreateData<K>>) {
+        async create(data: CreateData<K>) {
             return tryModes(writeModes, (authMode) =>
                 model.create(
                     data,

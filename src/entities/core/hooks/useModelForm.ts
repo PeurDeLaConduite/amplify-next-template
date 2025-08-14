@@ -12,6 +12,8 @@ export interface UseModelFormOptions<F, E = Record<string, unknown>> {
     create: (form: F) => Promise<string>;
     update: (form: F) => Promise<string>;
     syncRelations?: (id: string, form: F) => Promise<void>;
+    /** 🔄 Optionnel : fonction pour recharger la vérité serveur et hydrater le form */
+    load?: () => Promise<F | null>;
 }
 
 export interface UseModelFormResult<F, E> {
@@ -30,6 +32,8 @@ export interface UseModelFormResult<F, E> {
     setMode: React.Dispatch<React.SetStateAction<FormMode>>;
     setMessage: React.Dispatch<React.SetStateAction<string | null>>;
     adoptInitial: (next: F, mode?: FormMode) => void;
+    /** 🔄 Appelle `options.load()` et met à jour le form + baseline */
+    refresh: () => Promise<void>;
 }
 
 function deepEqual(a: unknown, b: unknown) {
@@ -52,6 +56,7 @@ export default function useModelForm<
         create,
         update,
         syncRelations,
+        load,
     } = options;
 
     const initialRef = useRef(initialForm);
@@ -82,6 +87,18 @@ export default function useModelForm<
         setMessage(null);
     }, []);
 
+    const refresh = useCallback(async () => {
+        if (!load) return;
+        try {
+            const next = await load();
+            if (next) {
+                adoptInitial(next, "edit");
+            }
+        } catch (e) {
+            setError(e);
+        }
+    }, [load, adoptInitial]);
+
     const submit = useCallback(async () => {
         setSaving(true);
         setError(null);
@@ -97,15 +114,19 @@ export default function useModelForm<
             if (syncRelations) {
                 await syncRelations(id, form);
             }
-            setMode("edit");
-            initialRef.current = form; // baseline = dernier form sauvegardé
+            // 🔄 Tente de recharger depuis la source de vérité si possible
+            if (load) {
+                await refresh();
+            } else {
+                setMode("edit");
+                initialRef.current = form; // baseline = dernier form sauvegardé
+            }
         } catch (e) {
             setError(e);
         } finally {
             setSaving(false);
         }
-        // ⬇️ retire adoptInitial (non utilisé)
-    }, [form, mode, validate, create, update, syncRelations]);
+    }, [form, mode, validate, create, update, syncRelations, load, refresh]);
 
     return {
         form,
@@ -123,5 +144,6 @@ export default function useModelForm<
         setMode,
         setMessage,
         adoptInitial,
+        refresh,
     };
 }
