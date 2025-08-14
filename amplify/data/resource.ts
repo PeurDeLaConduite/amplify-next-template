@@ -35,7 +35,6 @@ const schema = a.schema({
             id: a.id().required(),
             userName: a.string().required(),
             comments: a.hasMany("Comment", "userNameId"),
-            postComments: a.hasMany("PostComment", "userNameId"),
         })
         .authorization((allow) => [
             allow.publicApiKey().to(["read"]), // lecture publique
