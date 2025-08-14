@@ -1,5 +1,4 @@
 // src/entities/models/userName/hooks.tsx
-import { useCallback } from "react";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import { useModelForm } from "@entities/core/hooks";
 import { userNameService } from "@entities/models/userName/service";
@@ -20,6 +19,7 @@ export function useUserNameForm() {
         create: async (form) => {
             if (!sub) throw new Error("id manquant");
             const { data } = await userNameService.create({
+                id: sub,
                 ...toUserNameCreate(form),
             } as unknown as Parameters<typeof userNameService.create>[0]);
             if (!data) throw new Error("Erreur lors de la création du pseudo");
@@ -38,7 +38,7 @@ export function useUserNameForm() {
 
     const { adoptInitial, setMessage, setForm } = modelForm;
 
-    const fetchUserName = useCallback(async (): Promise<UserNameFormType | null> => {
+    const fetchUserName = async (): Promise<UserNameFormType | null> => {
         if (!sub) return null;
         try {
             const { data } = await userNameService.get({ id: sub });
@@ -53,7 +53,7 @@ export function useUserNameForm() {
             setMessage(err instanceof Error ? err.message : String(err));
             return null;
         }
-    }, [sub, adoptInitial, setMessage]);
+    };
 
     const saveField = async (field: keyof UserNameFormType, value: string): Promise<void> => {
         if (!sub) return;

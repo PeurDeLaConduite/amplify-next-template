@@ -150,13 +150,6 @@
                                 "targetNames": ["todoId"]
                             }
                         },
-                        "owner": {
-                            "name": "owner",
-                            "isArray": false,
-                            "type": "String",
-                            "isRequired": false,
-                            "attributes": []
-                        },
                         "userNameId": {
                             "name": "userNameId",
                             "isArray": false,
@@ -261,13 +254,6 @@
                             "isRequired": true,
                             "attributes": []
                         },
-                        "owner": {
-                            "name": "owner",
-                            "isArray": false,
-                            "type": "String",
-                            "isRequired": true,
-                            "attributes": []
-                        },
                         "comments": {
                             "name": "comments",
                             "isArray": true,
@@ -336,15 +322,11 @@
                                         "operations": ["read"]
                                     },
                                     {
-                                        "allow": "private",
-                                        "operations": ["create", "read", "delete"]
-                                    },
-                                    {
                                         "provider": "userPools",
                                         "ownerField": "owner",
                                         "allow": "owner",
-                                        "operations": ["read", "update", "delete"],
-                                        "identityClaim": "cognito:username"
+                                        "identityClaim": "cognito:username",
+                                        "operations": ["create", "update", "delete", "read"]
                                     }
                                 ]
                             }
@@ -1114,13 +1096,6 @@
                             "isArray": false,
                             "type": "String",
                             "isRequired": true,
-                            "attributes": []
-                        },
-                        "owner": {
-                            "name": "owner",
-                            "isArray": false,
-                            "type": "String",
-                            "isRequired": false,
                             "attributes": []
                         },
                         "postId": {

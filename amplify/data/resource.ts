@@ -18,6 +18,8 @@ const schema = a.schema({
             content: a.string(),
             todoId: a.id().required(),
             todo: a.belongsTo("Todo", "todoId"),
+            postId: a.id().required(),
+            post: a.belongsTo("Post", "postId"),
             userNameId: a.id().required(),
             userName: a.belongsTo("UserName", "userNameId"),
         })
@@ -105,7 +107,7 @@ const schema = a.schema({
             type: a.string(),
             status: a.enum(["draft", "published"]),
             seo: a.ref("Seo"),
-            comments: a.hasMany("PostComment", "postId"),
+            comments: a.hasMany("Comment", "postId"),
             sections: a.hasMany("SectionPost", "postId"),
             tags: a.hasMany("PostTag", "postId"),
         })
@@ -139,24 +141,6 @@ const schema = a.schema({
             allow.publicApiKey().to(["read"]),
             allow.authenticated().to(["read"]),
             allow.group("ADMINS").to(["create", "update", "delete", "read"]),
-        ]),
-
-    PostComment: a
-        .model({
-            id: a.id().required(),
-            content: a.string().required(),
-
-            postId: a.id().required(),
-            post: a.belongsTo("Post", "postId"),
-
-            userNameId: a.id().required(),
-            userName: a.belongsTo("UserName", "userNameId"),
-        })
-        .authorization((allow) => [
-            allow.publicApiKey().to(["read"]),
-            allow.authenticated().to(["read"]),
-            allow.group("ADMINS").to(["create", "update", "delete", "read"]),
-            allow.owner(),
         ]),
 
     SectionPost: a
