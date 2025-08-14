@@ -19,7 +19,6 @@ const schema = a.schema({
             todoId: a.id().required(),
             todo: a.belongsTo("Todo", "todoId"),
 
-            owner: a.string(),
             userNameId: a.id().required(),
             userName: a.belongsTo("UserName", "userNameId"),
         })
@@ -34,7 +33,6 @@ const schema = a.schema({
         .model({
             id: a.id().required(),
             userName: a.string().required(),
-            owner: a.string().required(),
             // ← ici on déclare les deux hasMany sans clé manuelle
             comments: a.hasMany("Comment", "userNameId"),
             postComments: a.hasMany("PostComment", "userNameId"),
