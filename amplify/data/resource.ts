@@ -18,7 +18,6 @@ const schema = a.schema({
             content: a.string(),
             todoId: a.id().required(),
             todo: a.belongsTo("Todo", "todoId"),
-
             userNameId: a.id().required(),
             userName: a.belongsTo("UserName", "userNameId"),
         })
@@ -33,14 +32,12 @@ const schema = a.schema({
         .model({
             id: a.id().required(),
             userName: a.string().required(),
-            // ← ici on déclare les deux hasMany sans clé manuelle
             comments: a.hasMany("Comment", "userNameId"),
             postComments: a.hasMany("PostComment", "userNameId"),
         })
         .authorization((allow) => [
             allow.publicApiKey().to(["read"]), // lecture publique
-            allow.authenticated().to(["create", "read", "delete"]), // create/read pour tout user logué
-            allow.owner().to(["read", "update", "delete"]), // propriétaire peut maj/suppr
+            allow.owner(),
         ]),
 
     UserProfile: a
@@ -148,7 +145,6 @@ const schema = a.schema({
         .model({
             id: a.id().required(),
             content: a.string().required(),
-            owner: a.string(),
 
             postId: a.id().required(),
             post: a.belongsTo("Post", "postId"),
