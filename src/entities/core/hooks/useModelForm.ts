@@ -29,7 +29,6 @@ export interface UseModelFormResult<F, E> {
     setExtras: React.Dispatch<React.SetStateAction<E>>;
     setMode: React.Dispatch<React.SetStateAction<FormMode>>;
     setMessage: React.Dispatch<React.SetStateAction<string | null>>;
-    /** ⬇️ nouveau : fixe baseline + mode d’un coup */
     adoptInitial: (next: F, mode?: FormMode) => void;
 }
 
