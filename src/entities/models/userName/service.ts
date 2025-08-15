@@ -1,12 +1,16 @@
-// src/entities/models/userName/service.ts
-import { crudService } from "@entities/core";
-import type { UserNameTypeCreateInput, UserNameTypeUpdateInput } from "./types";
+import { crudService } from "@entities/core/services/crudService";
 import type { IdArg } from "@entities/core/types";
+
+// DTO plats pour ce service (clairs et non-nullables côté API)
+export type UserNameCreateInput = { id: string; userName: string };
+export type UserNameUpdateInput = { id: string; userName?: string };
 
 export const userNameService = crudService<
     "UserName",
-    UserNameTypeCreateInput,
-    UserNameTypeUpdateInput,
+    UserNameCreateInput,
+    UserNameUpdateInput,
     IdArg,
     IdArg
->("UserName");
+>("UserName", {
+    auth: { read: ["apiKey", "userPool"], write: "userPool" },
+});

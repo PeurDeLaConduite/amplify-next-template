@@ -23,7 +23,6 @@ export const {
     initialForm: {
         userName: "",
         commentsIds: [],
-        postCommentsIds: [],
     },
     toForm: (userName, commentsIds: string[] = [], postCommentsIds: string[] = []) => ({
         userName: userName.userName ?? "",
@@ -31,15 +30,13 @@ export const {
         postCommentsIds,
     }),
     toCreate: (form: UserNameFormType): UserNameTypeUpdateInput => {
-        const { commentsIds, postCommentsIds, ...values } = form;
+        const { commentsIds, ...values } = form;
         void commentsIds;
-        void postCommentsIds;
         return values;
     },
     toUpdate: (form: UserNameFormType): UserNameTypeUpdateInput => {
-        const { commentsIds, postCommentsIds, ...values } = form;
+        const { commentsIds, ...values } = form;
         void commentsIds;
-        void postCommentsIds;
         return values;
     },
 });
