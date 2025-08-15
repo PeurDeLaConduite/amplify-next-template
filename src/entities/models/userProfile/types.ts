@@ -1,8 +1,8 @@
-import type { BaseModel, CreateOmit, UpdateInput, ModelForm } from "@entities/core";
+import type { BaseModel, CreateOmit, ModelForm } from "@entities/core/types";
 
 export type UserProfileType = BaseModel<"UserProfile">;
-export type UserProfileTypeOmit = CreateOmit<"UserProfile">;
-export type UserProfileTypeUpdateInput = UpdateInput<"UserProfile">;
+export type UserProfileTypeCreateInput = CreateOmit<"UserProfile">;
+export type UserProfileTypeUpdateInput = { id: string } & Partial<UserProfileTypeCreateInput>;
 export type UserProfileFormType = ModelForm<"UserProfile">;
 
 export type UserProfileMinimalType = {
