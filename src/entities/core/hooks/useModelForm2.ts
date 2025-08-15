@@ -1,7 +1,8 @@
 "use client";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { EditMode } from "@entities/core/types";
 
-export type FormMode = "create" | "edit";
+export type FormMode = EditMode;
 
 export interface UseModelFormOptions<F, E = Record<string, unknown>> {
     initialForm: F;

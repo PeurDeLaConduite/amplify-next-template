@@ -3,7 +3,7 @@
 /**
  * Règles d'authentification appliquées à une entité.
  */
-export type AuthRule =
+export type AuthRuleConfig =
     | { allow: "owner"; ownerField?: string }
     | { allow: "groups"; groups: string[] }
     | { allow: "public" }
@@ -35,10 +35,10 @@ export interface IdentifierDef extends BaseField {
     strategy?: "auto" | "uuid";
 }
 
-export type EntityFields = Record<string, FieldDef | RelationDef | IdentifierDef>;
+export type ModelFields = Record<string, FieldDef | RelationDef | IdentifierDef>;
 
-export interface EntityConfig {
+export interface ModelConfig {
     name: string;
-    fields: EntityFields;
-    auth?: AuthRule[];
+    fields: ModelFields;
+    auth?: AuthRuleConfig[];
 }

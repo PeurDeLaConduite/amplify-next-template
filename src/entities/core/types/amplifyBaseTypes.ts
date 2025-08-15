@@ -1,6 +1,13 @@
 // src/entities/core/types/amplifyBaseTypes.ts
 import type { Schema } from "@/amplify/data/resource";
 
+export type AmplifyId = string;
+
+export interface AmplifyListResult<T> {
+    data: T[];
+    nextToken?: string;
+}
+
 export type BaseModel<K extends keyof Schema> = Schema[K]["type"];
 
 export type CreateOmit<K extends keyof Schema> = Omit<

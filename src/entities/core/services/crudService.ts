@@ -1,7 +1,7 @@
 // src/entities/core/services/crudService.ts
 import { client, Schema } from "./amplifyClient";
 import { canAccess } from "../auth";
-import type { AuthRule } from "../types";
+import type { EntitiesAuthRule } from "../types";
 
 type ClientModels = typeof client.models;
 type ClientModelKey = keyof ClientModels;
@@ -76,7 +76,7 @@ export function crudService<
     U = DefaultUpdateArg<K>,
     G = DefaultGetArg<K>,
     D = DefaultDeleteArg<K>,
->(key: K, opts?: { auth?: CrudAuth; rules?: AuthRule[] }) {
+>(key: K, opts?: { auth?: CrudAuth; rules?: EntitiesAuthRule[] }) {
     const model = getModelClient<K, C, U, G, D>(key);
     const rules = opts?.rules ?? [{ allow: "public" }];
     const readModes = toArray(opts?.auth?.read);
