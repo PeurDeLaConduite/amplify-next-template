@@ -463,10 +463,23 @@ export const ${lower(m.name)}Service = crudService("${m.name}");
     safeWrite(path.join(dir, "service.ts"), serviceTs);
 
     // form.ts
-    const formTs = `import { createModelForm } from "@src/entities/core/createModelForm";
-import { ${lower(m.name)}Config } from "./config";
-export const ${lower(m.name)}Form = createModelForm(${lower(m.name)}Config);
-export const { initialForm, toForm, toInput, zodSchema } = ${lower(m.name)}Form;
+    const formTs = `import { createModelForm } from "@src/entities/core";
+import type { ${m.name}Type, ${m.name}FormType, ${m.name}TypeOmit } from "./types";
+
+export const initial${m.name}Form: ${m.name}FormType = {} as ${m.name}FormType;
+function to${m.name}Form(model: ${m.name}Type): ${m.name}FormType {
+  void model;
+  return initial${m.name}Form;
+}
+function to${m.name}Input(form: ${m.name}FormType): ${m.name}TypeOmit {
+  return form as ${m.name}TypeOmit;
+}
+
+export const ${lower(m.name)}Form = createModelForm<${m.name}Type, ${m.name}FormType, [], ${m.name}TypeOmit>(
+  initial${m.name}Form,
+  to${m.name}Form,
+  to${m.name}Input
+);
 `;
     safeWrite(path.join(dir, "form.ts"), formTs);
 
