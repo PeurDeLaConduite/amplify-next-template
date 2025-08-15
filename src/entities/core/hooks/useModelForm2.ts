@@ -1,39 +1,71 @@
-// src/entities/core/hooks/useModelForm.ts
 "use client";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 export type FormMode = "create" | "edit";
-export type FieldKey<T> = keyof T & string;
+
 export interface UseModelFormOptions<F, E = Record<string, unknown>> {
     initialForm: F;
     initialExtras?: E;
     mode?: FormMode;
+
     validate?: (form: F) => Promise<boolean> | boolean;
     create: (form: F) => Promise<string>;
     update: (form: F) => Promise<string>;
     syncRelations?: (id: string, form: F) => Promise<void>;
-    /** 🔄 Optionnel : fonction pour recharger la vérité serveur et hydrater le form */
+
+    /** 🔄 Charge l'entité depuis la "source de vérité" (ex: GET by id/sub) */
     load?: () => Promise<F | null>;
+    /** 📦 Charge et renvoie les "extras" (ex: listes pour selects) */
+    loadExtras?: () => Promise<Partial<E> | void> | Partial<E> | void;
+
+    /** Auto-exécuter load() au mount */
+    autoLoad?: boolean;
+    /** Auto-exécuter loadExtras() au mount */
+    autoLoadExtras?: boolean;
 }
 
 export interface UseModelFormResult<F, E> {
     form: F;
     extras: E;
     mode: FormMode;
+
     dirty: boolean;
     saving: boolean;
+    loading: boolean; // ← global (load + loadExtras)
+    loadingExtras: boolean; // ← pour différencier si besoin
+
     error: unknown;
     message: string | null;
+
     handleChange: <K extends keyof F>(field: K, value: F[K]) => void;
+    patch: (partial: Partial<F>) => void;
+
+    /** Helpers de mode */
+    setCreate: (next?: F) => void;
+    setEdit: (next?: F) => void;
+
+    /** Enchaîne create/update (+ syncRelations) puis refresh/load */
     submit: () => Promise<void>;
     reset: () => void;
+
     setForm: React.Dispatch<React.SetStateAction<F>>;
     setExtras: React.Dispatch<React.SetStateAction<E>>;
     setMode: React.Dispatch<React.SetStateAction<FormMode>>;
     setMessage: React.Dispatch<React.SetStateAction<string | null>>;
     adoptInitial: (next: F, mode?: FormMode) => void;
-    /** 🔄 Appelle `options.load()` et met à jour le form + baseline */
+
+    /** 🔄 Recharge depuis load() et met à jour baseline */
     refresh: () => Promise<void>;
+    /** 📦 Recharge les extras */
+    refreshExtras: () => Promise<void>;
+
+    /** Petit utilitaire pour inputs texte */
+    bindText: <K extends keyof F>(
+        field: K
+    ) => {
+        value: string;
+        onChange: (e: { target: { value: string } }) => void;
+    };
 }
 
 function deepEqual(a: unknown, b: unknown) {
@@ -57,6 +89,9 @@ export default function useModelForm<
         update,
         syncRelations,
         load,
+        loadExtras,
+        autoLoad = true,
+        autoLoadExtras = true,
     } = options;
 
     const initialRef = useRef(initialForm);
@@ -64,6 +99,8 @@ export default function useModelForm<
     const [extras, setExtras] = useState<E>((initialExtras as E) ?? ({} as E));
     const [mode, setMode] = useState<FormMode>(initialMode);
     const [saving, setSaving] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [loadingExtras, setLoadingExtras] = useState(false);
     const [error, setError] = useState<unknown>(null);
     const [message, setMessage] = useState<string | null>(null);
 
@@ -71,6 +108,10 @@ export default function useModelForm<
 
     const handleChange = useCallback(<K extends keyof F>(field: K, value: F[K]) => {
         setForm((f) => ({ ...f, [field]: value }));
+    }, []);
+
+    const patch = useCallback((partial: Partial<F>) => {
+        setForm((prev) => ({ ...prev, ...partial }));
     }, []);
 
     const reset = useCallback(() => {
@@ -90,14 +131,60 @@ export default function useModelForm<
     const refresh = useCallback(async () => {
         if (!load) return;
         try {
+            setLoading(true);
             const next = await load();
             if (next) {
                 adoptInitial(next, "edit");
+            } else {
+                adoptInitial(initialForm, "create");
             }
         } catch (e) {
             setError(e);
+        } finally {
+            setLoading(false);
         }
-    }, [load, adoptInitial]);
+    }, [load, adoptInitial, initialForm]);
+
+    const refreshExtras = useCallback(async () => {
+        if (!loadExtras) return;
+        try {
+            setLoadingExtras(true);
+            const next = await loadExtras();
+            if (next && typeof next === "object") {
+                setExtras((prev) => ({ ...(prev as E), ...(next as Partial<E>) }) as E);
+            }
+        } catch (e) {
+            setError(e);
+        } finally {
+            setLoadingExtras(false);
+        }
+    }, [loadExtras]);
+
+    // auto-load au mount
+    useEffect(() => {
+        if (autoLoad && load) void refresh();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [autoLoad, load]);
+
+    // auto-loadExtras au mount
+    useEffect(() => {
+        if (autoLoadExtras && loadExtras) void refreshExtras();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [autoLoadExtras, loadExtras]);
+
+    const setCreate = useCallback(
+        (next?: F) => {
+            adoptInitial(next ?? initialForm, "create");
+        },
+        [adoptInitial, initialForm]
+    );
+
+    const setEdit = useCallback(
+        (next?: F) => {
+            adoptInitial(next ?? form, "edit");
+        },
+        [adoptInitial, form]
+    );
 
     const submit = useCallback(async () => {
         setSaving(true);
@@ -114,12 +201,11 @@ export default function useModelForm<
             if (syncRelations) {
                 await syncRelations(id, form);
             }
-            // 🔄 Tente de recharger depuis la source de vérité si possible
             if (load) {
-                await refresh();
+                await refresh(); // vérité serveur
             } else {
                 setMode("edit");
-                initialRef.current = form; // baseline = dernier form sauvegardé
+                initialRef.current = form;
             }
         } catch (e) {
             setError(e);
@@ -128,15 +214,29 @@ export default function useModelForm<
         }
     }, [form, mode, validate, create, update, syncRelations, load, refresh]);
 
+    const bindText = useCallback(
+        <K extends keyof F>(field: K) => ({
+            value: String(form[field] ?? ""),
+            onChange: (e: { target: { value: string } }) =>
+                handleChange(field, e.target.value as F[K]),
+        }),
+        [form, handleChange]
+    );
+
     return {
         form,
         extras,
         mode,
         dirty,
         saving,
+        loading,
+        loadingExtras,
         error,
         message,
         handleChange,
+        patch,
+        setCreate,
+        setEdit,
         submit,
         reset,
         setForm,
@@ -145,5 +245,7 @@ export default function useModelForm<
         setMessage,
         adoptInitial,
         refresh,
+        refreshExtras,
+        bindText,
     };
 }

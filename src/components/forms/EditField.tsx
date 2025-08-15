@@ -1,6 +1,6 @@
 import { SaveButton, BackButton } from "@components/buttons";
 import React from "react";
-import { type FieldKey } from "@entities/core/hooks";
+import type { FieldKey } from "@entities/core/hooks";
 
 export type EditFieldProps<T extends Record<string, unknown>> = {
     editModeField: { field: FieldKey<T>; value: string };

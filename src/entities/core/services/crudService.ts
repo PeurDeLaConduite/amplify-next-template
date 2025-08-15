@@ -3,50 +3,47 @@ import { client, Schema } from "./amplifyClient";
 import { canAccess } from "../auth";
 import type { AuthRule } from "../types";
 
-// 🔧 Types dynamiques
-type ClientModelKey = keyof typeof client.models;
+type ClientModels = typeof client.models;
+type ClientModelKey = keyof ClientModels;
 type BaseModel<K extends ClientModelKey> = Schema[K]["type"];
 
-// ⬇️ IMPORTANT: autoriser un `id` fourni au create (ex: id = sub)
-//    et ignorer les timestamps gérés par le backend.
-type WithoutTimestamps<T> = Omit<T, "createdAt" | "updatedAt">;
-type CreateData<K extends ClientModelKey> = Partial<Pick<BaseModel<K>, "id">> &
-    WithoutTimestamps<BaseModel<K>>;
-type UpdateData<K extends ClientModelKey> = Partial<WithoutTimestamps<BaseModel<K>>> & {
-    id: string;
-};
+/** Infère le 1er argument d’une méthode seulement si la clé existe */
+type MethodArg<T, M extends PropertyKey> = M extends keyof T
+    ? T[M] extends (...args: infer P) => unknown
+        ? P extends [infer A, ...unknown[]]
+            ? A
+            : never
+        : never
+    : never;
 
-// Modes d'auth usuels
+type DefaultCreateArg<K extends ClientModelKey> = MethodArg<ClientModels[K], "create">;
+type DefaultUpdateArg<K extends ClientModelKey> = MethodArg<ClientModels[K], "update">;
+type DefaultGetArg<K extends ClientModelKey> = MethodArg<ClientModels[K], "get">;
+type DefaultDeleteArg<K extends ClientModelKey> = MethodArg<ClientModels[K], "delete">;
+
 export type AuthMode = "apiKey" | "userPool" | "identityPool" | "iam" | "lambda";
-
-type CrudAuth = {
-    read?: AuthMode | AuthMode[]; // list/get
-    write?: AuthMode | AuthMode[]; // create/update/delete
-};
-
-// ✅ Options « sûres » pour les opérations Amplify
+type CrudAuth = { read?: AuthMode | AuthMode[]; write?: AuthMode | AuthMode[] };
 type AmplifyOpOptions = { authMode?: AuthMode } & Record<string, unknown>;
 
-interface CrudModel<K extends ClientModelKey> {
+interface CrudModel<K extends ClientModelKey, C, U, G, D> {
     list: (opts?: AmplifyOpOptions) => Promise<{ data: BaseModel<K>[] }>;
-    get: (args: { id: string }, opts?: AmplifyOpOptions) => Promise<{ data?: BaseModel<K> }>;
+    get: (args: G, opts?: AmplifyOpOptions) => Promise<{ data?: BaseModel<K> }>;
     create: (
-        data: CreateData<K>,
+        data: C,
         opts?: AmplifyOpOptions
     ) => Promise<{ data: BaseModel<K>; errors?: { message: string }[] }>;
     update: (
-        data: UpdateData<K>,
+        data: U,
         opts?: AmplifyOpOptions
     ) => Promise<{ data: BaseModel<K>; errors?: { message: string }[] }>;
     delete: (
-        args: { id: string },
+        args: D,
         opts?: AmplifyOpOptions
     ) => Promise<{ data: BaseModel<K>; errors?: { message: string }[] }>;
 }
 
-// ✅ Récupère le client typé
-function getModelClient<K extends ClientModelKey>(key: K): CrudModel<K> {
-    return client.models[key] as unknown as CrudModel<K>;
+function getModelClient<K extends ClientModelKey, C, U, G, D>(key: K): CrudModel<K, C, U, G, D> {
+    return client.models[key] as unknown as CrudModel<K, C, U, G, D>;
 }
 
 function toArray<T>(v?: T | T[]): T[] {
@@ -69,18 +66,19 @@ async function tryModes<T>(
 }
 
 /**
- * CRUD générique pour les *modèles* (❌ pas pour les customTypes).
+ * CRUD générique
+ * - par défaut, on infère depuis le client Amplify
+ * - si ça “tombe à never” sur un modèle, tu peux SURCHARGER C/U/G/D au call-site
  */
-export function crudService<K extends ClientModelKey>(
-    key: K,
-    opts?: {
-        auth?: CrudAuth; // ex: { read: ["apiKey","userPool"], write: "userPool" }
-        rules?: AuthRule[]; // filtrage client via canAccess
-    }
-) {
-    const model = getModelClient(key);
+export function crudService<
+    K extends ClientModelKey,
+    C = DefaultCreateArg<K>,
+    U = DefaultUpdateArg<K>,
+    G = DefaultGetArg<K>,
+    D = DefaultDeleteArg<K>,
+>(key: K, opts?: { auth?: CrudAuth; rules?: AuthRule[] }) {
+    const model = getModelClient<K, C, U, G, D>(key);
     const rules = opts?.rules ?? [{ allow: "public" }];
-
     const readModes = toArray(opts?.auth?.read);
     const writeModes = toArray(opts?.auth?.write);
 
@@ -95,20 +93,18 @@ export function crudService<K extends ClientModelKey>(
             return { data: data.filter((item) => canAccess(null, item, rules)) };
         },
 
-        async get(args: { id: string }) {
+        async get(args: G) {
             const res = await tryModes(readModes, (authMode) =>
                 model.get(
                     args,
                     (authMode ? { authMode } : undefined) as AmplifyOpOptions | undefined
                 )
             );
-            if (res.data && !canAccess(null, res.data, rules)) {
-                return { data: undefined };
-            }
+            if (res.data && !canAccess(null, res.data, rules)) return { data: undefined };
             return res;
         },
 
-        async create(data: CreateData<K>) {
+        async create(data: C) {
             return tryModes(writeModes, (authMode) =>
                 model.create(
                     data,
@@ -117,7 +113,7 @@ export function crudService<K extends ClientModelKey>(
             );
         },
 
-        async update(data: UpdateData<K>) {
+        async update(data: U) {
             return tryModes(writeModes, (authMode) =>
                 model.update(
                     data,
@@ -126,7 +122,7 @@ export function crudService<K extends ClientModelKey>(
             );
         },
 
-        async delete(args: { id: string }) {
+        async delete(args: D) {
             return tryModes(writeModes, (authMode) =>
                 model.delete(
                     args,

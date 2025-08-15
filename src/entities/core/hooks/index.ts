@@ -1,11 +1,5 @@
 "use client";
-export { default as useEntityManager } from "./useEntityManager";
-export type {
-    FieldKey,
-    SingleFieldConfig,
-    FieldConfig,
-    UseEntityManagerOptions,
-    EntityManagerResult,
-} from "./useEntityManager";
+
 export { default as useModelForm } from "./useModelForm";
-export type { FormMode, UseModelFormOptions, UseModelFormResult } from "./useModelForm";
+export { default as useModelForm2 } from "./useModelForm2";
+export type { FormMode, UseModelFormOptions, UseModelFormResult, FieldKey } from "./useModelForm";
