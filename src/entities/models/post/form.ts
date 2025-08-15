@@ -2,6 +2,7 @@ import { z, type ZodType } from "zod";
 import {
     type PostType,
     type PostFormType,
+    type PostTypeCreateInput,
     type PostTypeUpdateInput,
 } from "@entities/models/post/types";
 import { toSeoForm, initialSeoForm } from "@entities/customTypes/seo/form";
@@ -16,7 +17,7 @@ export const {
 } = createModelForm<
     PostType,
     PostFormType,
-    PostTypeUpdateInput,
+    PostTypeCreateInput,
     PostTypeUpdateInput,
     [string[], string[]]
 >({
@@ -62,7 +63,7 @@ export const {
         tagIds,
         sectionIds,
     }),
-    toCreate: (form: PostFormType): PostTypeUpdateInput => {
+    toCreate: (form: PostFormType): PostTypeCreateInput => {
         const { tagIds, sectionIds, ...values } = form;
         void tagIds;
         void sectionIds;
@@ -72,6 +73,6 @@ export const {
         const { tagIds, sectionIds, ...values } = form;
         void tagIds;
         void sectionIds;
-        return values;
+        return values as PostTypeUpdateInput;
     },
 });
