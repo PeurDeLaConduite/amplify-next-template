@@ -1,19 +1,37 @@
-import {
-    userNameSchema,
-    initialUserNameForm,
-    toUserNameForm,
-    toUserNameCreate,
-    toUserNameUpdate,
-} from "./form";
+// AUTO-GENERATED – DO NOT EDIT
+import type { UserNameType } from "./types";
+import { z } from "zod";
+
+export type UserNameEditableKeys =
+  | "userName";
 
 export const userNameConfig = {
-    auth: "owner",
-    identifier: "id",
-    fields: ["userName"],
-    relations: ["comments", "postComments"],
-    zodSchema: userNameSchema,
-    toForm: toUserNameForm,
-    toCreate: toUserNameCreate,
-    toUpdate: toUserNameUpdate,
-    initialForm: initialUserNameForm,
-};
+  model: "UserName" as const,
+
+  fields: [
+    "userName"
+  ] as UserNameEditableKeys[],
+
+  labels(field: UserNameEditableKeys): string {
+    switch (field) {
+    case "userName": return "UserName";
+      default: return field;
+    }
+  },
+
+  zodSchema: z.object({
+  userName: z.string().min(1),
+  }),
+
+  toInput(form: Partial<Record<UserNameEditableKeys, unknown>>) {
+    const f = form as Partial<Pick<UserNameType, "userName">>;
+    const input = {
+    userName: f.userName,
+    } satisfies Partial<UserNameType>;
+    return input;
+  },
+
+  relations: {
+    manyToManyKeys: [] as const
+  }
+} as const;

@@ -1,10 +1,3 @@
-import { crudService } from "@entities/core";
-import type { TagTypeCreateInput, TagTypeUpdateInput } from "./types";
-import type { IdArg } from "@entities/core/types";
-
-export const tagService = crudService<"Tag", TagTypeCreateInput, TagTypeUpdateInput, IdArg, IdArg>(
-    "Tag",
-    {
-        auth: { read: ["apiKey", "userPool"], write: "userPool" },
-    }
-);
+// AUTO-GENERATED – DO NOT EDIT
+import { crudService } from "@src/entities/core";
+export const tagService = crudService("Tag");

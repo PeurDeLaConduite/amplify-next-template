@@ -1,8 +1,18 @@
-import type { BaseModel, CreateOmit, UpdateInput, ModelForm } from "@entities/core";
+// AUTO-GENERATED – DO NOT EDIT
+import type { BaseModel, CreateOmit, UpdateInput, ModelForm } from "@src/entities/core";
+
 
 export type UserNameType = BaseModel<"UserName">;
 export type UserNameTypeOmit = CreateOmit<"UserName">;
-export type UserNameTypeCreateInput = UpdateInput<"UserName">;
-export type UserNameTypeUpdateInput = { id: string } & Partial<UserNameTypeCreateInput>;
-export type UserNameFormType = ModelForm<"UserName", "comments", "comments" >;
-export type UserNameMinimalType = { userName: string };
+export type UserNameTypeUpdateInput = UpdateInput<"UserName">;
+
+type CTMap = Record<string, never>;
+type RelKeys = never;
+
+export type UserNameFormType = ModelForm<
+  "UserName",
+  never,
+  RelKeys,
+  CTMap,
+  never
+>;

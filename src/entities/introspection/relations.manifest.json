@@ -1,0 +1,62 @@
+{
+  "Post": {
+    "tags": {
+      "kind": "manyToMany",
+      "through": "PostTag",
+      "parentKey": "postId",
+      "childKey": "tagId",
+      "child": "Tag"
+    },
+    "sections": {
+      "kind": "manyToMany",
+      "through": "SectionPost",
+      "parentKey": "postId",
+      "childKey": "sectionId",
+      "child": "Section"
+    },
+    "comments": {
+      "kind": "hasMany",
+      "child": "Comment",
+      "childFk": "postId"
+    }
+  },
+  "Tag": {
+    "posts": {
+      "kind": "manyToMany",
+      "through": "PostTag",
+      "parentKey": "tagId",
+      "childKey": "postId",
+      "child": "Post"
+    }
+  },
+  "Section": {
+    "posts": {
+      "kind": "manyToMany",
+      "through": "SectionPost",
+      "parentKey": "sectionId",
+      "childKey": "postId",
+      "child": "Post"
+    }
+  },
+  "Todo": {
+    "comments": {
+      "kind": "hasMany",
+      "child": "Comment",
+      "childFk": "todoId"
+    }
+  },
+  "UserName": {
+    "comments": {
+      "kind": "hasMany",
+      "child": "Comment",
+      "childFk": "userNameId"
+    }
+  },
+  "Author": {
+    "posts": {
+      "kind": "hasMany",
+      "child": "Post",
+      "childFk": "authorId"
+    }
+  }
+}

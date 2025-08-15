@@ -1,11 +1,18 @@
-// src/entities/models/author/types.tsx
+// AUTO-GENERATED – DO NOT EDIT
+import type { BaseModel, CreateOmit, UpdateInput, ModelForm } from "@src/entities/core";
 
-import type { BaseModel, CreateOmit, UpdateInput, ModelForm } from "@entities/core";
 
 export type AuthorType = BaseModel<"Author">;
 export type AuthorTypeOmit = CreateOmit<"Author">;
+export type AuthorTypeUpdateInput = UpdateInput<"Author">;
 
-export type AuthorTypeCreateInput = UpdateInput<"Author">;
-export type AuthorTypeUpdateInput = { id: string } & Partial<AuthorTypeCreateInput>;
+type CTMap = Record<string, never>;
+type RelKeys = never;
 
-export type AuthorFormType = ModelForm<"Author", "posts", "post">;
+export type AuthorFormType = ModelForm<
+  "Author",
+  never,
+  RelKeys,
+  CTMap,
+  never
+>;

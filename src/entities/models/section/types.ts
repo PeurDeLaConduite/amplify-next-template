@@ -1,11 +1,19 @@
-import type { BaseModel, CreateOmit, UpdateInput, ModelForm } from "@entities/core/types";
-import { type SeoTypeOmit } from "@entities/customTypes/seo/types";
+// AUTO-GENERATED – DO NOT EDIT
+import type { BaseModel, CreateOmit, UpdateInput, ModelForm } from "@src/entities/core";
 
-export type SectionTypes = BaseModel<"Section">;
-export type SectionTypesOmit = CreateOmit<"Section">;
-export type SectionTypesCreateInput = UpdateInput<"Section">;
-export type SectionTypesUpdateInput = { id: string } & Partial<SectionTypesCreateInput>;
+import type { SeoForm } from "@src/entities/customTypes/seo/form";
 
-type PostCustomTypes = { seo: SeoTypeOmit };
+export type SectionType = BaseModel<"Section">;
+export type SectionTypeOmit = CreateOmit<"Section">;
+export type SectionTypeUpdateInput = UpdateInput<"Section">;
 
-export type SectionFormTypes = ModelForm<"Section", "posts", "post", PostCustomTypes, "seo">;
+type CTMap = { Seo: SeoForm };
+type RelKeys = "post";
+
+export type SectionFormType = ModelForm<
+  "Section",
+  never,
+  RelKeys,
+  CTMap,
+  "Seo"
+>;
