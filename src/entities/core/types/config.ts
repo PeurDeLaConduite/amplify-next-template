@@ -40,5 +40,5 @@ export type ModelFields = Record<string, FieldDef | RelationDef | IdentifierDef>
 export interface ModelConfig {
     name: string;
     fields: ModelFields;
-    auth?: AuthRuleConfig[];
+    auth?: EntitiesAuthRule[];
 }
