@@ -1,5 +1,15 @@
-import { crudService } from "@entities/core";
+// src/entities/models/author/service.tsx
 
-export const authorService = crudService("Author", {
+import { crudService } from "@entities/core";
+import type { AuthorTypeUpdateInput, AuthorTypeCreateInput } from "./types";
+import type { IdArg } from "@entities/core/types";
+
+export const authorService = crudService<
+    "Author",
+    AuthorTypeCreateInput,
+    AuthorTypeUpdateInput,
+    IdArg,
+    IdArg
+>("Author", {
     auth: { read: ["apiKey", "userPool"], write: "userPool" },
 });

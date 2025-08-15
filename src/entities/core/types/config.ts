@@ -3,7 +3,7 @@
 /**
  * Règles d'authentification appliquées à une entité.
  */
-export type AuthRuleConfig =
+export type EntitiesAuthRule =
     | { allow: "owner"; ownerField?: string }
     | { allow: "groups"; groups: string[] }
     | { allow: "public" }
