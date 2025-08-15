@@ -1,4 +1,5 @@
-import { client, canAccess, type AuthRule } from "@src/entities/core";
+import { client, canAccess } from "@src/entities/core";
+import type { EntitiesAuthRule } from "@src/entities/core/types";
 
 import type { BlogData, Author, Post, Section } from "@src/types/blog";
 
@@ -13,7 +14,7 @@ export async function fetchBlogData(): Promise<BlogData> {
             client.models.SectionPost.list({ authMode: "apiKey" }),
         ]);
 
-    const publicRule: AuthRule[] = [{ allow: "public" }];
+    const publicRule: EntitiesAuthRule[] = [{ allow: "public" }];
 
     const authorData = authorsRes.data.filter((a) => canAccess(null, a, publicRule));
     const sectionData = sectionsRes.data.filter((s) => canAccess(null, s, publicRule));

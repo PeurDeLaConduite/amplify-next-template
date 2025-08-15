@@ -1,4 +1,4 @@
-import type { AuthRule } from "./types";
+import type { EntitiesAuthRule } from "./types";
 
 export interface AuthUser {
     username?: string;
@@ -8,7 +8,7 @@ export interface AuthUser {
 export function canAccess(
     user: AuthUser | null,
     entity: Record<string, unknown>,
-    rules: AuthRule[] = []
+    rules: EntitiesAuthRule[] = []
 ): boolean {
     for (const rule of rules) {
         switch (rule.allow) {

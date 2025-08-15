@@ -1,10 +1,21 @@
 // src/entities/core/types/model.ts
 
-import type { EntityConfig } from "@entities/core/types/config";
+/** Identifiant générique d'un modèle. */
+export type ModelId = string;
 
-/**
- * Modèle typé dérivé d'une configuration d'entité.
- */
-export type EntityModel<C extends EntityConfig> = {
-    [K in keyof C["fields"]]: unknown;
-};
+/** Champs de suivi temporel communs à toutes les entités. */
+export interface Timestamps {
+    createdAt: string;
+    updatedAt: string;
+}
+
+/** Représente une entité de base avec identifiant et timestamps. */
+export interface BaseEntity extends Timestamps {
+    id: ModelId;
+}
+
+/** Relation optionnelle vers une autre entité. */
+export type Relation<T> = T | null;
+
+/** Collection relationnelle. */
+export type RelationArray<T> = T[];
