@@ -1,3 +1,5 @@
-// AUTO-GENERATED – DO NOT EDIT
-import { crudService } from "@src/entities/core";
-export const authorService = crudService("Author");
+import { crudService } from "@entities/core";
+
+export const authorService = crudService("Author", {
+    auth: { read: ["apiKey", "userPool"], write: "userPool" },
+});

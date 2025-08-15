@@ -1,32 +1,38 @@
-// AUTO-GENERATED – DO NOT EDIT
-    import type { TagType, TagFormType, TagTypeOmit } from "./types";
-    import { createModelForm } from "@src/entities/core";
-    
-    
-    export const initialTagForm: TagFormType = {
-      id: "",
-  name: "",
-  postIds: [] as string[],
-    };
-    
-    function toTagForm(model: TagType, postIds: string[] = []): TagFormType {
-      return {
-      name: model.name ?? "",
-  postIds,
-      };
-    }
-    
-    function toTagInput(form: TagFormType): TagTypeOmit {
-      const { postIds, ...rest } = form;
-  void postIds;
-  return rest as TagTypeOmit;
-    }
-    
-    export const tagForm = createModelForm<TagType, TagFormType, [string[]], TagTypeOmit>(
-      initialTagForm,
-      (model, postIds: string[] = []) => toTagForm(model, postIds),
-      toTagInput
-    );
-    
-    export { toTagForm, toTagInput };
-    
+import { z, type ZodType } from "zod";
+import { createModelForm } from "@entities/core";
+import {
+    type TagType,
+    type TagFormType,
+    type TagTypeUpdateInput,
+} from "@entities/models/tag/types";
+
+export const {
+    zodSchema: tagSchema,
+    initialForm: initialTagForm,
+    toForm: toTagForm,
+    toCreate: toTagCreate,
+    toUpdate: toTagUpdate,
+} = createModelForm<TagType, TagFormType, TagTypeUpdateInput, TagTypeUpdateInput, [string[]]>({
+    zodSchema: z.object({
+        name: z.string(),
+        postIds: z.array(z.string()),
+    }) as ZodType<TagFormType>,
+    initialForm: {
+        name: "",
+        postIds: [],
+    },
+    toForm: (tag, postIds: string[] = []) => ({
+        name: tag.name ?? "",
+        postIds,
+    }),
+    toCreate: (form: TagFormType): TagTypeUpdateInput => {
+        const { postIds, ...values } = form;
+        void postIds;
+        return values;
+    },
+    toUpdate: (form: TagFormType): TagTypeUpdateInput => {
+        const { postIds, ...values } = form;
+        void postIds;
+        return values;
+    },
+});

@@ -1,49 +1,45 @@
 // src/entities/core/services/crudService.ts
 import { client, Schema } from "./amplifyClient";
 import { canAccess } from "../auth";
-import type { EntitiesAuthRule } from "../types";
+import type { AuthRule } from "../types";
 
+// 🧠 Utiliser les signatures réelles du client Amplify
 type ClientModels = typeof client.models;
 type ClientModelKey = keyof ClientModels;
+
 type BaseModel<K extends ClientModelKey> = Schema[K]["type"];
-
-/** Infère le 1er argument d’une méthode seulement si la clé existe */
-type MethodArg<T, M extends PropertyKey> = M extends keyof T
-    ? T[M] extends (...args: infer P) => unknown
-        ? P extends [infer A, ...unknown[]]
-            ? A
-            : never
-        : never
-    : never;
-
-type DefaultCreateArg<K extends ClientModelKey> = MethodArg<ClientModels[K], "create">;
-type DefaultUpdateArg<K extends ClientModelKey> = MethodArg<ClientModels[K], "update">;
-type DefaultGetArg<K extends ClientModelKey> = MethodArg<ClientModels[K], "get">;
-type DefaultDeleteArg<K extends ClientModelKey> = MethodArg<ClientModels[K], "delete">;
+// @ts-expect-error no explain
+type CreateArg<K extends ClientModelKey> = Parameters<ClientModels[K]["create"]>[0];
+// @ts-expect-error no explain
+type UpdateArg<K extends ClientModelKey> = Parameters<ClientModels[K]["update"]>[0];
+// @ts-expect-error no explain
+type GetArg<K extends ClientModelKey> = Parameters<ClientModels[K]["get"]>[0];
+// @ts-expect-error no explain
+type DeleteArg<K extends ClientModelKey> = Parameters<ClientModels[K]["delete"]>[0];
 
 export type AuthMode = "apiKey" | "userPool" | "identityPool" | "iam" | "lambda";
 type CrudAuth = { read?: AuthMode | AuthMode[]; write?: AuthMode | AuthMode[] };
 type AmplifyOpOptions = { authMode?: AuthMode } & Record<string, unknown>;
 
-interface CrudModel<K extends ClientModelKey, C, U, G, D> {
+interface CrudModel<K extends ClientModelKey> {
     list: (opts?: AmplifyOpOptions) => Promise<{ data: BaseModel<K>[] }>;
-    get: (args: G, opts?: AmplifyOpOptions) => Promise<{ data?: BaseModel<K> }>;
+    get: (args: GetArg<K>, opts?: AmplifyOpOptions) => Promise<{ data?: BaseModel<K> }>;
     create: (
-        data: C,
+        data: CreateArg<K>,
         opts?: AmplifyOpOptions
     ) => Promise<{ data: BaseModel<K>; errors?: { message: string }[] }>;
     update: (
-        data: U,
+        data: UpdateArg<K>,
         opts?: AmplifyOpOptions
     ) => Promise<{ data: BaseModel<K>; errors?: { message: string }[] }>;
     delete: (
-        args: D,
+        args: DeleteArg<K>,
         opts?: AmplifyOpOptions
     ) => Promise<{ data: BaseModel<K>; errors?: { message: string }[] }>;
 }
 
-function getModelClient<K extends ClientModelKey, C, U, G, D>(key: K): CrudModel<K, C, U, G, D> {
-    return client.models[key] as unknown as CrudModel<K, C, U, G, D>;
+function getModelClient<K extends ClientModelKey>(key: K): CrudModel<K> {
+    return client.models[key] as unknown as CrudModel<K>;
 }
 
 function toArray<T>(v?: T | T[]): T[] {
@@ -65,19 +61,11 @@ async function tryModes<T>(
     throw lastErr;
 }
 
-/**
- * CRUD générique
- * - par défaut, on infère depuis le client Amplify
- * - si ça “tombe à never” sur un modèle, tu peux SURCHARGER C/U/G/D au call-site
- */
-export function crudService<
-    K extends ClientModelKey,
-    C = DefaultCreateArg<K>,
-    U = DefaultUpdateArg<K>,
-    G = DefaultGetArg<K>,
-    D = DefaultDeleteArg<K>,
->(key: K, opts?: { auth?: CrudAuth; rules?: EntitiesAuthRule[] }) {
-    const model = getModelClient<K, C, U, G, D>(key);
+export function crudService<K extends ClientModelKey>(
+    key: K,
+    opts?: { auth?: CrudAuth; rules?: AuthRule[] }
+) {
+    const model = getModelClient(key);
     const rules = opts?.rules ?? [{ allow: "public" }];
     const readModes = toArray(opts?.auth?.read);
     const writeModes = toArray(opts?.auth?.write);
@@ -93,7 +81,7 @@ export function crudService<
             return { data: data.filter((item) => canAccess(null, item, rules)) };
         },
 
-        async get(args: G) {
+        async get(args: GetArg<K>) {
             const res = await tryModes(readModes, (authMode) =>
                 model.get(
                     args,
@@ -104,7 +92,7 @@ export function crudService<
             return res;
         },
 
-        async create(data: C) {
+        async create(data: CreateArg<K>) {
             return tryModes(writeModes, (authMode) =>
                 model.create(
                     data,
@@ -113,7 +101,7 @@ export function crudService<
             );
         },
 
-        async update(data: U) {
+        async update(data: UpdateArg<K>) {
             return tryModes(writeModes, (authMode) =>
                 model.update(
                     data,
@@ -122,7 +110,7 @@ export function crudService<
             );
         },
 
-        async delete(args: D) {
+        async delete(args: DeleteArg<K>) {
             return tryModes(writeModes, (authMode) =>
                 model.delete(
                     args,

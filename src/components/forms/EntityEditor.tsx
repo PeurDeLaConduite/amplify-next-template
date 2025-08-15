@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import type { FieldKey } from "@entities/core/hooks";
-import type { EditMode } from "@entities/core/types";
+import type { FieldKey, FormMode } from "@entities/core/hooks";
 import ReadOnlyView from "./ReadOnlyView";
 import EditField from "./EditField";
 import EntityForm from "./EntityForm";
@@ -27,7 +26,7 @@ export type EntityEditorProps<T extends Record<string, unknown>> = {
     /** Données du formulaire */
     form: T;
     /** Mode du formulaire (création/édition) */
-    mode: EditMode;
+    mode: FormMode;
     /** Indicateur de modification */
     dirty: boolean;
     /** Gestion des changements */
