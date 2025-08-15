@@ -1,7 +1,12 @@
 // src/entities/models/userName/service.ts
-import { crudService } from "@entities/core/services/crudService";
+import { crudService } from "@entities/core";
+import type { UserNameTypeCreateInput, UserNameTypeUpdateInput } from "./types";
+import type { IdArg } from "@entities/core/types";
 
-// ✅ Lecture en public (API key), écritures avec User Pool
-export const userNameService = crudService("UserName", {
-    auth: { read: "apiKey", write: "userPool" },
-});
+export const userNameService = crudService<
+    "UserName",
+    UserNameTypeCreateInput,
+    UserNameTypeUpdateInput,
+    IdArg,
+    IdArg
+>("UserName");
