@@ -4,7 +4,7 @@ Le module `core` rassemble les outils de base pour manipuler les entités de l'a
 
 ## Index
 
-Le fichier [`index.ts`](./index.ts) ré-exporte les contenus des sous-dossiers `services`, `hooks`, `utils` et `types`. Cela permet d'importer toutes les fonctionnalités du module depuis `@src/entities/core` sans connaître la structure interne.
+Le fichier [`index.ts`](./index.ts) ré-exporte les contenus des sous-dossiers `services`, `hooks`, `utils` et `types`. Cela permet d'importer toutes les fonctionnalités du module depuis `@entities/core` sans connaître la structure interne.
 
 ## Rôle des sous-dossiers
 

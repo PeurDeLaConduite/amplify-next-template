@@ -9,7 +9,7 @@ import EditableTextArea from "@components/forms/EditableTextArea";
 import SeoFields from "@components/forms/SeoFields";
 import OrderSelector from "@components/forms/OrderSelector";
 import SelectField from "@components/forms/SelectField";
-import { type PostType } from "@/src/entities/models/post";
+import { type PostType } from "@entities/models/post";
 import { type SeoFormType } from "@entities/customTypes/seo/types";
 import { type PostFormType } from "@entities/models/post/types";
 
