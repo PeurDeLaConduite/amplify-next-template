@@ -123,13 +123,20 @@ export function createEntityHooks<T extends Record<string, string>>(
             }
         };
 
+        /**
+         * Recharge les données depuis le service.
+         * Alias pratique de `fetchData` exposé par `useEntityManager`.
+         */
+        const refresh = manager.fetchData;
+
         return {
             form: manager.formData,
             mode,
             dirty,
             reset,
             submit: manager.save,
-            refresh: manager.fetchData,
+            refresh,
+            fetchData: manager.fetchData,
             setForm: manager.setFormData,
             handleChange: manager.handleChange,
             fields: manager.fields,
