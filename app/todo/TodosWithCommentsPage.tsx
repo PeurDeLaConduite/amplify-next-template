@@ -12,6 +12,7 @@ type CommentWithTodoId = {
     createdAt: string;
     todoId?: string;
     postId?: string;
+    userName?: { userName?: string | null } | null;
 };
 
 export default function TodosWithCommentsPage() {
@@ -25,9 +26,20 @@ export default function TodosWithCommentsPage() {
         const todoSub = (todoClient as any).observeQuery().subscribe({
             next: (data: any) => setTodos([...(data.items as Schema["Todo"]["type"][])]),
         });
-        const commentSub = commentClient.observeQuery().subscribe({
-            next: (data) => setComments([...(data.items as CommentWithTodoId[])]),
-        });
+        const commentSub = commentClient
+            .observeQuery({
+                selectionSet: [
+                    "id",
+                    "content",
+                    "createdAt",
+                    "todoId",
+                    "postId",
+                    "userName.userName",
+                ],
+            })
+            .subscribe({
+                next: (data) => setComments([...(data.items as CommentWithTodoId[])]),
+            });
         // -- Cleanup au unmount
         return () => {
             todoSub.unsubscribe();
@@ -163,6 +175,7 @@ function CommentList({ comments, onDeleteComment }: CommentListProps) {
                     key={comment.id}
                     className="flex items-center gap-2 bg-white rounded px-2 py-1 shadow-sm"
                 >
+                    <span>{comment.userName?.userName}</span>
                     <span className="flex-1 text-gray-800">{comment.content}</span>
                     <button
                         onClick={() => onDeleteComment(comment.id)}
