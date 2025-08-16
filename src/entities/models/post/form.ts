@@ -5,6 +5,7 @@ import {
     type PostTypeUpdateInput,
 } from "@entities/models/post/types";
 import { toSeoForm, initialSeoForm, seoSchema } from "@entities/customTypes/seo";
+import type { SeoType } from "@entities/customTypes/seo";
 import { createModelForm } from "@entities/core";
 
 export const {
@@ -58,7 +59,7 @@ export const {
         order: post.order ?? 1,
         videoUrl: post.videoUrl ?? "",
         type: post.type ?? "",
-        seo: toSeoForm(post.seo),
+        seo: toSeoForm((post.seo ?? {}) as SeoType),
         tagIds,
         sectionIds,
     }),

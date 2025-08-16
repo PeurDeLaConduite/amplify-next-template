@@ -5,6 +5,7 @@ import {
     type SectionTypesUpdateInput,
 } from "@entities/models/section/types";
 import { toSeoForm, initialSeoForm, seoSchema } from "@entities/customTypes/seo";
+import type { SeoType } from "@entities/customTypes/seo";
 import { createModelForm } from "@entities/core";
 
 export const {
@@ -41,7 +42,7 @@ export const {
         title: section.title ?? "",
         description: section.description ?? "",
         order: section.order ?? 1,
-        seo: toSeoForm(section.seo),
+        seo: toSeoForm((section.seo ?? {}) as SeoType),
         postIds,
     }),
     toCreate: (form: SectionFormTypes): SectionTypesUpdateInput => {
