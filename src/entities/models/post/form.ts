@@ -30,7 +30,7 @@ export const {
         order: z.number(),
         videoUrl: z.string(),
         type: z.string(),
-        seo: z.any(),
+        seo: z.object(),
         tagIds: z.array(z.string()),
         sectionIds: z.array(z.string()),
     }) as ZodType<PostFormType>,
