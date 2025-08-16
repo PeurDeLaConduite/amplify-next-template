@@ -11324,7 +11324,6 @@ __metadata:
     esbuild: "npm:^0.23.1"
     eslint: "npm:^9.15.0"
     eslint-config-next: "npm:15.3.1"
-    execa: "npm:^9.5.2"
     file-saver: "npm:^2.0.5"
     global: "npm:^4.4.0"
     js-cookie: "npm:^3.0.5"
@@ -13901,7 +13900,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"execa@npm:^9.5.1, execa@npm:^9.5.2":
+"execa@npm:^9.5.1":
   version: 9.5.3
   resolution: "execa@npm:9.5.3"
   dependencies:
