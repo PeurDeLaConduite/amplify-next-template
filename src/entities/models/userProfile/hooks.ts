@@ -4,7 +4,7 @@ import type { UserProfileFormType } from "./types";
 import { userProfileConfig } from "./config";
 import { userProfileService } from "./service";
 
-export const useUserProfileManager = createEntityHooks<UserProfileFormType>({
+export const useUserProfileForm = createEntityHooks<UserProfileFormType>({
     ...userProfileConfig,
     service: userProfileService,
 });

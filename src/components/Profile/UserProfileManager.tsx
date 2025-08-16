@@ -54,7 +54,7 @@ export default function UserProfileManager() {
     };
     useEffect(() => {
         if (user) {
-            void profile.fetchProfile();
+            void profile.refresh();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
@@ -89,7 +89,7 @@ export default function UserProfileManager() {
             labels={profile.labels}
             saveField={profile.saveField}
             clearField={profile.clearField}
-            deleteEntity={profile.deleteProfile}
+            deleteEntity={profile.remove}
             loading={profile.loading}
         />
     );

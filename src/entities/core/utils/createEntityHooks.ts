@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import { useEntityManager, type FieldKey, type FieldConfig } from "@entities/core/hooks";
+import type { EditMode } from "@entities/core/types";
 
 interface EntityService<T extends Record<string, string>> {
     get: (id: string) => Promise<(T & { id?: string }) | null>;
@@ -101,6 +102,43 @@ export function createEntityHooks<T extends Record<string, string>>(
             config: fieldConfig,
         });
 
-        return { ...manager, error };
+        const mode: EditMode = manager.entity ? "edit" : "create";
+
+        const dirty = useMemo(() => {
+            if (mode === "edit" && manager.entity) {
+                return config.fields.some((f) => manager.formData[f] !== manager.entity?.[f]);
+            }
+            return config.fields.some((f) => manager.formData[f] !== initialData[f]);
+        }, [mode, manager.entity, manager.formData, initialData]);
+
+        const reset = () => {
+            if (manager.entity) {
+                const next = config.fields.reduce(
+                    (acc, f) => ({ ...acc, [f]: manager.entity?.[f] ?? initialData[f] }),
+                    {} as T
+                );
+                manager.setFormData(next);
+            } else {
+                manager.setFormData(initialData);
+            }
+        };
+
+        return {
+            form: manager.formData,
+            mode,
+            dirty,
+            reset,
+            submit: manager.save,
+            refresh: manager.fetchData,
+            setForm: manager.setFormData,
+            handleChange: manager.handleChange,
+            fields: manager.fields,
+            labels: manager.labels,
+            saveField: manager.saveField,
+            clearField: manager.clearField,
+            remove: manager.deleteEntity,
+            loading: manager.loading,
+            error,
+        } as const;
     };
 }
