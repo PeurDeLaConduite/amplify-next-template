@@ -1,6 +1,6 @@
 // AUTO-GENERATED – DO NOT EDIT
 import type { PostType, PostFormType, PostTypeOmit } from "./types";
-import { createModelForm } from "@src/entities/core";
+import { createModelForm } from "@entities/core";
 import { initialSeoForm, toSeoForm, toSeoInput } from "@src/entities/customTypes/seo/form";
 
 export const initialPostForm: PostFormType = {

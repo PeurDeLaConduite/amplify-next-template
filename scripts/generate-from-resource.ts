@@ -443,7 +443,7 @@ function scaffoldModel(m: ModelMeta, rels: Record<string, RelationDef>) {
         })
         .join(",\n");
 
-    const configTs = `import { defineEntity } from "@src/entities/core/defineEntity";
+    const configTs = `import { defineEntity } from "@entities/core/defineEntity";
 export const ${lower(m.name)}Config = defineEntity({
   model: "${m.name}",
   fields: {
@@ -457,13 +457,13 @@ ${relsConfig}
     safeWrite(path.join(dir, "config.ts"), configTs);
 
     // service.ts
-    const serviceTs = `import { crudService } from "@src/entities/core/services/crudService";
+    const serviceTs = `import { crudService } from "@entities/core/services/crudService";
 export const ${lower(m.name)}Service = crudService("${m.name}");
 `;
     safeWrite(path.join(dir, "service.ts"), serviceTs);
 
     // form.ts
-    const formTs = `import { createModelForm } from "@src/entities/core";
+    const formTs = `import { createModelForm } from "@entities/core";
 import type { ${m.name}Type, ${m.name}FormType, ${m.name}TypeOmit } from "./types";
 
 export const initial${m.name}Form: ${m.name}FormType = {} as ${m.name}FormType;
@@ -484,7 +484,7 @@ export const ${lower(m.name)}Form = createModelForm<${m.name}Type, ${m.name}Form
     safeWrite(path.join(dir, "form.ts"), formTs);
 
     // hooks.ts
-    const hooksTs = `import { createEntityHooks } from "@src/entities/core/createEntityHooks";
+    const hooksTs = `import { createEntityHooks } from "@entities/core/createEntityHooks";
 import { ${lower(m.name)}Config } from "./config";
 export const { useManager: use${m.name}Manager, service: ${lower(m.name)}Service2, form: ${lower(m.name)}Form2 } = createEntityHooks(${lower(m.name)}Config);
 `;

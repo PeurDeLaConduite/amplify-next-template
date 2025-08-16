@@ -1,6 +1,6 @@
 // AUTO-GENERATED – DO NOT EDIT
 import type { TodoType, TodoFormType, TodoTypeOmit } from "./types";
-import { createModelForm } from "@src/entities/core";
+import { createModelForm } from "@entities/core";
 
 export const initialTodoForm: TodoFormType = {
     id: "",

@@ -1,6 +1,6 @@
 // AUTO-GENERATED – DO NOT EDIT
 import type { AuthorType, AuthorFormType, AuthorTypeOmit } from "./types";
-import { createModelForm } from "@src/entities/core";
+import { createModelForm } from "@entities/core";
 
 export const initialAuthorForm: AuthorFormType = {
     id: "",
