@@ -23,28 +23,43 @@ export function useTodosWithComments() {
     const { canModifyComment } = useCommentPermissions();
 
     useEffect(() => {
-        const todoSub = todoClient.observeQuery().subscribe({
-            next: ({ items }) => setTodos([...(items as Schema["Todo"]["type"][])]),
-        });
-        const commentSub = commentClient
-            .observeQuery({
-                selectionSet: [
-                    "id",
-                    "content",
-                    "createdAt",
-                    "todoId",
-                    "postId",
-                    "userNameId",
-                    "userName.userName",
-                ],
-            })
-            .subscribe({
-                // @ts-expect-error : no explain
-                next: (data) => setComments([...(data.items as CommentWithTodoId[])]),
+        let todoSub: { unsubscribe: () => void } | undefined;
+        let commentSub: { unsubscribe: () => void } | undefined;
+
+        (async () => {
+            const options: { authMode?: "apiKey" } = {};
+            try {
+                await getCurrentUser();
+            } catch {
+                options.authMode = "apiKey";
+            }
+
+            todoSub = todoClient.observeQuery(options).subscribe({
+                next: ({ items }) => setTodos([...(items as Schema["Todo"]["type"][])]),
             });
+
+            commentSub = commentClient
+                .observeQuery({
+                    ...options,
+                    selectionSet: [
+                        "id",
+                        "content",
+                        "createdAt",
+                        "todoId",
+                        "postId",
+                        "userNameId",
+                        "userName.userName",
+                    ],
+                })
+                .subscribe({
+                    // @ts-expect-error : no explain
+                    next: (data) => setComments([...(data.items as CommentWithTodoId[])]),
+                });
+        })();
+
         return () => {
-            todoSub.unsubscribe();
-            commentSub.unsubscribe();
+            todoSub?.unsubscribe();
+            commentSub?.unsubscribe();
         };
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 

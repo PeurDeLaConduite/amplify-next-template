@@ -4,8 +4,8 @@ import { CommentWithTodoId } from "@src/features/todo/useTodosWithComments";
 interface CommentListProps {
     comments: CommentWithTodoId[];
     onEditComment: (id: string, ownerId?: string) => void;
-    onDeleteComment: (id: string, ownerId?: string | group("ADMINS")) => void;
-    canModify: (ownerId?: string | group("ADMINS")) => boolean;
+    onDeleteComment: (id: string, ownerId?: string) => void;
+    canModify: (ownerId?: string) => boolean;
 }
 
 export default function CommentList({
