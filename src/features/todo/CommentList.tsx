@@ -4,8 +4,8 @@ import { CommentWithTodoId } from "@src/features/todo/useTodosWithComments";
 interface CommentListProps {
     comments: CommentWithTodoId[];
     onEditComment: (id: string, ownerId?: string) => void;
-    onDeleteComment: (id: string, ownerId?: string | group("ADMINS")) => void;
-    canModify: (ownerId?: string | group("ADMINS")) => boolean;
+    onDeleteComment: (id: string, ownerId?: string) => void;
+    canModify: (ownerId?: string | null) => boolean;
 }
 
 export default function CommentList({
@@ -31,13 +31,17 @@ export default function CommentList({
                         {canModify(comment.userNameId) && (
                             <div className="flex gap-2">
                                 <button
-                                    onClick={() => onEditComment(comment.id, comment.userNameId)}
+                                    onClick={() =>
+                                        onEditComment(comment.id, comment.userNameId)
+                                    }
                                     className="text-xs px-2 py-1 rounded-md bg-yellow-50 hover:bg-yellow-100 text-yellow-700 border border-yellow-200 transition"
                                 >
                                     ✏️ Modifier
                                 </button>
                                 <button
-                                    onClick={() => onDeleteComment(comment.id, comment.userNameId)}
+                                    onClick={() =>
+                                        onDeleteComment(comment.id, comment.userNameId)
+                                    }
                                     className="text-xs px-2 py-1 rounded-md bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 transition"
                                 >
                                     ❌ Supprimer
@@ -46,7 +50,9 @@ export default function CommentList({
                         )}
                     </div>
 
-                    <p className="text-gray-800 text-sm leading-snug">{comment.content}</p>
+                    <p className="text-gray-800 text-sm leading-snug">
+                        {comment.content}
+                    </p>
                 </li>
             ))}
         </ul>
