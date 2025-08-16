@@ -90,6 +90,7 @@ export default function UserProfileManager() {
             saveField={profile.saveField}
             clearField={profile.clearField}
             deleteEntity={profile.deleteProfile}
+            loading={profile.loading}
         />
     );
 }

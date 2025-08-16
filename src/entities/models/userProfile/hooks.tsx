@@ -21,6 +21,7 @@ export function useUserProfileForm(): UserProfileFormResult {
     const { user } = useAuthenticator();
     const sub = user?.userId ?? user?.username;
     const [error, setError] = useState<Error | null>(null);
+    const [loading, setLoading] = useState(false);
 
     const initialForm: UserProfileMinimalType = {
         firstName: "",
@@ -67,6 +68,7 @@ export function useUserProfileForm(): UserProfileFormResult {
 
     const fetchProfile = async (): Promise<UserProfileMinimalType | null> => {
         if (!sub) return null;
+        setLoading(true);
         try {
             const { data } = await userProfileService.get({ id: sub });
             if (!data) return null;
@@ -84,17 +86,22 @@ export function useUserProfileForm(): UserProfileFormResult {
         } catch (e) {
             setError(e as Error);
             return null;
+        } finally {
+            setLoading(false);
         }
     };
 
     const saveField = async (field: keyof UserProfileMinimalType, value: string): Promise<void> => {
         if (!sub) return;
+        setLoading(true);
         try {
             setError(null);
             await userProfileService.update({ id: sub, [field]: value });
             setForm((f) => ({ ...f, [field]: value }));
         } catch (e) {
             setError(e as Error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -104,6 +111,7 @@ export function useUserProfileForm(): UserProfileFormResult {
 
     const deleteProfile = async (): Promise<void> => {
         if (!sub) return;
+        setLoading(true);
         try {
             setError(null);
             await userProfileService.delete({ id: sub });
@@ -111,6 +119,8 @@ export function useUserProfileForm(): UserProfileFormResult {
             reset();
         } catch (e) {
             setError(e as Error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -126,6 +136,7 @@ export function useUserProfileForm(): UserProfileFormResult {
 
     return {
         ...formManager,
+        loading: loading || formManager.saving,
         fetchProfile,
         saveField,
         clearField,

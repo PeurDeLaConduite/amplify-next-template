@@ -22,7 +22,8 @@ export default function UserNameManager() {
         if (user) {
             void manager.refresh(); // 🔄 charge/rafraîchit au montage et quand l'user change
         }
-    }, [user, manager.refresh]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user]);
 
     if (!user) return <Authenticator />;
 
@@ -57,6 +58,7 @@ export default function UserNameManager() {
             saveField={manager.saveField} // ⬅️ refetch inclus
             clearField={manager.clearField}
             deleteEntity={manager.remove} // ⬅️ refetch inclus
+            loading={manager.loading}
         />
     );
 }

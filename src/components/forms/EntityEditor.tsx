@@ -48,6 +48,8 @@ export type EntityEditorProps<T extends Record<string, unknown>> = {
     clearField?: (field: FieldKey<T>) => Promise<void>;
     /** Suppression de l'entité */
     deleteEntity?: () => Promise<void>;
+    /** Indique si une opération est en cours */
+    loading?: boolean;
 };
 
 export default function EntityEditor<T extends Record<string, unknown>>(
@@ -72,6 +74,7 @@ export default function EntityEditor<T extends Record<string, unknown>>(
         saveField,
         clearField,
         deleteEntity,
+        loading = false,
     } = props;
     const [editModeField, setEditModeField] = useState<{
         field: FieldKey<T>;
@@ -91,6 +94,19 @@ export default function EntityEditor<T extends Record<string, unknown>>(
             void clearField?.(field);
         }
     };
+
+    if (loading) {
+        return (
+            <section
+                className={`w-full max-w-md mx-auto px-4 py-6 bg-white shadow rounded-lg mb-8 ${
+                    className ?? ""
+                }`}
+            >
+                <h1 className="text-2xl font-bold text-center mb-6">{title}</h1>
+                <p className="text-center text-gray-500">Chargement…</p>
+            </section>
+        );
+    }
 
     return (
         <section
