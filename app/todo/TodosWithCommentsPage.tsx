@@ -5,6 +5,7 @@ import "@aws-amplify/ui-react/styles.css";
 import { getCurrentUser } from "aws-amplify/auth";
 import { useTodoService, todoService } from "@src/entities/models/todo";
 import { useCommentService, commentService } from "@src/entities/models/comment";
+import { useCommentPermissions } from "@src/hooks/useCommentPermissions";
 
 type CommentWithTodoId = {
     id: string;
@@ -12,6 +13,7 @@ type CommentWithTodoId = {
     createdAt: string;
     todoId?: string;
     postId?: string;
+    userNameId?: string;
     userName?: { userName?: string | null } | null;
 };
 
@@ -20,6 +22,7 @@ export default function TodosWithCommentsPage() {
     const [comments, setComments] = useState<CommentWithTodoId[]>([]);
     const todoClient = useTodoService();
     const commentClient = useCommentService();
+    const { canModifyComment } = useCommentPermissions();
 
     useEffect(() => {
         // -- Abonnement au mount
@@ -34,6 +37,7 @@ export default function TodosWithCommentsPage() {
                     "createdAt",
                     "todoId",
                     "postId",
+                    "userNameId",
                     "userName.userName",
                 ],
             })
@@ -63,11 +67,19 @@ export default function TodosWithCommentsPage() {
         await commentService.create({
             content,
             todoId,
-            userNameId, 
+            userNameId,
         });
     };
 
-    const deleteComment = (id: string) => {
+    const editComment = async (id: string, ownerId?: string) => {
+        if (!canModifyComment(ownerId)) return;
+        const content = window.prompt("Modifier ce commentaire ?");
+        if (!content) return;
+        await commentService.update({ id, content });
+    };
+
+    const deleteComment = (id: string, ownerId?: string) => {
+        if (!canModifyComment(ownerId)) return;
         if (confirm("Supprimer ce commentaire ?")) {
             void commentService.delete({ id });
         }
@@ -104,7 +116,9 @@ export default function TodosWithCommentsPage() {
                 comments={comments}
                 onDeleteTodo={deleteTodo}
                 onAddComment={addComment}
+                onEditComment={editComment}
                 onDeleteComment={deleteComment}
+                canModify={canModifyComment}
             />
         </section>
     );
@@ -115,10 +129,20 @@ interface TodoListProps {
     comments: CommentWithTodoId[];
     onDeleteTodo: (id: string) => void;
     onAddComment: (todoId: string) => void;
-    onDeleteComment: (id: string) => void;
+    onEditComment: (id: string, ownerId?: string) => void;
+    onDeleteComment: (id: string, ownerId?: string) => void;
+    canModify: (ownerId?: string | null) => boolean;
 }
 
-function TodoList({ todos, comments, onDeleteTodo, onAddComment, onDeleteComment }: TodoListProps) {
+function TodoList({
+    todos,
+    comments,
+    onDeleteTodo,
+    onAddComment,
+    onEditComment,
+    onDeleteComment,
+    canModify,
+}: TodoListProps) {
     if (todos.length === 0)
         return <div className="text-gray-400 text-center py-12">Aucun todo pour le moment.</div>;
 
@@ -151,7 +175,9 @@ function TodoList({ todos, comments, onDeleteTodo, onAddComment, onDeleteComment
                         {todoComments.length > 0 && (
                             <CommentList
                                 comments={todoComments}
+                                onEditComment={onEditComment}
                                 onDeleteComment={onDeleteComment}
+                                canModify={canModify}
                             />
                         )}
                     </li>
@@ -164,10 +190,12 @@ function TodoList({ todos, comments, onDeleteTodo, onAddComment, onDeleteComment
 // Composant de gestion et affichage des commentaires
 interface CommentListProps {
     comments: CommentWithTodoId[];
-    onDeleteComment: (id: string) => void;
+    onEditComment: (id: string, ownerId?: string) => void;
+    onDeleteComment: (id: string, ownerId?: string) => void;
+    canModify: (ownerId?: string | null) => boolean;
 }
 
-function CommentList({ comments, onDeleteComment }: CommentListProps) {
+function CommentList({ comments, onEditComment, onDeleteComment, canModify }: CommentListProps) {
     return (
         <ul className="ml-6 mt-2 space-y-1">
             {comments.map((comment) => (
@@ -177,12 +205,22 @@ function CommentList({ comments, onDeleteComment }: CommentListProps) {
                 >
                     <span>{comment.userName?.userName}</span>
                     <span className="flex-1 text-gray-800">{comment.content}</span>
-                    <button
-                        onClick={() => onDeleteComment(comment.id)}
-                        className="text-xs px-2 py-1 rounded bg-red-100 hover:bg-red-200 text-red-600 transition"
-                    >
-                        ❌
-                    </button>
+                    {canModify(comment.userNameId) && (
+                        <div className="flex gap-1">
+                            <button
+                                onClick={() => onEditComment(comment.id, comment.userNameId)}
+                                className="text-xs px-2 py-1 rounded bg-yellow-100 hover:bg-yellow-200 text-yellow-700 transition"
+                            >
+                                ✏️
+                            </button>
+                            <button
+                                onClick={() => onDeleteComment(comment.id, comment.userNameId)}
+                                className="text-xs px-2 py-1 rounded bg-red-100 hover:bg-red-200 text-red-600 transition"
+                            >
+                                ❌
+                            </button>
+                        </div>
+                    )}
                 </li>
             ))}
         </ul>
