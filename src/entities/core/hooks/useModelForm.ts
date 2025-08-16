@@ -1,9 +1,8 @@
 // src/entities/core/hooks/useModelForm.ts
 "use client";
 import { useCallback, useMemo, useRef, useState } from "react";
-import type { EditMode } from "@entities/core/types";
 
-export type FormMode = EditMode;
+export type FormMode = "create" | "edit";
 export type FieldKey<T> = keyof T & string;
 export interface UseModelFormOptions<F, E = Record<string, unknown>> {
     initialForm: F;

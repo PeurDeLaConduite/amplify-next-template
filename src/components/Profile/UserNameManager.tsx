@@ -17,13 +17,12 @@ const fields: (keyof UserNameFormType)[] = ["userName"];
 export default function UserNameManager() {
     const { user } = useAuthenticator();
     const manager = useUserNameForm();
-    const { refresh } = manager;
 
     useEffect(() => {
         if (user) {
-            void refresh(); // 🔄 charge/rafraîchit au montage et quand l'user change
+            void manager.refresh(); // 🔄 charge/rafraîchit au montage et quand l'user change
         }
-    }, [user, refresh]);
+    }, [user, manager.refresh]);
 
     if (!user) return <Authenticator />;
 
@@ -58,7 +57,6 @@ export default function UserNameManager() {
             saveField={manager.saveField} // ⬅️ refetch inclus
             clearField={manager.clearField}
             deleteEntity={manager.remove} // ⬅️ refetch inclus
-            loading={manager.loading}
         />
     );
 }

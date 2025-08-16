@@ -1,6 +1,5 @@
-// AUTO-GENERATED – DO NOT EDIT
-export * from "./types";
-export { userNameConfig } from "./config";
-export * from "./form";
-export { userNameService } from "./service";
 export * from "./hooks";
+export * from "./types";
+export * from "./form";
+export * from "./service";
+export { userNameConfig } from "./config";

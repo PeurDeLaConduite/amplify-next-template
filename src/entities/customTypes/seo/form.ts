@@ -1,21 +1,15 @@
-// AUTO-GENERATED – DO NOT EDIT
-export type SeoForm = {
-    title: string;
-    description: string;
-    image: string;
-};
+import type { SeoType, SeoFormType } from "./types";
 
-export const initialSeoForm: SeoForm = {
+export const initialSeoForm: SeoFormType = {
     title: "",
     description: "",
     image: "",
 };
 
-export function toSeoForm(value: Partial<SeoForm> | null | undefined): SeoForm {
-    if (!value) return { ...initialSeoForm };
+export function toSeoForm(seo: SeoType | null | undefined): SeoFormType {
     return {
-        title: value.title ?? "",
-        description: value.description ?? "",
-        image: value.image ?? "",
+        title: seo?.title ?? "",
+        description: seo?.description ?? "",
+        image: seo?.image ?? "",
     };
 }

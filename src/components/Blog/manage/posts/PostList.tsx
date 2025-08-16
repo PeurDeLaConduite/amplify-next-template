@@ -1,10 +1,10 @@
 "use client";
 import React from "react";
 import FormActionButtons from "../components/FormActionButtons";
-import { type PostType } from "@entities/models/post";
+import { type PostType  } from "@/src/entities/models/post";
 
 interface Props {
-    posts: PostType[];
+    posts: PostType [];
     editingIndex: number | null;
     onEdit: (idx: number) => void;
     onSave: () => void;

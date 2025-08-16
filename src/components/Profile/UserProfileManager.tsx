@@ -13,7 +13,6 @@ import { type UserProfileMinimalType } from "@entities/models/userProfile/types"
 export default function UserProfileManager() {
     const { user } = useAuthenticator();
     const profile = useUserProfileForm();
-    const { refresh } = profile;
 
     const getIcon = (field: keyof UserProfileMinimalType) => {
         switch (field) {
@@ -55,9 +54,10 @@ export default function UserProfileManager() {
     };
     useEffect(() => {
         if (user) {
-            void refresh();
+            void profile.fetchProfile();
         }
-    }, [user, refresh]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user]);
 
     if (!user) return null;
 
@@ -89,8 +89,7 @@ export default function UserProfileManager() {
             labels={profile.labels}
             saveField={profile.saveField}
             clearField={profile.clearField}
-            deleteEntity={profile.remove}
-            loading={profile.loading}
+            deleteEntity={profile.deleteProfile}
         />
     );
 }

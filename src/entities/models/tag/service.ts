@@ -1,3 +1,5 @@
-// AUTO-GENERATED – DO NOT EDIT
 import { crudService } from "@entities/core";
-export const tagService = crudService("Tag");
+
+export const tagService = crudService("Tag", {
+    auth: { read: ["apiKey", "userPool"], write: "userPool" },
+});

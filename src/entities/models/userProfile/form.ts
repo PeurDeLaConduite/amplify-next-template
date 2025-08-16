@@ -1,39 +1,50 @@
-// AUTO-GENERATED – DO NOT EDIT
-import type { UserProfileType, UserProfileFormType, UserProfileTypeOmit } from "./types";
+import { z, type ZodType } from "zod";
 import { createModelForm } from "@entities/core";
+import type { UserProfileType, UserProfileFormType, UserProfileTypeUpdateInput } from "./types";
 
-export const initialUserProfileForm: UserProfileFormType = {
-    id: "",
-    firstName: "",
-    familyName: "",
-    address: "",
-    postalCode: "",
-    city: "",
-    country: "",
-    phoneNumber: "",
-};
-
-function toUserProfileForm(model: UserProfileType): UserProfileFormType {
-    return {
-        firstName: model.firstName ?? "",
-        familyName: model.familyName ?? "",
-        address: model.address ?? "",
-        postalCode: model.postalCode ?? "",
-        city: model.city ?? "",
-        country: model.country ?? "",
-        phoneNumber: model.phoneNumber ?? "",
-    };
-}
-
-function toUserProfileInput(form: UserProfileFormType): UserProfileTypeOmit {
-    return form as UserProfileTypeOmit;
-}
-
-export const userProfileForm = createModelForm<
+export const {
+    zodSchema: userProfileSchema,
+    initialForm: initialUserProfileForm,
+    toForm: toUserProfileForm,
+    toCreate: toUserProfileCreate,
+    toUpdate: toUserProfileUpdate,
+} = createModelForm<
     UserProfileType,
     UserProfileFormType,
-    [],
-    UserProfileTypeOmit
->(initialUserProfileForm, (model) => toUserProfileForm(model), toUserProfileInput);
-
-export { toUserProfileForm, toUserProfileInput };
+    UserProfileTypeUpdateInput,
+    UserProfileTypeUpdateInput
+>({
+    zodSchema: z.object({
+        firstName: z.string(),
+        familyName: z.string(),
+        address: z.string(),
+        postalCode: z.string(),
+        city: z.string(),
+        country: z.string(),
+        phoneNumber: z.string(),
+    }) as ZodType<UserProfileFormType>,
+    initialForm: {
+        firstName: "",
+        familyName: "",
+        address: "",
+        postalCode: "",
+        city: "",
+        country: "",
+        phoneNumber: "",
+    },
+    toForm: (profile) => ({
+        firstName: profile.firstName ?? "",
+        familyName: profile.familyName ?? "",
+        address: profile.address ?? "",
+        postalCode: profile.postalCode ?? "",
+        city: profile.city ?? "",
+        country: profile.country ?? "",
+        phoneNumber: profile.phoneNumber ?? "",
+    }),
+    toCreate: (form: UserProfileFormType): UserProfileTypeUpdateInput => ({
+        ...form,
+    }),
+    toUpdate: (form: UserProfileFormType): UserProfileTypeUpdateInput => ({
+        ...form,
+    }),
+});
