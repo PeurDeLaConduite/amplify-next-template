@@ -1,5 +1,5 @@
 // AUTO-GENERATED – DO NOT EDIT
-import type { BaseModel, CreateOmit, UpdateInput, ModelForm } from "@src/entities/core";
+import type { BaseModel, CreateOmit, UpdateInput, ModelForm } from "@entities/core";
 
 import type { SeoForm } from "@src/entities/customTypes/seo/form";
 

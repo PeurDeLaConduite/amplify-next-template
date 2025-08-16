@@ -1,5 +1,5 @@
-import { client, canAccess } from "@src/entities/core";
-import type { EntitiesAuthRule } from "@src/entities/core/types";
+import { client, canAccess } from "@entities/core";
+import type { EntitiesAuthRule } from "@entities/core/types";
 
 import type { BlogData, Author, Post, Section } from "@src/types/blog";
 
