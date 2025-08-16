@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import { useModelForm } from "@entities/core/hooks";
 import { userNameService } from "@entities/models/userName/service";
@@ -12,6 +12,7 @@ import type { UserNameFormType } from "@entities/models/userName/types";
 export function useUserNameForm() {
     const { user } = useAuthenticator();
     const sub = user?.userId ?? user?.username;
+    const [loading, setLoading] = useState(false);
 
     const modelForm = useModelForm<UserNameFormType>({
         initialForm: initialUserNameForm,
@@ -43,28 +44,48 @@ export function useUserNameForm() {
         },
     });
 
-    const { adoptInitial, setMessage, setForm, refresh, submit } = modelForm;
+    const { adoptInitial, setMessage, setForm, refresh, submit, saving } = modelForm;
+
+    const refreshWithLoading = useCallback(async () => {
+        setLoading(true);
+        try {
+            await refresh();
+        } finally {
+            setLoading(false);
+        }
+    }, [refresh]);
 
     useEffect(() => {
         if (!sub) return;
         (async () => {
-            const { data } = await userNameService.get({ id: sub });
-            adoptInitial(
-                data ? toUserNameForm(data, [], []) : initialUserNameForm,
-                data ? "edit" : "create"
-            );
+            setLoading(true);
+            try {
+                const { data } = await userNameService.get({ id: sub });
+                adoptInitial(
+                    data ? toUserNameForm(data, [], []) : initialUserNameForm,
+                    data ? "edit" : "create"
+                );
+            } finally {
+                setLoading(false);
+            }
         })();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [sub]);
 
     const submitAndRefresh = useCallback(async () => {
-        await submit();
-        await refresh();
+        setLoading(true);
+        try {
+            await submit();
+            await refresh();
+        } finally {
+            setLoading(false);
+        }
     }, [submit, refresh]);
 
     // Typage strict : on ne manipule que 'userName' ici
     const saveField = async (field: "userName", value: string): Promise<void> => {
         if (!sub) return;
+        setLoading(true);
         try {
             setMessage(null);
             const userName = (value ?? "").toString();
@@ -74,6 +95,8 @@ export function useUserNameForm() {
             await refresh();
         } catch (err) {
             setMessage(err instanceof Error ? err.message : String(err));
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -83,6 +106,7 @@ export function useUserNameForm() {
 
     const remove = async () => {
         if (!sub) return;
+        setLoading(true);
         try {
             const { errors } = await userNameService.delete({ id: sub });
             if (errors?.length) throw new Error(errors[0].message);
@@ -90,13 +114,16 @@ export function useUserNameForm() {
             await refresh();
         } catch (err) {
             setMessage(err instanceof Error ? err.message : String(err));
+        } finally {
+            setLoading(false);
         }
     };
 
     return {
         ...modelForm,
+        loading: loading || saving,
         submit: submitAndRefresh,
-        refresh,
+        refresh: refreshWithLoading,
         saveField,
         clearField,
         remove,
