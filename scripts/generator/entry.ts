@@ -6,6 +6,7 @@ import { renderModel } from "./render/renderModel";
 import { renderPivot } from "./render/renderPivot";
 import { renderCustomType } from "./render/renderCustomType";
 import { GEN } from "./generator.config";
+import { execa } from "execa";
 
 async function main() {
     const ROOT = process.cwd();
@@ -46,6 +47,15 @@ async function main() {
         (m) => m.type === "model" && !(pivots as string[]).includes(m.name)
     ))
         renderModel(m as any, relations as any);
+
+    await execa(
+        "yarn",
+        ["prettier", "--write", GEN.out.models, GEN.out.customTypes, GEN.out.relations],
+        {
+            cwd: ROOT,
+            stdio: "inherit",
+        }
+    );
 
     console.log("✅ Generation done.");
 }

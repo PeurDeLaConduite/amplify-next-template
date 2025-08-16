@@ -11,10 +11,49 @@ import type { ${m.name}FormType } from "./types";
 import { ${low}Config } from "./config";
 import { ${low}Service } from "./service";
 
-export const use${m.name}Manager = createEntityHooks<${m.name}FormType>({
+const use${m.name}Base = createEntityHooks<${m.name}FormType>({
     ...${low}Config,
     service: ${low}Service,
 });
+
+export const use${m.name}Manager = use${m.name}Base;
+
+export const use${m.name}Form = () => {
+    const {
+        form,
+        mode,
+        dirty,
+        reset,
+        submit,
+        refresh,
+        setForm,
+        handleChange,
+        fields,
+        labels,
+        saveField,
+        clearField,
+        remove,
+        loading,
+        error,
+    } = use${m.name}Base();
+    return {
+        form,
+        mode,
+        dirty,
+        reset,
+        submit,
+        refresh,
+        setForm,
+        handleChange,
+        fields,
+        labels,
+        saveField,
+        clearField,
+        remove,
+        loading,
+        error,
+    } as const;
+};
 `;
     safeWrite(path.join(dir, "hooks.ts"), content);
 }
