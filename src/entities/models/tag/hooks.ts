@@ -2,5 +2,9 @@
 import { createEntityHooks } from "@src/entities/core/createEntityHooks";
 import type { TagFormType } from "./types";
 import { tagConfig } from "./config";
+import { tagService } from "./service";
 
-export const useTagManager = createEntityHooks<TagFormType>(tagConfig);
+export const useTagManager = createEntityHooks<TagFormType>({
+    ...tagConfig,
+    service: tagService,
+});

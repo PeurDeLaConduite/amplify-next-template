@@ -2,5 +2,9 @@
 import { createEntityHooks } from "@src/entities/core/createEntityHooks";
 import type { CommentFormType } from "./types";
 import { commentConfig } from "./config";
+import { commentService } from "./service";
 
-export const useCommentManager = createEntityHooks<CommentFormType>(commentConfig);
+export const useCommentManager = createEntityHooks<CommentFormType>({
+    ...commentConfig,
+    service: commentService,
+});
