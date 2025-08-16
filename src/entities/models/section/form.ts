@@ -1,7 +1,7 @@
 // AUTO-GENERATED – DO NOT EDIT
 import type { SectionType, SectionFormType, SectionTypeOmit } from "./types";
 import { createModelForm } from "@src/entities/core";
-import { initialSeoForm, toSeoForm, toSeoInput } from "@src/entities/customTypes/seo/form";
+import { initialSeoForm, toSeoForm } from "@src/entities/customTypes/seo/form";
 
 export const initialSectionForm: SectionFormType = {
     id: "",
