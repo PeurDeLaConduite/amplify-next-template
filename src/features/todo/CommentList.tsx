@@ -5,7 +5,7 @@ interface CommentListProps {
     comments: CommentWithTodoId[];
     onEditComment: (id: string, ownerId?: string) => void;
     onDeleteComment: (id: string, ownerId?: string) => void;
-    canModify: (ownerId?: string | null) => boolean;
+    canModify: (ownerId?: string) => boolean;
 }
 
 export default function CommentList({
