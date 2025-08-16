@@ -135,5 +135,3 @@ export function useUserProfileForm(): UserProfileFormResult {
         error,
     };
 }
-
-export { fieldLabel };
