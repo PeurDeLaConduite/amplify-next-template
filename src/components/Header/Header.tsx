@@ -7,7 +7,11 @@ import { PowerButton } from "@src/components/buttons";
 import { useUserNameForm } from "@entities/models/userName/hooks";
 import UserNameModal from "@src/components/Profile/UserNameModal";
 
-const Header = () => {
+interface HeaderProps {
+    className?: string;
+}
+
+const Header: React.FC<HeaderProps> = ({ className }) => {
     const { user, signOut } = useAuthenticator();
 
     // ⬇️ le hook expose maintenant `refresh`
@@ -35,7 +39,7 @@ const Header = () => {
 
     return (
         <>
-            <header className="bg-white shadow-md">
+            <header className={`bg-white shadow-md ${className ?? ""}`}>
                 <nav className="max-w-6xl mx-auto flex items-center justify-between p-4">
                     <div className="flex gap-6">
                         <Link href="/todo" className="text-gray-700 hover:text-blue-600">
@@ -71,9 +75,7 @@ const Header = () => {
                                     <PowerButton
                                         onClick={signOut}
                                         className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
-                                    >
-                                        Se déconnecter
-                                    </PowerButton>
+                                    />
                                 </>
                             ) : (
                                 <>
@@ -81,9 +83,7 @@ const Header = () => {
                                     <PowerButton
                                         onClick={signOut}
                                         className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
-                                    >
-                                        Se déconnecter
-                                    </PowerButton>
+                                    />
                                 </>
                             )
                         ) : (
