@@ -3,6 +3,7 @@ import type { Schema } from "@/amplify/data/resource";
 import { getCurrentUser } from "aws-amplify/auth";
 import { useTodoService, todoService } from "@src/entities/models/todo";
 import { useCommentService, commentService } from "@src/entities/models/comment";
+import { userNameService } from "@src/entities/models/userName";
 import { useCommentPermissions } from "@src/hooks/useCommentPermissions";
 
 export type CommentWithTodoId = {
@@ -72,6 +73,11 @@ export function useTodosWithComments() {
         const content = window.prompt("Contenu du commentaire ?");
         if (!content) return;
         const { userId: userNameId } = await getCurrentUser();
+        const { data } = await userNameService.get({ id: userNameId });
+        if (!data?.userName) {
+            window.alert("Pseudo manquant");
+            return;
+        }
         await commentService.create({ content, todoId, userNameId });
     };
 
