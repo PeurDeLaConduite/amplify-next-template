@@ -24,7 +24,7 @@ export function useCommentPermissions() {
         })();
     }, []);
 
-    const isAdmin = groups.includes("admin");
+    const isAdmin = groups.includes("ADMINS");
     const canModifyComment = useCallback(
         (ownerId?: string | null) => isAdmin || (!!ownerId && ownerId === userId),
         [isAdmin, userId]
