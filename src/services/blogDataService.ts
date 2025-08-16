@@ -1,16 +1,22 @@
-import { client, canAccess, type AuthRule } from "@src/entities/core";
+import { canAccess, type AuthRule } from "@src/entities/core";
+import { authorService } from "@src/entities/models/author/service";
+import { sectionService } from "@src/entities/models/section/service";
+import { postService } from "@src/entities/models/post/service";
+import { tagService } from "@src/entities/models/tag/service";
+import { postTagService } from "@src/entities/relations/postTag/service";
+import { sectionPostService } from "@src/entities/relations/sectionPost/service";
 
 import type { BlogData, Author, Post, Section } from "@src/types/blog";
 
 export async function fetchBlogData(): Promise<BlogData> {
     const [authorsRes, sectionsRes, postsRes, tagsRes, postTagsRes, sectionPostsRes] =
         await Promise.all([
-            client.models.Author.list({ authMode: "apiKey" }),
-            client.models.Section.list({ authMode: "apiKey" }),
-            client.models.Post.list({ authMode: "apiKey" }),
-            client.models.Tag.list({ authMode: "apiKey" }),
-            client.models.PostTag.list({ authMode: "apiKey" }),
-            client.models.SectionPost.list({ authMode: "apiKey" }),
+            authorService.list({ authMode: "apiKey" }),
+            sectionService.list({ authMode: "apiKey" }),
+            postService.list({ authMode: "apiKey" }),
+            tagService.list({ authMode: "apiKey" }),
+            postTagService.list({ authMode: "apiKey" }),
+            sectionPostService.list({ authMode: "apiKey" }),
         ]);
 
     const publicRule: AuthRule[] = [{ allow: "public" }];
