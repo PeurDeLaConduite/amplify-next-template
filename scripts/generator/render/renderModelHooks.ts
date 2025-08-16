@@ -9,8 +9,12 @@ export function renderModelHooks(m: ModelMeta) {
 import { createEntityHooks } from "${GEN.paths.createEntityHooks}";
 import type { ${m.name}FormType } from "./types";
 import { ${low}Config } from "./config";
+import { ${low}Service } from "./service";
 
-export const use${m.name}Manager = createEntityHooks<${m.name}FormType>(${low}Config);
+export const use${m.name}Manager = createEntityHooks<${m.name}FormType>({
+    ...${low}Config,
+    service: ${low}Service,
+});
 `;
     safeWrite(path.join(dir, "hooks.ts"), content);
 }
