@@ -1,4 +1,5 @@
 import path from "node:path";
+import { spawn } from "node:child_process";
 import { parseSchema } from "./parse/parseSchema";
 import { inferRelations } from "./parse/inferRelations";
 import { ensureDir, writeJSON } from "./utils/fs";
@@ -6,7 +7,26 @@ import { renderModel } from "./render/renderModel";
 import { renderPivot } from "./render/renderPivot";
 import { renderCustomType } from "./render/renderCustomType";
 import { GEN } from "./generator.config";
-import { execa } from "execa";
+// ❌ import { execa } from "execa";  // supprimé
+
+async function runPrettier(args: string[], cwd: string) {
+    // Utilise le runner Node et le binaire JS de Prettier (évite .cmd / shell)
+    const prettierCli = require.resolve("prettier/bin/prettier.cjs");
+    const safeArgs = args.filter(Boolean); // au cas où un chemin serait undefined
+
+    await new Promise<void>((resolve, reject) => {
+        const cp = spawn(process.execPath, [prettierCli, ...safeArgs], {
+            cwd,
+            stdio: "inherit",
+            shell: false,
+        });
+        cp.on("error", reject);
+        cp.on("exit", (code) => {
+            if (code === 0) resolve();
+            else reject(new Error(`prettier exited with code ${code}`));
+        });
+    });
+}
 
 async function main() {
     const ROOT = process.cwd();
@@ -16,8 +36,10 @@ async function main() {
         tsconfigRel: GEN.tsconfigRel,
         debug: false,
     });
+
     await ensureDir(path.join(ROOT, GEN.out.introspection));
     await writeJSON(path.join(ROOT, GEN.out.introspection, "schema.json"), metas);
+
     // Inject implicit id for non-composite models
     for (const m of metas) {
         if (m.type !== "model") continue;
@@ -48,14 +70,7 @@ async function main() {
     ))
         renderModel(m as any, relations as any);
 
-    await execa(
-        "yarn",
-        ["prettier", "--write", GEN.out.models, GEN.out.customTypes, GEN.out.relations],
-        {
-            cwd: ROOT,
-            stdio: "inherit",
-        }
-    );
+    await runPrettier(["--write", GEN.out.models, GEN.out.customTypes, GEN.out.relations], ROOT);
 
     console.log("✅ Generation done.");
 }

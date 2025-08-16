@@ -2,36 +2,35 @@
 import type { UserNameType } from "./types";
 import { z } from "zod";
 
-export type UserNameEditableKeys =
-  | "userName";
+export type UserNameEditableKeys = "userName";
 
 export const userNameConfig = {
-  model: "UserName" as const,
+    model: "UserName" as const,
 
-  fields: [
-    "userName"
-  ] as UserNameEditableKeys[],
+    fields: ["userName"] as UserNameEditableKeys[],
 
-  labels(field: UserNameEditableKeys): string {
-    switch (field) {
-    case "userName": return "UserName";
-      default: return field;
-    }
-  },
+    labels(field: UserNameEditableKeys): string {
+        switch (field) {
+            case "userName":
+                return "UserName";
+            default:
+                return field;
+        }
+    },
 
-  zodSchema: z.object({
-  userName: z.string().min(1),
-  }),
+    zodSchema: z.object({
+        userName: z.string().min(1),
+    }),
 
-  toInput(form: Partial<Record<UserNameEditableKeys, unknown>>) {
-    const f = form as Partial<Pick<UserNameType, "userName">>;
-    const input = {
-    userName: f.userName,
-    } satisfies Partial<UserNameType>;
-    return input;
-  },
+    toInput(form: Partial<Record<UserNameEditableKeys, unknown>>) {
+        const f = form as Partial<Pick<UserNameType, "userName">>;
+        const input = {
+            userName: f.userName,
+        } satisfies Partial<UserNameType>;
+        return input;
+    },
 
-  relations: {
-    manyToManyKeys: [] as const
-  }
+    relations: {
+        manyToManyKeys: [] as const,
+    },
 } as const;

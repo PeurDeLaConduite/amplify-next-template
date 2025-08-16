@@ -1,6 +1,6 @@
 // AUTO-GENERATED – DO NOT EDIT
 import type { TagType, TagFormType, TagTypeOmit } from "./types";
-import { createModelForm } from "@entities/core";
+import { createModelForm } from "@src/entities/core";
 
 export const initialTagForm: TagFormType = {
     id: "",
