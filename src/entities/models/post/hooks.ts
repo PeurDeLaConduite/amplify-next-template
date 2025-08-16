@@ -1,5 +1,5 @@
 // AUTO-GENERATED – DO NOT EDIT
-import { createEntityHooks } from "@src/entities/core/createEntityHooks";
+import { createEntityHooks } from "@entities/core/createEntityHooks";
 import type { PostFormType } from "./types";
 import { postConfig } from "./config";
 import { postService } from "./service";
