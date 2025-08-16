@@ -51,7 +51,7 @@ export default function TodosWithCommentsPage() {
         await commentService.create({
             content,
             todoId,
-            userNameId, // ← obligatoire d’après votre schéma
+            userNameId, 
         });
     };
 
