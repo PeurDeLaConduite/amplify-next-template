@@ -4,7 +4,7 @@ import {
     type SectionFormTypes,
     type SectionTypesUpdateInput,
 } from "@entities/models/section/types";
-import { toSeoForm, initialSeoForm } from "@entities/customTypes/seo/form";
+import { toSeoForm, initialSeoForm, seoSchema } from "@entities/customTypes/seo";
 import { createModelForm } from "@entities/core";
 
 export const {
@@ -25,7 +25,7 @@ export const {
         title: z.string(),
         description: z.string(),
         order: z.number(),
-        seo: z.any(),
+        seo: seoSchema,
         postIds: z.array(z.string()),
     }) as ZodType<SectionFormTypes>,
     initialForm: {
