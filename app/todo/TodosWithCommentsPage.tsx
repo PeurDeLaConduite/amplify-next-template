@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 import type { Schema } from "@/amplify/data/resource";
-import { client } from "@entities/core";
 import "@aws-amplify/ui-react/styles.css";
 import { getCurrentUser } from "aws-amplify/auth";
+import { useTodoService, todoService } from "@src/entities/models/todo";
+import { useCommentService, commentService } from "@src/entities/models/comment";
 
 type CommentWithTodoId = {
     id: string;
@@ -13,15 +15,17 @@ type CommentWithTodoId = {
 };
 
 export default function TodosWithCommentsPage() {
-    const [todos, setTodos] = useState<Schema["Todo"]["type"][]>([]);
+    const [todos, setTodos] = useState<any[]>([]);
     const [comments, setComments] = useState<CommentWithTodoId[]>([]);
+    const todoClient = useTodoService();
+    const commentClient = useCommentService();
 
     useEffect(() => {
         // -- Abonnement au mount
-        const todoSub = client.models.Todo.observeQuery().subscribe({
-            next: (data) => setTodos([...data.items]),
+        const todoSub = (todoClient as any).observeQuery().subscribe({
+            next: (data: any) => setTodos([...(data.items as Schema["Todo"]["type"][])]),
         });
-        const commentSub = client.models.Comment.observeQuery().subscribe({
+        const commentSub = commentClient.observeQuery().subscribe({
             next: (data) => setComments([...(data.items as CommentWithTodoId[])]),
         });
         // -- Cleanup au unmount
@@ -29,12 +33,12 @@ export default function TodosWithCommentsPage() {
             todoSub.unsubscribe();
             commentSub.unsubscribe();
         };
-    }, []);
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     // CRUD handlers (inchangés)
     const createTodo = () => {
         const content = window.prompt("Contenu du Todo ?");
-        if (content) client.models.Todo.create({ content });
+        if (content) void todoService.create({ content });
     };
 
     const addComment = async (todoId: string) => {
@@ -44,7 +48,7 @@ export default function TodosWithCommentsPage() {
         // on récupère { userId, username, ... }
         const { userId: userNameId } = await getCurrentUser();
 
-        await client.models.Comment.create({
+        await commentService.create({
             content,
             todoId,
             userNameId, // ← obligatoire d’après votre schéma
@@ -53,25 +57,25 @@ export default function TodosWithCommentsPage() {
 
     const deleteComment = (id: string) => {
         if (confirm("Supprimer ce commentaire ?")) {
-            client.models.Comment.delete({ id });
+            void commentService.delete({ id });
         }
     };
     const deleteTodo = async (id: string) => {
         if (confirm("Supprimer ce Todo (et ses commentaires) ?")) {
             // 1. Récupère tous les commentaires liés au Todo
-            const { data: comments } = await client.models.Comment.list({
+            const { data: comments } = await commentService.list({
                 filter: { todoId: { eq: id } },
             });
 
             // 2. Supprime chaque commentaire
             if (comments) {
                 for (const comment of comments) {
-                    await client.models.Comment.delete({ id: comment.id });
+                    await commentService.delete({ id: comment.id });
                 }
             }
 
             // 3. Supprime le Todo
-            await client.models.Todo.delete({ id });
+            await todoService.delete({ id });
         }
     };
 
@@ -95,7 +99,7 @@ export default function TodosWithCommentsPage() {
 }
 
 interface TodoListProps {
-    todos: Schema["Todo"]["type"][];
+    todos: any[];
     comments: CommentWithTodoId[];
     onDeleteTodo: (id: string) => void;
     onAddComment: (todoId: string) => void;
