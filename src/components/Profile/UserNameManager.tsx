@@ -22,7 +22,7 @@ export default function UserNameManager() {
         if (user) {
             void manager.refresh(); // 🔄 charge/rafraîchit au montage et quand l'user change
         }
-    }, [user, manager.refresh]);
+    }, [user, manager]);
 
     if (!user) return <Authenticator />;
 

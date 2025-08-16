@@ -16,21 +16,17 @@ const schema = a.schema({
         .model({
             id: a.id().required(),
             content: a.string().required(),
-
-            // ⬇️ optionnels : un commentaire cible EITHER Todo OR Post
             todoId: a.id(),
             todo: a.belongsTo("Todo", "todoId"),
-
             postId: a.id(),
             post: a.belongsTo("Post", "postId"),
-
             userNameId: a.id().required(),
             userName: a.belongsTo("UserName", "userNameId"),
         })
         .authorization((allow) => [
-            allow.publicApiKey().to(["read"]),
-            allow.group("ADMINS").to(["create", "update", "delete", "read"]),
-            allow.owner().to(["create", "update", "delete", "read"]),
+            allow.publicApiKey().to(["read"]), // lecture libre
+            allow.owner().to(["create", "update", "delete", "read"]), // l’auteur gère son com
+            allow.group("ADMINS").to(["read", "update", "delete"]), // admin peut aussi gérer
         ]),
 
     UserName: a
@@ -40,8 +36,10 @@ const schema = a.schema({
             comments: a.hasMany("Comment", "userNameId"),
         })
         .authorization((allow) => [
-            allow.publicApiKey().to(["read"]),
-            allow.owner().to(["create", "read", "update", "delete"]),
+            allow.publicApiKey().to(["read"]), // tout le monde peut voir le userName
+            allow.authenticated().to(["read"]),
+            allow.owner().to(["create", "update", "delete"]), // seul l’owner modifie son pseudo
+            allow.group("ADMINS").to(["read", "update", "delete"]), // admin peut aussi gérer
         ]),
 
     UserProfile: a
