@@ -1,0 +1,17 @@
+{
+    "extends": "./tsconfig.json",
+    "include": [
+        "next-env.d.ts",
+        "app/**/*.ts",
+        "app/**/*.tsx",
+        "src/**/*.ts",
+        "src/**/*.tsx",
+        "public/**/*.json"
+    ],
+    "exclude": [
+        "node_modules",
+        "amplify",
+        ".Help",
+        ".next" // ← on force l’exclusion ici
+    ]
+}
