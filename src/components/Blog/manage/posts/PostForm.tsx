@@ -132,6 +132,13 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
                 onChange={handlePostChange}
                 readOnly={false}
             />
+            <EditableField
+                name="videoUrl"
+                label="Video URL"
+                value={form.videoUrl ?? ""}
+                onChange={handlePostChange}
+                readOnly={false}
+            />
             <EditableTextArea
                 name="content"
                 label="Contenu"
@@ -167,17 +174,21 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
             />
             <fieldset className="border p-2 space-y-2">
                 <legend className="font-semibold">Tags</legend>
-                {tags.map((tag) => (
-                    <label key={tag.id} className="block">
-                        <input
-                            type="checkbox"
-                            checked={form.tagIds.includes(tag.id)}
-                            onChange={() => toggleTag(tag.id)}
-                        />
-                        <span className="ml-2">{tag.name}</span>
-                    </label>
-                ))}
+                {tags
+                    .slice()
+                    .sort((a, b) => a.name.localeCompare(b.name)) // tri alphabétique
+                    .map((tag) => (
+                        <label key={tag.id} className="block">
+                            <input
+                                type="checkbox"
+                                checked={form.tagIds.includes(tag.id)}
+                                onChange={() => toggleTag(tag.id)}
+                            />
+                            <span className="ml-2">{tag.name}</span>
+                        </label>
+                    ))}
             </fieldset>
+
             <fieldset className="border p-2 space-y-2">
                 <legend className="font-semibold">Sections</legend>
                 {sections

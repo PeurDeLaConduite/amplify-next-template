@@ -4,7 +4,8 @@ import {
     type PostFormType,
     type PostTypeUpdateInput,
 } from "@entities/models/post/types";
-import { toSeoForm, initialSeoForm } from "@entities/customTypes/seo/form";
+import { toSeoForm, initialSeoForm, seoSchema } from "@entities/customTypes/seo";
+import type { SeoType } from "@entities/customTypes/seo";
 import { createModelForm } from "@entities/core";
 
 export const {
@@ -30,7 +31,7 @@ export const {
         order: z.number(),
         videoUrl: z.string(),
         type: z.string(),
-        seo: z.any(),
+        seo: seoSchema,
         tagIds: z.array(z.string()),
         sectionIds: z.array(z.string()),
     }) as ZodType<PostFormType>,
@@ -58,7 +59,7 @@ export const {
         order: post.order ?? 1,
         videoUrl: post.videoUrl ?? "",
         type: post.type ?? "",
-        seo: toSeoForm(post.seo),
+        seo: toSeoForm((post.seo ?? {}) as SeoType),
         tagIds,
         sectionIds,
     }),
