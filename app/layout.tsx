@@ -3,6 +3,10 @@ import "./globals.css";
 import "@aws-amplify/ui-react/styles.css";
 import Header from "@components/Header/Header";
 import AuthProvider from "@components/Authentication/auth-provider";
+export const metadata = {
+    metadataBase: new URL("https://ton-domaine-prod.tld"),
+    // ...le reste (title, openGraph, twitter, etc.)
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
