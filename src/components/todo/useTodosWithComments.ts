@@ -16,6 +16,10 @@ export type CommentWithTodoId = {
     userName?: { userName?: string | null } | null;
 };
 
+/**
+ * Récupère les todos ainsi que leurs commentaires en temps réel.
+ * En cas d'erreur lors de l'observation, l'erreur est journalisée et l'utilisateur est averti.
+ */
 export function useTodosWithComments() {
     const [todos, setTodos] = useState<Schema["Todo"]["type"][]>([]);
     const [comments, setComments] = useState<CommentWithTodoId[]>([]);
@@ -35,9 +39,13 @@ export function useTodosWithComments() {
                 options.authMode = "apiKey";
             }
 
-            // TODOs
+            // Liste des Todos
             todoSub = todoClient.observeQuery(options).subscribe({
                 next: ({ items }: { items: Schema["Todo"]["type"][] }) => setTodos([...items]),
+                error: (error) => {
+                    console.error("Erreur lors de l'observation des todos", error);
+                    window.alert("Impossible de charger les todos");
+                },
             });
 
             // Comments
@@ -56,6 +64,10 @@ export function useTodosWithComments() {
                 })
                 .subscribe({
                     next: ({ items }: { items: CommentWithTodoId[] }) => setComments([...items]),
+                    error: (error) => {
+                        console.error("Erreur lors de l'observation des commentaires", error);
+                        window.alert("Impossible de charger les commentaires");
+                    },
                 });
         })();
 
