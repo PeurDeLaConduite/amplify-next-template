@@ -1,10 +1,28 @@
 import React from "react";
 import { AddButton, EditButton, DeleteButton, SaveButton, CancelButton } from "@components/buttons";
+import type { TagType } from "@entities/models/tag/types";
+import type { UseTagFormReturn } from "@entities/models/tag/hooks";
 
-export default function TagCrudManager({ tags, modelForm, onEdit, onCancel, onDelete, fetchAll }) {
+interface TagCrudManagerProps {
+    tags: TagType[];
+    modelForm: UseTagFormReturn;
+    onEdit: (id: string) => void;
+    onCancel: () => void;
+    onDelete: (id: string) => void;
+    fetchAll: () => Promise<void>;
+}
+
+export default function TagCrudManager({
+    tags,
+    modelForm,
+    onEdit,
+    onCancel,
+    onDelete,
+    fetchAll,
+}: TagCrudManagerProps): React.ReactElement {
     const { form, mode, setForm, submit } = modelForm;
 
-    async function handleSubmit() {
+    async function handleSubmit(): Promise<void> {
         await submit();
         await fetchAll();
         onCancel();
@@ -19,7 +37,9 @@ export default function TagCrudManager({ tags, modelForm, onEdit, onCancel, onDe
                 <input
                     type="text"
                     value={form.name}
-                    onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setForm((f) => ({ ...f, name: e.target.value }))
+                    }
                     placeholder="Nom du tag"
                     className="border rounded p-2 flex-1 bg-white"
                 />

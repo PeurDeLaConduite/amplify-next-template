@@ -1,6 +1,18 @@
 import ActionButtons from "./buttons/ActionButtons";
 import { EditButton, DeleteButton } from "@components/buttons";
 
+interface FormActionButtonsProps {
+    editingIndex: number | null;
+    currentIndex: number;
+    onEdit: () => void;
+    onSave: () => void;
+    onCancel: () => void;
+    onDelete: () => void;
+    isFormNew: boolean;
+    addButtonLabel?: string;
+    className?: string;
+}
+
 export default function FormActionButtons({
     editingIndex,
     currentIndex,
@@ -11,7 +23,7 @@ export default function FormActionButtons({
     isFormNew,
     addButtonLabel = "Ajouter",
     className = "",
-}) {
+}: FormActionButtonsProps): React.ReactElement {
     if (isFormNew && editingIndex === null) {
         return (
             <button
