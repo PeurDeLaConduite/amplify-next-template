@@ -1,5 +1,16 @@
 import React from "react";
 import ButtonBase from "@components/buttons/ButtonBase";
+import type { TagType } from "@entities/models/tag/types";
+import type { PostType } from "@entities/models/post/types";
+
+interface PostTagsManagerProps {
+    posts: PostType[];
+    tags: TagType[];
+    tagsForPost: (postId: string) => TagType[];
+    isTagLinked: (postId: string, tagId: string) => boolean;
+    toggle: (postId: string, tagId: string) => Promise<void>;
+    loading: boolean;
+}
 
 export default function PostTagsManager({
     posts,
@@ -8,7 +19,7 @@ export default function PostTagsManager({
     isTagLinked,
     toggle,
     loading,
-}) {
+}: PostTagsManagerProps): React.ReactElement {
     return (
         <div className="p-4 mb-6 bg-gray-50 rounded-lg border">
             <h2 className="font-semibold text-lg mb-3">Associer les tags aux articles</h2>
