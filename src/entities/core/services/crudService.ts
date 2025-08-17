@@ -8,13 +8,9 @@ type ClientModels = typeof client.models;
 type ClientModelKey = keyof ClientModels;
 
 type BaseModel<K extends ClientModelKey> = Schema[K]["type"];
-// @ts-expect-error no explain
 type CreateArg<K extends ClientModelKey> = Parameters<ClientModels[K]["create"]>[0];
-// @ts-expect-error no explain
 type UpdateArg<K extends ClientModelKey> = Parameters<ClientModels[K]["update"]>[0];
-// @ts-expect-error no explain
 type GetArg<K extends ClientModelKey> = Parameters<ClientModels[K]["get"]>[0];
-// @ts-expect-error no explain
 type DeleteArg<K extends ClientModelKey> = Parameters<ClientModels[K]["delete"]>[0];
 
 export type AuthMode = "apiKey" | "userPool" | "identityPool" | "iam" | "lambda";
