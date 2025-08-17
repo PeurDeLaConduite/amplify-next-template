@@ -22,11 +22,13 @@ const schema = a.schema({
             post: a.belongsTo("Post", "postId"),
             userNameId: a.id().required(),
             userName: a.belongsTo("UserName", "userNameId"),
+            // owner: a.string(), // optionnel si tu veux être explicite
         })
         .authorization((allow) => [
-            allow.publicApiKey().to(["read"]), // lecture libre
-            allow.owner().to(["create", "update", "delete", "read"]), // l’auteur gère son com
-            allow.group("ADMINS").to(["read", "update", "delete"]), // admin peut aussi gérer
+            allow.publicApiKey().to(["read"]),
+            allow.authenticated().to(["read"]), // ⬅️ ajout
+            allow.owner().to(["create", "update", "delete", "read"]),
+            allow.group("ADMINS").to(["read", "update", "delete"]),
         ]),
 
     UserName: a
