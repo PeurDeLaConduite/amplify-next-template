@@ -10,8 +10,8 @@ export type CommentWithTodoId = {
     id: string;
     content?: string | null;
     createdAt: string;
-    todoId?: string;
-    postId?: string;
+    todoId?: string | null; // <= null accepté
+    postId?: string | null; // <= null accepté
     userNameId?: string;
     userName?: { userName?: string | null } | null;
 };
@@ -35,10 +35,12 @@ export function useTodosWithComments() {
                 options.authMode = "apiKey";
             }
 
+            // TODOs
             todoSub = todoClient.observeQuery(options).subscribe({
-                next: ({ items }) => setTodos([...(items as Schema["Todo"]["type"][])]),
+                next: ({ items }: { items: Schema["Todo"]["type"][] }) => setTodos([...items]),
             });
 
+            // Comments
             commentSub = commentClient
                 .observeQuery({
                     ...options,
@@ -53,7 +55,7 @@ export function useTodosWithComments() {
                     ],
                 })
                 .subscribe({
-                    next: (data) => setComments([...(data.items as CommentWithTodoId[])]),
+                    next: ({ items }: { items: CommentWithTodoId[] }) => setComments([...items]),
                 });
         })();
 

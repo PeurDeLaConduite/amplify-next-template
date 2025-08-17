@@ -1,88 +1,52 @@
 {
-  "compilerOptions": {
-    "target": "ES2017",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true,
-    "tsBuildInfoFile": ".tsbuildinfo",
-    "forceConsistentCasingInFileNames": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": [
-        "./*"
-      ],
-      "@app/*": [
-        "app/*"
-      ],
-      "@src/*": [
-        "src/*"
-      ],
-      "@amplify/*": [
-        "amplify/*"
-      ],
-      "@components/*": [
-        "src/components/*"
-      ],
-      "@hooks/*": [
-        "src/hooks/*"
-      ],
-      "@context/*": [
-        "src/context/*"
-      ],
-      "@services/*": [
-        "src/services/*"
-      ],
-      "@myTypes/*": [
-        "src/types/*"
-      ],
-      "@entities/*": [
-        "src/entities/*"
-      ],
-      "@public/*": [
-        "public/*"
-      ]
+    "compilerOptions": {
+        "target": "ES2017",
+        "lib": ["dom", "dom.iterable", "esnext"],
+        "allowJs": true,
+        "skipLibCheck": true,
+        "strict": true,
+        "noEmit": true,
+        "esModuleInterop": true,
+        "module": "esnext",
+        "moduleResolution": "bundler",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "jsx": "preserve",
+        "incremental": true,
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["./*"],
+            "@app/*": ["app/*"],
+            "@src/*": ["src/*"],
+            "@amplify/*": ["amplify/*"],
+            "@components/*": ["src/components/*"],
+            "@hooks/*": ["src/hooks/*"],
+            "@context/*": ["src/context/*"],
+            "@services/*": ["src/services/*"],
+            "@myTypes/*": ["src/types/*"],
+            "@entities/*": ["src/entities/*"],
+            "@public/*": ["public/*"]
+        },
+        "plugins": [
+            {
+                "name": "next"
+            }
+        ]
     },
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ]
-  },
-  "include": [
-    "app/**/*.ts",
-    "app/**/*.tsx",
-    "next-env.d.ts",
-    "public/**/*.json",
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/components/Blog/Create/PostsForm.jsx",
-    "src/components/Blog/Create/components/ArticleEditForm.jsx",
-    "src/components/Blog/Create/components/TagPostManager.tsx",
-    "src/components/Blog/manage/authors/CreateAuthor.tsx",
-    "src/components/Blog/manage/sections/SectionsForm.tsx",
-    "src/components/Header/Header.tsx",
-    "src/hooks/useEditableForm.js",
-    ".next/types/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "amplify",
-    ".Help",
-    ".next",
-    "coverage",
-    "dist"
-  ]
+    "include": [
+        "next-env.d.ts",
+        "app/**/*.ts",
+        "app/**/*.tsx",
+        "src/**/*.ts",
+        "src/**/*.tsx",
+        "public/**/*.json",
+        ".next/types/**/*.ts",
+        "src/hooks/useEditableForm.js",
+        "src/components/Blog/Create/components/ArticleEditForm.jsx",
+        "src/components/Blog/manage/authors/CreateAuthor.tsx",
+        "src/components/Blog/Create/components/TagPostManager.tsx",
+        "src/components/Blog/Create/PostsForm.jsx",
+        "src/components/Blog/manage/sections/SectionsForm.tsx"
+    ],
+    "exclude": ["node_modules", "amplify", ".Help/examples"]
 }
