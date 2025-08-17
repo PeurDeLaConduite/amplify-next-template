@@ -53,7 +53,6 @@ export function useTodosWithComments() {
                     ],
                 })
                 .subscribe({
-                    // @ts-expect-error : no explain
                     next: (data) => setComments([...(data.items as CommentWithTodoId[])]),
                 });
         })();
