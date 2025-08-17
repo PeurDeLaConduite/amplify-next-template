@@ -1,7 +1,7 @@
 import React from "react";
 import type { Schema } from "@/amplify/data/resource";
-import { CommentWithTodoId } from "@src/features/todo/useTodosWithComments";
-import CommentList from "@src/features/todo/CommentList";
+import { CommentWithTodoId } from "@/src/components/todo/useTodosWithComments";
+import CommentList from "@/src/components/todo/CommentList";
 
 interface TodoListProps {
     todos: Schema["Todo"]["type"][];
