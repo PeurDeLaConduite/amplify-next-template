@@ -1,0 +1,47 @@
+import { describe, it, expect } from "vitest";
+import { faker } from "@faker-js/faker";
+import { toAuthorForm, toAuthorCreate, toAuthorUpdate } from "@entities/models/author/form";
+import type { AuthorType, AuthorFormType } from "@entities/models/author/types";
+
+describe("toAuthorForm", () => {
+    it("convertit AuthorType en AuthorFormType", () => {
+        const author = {
+            authorName: faker.person.fullName(),
+            avatar: faker.image.avatar(),
+            bio: faker.lorem.sentence(),
+            email: faker.internet.email(),
+        } as unknown as AuthorType;
+
+        const postIds = [faker.string.uuid(), faker.string.uuid()];
+        const form = toAuthorForm(author, postIds);
+        expect(form).toEqual({
+            authorName: author.authorName,
+            avatar: author.avatar,
+            bio: author.bio,
+            email: author.email,
+            postIds,
+        });
+    });
+});
+
+describe("toAuthorCreate / toAuthorUpdate", () => {
+    it("supprime postIds", () => {
+        const form: AuthorFormType = {
+            authorName: faker.person.fullName(),
+            avatar: faker.image.avatar(),
+            bio: faker.lorem.sentence(),
+            email: faker.internet.email(),
+            postIds: [faker.string.uuid()],
+        };
+
+        const expected = {
+            authorName: form.authorName,
+            avatar: form.avatar,
+            bio: form.bio,
+            email: form.email,
+        };
+
+        expect(toAuthorCreate(form)).toEqual(expected);
+        expect(toAuthorUpdate(form)).toEqual(expected);
+    });
+});
