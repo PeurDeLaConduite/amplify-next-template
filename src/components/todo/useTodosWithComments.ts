@@ -20,7 +20,7 @@ export type CommentWithTodoId = {
  * Récupère les todos ainsi que leurs commentaires en temps réel.
  * En cas d'erreur lors de l'observation, l'erreur est journalisée et l'utilisateur est averti.
  */
-export function useTodosWithComments() {
+export default function useTodosWithComments() {
     const [todos, setTodos] = useState<Schema["Todo"]["type"][]>([]);
     const [comments, setComments] = useState<CommentWithTodoId[]>([]);
     const todoClient = useTodoService();
@@ -133,5 +133,3 @@ export function useTodosWithComments() {
         canModifyComment,
     };
 }
-
-export default useTodosWithComments;
