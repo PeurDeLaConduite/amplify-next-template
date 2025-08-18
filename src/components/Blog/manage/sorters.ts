@@ -9,6 +9,7 @@ export const byOptionalOrder = <T extends { order?: number | null }>(a: T, b: T)
     return ao - bo;
 };
 
-export function byAlpha<T>(selector: (item: T) => string) {
-    return (a: T, b: T) => selector(a).localeCompare(selector(b));
-}
+export const byAlpha =
+    <T>(pick: (item: T) => string) =>
+    (a: T, b: T) =>
+        pick(a).localeCompare(pick(b), undefined, { sensitivity: "base" });
