@@ -42,12 +42,7 @@
         "src/**/*.ts",
         "src/**/*.tsx",
         "public/**/*.json",
-        ".next/types/**/*.ts",
-        "src/components/Blog/Create/components/ArticleEditForm.jsx",
-        "src/components/Blog/manage/authors/CreateAuthor.tsx",
-        "src/components/Blog/Create/components/TagPostManager.tsx",
-        "src/components/Blog/Create/PostsForm.jsx",
-        "src/components/Blog/manage/sections/SectionsForm.tsx"
+        ".next/types/**/*.ts"
     ],
     "exclude": ["node_modules", "amplify", ".Help/examples"]
 }
