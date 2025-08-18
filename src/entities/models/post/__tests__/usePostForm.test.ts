@@ -1,19 +1,20 @@
 import { renderHook, act, waitFor } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { usePostForm } from "@entities/models/post/hooks";
+import { postService } from "@entities/models/post/service";
 import { postTagService } from "@entities/relations/postTag/service";
 import { sectionPostService } from "@entities/relations/sectionPost/service";
 
 vi.mock("@entities/models/post/service", () => ({
     postService: {
-        create: vi.fn(),
+        create: vi.fn().mockResolvedValue({ data: { id: "post1" } }),
         update: vi.fn().mockResolvedValue({ data: { id: "post1" } }),
     },
 }));
 
 vi.mock("@entities/relations/postTag/service", () => ({
     postTagService: {
-        listByParent: vi.fn().mockResolvedValue(["tag1"]),
+        listByParent: vi.fn().mockResolvedValue([]),
         create: vi.fn().mockResolvedValue(undefined),
         delete: vi.fn().mockResolvedValue(undefined),
     },
@@ -21,7 +22,7 @@ vi.mock("@entities/relations/postTag/service", () => ({
 
 vi.mock("@entities/relations/sectionPost/service", () => ({
     sectionPostService: {
-        listByChild: vi.fn().mockResolvedValue(["section1"]),
+        listByChild: vi.fn().mockResolvedValue([]),
         create: vi.fn().mockResolvedValue(undefined),
         delete: vi.fn().mockResolvedValue(undefined),
     },
@@ -39,8 +40,40 @@ vi.mock("@entities/models/section/service", () => ({
     sectionService: { list: vi.fn().mockResolvedValue({ data: [] }) },
 }));
 
-describe("usePostForm syncRelations", () => {
+beforeEach(() => {
+    vi.clearAllMocks();
+});
+
+describe("usePostForm", () => {
+    it("gère la création, les toggles et le reset", async () => {
+        const { result } = renderHook(() => usePostForm(null));
+
+        act(() => {
+            result.current.handleChange("title", "Titre");
+            result.current.toggleTag("tag1");
+            result.current.toggleSection("section1");
+        });
+
+        await act(async () => {
+            await result.current.submit();
+        });
+
+        expect(postService.create).toHaveBeenCalled();
+        expect(result.current.form.tagIds).toEqual(["tag1"]);
+        expect(result.current.form.sectionIds).toEqual(["section1"]);
+        expect(result.current.mode).toBe("edit");
+
+        act(() => {
+            result.current.handleChange("title", "Nouveau");
+            result.current.reset();
+        });
+        expect(result.current.form.title).toBe("Titre");
+        expect(result.current.form.tagIds).toEqual(["tag1"]);
+    });
+
     it("synchronise les tags et sections", async () => {
+        (postTagService.listByParent as any).mockResolvedValue(["tag1"]);
+        (sectionPostService.listByChild as any).mockResolvedValue(["section1"]);
         const post = { id: "post1", seo: {} } as any;
         const { result } = renderHook(() => usePostForm(post));
 
