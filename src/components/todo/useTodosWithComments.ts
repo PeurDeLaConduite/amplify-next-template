@@ -114,9 +114,9 @@ export function useTodosWithComments() {
                 filter: { todoId: { eq: id } },
             });
             if (relatedComments) {
-                for (const comment of relatedComments) {
-                    await commentService.delete({ id: comment.id });
-                }
+                await Promise.all(
+                    relatedComments.map((comment) => commentService.delete({ id: comment.id }))
+                );
             }
             await todoService.delete({ id });
         }
