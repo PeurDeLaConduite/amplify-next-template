@@ -45,20 +45,31 @@ export function useSectionForm(section: SectionTypes | null) {
         },
     });
 
-    const { setForm, setExtras, setMode } = modelForm;
+    const { extras, setForm, setExtras, setMode } = modelForm;
 
-    const fetchSections = useCallback(async () => {
+    const fetchList = useCallback(async () => {
         const { data } = await sectionService.list();
         setExtras((e) => ({ ...e, sections: data ?? [] }));
     }, [setExtras]);
+
+    const remove = useCallback(
+        async (idx: number) => {
+            const sectionItem = extras.sections[idx];
+            if (!sectionItem) return;
+            if (!window.confirm("Supprimer cette section ?")) return;
+            await sectionService.delete({ id: sectionItem.id });
+            await fetchList();
+        },
+        [extras.sections, fetchList]
+    );
 
     useEffect(() => {
         void (async () => {
             const { data } = await postService.list();
             setExtras((e) => ({ ...e, posts: data ?? [] }));
         })();
-        void fetchSections();
-    }, [setExtras, fetchSections]);
+        void fetchList();
+    }, [setExtras, fetchList]);
 
     useEffect(() => {
         void (async () => {
@@ -73,5 +84,5 @@ export function useSectionForm(section: SectionTypes | null) {
         })();
     }, [section, setForm, setMode]);
 
-    return { ...modelForm, fetchSections };
+    return { ...modelForm, fetchList, remove };
 }

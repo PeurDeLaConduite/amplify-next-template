@@ -6,7 +6,6 @@ import SectionForm from "./SectionsForm";
 import SectionList from "./SectionList";
 import BlogEditorLayout from "@components/Blog/manage/BlogEditorLayout";
 import SectionHeader from "@components/Blog/manage/SectionHeader";
-import { sectionService } from "@entities/models/section/service";
 import { type SectionTypes, initialSectionForm, useSectionForm } from "@entities/models/section";
 
 export default function SectionManagerPage() {
@@ -16,14 +15,15 @@ export default function SectionManagerPage() {
     const manager = useSectionForm(editingSection);
     const {
         extras: { sections },
-        fetchSections,
+        fetchList,
+        remove,
         setForm,
         setMode,
     } = manager;
 
     useEffect(() => {
-        fetchSections();
-    }, [fetchSections]);
+        fetchList();
+    }, [fetchList]);
 
     const handleEdit = (idx: number) => {
         setEditingSection(sections[idx]);
@@ -31,14 +31,11 @@ export default function SectionManagerPage() {
     };
 
     const handleDelete = async (idx: number) => {
-        if (!confirm("Supprimer cette section ?")) return;
-        const id = sections[idx].id;
-        await sectionService.delete({ id });
-        await fetchSections();
+        await remove(idx);
     };
 
     const handleSave = async () => {
-        await fetchSections();
+        await fetchList();
         setEditingSection(null);
         setEditingIndex(null);
     };
