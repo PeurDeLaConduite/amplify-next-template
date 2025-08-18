@@ -5,6 +5,7 @@ import RequireAdmin from "@components/RequireAdmin";
 import SectionForm from "./SectionsForm";
 import SectionList from "./SectionList";
 import BlogEditorLayout from "@components/Blog/manage/BlogEditorLayout";
+import SectionHeader from "@components/Blog/manage/SectionHeader";
 import { sectionService } from "@entities/models/section/service";
 import { type SectionTypes, initialSectionForm, useSectionForm } from "@entities/models/section";
 
@@ -52,12 +53,14 @@ export default function SectionManagerPage() {
     return (
         <RequireAdmin>
             <BlogEditorLayout title="Gestion des Sections">
+                <SectionHeader className="mt-8">Nouvelle section</SectionHeader>
                 <SectionForm
                     ref={formRef}
                     manager={manager}
                     editingIndex={editingIndex}
                     onSave={handleSave}
                 />
+                <SectionHeader>Liste des sections</SectionHeader>
                 <SectionList
                     sections={sections}
                     editingIndex={editingIndex}
