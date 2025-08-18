@@ -1,32 +1,27 @@
-import React from "react";
-import { AddButton, EditButton, DeleteButton, SaveButton, CancelButton } from "@components/buttons";
-import type { TagType } from "@entities/models/tag/types";
-import type { UseTagFormReturn } from "@entities/models/tag/hooks";
+"use client";
 
-interface TagCrudManagerProps {
-    tags: TagType[];
-    modelForm: UseTagFormReturn;
-    onEdit: (id: string) => void;
-    onCancel: () => void;
-    onDelete: (id: string) => void;
-    fetchAll: () => Promise<void>;
+import React from "react";
+import { AddButton } from "@components/buttons";
+import GenericList from "@components/Blog/manage/GenericList";
+import { byAlpha } from "@components/Blog/manage/sorters";
+import type { UseTagFormReturn } from "@entities/models/tag/hooks";
+import type { TagType } from "@entities/models/tag/types";
+
+interface Props {
+    manager: UseTagFormReturn;
 }
 
-export default function TagCrudManager({
-    tags,
-    modelForm,
-    onEdit,
-    onCancel,
-    onDelete,
-    fetchAll,
-}: TagCrudManagerProps): React.ReactElement {
-    const { form, mode, setForm, submit } = modelForm;
-
-    async function handleSubmit(): Promise<void> {
-        await submit();
-        await fetchAll();
-        onCancel();
-    }
+export default function TagManager({ manager }: Props) {
+    const {
+        form,
+        setForm,
+        mode,
+        extras: { tags, index },
+        save,
+        edit,
+        cancel,
+        remove,
+    } = manager;
 
     return (
         <fieldset className="border p-4 rounded-md mt-4">
@@ -43,28 +38,21 @@ export default function TagCrudManager({
                     placeholder="Nom du tag"
                     className="border rounded p-2 flex-1 bg-white"
                 />
-
-                {mode === "create" ? (
-                    <AddButton label="Ajouter" onClick={handleSubmit} />
-                ) : (
-                    <>
-                        <SaveButton label="Enregistrer" onClick={handleSubmit} />
-                        <CancelButton label="Annuler" onClick={onCancel} />
-                    </>
-                )}
+                {mode === "create" && <AddButton label="Ajouter" onClick={save} />}
             </div>
-            <ul className="flex flex-wrap gap-2 mt-2">
-                {tags.map((tag) => (
-                    <li
-                        key={tag.id}
-                        className="flex gap-2 items-center px-4 py-1 bg-blue-50 border border-blue-100 rounded-lg"
-                    >
-                        <span className="font-semibold text-blue-700 px-2">{tag.name}</span>
-                        <EditButton label="" onClick={() => onEdit(tag.id)} color="#1976d2" />
-                        <DeleteButton label="" onClick={() => onDelete(tag.id)} />
-                    </li>
-                ))}
-            </ul>
+            <GenericList<TagType>
+                items={tags}
+                editingIndex={index}
+                getKey={(t) => t.id}
+                renderContent={(t) => (
+                    <span className="font-semibold text-blue-700 px-2">{t.name}</span>
+                )}
+                sortBy={byAlpha((t) => t.name)}
+                onEdit={edit}
+                onSave={save}
+                onCancel={cancel}
+                onDelete={remove}
+            />
         </fieldset>
     );
 }
