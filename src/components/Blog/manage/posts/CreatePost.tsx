@@ -5,6 +5,7 @@ import PostForm from "./PostForm";
 import { postService } from "@entities/models/post/service";
 import { type PostType } from "@entities/models/post/types";
 import RequireAdmin from "../../../RequireAdmin";
+import BlogEditorLayout from "@components/Blog/manage/BlogEditorLayout";
 export default function PostManagerPage() {
     const [posts, setPosts] = useState<PostType[]>([]);
     const [editingPost, setEditingPost] = useState<PostType | null>(null);
@@ -46,8 +47,7 @@ export default function PostManagerPage() {
 
     return (
         <RequireAdmin>
-            <div className="p-4">
-                <h1 className="text-2xl font-bold mb-4">Gestion des Posts</h1>
+            <BlogEditorLayout title="Gestion des Posts">
                 <PostForm ref={formRef} post={editingPost} posts={posts} onSave={handleSave} />
                 <PostList
                     posts={posts}
@@ -60,7 +60,7 @@ export default function PostManagerPage() {
                     onCancel={handleCancel}
                     onDelete={handleDelete}
                 />
-            </div>
+            </BlogEditorLayout>
         </RequireAdmin>
     );
 }
