@@ -1,6 +1,5 @@
-+12 - 1;
 // src/components/Blog/MarkdownRenderer.tsx
-("use client");
+"use client";
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
