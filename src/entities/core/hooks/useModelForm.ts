@@ -23,6 +23,8 @@ export interface UseModelFormOptions<F, E = Record<string, unknown>> {
     autoLoad?: boolean;
     /** Auto-exécuter loadExtras() au mount */
     autoLoadExtras?: boolean;
+    /** Réinitialiser le formulaire si load() renvoie null */
+    resetOnNull?: boolean;
 }
 
 export interface UseModelFormResult<F, E> {
@@ -93,6 +95,7 @@ export default function useModelForm<
         loadExtras,
         autoLoad = true,
         autoLoadExtras = true,
+        resetOnNull = false,
     } = options;
 
     const initialRef = useRef(initialForm);
@@ -136,7 +139,7 @@ export default function useModelForm<
             const next = await load();
             if (next) {
                 adoptInitial(next, "edit");
-            } else {
+            } else if (resetOnNull) {
                 adoptInitial(initialForm, "create");
             }
         } catch (e) {
@@ -144,7 +147,7 @@ export default function useModelForm<
         } finally {
             setLoading(false);
         }
-    }, [load, adoptInitial, initialForm]);
+    }, [load, adoptInitial, initialForm, resetOnNull]);
 
     const refreshExtras = useCallback(async () => {
         if (!loadExtras) return;

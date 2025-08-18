@@ -1,5 +1,5 @@
 // src/entities/models/userName/hooks.tsx
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import { useModelForm } from "@entities/core/hooks";
 import { userNameService } from "@entities/models/userName/service";
@@ -45,20 +45,6 @@ export function useUserNameForm() {
     });
 
     const { adoptInitial, setMessage, setForm, refresh, submit } = modelForm;
-
-    // Au montage (ou changement d'utilisateur), on essaie de charger l'état
-    useEffect(() => {
-        if (!sub) return;
-        (async () => {
-            const form = await (async () => {
-                const { data } = await userNameService.get({ id: sub });
-                return data ? toUserNameForm(data, [], []) : null;
-            })();
-            if (form) adoptInitial(form, "edit");
-            else adoptInitial(initialUserNameForm, "create");
-        })();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [sub]);
 
     // On wrap submit pour s'assurer du refresh après l'opération
     const submitAndRefresh = useCallback(async () => {
