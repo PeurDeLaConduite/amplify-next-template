@@ -29,7 +29,7 @@ export function useUserNameForm() {
             const { data, errors } = await userNameService.create({
                 id: sub,
                 ...toUserNameCreate(form),
-            } as UserNameTypeOmit & { id: string });
+            });
             if (!data) throw new Error(errors?.[0]?.message ?? "Erreur création pseudo");
             return data.id;
         },

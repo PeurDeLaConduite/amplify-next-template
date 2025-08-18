@@ -7,10 +7,7 @@ import EntityEditor from "@components/forms/EntityEditor";
 import { label as fieldLabel } from "./utilsUserName";
 import PersonIcon from "@mui/icons-material/Person";
 import { useUserNameForm } from "@entities/models/userName/hooks";
-import {
-    type UserNameFormType,
-    type UserNameTypeUpdateInput,
-} from "@entities/models/userName/types";
+import { type UserNameFormType, type UserNameUpdateInput } from "@entities/models/userName/types";
 
 const fields: (keyof UserNameFormType)[] = ["userName"];
 
@@ -36,7 +33,7 @@ export default function UserNameManager() {
                 if (
                     confirm(
                         `Supprimer le contenu du champ "${fieldLabel(
-                            field as keyof UserNameTypeUpdateInput
+                            field as keyof UserNameUpdateInput
                         )}" ?`
                     )
                 ) {
