@@ -29,11 +29,7 @@
             "@entities/*": ["src/entities/*"],
             "@public/*": ["public/*"]
         },
-        "plugins": [
-            {
-                "name": "next"
-            }
-        ]
+        "plugins": [{ "name": "next" }]
     },
     "include": [
         "next-env.d.ts",
@@ -44,5 +40,5 @@
         "public/**/*.json",
         ".next/types/**/*.ts"
     ],
-    "exclude": ["node_modules", "amplify", ".Help/examples"]
+    "exclude": ["node_modules", "amplify", ".Help/examples", ".next", "dist"]
 }

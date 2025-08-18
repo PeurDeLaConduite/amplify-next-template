@@ -1,7 +1,7 @@
 import { test, expect } from "playwright/test";
 import { signIn, signOut } from "@aws-amplify/auth";
 import { tagService } from "@entities/models/tag/service";
-import { postService } from "@entities/models/post/service";
+import { postService } from "@src/entities/models/post/service";
 import { authorService } from "@entities/models/author/service";
 import { postTagService } from "@entities/relations/postTag/service";
 

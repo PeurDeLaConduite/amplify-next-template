@@ -11571,6 +11571,7 @@ __metadata:
     tailwindcss: "npm:^4"
     ts-morph: "npm:^26.0.0"
     ts-node: "npm:^10.9.2"
+    tsconfig-paths: "npm:^4.2.0"
     tsx: "npm:^4.19.2"
     typescript: "npm:5.4.4"
     vitest: "npm:^2.1.4"
