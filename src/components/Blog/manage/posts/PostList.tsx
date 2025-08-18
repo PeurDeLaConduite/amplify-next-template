@@ -1,10 +1,13 @@
+// src/components/Blog/manage/PostList.tsx
 "use client";
+
 import React from "react";
-import FormActionButtons from "../components/FormActionButtons";
-import { type PostType  } from "@/src/entities/models/post";
+import GenericList from "../GenericList";
+import { byOptionalOrder } from "../sorters";
+import { type PostType } from "@/src/entities/models/post";
 
 interface Props {
-    posts: PostType [];
+    posts: PostType[];
     editingIndex: number | null;
     onEdit: (idx: number) => void;
     onSave: () => void;
@@ -12,43 +15,22 @@ interface Props {
     onDelete: (idx: number) => void;
 }
 
-export default function PostList({
-    posts,
-    editingIndex,
-    onEdit,
-    onSave,
-    onCancel,
-    onDelete,
-}: Props) {
-    // Pas de mutation d'ordre du state parent (slice())
+export default function PostList(props: Props) {
     return (
-        <ul className="mt-6 space-y-2">
-            {posts
-                .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-                .map((post, idx) => {
-                    const active = editingIndex === idx;
-                    return (
-                        <li
-                            key={post.id}
-                            className={`flex justify-between items-center p-2 transition-colors duration-300 ${
-                                active ? "bg-yellow-100 shadow-sm" : "border-b"
-                            }`}
-                        >
-                            <div>
-                                <strong>{post.title}</strong> (ordre : {post.order})
-                            </div>
-                            <FormActionButtons
-                                editingIndex={editingIndex}
-                                currentIndex={idx}
-                                onEdit={() => onEdit(idx)}
-                                onSave={onSave}
-                                onCancel={onCancel}
-                                onDelete={() => onDelete(idx)}
-                                isFormNew={false}
-                            />
-                        </li>
-                    );
-                })}
-        </ul>
+        <GenericList<PostType>
+            items={props.posts}
+            editingIndex={props.editingIndex}
+            getKey={(p) => p.id}
+            renderContent={(p) => (
+                <p className="self-center">
+                    <strong>{p.title}</strong> (ordre : {p.order})
+                </p>
+            )}
+            sortBy={byOptionalOrder}
+            onEdit={props.onEdit}
+            onSave={props.onSave}
+            onCancel={props.onCancel}
+            onDelete={props.onDelete}
+        />
     );
 }

@@ -1,7 +1,10 @@
+// src/components/Blog/manage/SectionList.tsx
 "use client";
+
 import React from "react";
+import GenericList from "../GenericList";
+import { byOptionalOrder } from "../sorters";
 import { type SectionTypes } from "@entities/models/section";
-import FormActionButtons from "../components/FormActionButtons";
 
 interface Props {
     sections: SectionTypes[];
@@ -12,42 +15,22 @@ interface Props {
     onDelete: (idx: number) => void;
 }
 
-export default function SectionList({
-    sections,
-    editingIndex,
-    onEdit,
-    onSave,
-    onCancel,
-    onDelete,
-}: Props) {
+export default function SectionList(props: Props) {
     return (
-        <ul className="mt-6 space-y-2">
-            {sections
-                .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-                .map((section, idx) => {
-                    const active = editingIndex === idx;
-                    return (
-                        <li
-                            key={section.id}
-                            className={`flex justify-between items-center p-2 transition-colors duration-300 ${
-                                active ? "bg-yellow-100 shadow-sm" : "border-b"
-                            }`}
-                        >
-                            <div>
-                                <strong>{section.title}</strong> (ordre : {section.order})
-                            </div>
-                            <FormActionButtons
-                                editingIndex={editingIndex}
-                                currentIndex={idx}
-                                onEdit={() => onEdit(idx)}
-                                onSave={onSave}
-                                onCancel={onCancel}
-                                onDelete={() => onDelete(idx)}
-                                isFormNew={false}
-                            />
-                        </li>
-                    );
-                })}
-        </ul>
+        <GenericList<SectionTypes>
+            items={props.sections}
+            editingIndex={props.editingIndex}
+            getKey={(s) => s.id}
+            renderContent={(s) => (
+                <p className="self-center">
+                    <strong>{s.title}</strong> (ordre : {s.order})
+                </p>
+            )}
+            sortBy={byOptionalOrder}
+            onEdit={props.onEdit}
+            onSave={props.onSave}
+            onCancel={props.onCancel}
+            onDelete={props.onDelete}
+        />
     );
 }

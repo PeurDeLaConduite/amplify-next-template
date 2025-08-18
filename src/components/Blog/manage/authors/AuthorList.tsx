@@ -1,8 +1,9 @@
+// src/components/Blog/manage/AuthorList.tsx
 "use client";
 
 import React from "react";
+import GenericList from "../GenericList";
 import { type AuthorType } from "@entities/models/author";
-import FormActionButtons from "@components/Blog/manage/components/FormActionButtons";
 
 interface Props {
     authors: AuthorType[];
@@ -13,40 +14,21 @@ interface Props {
     onDelete: (idx: number) => void;
 }
 
-export default function AuthorList({
-    authors,
-    editingIndex,
-    onEdit,
-    onSave,
-    onCancel,
-    onDelete,
-}: Props) {
+export default function AuthorList(props: Props) {
     return (
-        <ul className="mt-4 mb-6 space-y-2">
-            {authors.map((author, idx) => {
-                const active = editingIndex === idx;
-                return (
-                    <li
-                        key={author.id}
-                        className={`flex justify-between items-center p-2 transition-colors duration-300 ${
-                            active ? "bg-yellow-100 shadow-sm " : "bg-white "
-                        }`}
-                    >
-                        <div>
-                            <strong>{author.authorName}</strong> — {author.email}
-                        </div>
-                        <FormActionButtons
-                            editingIndex={editingIndex}
-                            currentIndex={idx}
-                            onEdit={() => onEdit(idx)}
-                            onSave={onSave}
-                            onCancel={onCancel}
-                            onDelete={() => onDelete(idx)}
-                            isFormNew={false}
-                        />
-                    </li>
-                );
-            })}
-        </ul>
+        <GenericList<AuthorType>
+            items={props.authors}
+            editingIndex={props.editingIndex}
+            getKey={(a) => a.id}
+            renderContent={(a) => (
+                <p className="self-center">
+                    <strong>{a.authorName}</strong> — {a.email}
+                </p>
+            )}
+            onEdit={props.onEdit}
+            onSave={props.onSave}
+            onCancel={props.onCancel}
+            onDelete={props.onDelete}
+        />
     );
 }

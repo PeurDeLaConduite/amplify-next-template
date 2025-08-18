@@ -1,6 +1,6 @@
-// PostForm.tsx
+// src/components/Blog/manage/posts/PostForm.tsx
 "use client";
-import React, { forwardRef, type ChangeEvent, type FormEvent } from "react";
+import React, { forwardRef, type ChangeEvent } from "react";
 import { usePostForm } from "@entities/models/post/hooks";
 import { initialPostForm } from "@entities/models/post/form";
 import { useAutoGenFields, slugify } from "@hooks/useAutoGenFields";
@@ -9,9 +9,10 @@ import EditableTextArea from "@components/forms/EditableTextArea";
 import SeoFields from "@components/forms/SeoFields";
 import OrderSelector from "@components/forms/OrderSelector";
 import SelectField from "@components/forms/SelectField";
-import { type PostType } from "@/src/entities/models/post";
+import EntityFormShell from "../EntityFormShell";
 import { type SeoFormType } from "@entities/customTypes/seo/types";
 import { type PostFormType } from "@entities/models/post/types";
+import { type PostType } from "@entities/models/post";
 
 interface Props {
     post: PostType | null;
@@ -19,7 +20,7 @@ interface Props {
     posts: PostType[];
 }
 
-const PostForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
+const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
     { post, onSave, posts },
     ref
 ) {
@@ -49,33 +50,23 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
                 source: form.title ?? "",
                 current: form.seo.title ?? "",
                 target: "seo.title",
-                setter: (v) =>
-                    handleChange("seo", {
-                        ...form.seo,
-                        title: v ?? "",
-                    }),
+                setter: (v) => handleChange("seo", { ...form.seo, title: v ?? "" }),
             },
             {
                 editingKey: "excerpt",
                 source: form.excerpt ?? "",
                 current: form.seo.description ?? "",
                 target: "seo.description",
-                setter: (v) =>
-                    handleChange("seo", {
-                        ...form.seo,
-                        description: v ?? "",
-                    }),
+                setter: (v) => handleChange("seo", { ...form.seo, description: v ?? "" }),
             },
         ],
     });
 
-    function handlePostChange(
+    const onChange = (
         e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-    ) {
+    ) => {
         const { name, value } = e.target;
-        if (name === "title" || name === "excerpt") {
-            handleSourceFocus(name);
-        }
+        if (name === "title" || name === "excerpt") handleSourceFocus(name);
         if (name.startsWith("seo.")) {
             const key = name.split(".")[1] as keyof SeoFormType;
             handleChange("seo", { ...form.seo, [key]: value });
@@ -86,41 +77,53 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
         } else {
             handleChange(name as keyof PostFormType, value as never);
         }
-    }
+    };
 
-    async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-        e.preventDefault();
-        if (!form.authorId) {
-            alert("Veuillez sélectionner un auteur.");
-            return;
-        }
-        await submit();
-        setMode("create");
-        setForm(initialPostForm);
-        onSave();
-    }
+    // On garde la règle métier de validation authorId (inchangée)
+    const managerLike = {
+        form,
+        submit: async () => {
+            if (!form.authorId) {
+                alert("Veuillez sélectionner un auteur.");
+                return;
+            }
+            await submit();
+            setMode("create");
+            setForm(initialPostForm);
+            onSave();
+        },
+        setForm,
+        setMode,
+        mode: "create" as const,
+    };
 
     return (
-        <form ref={ref} onSubmit={handleSubmit} className="mb-6 space-y-2">
+        <EntityFormShell
+            ref={ref}
+            manager={{ ...managerLike, message: null, saving: undefined }}
+            initialForm={initialPostForm}
+            onSave={onSave}
+            submitLabel={{ create: post ? "Mettre à jour" : "Créer", edit: "Mettre à jour" }}
+        >
             <EditableField
                 name="title"
                 label="Titre"
                 value={form.title}
-                onChange={handlePostChange}
+                onChange={onChange}
                 readOnly={false}
             />
             <EditableTextArea
                 name="excerpt"
                 label="Résumé"
                 value={form.excerpt ?? ""}
-                onChange={handlePostChange}
+                onChange={onChange}
                 readOnly={false}
             />
             <EditableField
                 name="slug"
                 label="Slug"
                 value={form.slug}
-                onChange={handlePostChange}
+                onChange={onChange}
                 readOnly={false}
             />
             <SeoFields
@@ -129,28 +132,28 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
                     description: form.seo.description ?? "",
                     image: form.seo.image ?? "",
                 }}
-                onChange={handlePostChange}
+                onChange={onChange}
                 readOnly={false}
             />
             <EditableField
                 name="videoUrl"
                 label="Video URL"
                 value={form.videoUrl ?? ""}
-                onChange={handlePostChange}
+                onChange={onChange}
                 readOnly={false}
             />
             <EditableTextArea
                 name="content"
                 label="Contenu"
                 value={form.content ?? ""}
-                onChange={handlePostChange}
+                onChange={onChange}
                 readOnly={false}
             />
             <SelectField
                 label="Statut"
                 name="status"
                 value={form.status ?? ""}
-                onChange={handlePostChange}
+                onChange={onChange}
                 options={[
                     { value: "draft", label: "Brouillon" },
                     { value: "published", label: "Publié" },
@@ -160,23 +163,23 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
                 label="Auteur"
                 name="authorId"
                 value={form.authorId}
-                onChange={handlePostChange}
+                onChange={onChange}
                 options={[
                     { value: "", label: "Sélectionner un auteur" },
                     ...authors.map((a) => ({ value: a.id, label: a.authorName })),
                 ]}
             />
             <OrderSelector
-                sections={posts} // tu passes la bonne liste ici
+                sections={posts}
                 currentIndex={posts.findIndex((p) => p.id === post?.id)}
                 value={form.order ?? 1}
-                onReorder={(_: number, newOrder: number) => handleChange("order", newOrder)}
+                onReorder={(_, newOrder) => handleChange("order", newOrder)}
             />
             <fieldset className="border p-2 space-y-2">
                 <legend className="font-semibold">Tags</legend>
                 {tags
                     .slice()
-                    .sort((a, b) => a.name.localeCompare(b.name)) // tri alphabétique
+                    .sort((a, b) => a.name.localeCompare(b.name))
                     .map((tag) => (
                         <label key={tag.id} className="block">
                             <input
@@ -188,11 +191,10 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
                         </label>
                     ))}
             </fieldset>
-
             <fieldset className="border p-2 space-y-2">
                 <legend className="font-semibold">Sections</legend>
                 {sections
-                    .slice() // pour ne pas modifier le tableau d'origine
+                    .slice()
                     .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
                     .map((section) => (
                         <label key={section.id} className="block">
@@ -206,12 +208,7 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
                         </label>
                     ))}
             </fieldset>
-            <div className="flex space-x-2">
-                <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
-                    {post ? "Mettre à jour" : "Créer"}
-                </button>
-            </div>
-        </form>
+        </EntityFormShell>
     );
 });
 

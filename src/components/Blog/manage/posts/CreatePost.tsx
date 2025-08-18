@@ -57,7 +57,7 @@ export default function PostManagerPage() {
                     editingIndex={editingIndex}
                     onEdit={handleEdit}
                     onSave={() => {
-                        // Appelle le submit du formulaire via la ref
+
                         formRef.current?.requestSubmit();
                     }}
                     onCancel={handleCancel}

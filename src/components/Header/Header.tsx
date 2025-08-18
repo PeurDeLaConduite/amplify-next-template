@@ -1,3 +1,4 @@
+// src/components/layout/Header.tsx
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -6,6 +7,7 @@ import { useAuthenticator } from "@aws-amplify/ui-react";
 import { PowerButton } from "@src/components/buttons";
 import { useUserNameForm } from "@entities/models/userName/hooks";
 import UserNameModal from "@src/components/Profile/UserNameModal";
+import { onUserNameUpdated } from "@entities/models/userName/bus";
 
 interface HeaderProps {
     className?: string;
@@ -14,7 +16,6 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ className }) => {
     const { user, signOut } = useAuthenticator();
 
-    // ⬇️ le hook expose maintenant `refresh`
     const {
         form: { userName },
         refresh,
@@ -22,13 +23,19 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
 
     const [showModal, setShowModal] = useState(false);
 
-    // Rafraîchir quand l'utilisateur change (login/logout)
+    // Rafraîchir au login/logout
     useEffect(() => {
-        if (user) {
+        if (user) void refresh();
+        else setShowModal(false);
+    }, [user, refresh]);
+
+    // Rafraîchir quand un autre écran met à jour le pseudo
+    useEffect(() => {
+        if (!user) return;
+        const unsub = onUserNameUpdated(() => {
             void refresh();
-        } else {
-            setShowModal(false); // ferme le modal si déconnexion
-        }
+        });
+        return unsub;
     }, [user, refresh]);
 
     // Ouvrir/fermer le modal selon présence du userName
@@ -88,7 +95,7 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
                             )
                         ) : (
                             <Link href="/connection" className="text-gray-700 hover:text-blue-600">
-                                Connection
+                                Connexion
                             </Link>
                         )}
                     </div>

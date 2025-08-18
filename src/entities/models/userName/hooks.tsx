@@ -9,85 +9,103 @@ import {
     toUserNameCreate,
     toUserNameUpdate,
 } from "@entities/models/userName/form";
-import { type UserNameFormType, type UserNameTypeOmit } from "@entities/models/userName/types";
+import { type UserNameFormType } from "@entities/models/userName/types";
+import { emitUserNameUpdated } from "./bus";
 
 export function useUserNameForm() {
     const { user } = useAuthenticator();
-    const sub = user?.userId ?? user?.username;
+    const sub = user?.userId ?? user?.username ?? null;
 
-    const modelForm = useModelForm<UserNameFormType>({
-        initialForm: initialUserNameForm,
-        // 🔄 Charge la vérité serveur (ou null si inexistant)
-        load: async () => {
-            if (!sub) return null;
-            const { data } = await userNameService.get({ id: sub });
-            if (!data) return null;
-            return toUserNameForm(data, [], []);
-        },
-        create: async (form) => {
+    const load = useCallback(async () => {
+        if (!sub) return null;
+        const { data } = await userNameService.get({ id: sub });
+        if (!data) return null;
+        return toUserNameForm(data, [], []);
+    }, [sub]);
+
+    const create = useCallback(
+        async (form: UserNameFormType) => {
             if (!sub) throw new Error("id manquant");
             const { data, errors } = await userNameService.create({
                 id: sub,
                 ...toUserNameCreate(form),
             });
             if (!data) throw new Error(errors?.[0]?.message ?? "Erreur création pseudo");
+            emitUserNameUpdated(); // notify UI
             return data.id;
         },
-        update: async (form) => {
+        [sub]
+    );
+
+    // ⬇️ pas de refresh ici : submit() le fera
+    const update = useCallback(
+        async (form: UserNameFormType) => {
             if (!sub) throw new Error("id manquant");
             const { data, errors } = await userNameService.update({
                 id: sub,
                 ...toUserNameUpdate(form),
             });
             if (!data) throw new Error(errors?.[0]?.message ?? "Erreur mise à jour pseudo");
+            emitUserNameUpdated(); // notify UI
             return data.id;
         },
+        [sub]
+    );
+
+    const modelForm = useModelForm<UserNameFormType>({
+        initialForm: initialUserNameForm,
+        load,
+        create,
+        update,
+        autoLoad: true,
+        autoLoadExtras: false,
     });
 
     const { adoptInitial, setMessage, setForm, refresh, submit } = modelForm;
 
-    // On wrap submit pour s'assurer du refresh après l'opération
-    const submitAndRefresh = useCallback(async () => {
-        await submit();
-        await refresh();
-    }, [submit, refresh]);
+    const saveField = useCallback(
+        async (field: keyof UserNameFormType, value: string) => {
+            if (!sub) return;
+            try {
+                setMessage(null);
+                const { errors } = await userNameService.update({
+                    id: sub,
+                    [field]: value as string,
+                });
+                if (errors?.length) throw new Error(errors[0].message);
+                setForm((f) => ({ ...f, [field]: value })); // optimiste
+                await refresh(); // vérité serveur
+                emitUserNameUpdated(); // notify UI
+            } catch (err) {
+                setMessage(err instanceof Error ? err.message : String(err));
+            }
+        },
+        [sub, setForm, setMessage, refresh]
+    );
 
-    const saveField = async (field: keyof UserNameFormType, value: string): Promise<void> => {
-        if (!sub) return;
-        try {
-            setMessage(null);
-            const { errors } = await userNameService.update({
-                id: sub,
-                [field]: value as string,
-            });
-            if (errors?.length) throw new Error(errors[0].message);
-            // Optimiste + re-fetch pour la vérité serveur
-            setForm((f) => ({ ...f, [field]: value }));
-            await refresh();
-        } catch (err) {
-            setMessage(err instanceof Error ? err.message : String(err));
-        }
-    };
+    const clearField = useCallback(
+        async (field: keyof UserNameFormType) => {
+            await saveField(field, "");
+        },
+        [saveField]
+    );
 
-    const clearField = async (field: keyof UserNameFormType): Promise<void> => {
-        await saveField(field, "");
-    };
-
-    const remove = async () => {
+    const remove = useCallback(async () => {
         if (!sub) return;
         try {
             const { errors } = await userNameService.delete({ id: sub });
             if (errors?.length) throw new Error(errors[0].message);
             adoptInitial(initialUserNameForm, "create");
-            await refresh(); // par sécurité
+            await refresh();
+            emitUserNameUpdated();
         } catch (err) {
             setMessage(err instanceof Error ? err.message : String(err));
         }
-    };
+    }, [sub, adoptInitial, refresh, setMessage]);
 
     return {
         ...modelForm,
-        submit: submitAndRefresh, // ⬅️ expose la version qui refetch
+        submit, // submit() déclenche déjà le refresh via load
         refresh,
         saveField,
         clearField,
