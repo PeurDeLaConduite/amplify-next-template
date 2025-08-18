@@ -44,6 +44,9 @@ beforeEach(() => {
     (tagService.list as ReturnType<typeof vi.fn>).mockResolvedValue({ data: tags });
     (postService.list as ReturnType<typeof vi.fn>).mockResolvedValue({ data: posts });
     (postTagService.list as ReturnType<typeof vi.fn>).mockResolvedValue({ data: postTags });
+    (postTagService.listByChild as ReturnType<typeof vi.fn>).mockImplementation(
+        async (tagId: string) => (tagId === "t1" ? ["p1"] : [])
+    );
 });
 
 describe("useTagForm", () => {
@@ -76,5 +79,53 @@ describe("useTagForm", () => {
         });
         expect(deleteMock).toHaveBeenCalledWith("p1", "t2");
         expect(result.current.extras.postTags).not.toContainEqual({ postId: "p1", tagId: "t2" });
+    });
+
+    it("edit préremplit le formulaire et fixe l'index", async () => {
+        const { result } = renderHook(() => useTagForm());
+        await act(async () => {
+            await result.current.fetchAll();
+        });
+        await act(async () => {
+            await result.current.edit(0);
+        });
+        expect(result.current.form).toEqual({ name: "Tag1", postIds: ["p1"] });
+        expect(result.current.extras.index).toBe(0);
+    });
+
+    it("cancel réinitialise le formulaire et l'index", async () => {
+        const { result } = renderHook(() => useTagForm());
+        await act(async () => {
+            await result.current.fetchAll();
+        });
+        await act(async () => {
+            await result.current.edit(0);
+        });
+        act(() => {
+            result.current.cancel();
+        });
+        expect(result.current.form).toEqual({ name: "", postIds: [] });
+        expect(result.current.extras.index).toBeNull();
+    });
+
+    it("remove supprime le tag et réinitialise l'index", async () => {
+        const deleteTagMock = tagService.delete as ReturnType<typeof vi.fn>;
+        const deleteRelationMock = postTagService.delete as ReturnType<typeof vi.fn>;
+        deleteTagMock.mockResolvedValue({});
+        deleteRelationMock.mockResolvedValue({});
+        vi.spyOn(window, "confirm").mockReturnValue(true);
+        const { result } = renderHook(() => useTagForm());
+        await act(async () => {
+            await result.current.fetchAll();
+        });
+        await act(async () => {
+            await result.current.edit(0);
+        });
+        await act(async () => {
+            await result.current.remove(0);
+        });
+        expect(deleteRelationMock).toHaveBeenCalledWith("p1", "t1");
+        expect(deleteTagMock).toHaveBeenCalledWith({ id: "t1" });
+        expect(result.current.extras.index).toBeNull();
     });
 });

@@ -12,20 +12,25 @@ import { syncManyToMany } from "@entities/core/utils/syncManyToMany";
 // Pivot léger côté UI
 type PostTagLink = { postId: string; tagId: string };
 
-interface Extras extends Record<string, unknown> {
+export interface TagFormExtras extends Record<string, unknown> {
     index: number | null; // purement UI, optionnel
     tags: TagType[];
     posts: PostType[];
     postTags: PostTagLink[]; // ⚠️ paires d'IDs uniquement côté UI
 }
 
-const initialExtras: Extras = { index: null, tags: [], posts: [], postTags: [] };
+const initialExtras: TagFormExtras = {
+    index: null,
+    tags: [],
+    posts: [],
+    postTags: [],
+};
 
 export function useTagForm() {
     const currentId = useRef<string | null>(null);
     const [loading, setLoading] = useState(true);
 
-    const modelForm = useModelForm<TagFormType, Extras>({
+    const modelForm = useModelForm<TagFormType, TagFormExtras>({
         initialForm: initialTagForm,
         initialExtras,
         create: async (form) => {
@@ -112,8 +117,11 @@ export function useTagForm() {
             await Promise.all(linkedPostIds.map((postId) => postTagService.delete(postId, tag.id)));
             await tagService.delete({ id: tag.id });
             await fetchAll();
+            if (extras.index === idx) {
+                cancel();
+            }
         },
-        [extras.tags, fetchAll]
+        [extras.tags, extras.index, fetchAll, cancel]
     );
 
     const toggle = useCallback(
