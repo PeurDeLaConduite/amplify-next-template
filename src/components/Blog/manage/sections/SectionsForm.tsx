@@ -86,7 +86,7 @@ const SectionForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
     }
 
     return (
-        <form ref={ref} onSubmit={handleSubmit} className="space-y-2">
+        <form ref={ref} onSubmit={handleSubmit} className="space-y-2 mb-6">
             <EditableField
                 name="title"
                 label="Titre"

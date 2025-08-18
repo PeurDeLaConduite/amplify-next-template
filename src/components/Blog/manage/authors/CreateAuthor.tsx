@@ -5,6 +5,7 @@ import RequireAdmin from "@components/RequireAdmin";
 import AuthorForm from "@components/Blog/manage/authors/AuthorForm";
 import AuthorList from "@components/Blog/manage/authors/AuthorList";
 import BlogEditorLayout from "@components/Blog/manage/BlogEditorLayout";
+import SectionHeader from "@components/Blog/manage/SectionHeader";
 import {
     type AuthorType,
     initialAuthorForm,
@@ -56,11 +57,12 @@ export default function AuthorManagerPage() {
     return (
         <RequireAdmin>
             <BlogEditorLayout title="Éditeur de blog : Auteurs">
+                <SectionHeader className="mt-8">Nouvel auteur</SectionHeader>
                 <AuthorForm ref={formRef} manager={manager} onSave={handleSave} />
+                <SectionHeader loading={loading}>Liste d&apos;auteurs</SectionHeader>
                 <AuthorList
                     authors={authors}
                     editingIndex={editingIndex}
-                    loading={loading}
                     onEdit={handleEdit}
                     onSave={() => {
                         formRef.current?.requestSubmit();
