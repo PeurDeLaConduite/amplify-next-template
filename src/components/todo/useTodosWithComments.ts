@@ -42,7 +42,7 @@ export function useTodosWithComments() {
             // Liste des Todos
             todoSub = todoClient.observeQuery(options).subscribe({
                 next: ({ items }: { items: Schema["Todo"]["type"][] }) => setTodos([...items]),
-                error: (error) => {
+                error: (error: unknown) => {
                     console.error("Erreur lors de l'observation des todos", error);
                     window.alert("Impossible de charger les todos");
                 },
@@ -64,7 +64,7 @@ export function useTodosWithComments() {
                 })
                 .subscribe({
                     next: ({ items }: { items: CommentWithTodoId[] }) => setComments([...items]),
-                    error: (error) => {
+                    error: (error: unknown) => {
                         console.error("Erreur lors de l'observation des commentaires", error);
                         window.alert("Impossible de charger les commentaires");
                     },
