@@ -1,4 +1,5 @@
 import React from "react";
+import ListLoader from "@components/Blog/manage/ListLoader";
 
 interface Props {
     children: React.ReactNode;
@@ -10,7 +11,7 @@ export default function SectionHeader({ children, loading = false, className = "
     return (
         <h2 className={`text-xl font-semibold mb-4 border-b ${className}`}>
             {children}
-            {loading && <span className=" ml-2 animate-pulse">Actualisation…</span>}
+            {loading && <ListLoader />}
         </h2>
     );
 }
