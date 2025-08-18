@@ -9,7 +9,8 @@ import EditableTextArea from "@components/forms/EditableTextArea";
 import SeoFields from "@components/forms/SeoFields";
 import OrderSelector from "@components/forms/OrderSelector";
 import SelectField from "@components/forms/SelectField";
-import EntityFormShell from "../EntityFormShell";
+import EntityFormShell from "@components/Blog/manage/EntityFormShell";
+import { byAlpha, byOptionalOrder } from "@components/Blog/manage/sorters";
 import { type SeoFormType } from "@entities/customTypes/seo/types";
 import { type PostFormType } from "@entities/models/post/types";
 import { type PostType } from "@entities/models/post";
@@ -166,7 +167,10 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
                 onChange={onChange}
                 options={[
                     { value: "", label: "Sélectionner un auteur" },
-                    ...authors.map((a) => ({ value: a.id, label: a.authorName })),
+                    ...authors
+                        .slice()
+                        .sort(byAlpha((a) => a.authorName))
+                        .map((a) => ({ value: a.id, label: a.authorName })),
                 ]}
             />
             <OrderSelector
@@ -179,7 +183,7 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
                 <legend className="font-semibold">Tags</legend>
                 {tags
                     .slice()
-                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .sort(byAlpha((a) => a.name))
                     .map((tag) => (
                         <label key={tag.id} className="block">
                             <input
@@ -195,7 +199,7 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
                 <legend className="font-semibold">Sections</legend>
                 {sections
                     .slice()
-                    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+                    .sort(byOptionalOrder)
                     .map((section) => (
                         <label key={section.id} className="block">
                             <input
