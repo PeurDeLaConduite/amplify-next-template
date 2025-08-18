@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import type { Schema } from "@/amplify/data/resource";
 import { useTodoService } from "@src/entities/models/todo";
 import "@aws-amplify/ui-react/styles.css";
-import "./../app/app.css";
+import "./app.css";
 
 export default function TodosPublicPage() {
     const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
