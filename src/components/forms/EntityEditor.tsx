@@ -6,7 +6,7 @@ import EditField from "./EditField";
 import EntityForm from "./EntityForm";
 import { DeleteButton } from "@components/buttons";
 
-export type EntityEditorProps<T extends Record<string, unknown>> = {
+type EntityEditorProps<T extends Record<string, unknown>> = {
     /** Titre de la section */
     title: string;
     /** Champs requis pour le formulaire */

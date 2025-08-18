@@ -2,7 +2,7 @@ import React from "react";
 import { EditButton, DeleteButton } from "@components/buttons";
 import { type FieldKey } from "@entities/core/hooks";
 
-export type ReadOnlyViewProps<T extends Record<string, unknown>> = {
+type ReadOnlyViewProps<T extends Record<string, unknown>> = {
     /** Données partiellement définies */
     data: Partial<T>;
     /** Champs à afficher */

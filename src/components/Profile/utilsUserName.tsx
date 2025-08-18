@@ -1,4 +1,3 @@
-import { toUserNameForm } from "@entities/models/userName/form";
 import { type UserNameTypeUpdateInput } from "@entities/models/userName/types";
 
 export const label = (field: keyof UserNameTypeUpdateInput): string => {
@@ -9,5 +8,3 @@ export const label = (field: keyof UserNameTypeUpdateInput): string => {
             return field;
     }
 };
-
-export const normalizeFormData = toUserNameForm;
