@@ -1,9 +1,8 @@
-// src/components/Blog/manage/SectionList.tsx
 "use client";
 
 import React from "react";
-import GenericList from "../GenericList";
-import { byOptionalOrder } from "../sorters";
+import GenericList from "@components/Blog/manage/GenericList";
+import { byOptionalOrder } from "@components/Blog/manage/sorters";
 import { type SectionTypes } from "@entities/models/section";
 
 interface Props {
