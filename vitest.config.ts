@@ -1,5 +1,6 @@
 // vitest.config.ts
 import { defineConfig } from "vitest/config";
+import path from "path";
 
 export default defineConfig({
     test: {
@@ -19,6 +20,12 @@ export default defineConfig({
             // optionnel : choisis ce que tu inclus/exclus
             include: ["src/**/*.{ts,tsx}"],
             exclude: ["node_modules/", ".next/", "**/*.d.ts", "tests/**", "test/**"],
+        },
+    },
+    resolve: {
+        alias: {
+            "@": path.resolve(__dirname, "."),
+            "@entities": path.resolve(__dirname, "src/entities"),
         },
     },
     css: {
