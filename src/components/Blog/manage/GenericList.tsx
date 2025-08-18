@@ -46,12 +46,15 @@ export default function GenericList<T>({
     itemClassName,
     rounded = true,
 }: GenericListProps<T>) {
-    const sorted = useMemo(() => (sortBy ? [...items].sort(sortBy) : items), [items, sortBy]);
+    const sorted = useMemo(() => {
+        const indexed = items.map((item, idx) => ({ item, idx }));
+        return sortBy ? indexed.sort((a, b) => sortBy(a.item, b.item)) : indexed;
+    }, [items, sortBy]);
 
     return (
         <ul className={`mt-4 mb-6 space-y-2 ${className ?? ""}`}>
-            {sorted.map((item, idx) => {
-                const active = editingIndex === idx;
+            {sorted.map(({ item, idx: originalIdx }) => {
+                const active = editingIndex === originalIdx;
                 const base =
                     "flex justify-between items-center p-4 gap-4 transition-colors duration-300";
                 const activeCls = active ? "bg-yellow-100 shadow-sm" : "bg-white";
@@ -59,15 +62,15 @@ export default function GenericList<T>({
                 const liClass = itemClassName?.(active) ?? `${base} ${activeCls} ${radius}`;
 
                 return (
-                    <li key={String(getKey(item, idx))} className={liClass}>
-                        <div className="self-center">{renderContent(item, idx)}</div>
+                    <li key={String(getKey(item, originalIdx))} className={liClass}>
+                        <div className="self-center">{renderContent(item, originalIdx)}</div>
                         <FormActionButtons
                             editingIndex={editingIndex}
-                            currentIndex={idx}
-                            onEdit={() => onEdit(idx)}
+                            currentIndex={originalIdx}
+                            onEdit={() => onEdit(originalIdx)}
                             onSave={onSave}
                             onCancel={onCancel}
-                            onDelete={() => onDelete(idx)}
+                            onDelete={() => onDelete(originalIdx)}
                             isFormNew={false}
                         />
                     </li>
