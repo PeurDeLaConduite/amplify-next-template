@@ -2,7 +2,8 @@
 "use client";
 
 import React from "react";
-import GenericList from "../GenericList";
+import GenericList from "@components/Blog/manage/GenericList";
+import { byAlpha } from "@components/Blog/manage/sorters";
 import { type AuthorType } from "@entities/models/author";
 
 interface Props {
@@ -25,6 +26,7 @@ export default function AuthorList(props: Props) {
                     <strong>{a.authorName}</strong> — {a.email}
                 </p>
             )}
+            sortBy={byAlpha((a) => a.authorName)}
             onEdit={props.onEdit}
             onSave={props.onSave}
             onCancel={props.onCancel}
