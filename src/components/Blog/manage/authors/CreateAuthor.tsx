@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import RequireAdmin from "@components/RequireAdmin";
 import AuthorForm from "@components/Blog/manage/authors/AuthorForm";
 import AuthorList from "@components/Blog/manage/authors/AuthorList";
+import BlogEditorLayout from "@components/Blog/manage/BlogEditorLayout";
 import {
     type AuthorType,
     initialAuthorForm,
@@ -54,8 +55,7 @@ export default function AuthorManagerPage() {
 
     return (
         <RequireAdmin>
-            <div className="p-6 max-w-5xl mx-auto space-y-6">
-                <h1 className="text-2xl font-bold">Éditeur de blog : Auteurs</h1>
+            <BlogEditorLayout title="Éditeur de blog : Auteurs">
                 <AuthorForm ref={formRef} manager={manager} onSave={handleSave} />
                 <AuthorList
                     authors={authors}
@@ -68,7 +68,7 @@ export default function AuthorManagerPage() {
                     onCancel={handleCancel}
                     onDelete={handleDelete}
                 />
-            </div>
+            </BlogEditorLayout>
         </RequireAdmin>
     );
 }
