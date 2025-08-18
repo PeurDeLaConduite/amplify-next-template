@@ -13,13 +13,13 @@ import { syncManyToMany } from "@entities/core/utils/syncManyToMany";
 type PostTagLink = { postId: string; tagId: string };
 
 interface Extras extends Record<string, unknown> {
-    index?: string; // purement UI, optionnel
+    index: number | null; // purement UI, optionnel
     tags: TagType[];
     posts: PostType[];
     postTags: PostTagLink[]; // ⚠️ paires d'IDs uniquement côté UI
 }
 
-const initialExtras: Extras = { index: "", tags: [], posts: [], postTags: [] };
+const initialExtras: Extras = { index: null, tags: [], posts: [], postTags: [] };
 
 export function useTagForm() {
     const currentId = useRef<string | null>(null);
@@ -90,15 +90,17 @@ export function useTagForm() {
             currentId.current = tag.id;
             setForm(toTagForm(tag, postIds));
             setMode("edit");
+            setExtras((prev) => ({ ...prev, index: idx }));
         },
-        [extras.tags, setForm, setMode]
+        [extras.tags, setForm, setMode, setExtras]
     );
 
     const cancel = useCallback(() => {
         currentId.current = null;
         setForm(initialTagForm);
         setMode("create");
-    }, [setForm, setMode]);
+        setExtras((prev) => ({ ...prev, index: null }));
+    }, [setForm, setMode, setExtras]);
 
     const remove = useCallback(
         async (idx: number) => {

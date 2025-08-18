@@ -1,25 +1,22 @@
 "use client";
 import React from "react";
-import RequireAdmin from "../../../RequireAdmin";
+import RequireAdmin from "@components/RequireAdmin";
 import { RefreshButton } from "@components/buttons";
 
-import TagCrudManager from "../components/tag/TagManager";
-import PostTagsManager from "../components/tag/PostTagsManager";
+import TagManager from "@components/Blog/manage/components/tag/TagManager";
+import PostTagsManager from "@components/Blog/manage/components/tag/PostTagsManager";
 import { useTagForm } from "@entities/models/tag/hooks";
 
 export default function PostsTagsManagerPage() {
-    const tagForm = useTagForm();
+    const manager = useTagForm();
     const {
         extras: { tags, posts },
         loading,
-        edit,
-        cancel,
-        remove,
         toggle,
         tagsForPost,
         isTagLinked,
         fetchAll,
-    } = tagForm;
+    } = manager;
 
     return (
         <RequireAdmin>
@@ -28,20 +25,7 @@ export default function PostsTagsManagerPage() {
                     <h1 className="text-2xl font-bold flex-1">Gestion des tags par article</h1>
                     <RefreshButton onClick={fetchAll} label="Rafraîchir" />
                 </div>
-                <TagCrudManager
-                    tags={tags}
-                    modelForm={tagForm}
-                    fetchAll={fetchAll}
-                    onEdit={(id: string) => {
-                        const idx = tags.findIndex((t) => t.id === id);
-                        if (idx !== -1) void edit(idx);
-                    }}
-                    onCancel={cancel}
-                    onDelete={(id: string) => {
-                        const idx = tags.findIndex((t) => t.id === id);
-                        if (idx !== -1) void remove(idx);
-                    }}
-                />
+                <TagManager manager={manager} />
                 <PostTagsManager
                     posts={posts}
                     tags={tags}
