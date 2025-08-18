@@ -60,10 +60,13 @@ async function tryModes<T>(
     throw lastErr;
 }
 
-export function crudService<K extends ClientModelKey>(
-    key: K,
-    opts?: { auth?: CrudAuth; rules?: AuthRule[] }
-) {
+export function crudService<
+    K extends ClientModelKey,
+    C = CreateArg<K>,
+    U = UpdateArg<K>,
+    G = GetArg<K>,
+    D = DeleteArg<K>,
+>(key: K, opts?: { auth?: CrudAuth; rules?: AuthRule[] }) {
     const model = getModelClient(key);
     const rules = opts?.rules ?? [{ allow: "public" }];
     const readModes = toArray(opts?.auth?.read);
@@ -80,10 +83,10 @@ export function crudService<K extends ClientModelKey>(
             return { data: data.filter((item) => canAccess(null, item, rules)) };
         },
 
-        async get(args: GetArg<K>) {
+        async get(args: G) {
             const res = await tryModes(readModes, (authMode) =>
                 model.get(
-                    args,
+                    args as GetArg<K>,
                     (authMode ? { authMode } : undefined) as AmplifyOpOptions | undefined
                 )
             );
@@ -91,28 +94,28 @@ export function crudService<K extends ClientModelKey>(
             return res;
         },
 
-        async create(data: CreateArg<K>) {
+        async create(data: C) {
             return tryModes(writeModes, (authMode) =>
                 model.create(
-                    data,
+                    data as CreateArg<K>,
                     (authMode ? { authMode } : undefined) as AmplifyOpOptions | undefined
                 )
             );
         },
 
-        async update(data: UpdateArg<K>) {
+        async update(data: U) {
             return tryModes(writeModes, (authMode) =>
                 model.update(
-                    data,
+                    data as UpdateArg<K>,
                     (authMode ? { authMode } : undefined) as AmplifyOpOptions | undefined
                 )
             );
         },
 
-        async delete(args: DeleteArg<K>) {
+        async delete(args: D) {
             return tryModes(writeModes, (authMode) =>
                 model.delete(
-                    args,
+                    args as DeleteArg<K>,
                     (authMode ? { authMode } : undefined) as AmplifyOpOptions | undefined
                 )
             );

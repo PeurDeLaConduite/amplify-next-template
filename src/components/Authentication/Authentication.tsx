@@ -14,9 +14,11 @@ export default function Authentication() {
     const services = {
         async handleSignUp(formData: Parameters<typeof signUp>[0]) {
             const result = await signUp(formData);
+            const { userId } = result;
+            if (!userId) throw new Error("userId manquant");
             try {
                 await userNameService.create({
-                    id: result.userId,
+                    id: userId,
                     userName: formData.username,
                 });
             } catch (err) {
