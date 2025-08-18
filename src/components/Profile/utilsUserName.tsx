@@ -1,10 +1,10 @@
-import { type UserNameTypeUpdateInput } from "@entities/models/userName/types";
+import { type UserNameUpdateInput } from "@entities/models/userName/types";
 
-export const label = (field: keyof UserNameTypeUpdateInput): string => {
+export const label = (field: keyof UserNameUpdateInput): string => {
     switch (field) {
         case "userName":
             return "Pseudo public";
         default:
-            return field;
+            return field as string;
     }
 };

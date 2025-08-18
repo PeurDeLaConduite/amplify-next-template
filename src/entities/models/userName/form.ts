@@ -1,6 +1,11 @@
 import { z, type ZodType } from "zod";
 import { createModelForm } from "@entities/core";
-import type { UserNameType, UserNameFormType, UserNameTypeUpdateInput } from "./types";
+import type {
+    UserNameType,
+    UserNameFormType,
+    UserNameCreateInput,
+    UserNameUpdateInput,
+} from "./types";
 
 export const {
     zodSchema: userNameSchema,
@@ -11,8 +16,8 @@ export const {
 } = createModelForm<
     UserNameType,
     UserNameFormType,
-    UserNameTypeUpdateInput,
-    UserNameTypeUpdateInput,
+    UserNameCreateInput,
+    UserNameUpdateInput,
     [string[], string[]]
 >({
     zodSchema: z.object({
@@ -30,13 +35,13 @@ export const {
         commentsIds,
         postCommentsIds,
     }),
-    toCreate: (form: UserNameFormType): UserNameTypeUpdateInput => {
+    toCreate: (form: UserNameFormType): UserNameCreateInput => {
         const { commentsIds, postCommentsIds, ...values } = form;
         void commentsIds;
         void postCommentsIds;
         return values;
     },
-    toUpdate: (form: UserNameFormType): UserNameTypeUpdateInput => {
+    toUpdate: (form: UserNameFormType): UserNameUpdateInput => {
         const { commentsIds, postCommentsIds, ...values } = form;
         void commentsIds;
         void postCommentsIds;

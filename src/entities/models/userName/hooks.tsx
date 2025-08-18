@@ -29,7 +29,7 @@ export function useUserNameForm() {
             const { data, errors } = await userNameService.create({
                 id: sub,
                 ...toUserNameCreate(form),
-            } as unknown as Parameters<typeof userNameService.create>[0]);
+            });
             if (!data) throw new Error(errors?.[0]?.message ?? "Erreur création pseudo");
             return data.id;
         },
@@ -56,10 +56,13 @@ export function useUserNameForm() {
         if (!sub) return;
         try {
             setMessage(null);
-            const { errors } = await userNameService.update({ id: sub, [field]: value } as never);
+            const { errors } = await userNameService.update({
+                id: sub,
+                [field]: value as string,
+            });
             if (errors?.length) throw new Error(errors[0].message);
             // Optimiste + re-fetch pour la vérité serveur
-            setForm((f) => ({ ...f, [field]: value as never }));
+            setForm((f) => ({ ...f, [field]: value }));
             await refresh();
         } catch (err) {
             setMessage(err instanceof Error ? err.message : String(err));
