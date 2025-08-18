@@ -6,6 +6,7 @@ import { postService } from "@entities/models/post/service";
 import { type PostType } from "@entities/models/post/types";
 import RequireAdmin from "../../../RequireAdmin";
 import BlogEditorLayout from "@components/Blog/manage/BlogEditorLayout";
+import SectionHeader from "@components/Blog/manage/SectionHeader";
 export default function PostManagerPage() {
     const [posts, setPosts] = useState<PostType[]>([]);
     const [editingPost, setEditingPost] = useState<PostType | null>(null);
@@ -48,7 +49,9 @@ export default function PostManagerPage() {
     return (
         <RequireAdmin>
             <BlogEditorLayout title="Gestion des Posts">
+                <SectionHeader className="mt-8">Nouvel article</SectionHeader>
                 <PostForm ref={formRef} post={editingPost} posts={posts} onSave={handleSave} />
+                <SectionHeader>Liste des articles</SectionHeader>
                 <PostList
                     posts={posts}
                     editingIndex={editingIndex}

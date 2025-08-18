@@ -31,7 +31,6 @@ const AuthorForm = forwardRef<HTMLFormElement, Props>(function AuthorForm(
 
     return (
         <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-4 mt-8 border-b">Nouvel auteur</h2>
             <form ref={ref} onSubmit={handleSubmit} className="grid gap-2">
                 <EditableField
                     name="authorName"
