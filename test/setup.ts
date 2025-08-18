@@ -1,7 +1,7 @@
-import { afterAll, afterEach, beforeAll, expect } from "vitest";
+import { expect, afterAll, afterEach, beforeAll } from "vitest";
 import "whatwg-fetch";
-import "@testing-library/jest-dom/vitest";
 import * as matchers from "@testing-library/jest-dom/matchers";
+import "@testing-library/jest-dom/vitest";
 
 import { setupServer } from "msw/node";
 

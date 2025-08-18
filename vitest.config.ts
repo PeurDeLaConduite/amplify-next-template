@@ -11,6 +11,7 @@ export default defineConfig({
     alias: {
       "@": resolve(__dirname, "."),
       "@entities": resolve(__dirname, "src/entities"),
+      "@test": resolve(__dirname, "test"),
     },
   },
   test: {
