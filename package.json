@@ -11,7 +11,7 @@
         "audit:summarize": "node scripts/summarize-audit.mjs",
         "gen:entities": "tsx scripts/generator/entry.ts",
         "gen:entities:debug": "tsx scripts/generator/entry.ts --debug",
-        "test": "vitest run --passWithNoTests",
+        "test": "vitest run",
         "test:watch": "vitest",
         "test:coverage": "vitest run --coverage",
         "e2e": "playwright test"
