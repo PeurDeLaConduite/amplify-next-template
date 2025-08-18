@@ -25,6 +25,9 @@ frontend:
             commands:
                 - export NODE_OPTIONS="--max-old-space-size=6144"
                 - export NEXT_TELEMETRY_DISABLED=1
+                - yarn lint
+                - yarn test:coverage
+                - yarn e2e
                 - yarn build
 
     artifacts:
