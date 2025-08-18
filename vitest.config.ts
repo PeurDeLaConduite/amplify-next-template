@@ -1,7 +1,14 @@
 // vitest.config.ts
 import { defineConfig } from "vitest/config";
+import path from "node:path";
 
 export default defineConfig({
+    resolve: {
+        alias: {
+            "@entities": path.resolve(__dirname, "src/entities"),
+            "@": path.resolve(__dirname, "."),
+        },
+    },
     test: {
         environment: "jsdom",
         // adapte le chemin si besoin
