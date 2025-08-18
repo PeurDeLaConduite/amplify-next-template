@@ -1,17 +1,23 @@
+// src/components/Blog/manage/posts/CreatePost.tsx (refactored)
 "use client";
+
 import React, { useState, useEffect, useRef } from "react";
 import PostList from "./PostList";
 import PostForm from "./PostForm";
 import { postService } from "@entities/models/post/service";
 import { type PostType } from "@entities/models/post/types";
-import RequireAdmin from "../../../RequireAdmin";
+import RequireAdmin from "@components/RequireAdmin";
 import BlogEditorLayout from "@components/Blog/manage/BlogEditorLayout";
 import SectionHeader from "@components/Blog/manage/SectionHeader";
+import { usePostForm } from "@entities/models/post/hooks";
+
 export default function PostManagerPage() {
     const [posts, setPosts] = useState<PostType[]>([]);
     const [editingPost, setEditingPost] = useState<PostType | null>(null);
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
     const formRef = useRef<HTMLFormElement>(null);
+
+    const manager = usePostForm(editingPost);
 
     const fetchPosts = async () => {
         const { data } = await postService.list();
@@ -19,10 +25,9 @@ export default function PostManagerPage() {
     };
 
     useEffect(() => {
-        fetchPosts();
+        void fetchPosts();
     }, []);
 
-    // Edition par index (comme SectionManagerPage)
     const handleEdit = (idx: number) => {
         setEditingPost(posts[idx]);
         setEditingIndex(idx);
@@ -35,8 +40,8 @@ export default function PostManagerPage() {
         await fetchPosts();
     };
 
-    const handleSave = () => {
-        fetchPosts();
+    const handleSave = async () => {
+        await fetchPosts();
         setEditingPost(null);
         setEditingIndex(null);
     };
@@ -50,14 +55,13 @@ export default function PostManagerPage() {
         <RequireAdmin>
             <BlogEditorLayout title="Gestion des Posts">
                 <SectionHeader className="mt-8">Nouvel article</SectionHeader>
-                <PostForm ref={formRef} post={editingPost} posts={posts} onSave={handleSave} />
+                <PostForm ref={formRef} manager={manager} posts={posts} onSave={handleSave} />
                 <SectionHeader>Liste des articles</SectionHeader>
                 <PostList
                     posts={posts}
                     editingIndex={editingIndex}
                     onEdit={handleEdit}
                     onSave={() => {
-
                         formRef.current?.requestSubmit();
                     }}
                     onCancel={handleCancel}

@@ -1,40 +1,75 @@
+// src/components/Blog/manage/tags/CreateTag.tsx
 "use client";
-import React from "react";
+
+import React, { useEffect, useRef, useCallback } from "react";
 import RequireAdmin from "@components/RequireAdmin";
+import BlogEditorLayout from "@components/Blog/manage/BlogEditorLayout";
+import SectionHeader from "@components/Blog/manage/SectionHeader";
 import { RefreshButton } from "@components/buttons";
 
-import TagManager from "@components/Blog/manage/components/tag/TagManager";
-import PostTagsManager from "@components/Blog/manage/components/tag/PostTagsManager";
+import TagForm from "@components/Blog/manage/tags/TagForm";
+import TagList from "@components/Blog/manage/tags/TagList";
+import PostTagsRelationManager from "@components/Blog/manage/tags/PostTagsRelationManager";
+
 import { useTagForm } from "@entities/models/tag/hooks";
 
-export default function PostsTagsManagerPage() {
+export default function CreateTagPage() {
+    const formRef = useRef<HTMLFormElement>(null);
     const manager = useTagForm();
+
     const {
-        extras: { tags, posts },
+        extras: { tags, posts, index },
         loading,
-        toggle,
+        fetchAll,
+        edit,
+        cancel,
+        remove,
         tagsForPost,
         isTagLinked,
-        fetchAll,
-    } = manager;
+        toggle,
+    } = manager as any;
+
+    useEffect(() => {
+        void fetchAll?.();
+    }, [fetchAll]);
+
+    // ⇧ stable: évite de casser la mémo de TagList
+    const submitForm = useCallback(() => formRef.current?.requestSubmit(), []);
+
+    const handleSaved = useCallback(async () => {
+        await fetchAll?.();
+    }, [fetchAll]);
 
     return (
         <RequireAdmin>
-            <div className="max-w-4xl mx-auto p-6 space-y-8">
-                <div className="flex items-center gap-2 mb-4">
-                    <h1 className="text-2xl font-bold flex-1">Gestion des tags par article</h1>
+            <BlogEditorLayout title="Gestion des Tags">
+                <div className="flex items-center gap-2">
+                    <SectionHeader className="!mb-0 flex-1">Nouveau tag</SectionHeader>
                     <RefreshButton onClick={fetchAll} label="Rafraîchir" />
                 </div>
-                <TagManager manager={manager} />
-                <PostTagsManager
+
+                <TagForm ref={formRef} manager={manager} onSave={handleSaved} />
+
+                <SectionHeader>Liste des tags</SectionHeader>
+                <TagList
+                    tags={tags}
+                    editingIndex={index ?? null}
+                    onEdit={edit}
+                    onSave={submitForm}
+                    onCancel={cancel}
+                    onDelete={remove}
+                />
+
+                <SectionHeader loading={loading}>Associer les tags aux articles</SectionHeader>
+                <PostTagsRelationManager
                     posts={posts}
                     tags={tags}
                     tagsForPost={tagsForPost}
                     isTagLinked={isTagLinked}
                     toggle={toggle}
-                    loading={loading}
+                    loading={!!loading}
                 />
-            </div>
+            </BlogEditorLayout>
         </RequireAdmin>
     );
 }

@@ -1,5 +1,6 @@
-// src/components/Blog/manage/posts/PostForm.tsx
+// src/components/Blog/manage/posts/PostForm.tsx (refactored)
 "use client";
+
 import React, { forwardRef, type ChangeEvent } from "react";
 import { usePostForm } from "@entities/models/post/hooks";
 import { initialPostForm } from "@entities/models/post/form";
@@ -16,25 +17,22 @@ import { type PostFormType } from "@entities/models/post/types";
 import { type PostType } from "@entities/models/post";
 
 interface Props {
-    post: PostType | null;
+    manager: ReturnType<typeof usePostForm>;
     onSave: () => void;
     posts: PostType[];
 }
 
 const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
-    { post, onSave, posts },
+    { manager, onSave, posts },
     ref
 ) {
     const {
         form,
         extras: { authors, tags, sections },
-        submit,
         handleChange,
         toggleTag,
         toggleSection,
-        setForm,
-        setMode,
-    } = usePostForm(post);
+    } = manager;
 
     const { handleSourceFocus, handleManualEdit } = useAutoGenFields({
         configs: [
@@ -80,31 +78,13 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
         }
     };
 
-    // On garde la règle métier de validation authorId (inchangée)
-    const managerLike = {
-        form,
-        submit: async () => {
-            if (!form.authorId) {
-                alert("Veuillez sélectionner un auteur.");
-                return;
-            }
-            await submit();
-            setMode("create");
-            setForm(initialPostForm);
-            onSave();
-        },
-        setForm,
-        setMode,
-        mode: "create" as const,
-    };
-
     return (
         <EntityFormShell
             ref={ref}
-            manager={{ ...managerLike, message: null, saving: undefined }}
+            manager={manager}
             initialForm={initialPostForm}
             onSave={onSave}
-            submitLabel={{ create: post ? "Mettre à jour" : "Créer", edit: "Mettre à jour" }}
+            submitLabel={{ create: "Créer l'article", edit: "Mettre à jour" }}
         >
             <EditableField
                 name="title"
@@ -175,7 +155,7 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
             />
             <OrderSelector
                 sections={posts}
-                currentIndex={posts.findIndex((p) => p.id === post?.id)}
+                currentIndex={posts.findIndex((p) => p.id === form.id)}
                 value={form.order ?? 1}
                 onReorder={(_, newOrder) => handleChange("order", newOrder)}
             />
