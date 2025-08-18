@@ -9,7 +9,7 @@ import {
     toUserNameCreate,
     toUserNameUpdate,
 } from "@entities/models/userName/form";
-import { type UserNameFormType } from "@entities/models/userName/types";
+import { type UserNameFormType, type UserNameTypeOmit } from "@entities/models/userName/types";
 
 export function useUserNameForm() {
     const { user } = useAuthenticator();

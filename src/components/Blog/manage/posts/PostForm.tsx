@@ -101,7 +101,7 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
     }
 
     return (
-        <form ref={ref} onSubmit={handleSubmit} className="mb-4 space-y-2">
+        <form ref={ref} onSubmit={handleSubmit} className="mb-6 space-y-2">
             <EditableField
                 name="title"
                 label="Titre"
