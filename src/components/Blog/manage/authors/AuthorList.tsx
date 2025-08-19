@@ -6,20 +6,22 @@ import GenericList from "@components/Blog/manage/GenericList";
 import { byAlpha } from "@components/Blog/manage/sorters";
 import { type AuthorType } from "@entities/models/author";
 
+type IdLike = string | number;
+
 interface Props {
     authors: AuthorType[];
-    editingIndex: number | null;
-    onEdit: (idx: number) => void;
+    editingId: IdLike | null;
+    onEditById: (id: IdLike) => void;
     onSave: () => void;
     onCancel: () => void;
-    onDelete: (idx: number) => void;
+    onDeleteById: (id: IdLike) => void;
 }
 
 export default function AuthorList(props: Props) {
     return (
         <GenericList<AuthorType>
             items={props.authors}
-            editingIndex={props.editingIndex}
+            editingId={props.editingId}
             getKey={(a) => a.id}
             renderContent={(a) => (
                 <p className="self-center">
@@ -27,10 +29,10 @@ export default function AuthorList(props: Props) {
                 </p>
             )}
             sortBy={byAlpha((a) => a.authorName)}
-            onEdit={props.onEdit}
+            onEdit={props.onEditById}
             onSave={props.onSave}
             onCancel={props.onCancel}
-            onDelete={props.onDelete}
+            onDelete={props.onDeleteById}
         />
     );
 }
