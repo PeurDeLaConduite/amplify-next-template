@@ -14,7 +14,7 @@ import { usePostForm } from "@entities/models/post/hooks";
 export default function PostManagerPage() {
     const [posts, setPosts] = useState<PostType[]>([]);
     const [editingPost, setEditingPost] = useState<PostType | null>(null);
-    const [editingIndex, setEditingIndex] = useState<number | null>(null);
+    const [editingId, setEditingId] = useState<string | null>(null);
     const formRef = useRef<HTMLFormElement>(null);
 
     const manager = usePostForm(editingPost);
@@ -28,14 +28,15 @@ export default function PostManagerPage() {
         void fetchPosts();
     }, [fetchPosts]);
 
-    const handleEdit = (idx: number) => {
-        setEditingPost(posts[idx]);
-        setEditingIndex(idx);
+    const handleEditById = (id: string) => {
+        const post = posts.find((p) => p.id === id);
+        if (!post) return;
+        setEditingPost(post);
+        setEditingId(id);
     };
 
-    const handleDelete = async (idx: number) => {
+    const handleDeleteById = async (id: string) => {
         if (!confirm("Supprimer ce post ?")) return;
-        const id = posts[idx].id;
         await postService.delete({ id });
         await fetchPosts();
     };
@@ -43,12 +44,12 @@ export default function PostManagerPage() {
     const handleSave = async () => {
         await fetchPosts();
         setEditingPost(null);
-        setEditingIndex(null);
+        setEditingId(null);
     };
 
     const handleCancel = () => {
         setEditingPost(null);
-        setEditingIndex(null);
+        setEditingId(null);
     };
 
     return (
@@ -59,13 +60,13 @@ export default function PostManagerPage() {
                 <SectionHeader>Liste des articles</SectionHeader>
                 <PostList
                     posts={posts}
-                    editingIndex={editingIndex}
-                    onEdit={handleEdit}
+                    editingId={editingId}
+                    onEditById={handleEditById}
                     onSave={() => {
                         formRef.current?.requestSubmit();
                     }}
                     onCancel={handleCancel}
-                    onDelete={handleDelete}
+                    onDeleteById={handleDeleteById}
                 />
             </BlogEditorLayout>
         </RequireAdmin>

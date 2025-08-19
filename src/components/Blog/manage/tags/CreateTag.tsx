@@ -1,7 +1,7 @@
 // src/components/Blog/manage/tags/CreateTag.tsx
 "use client";
 
-import React, { useEffect, useRef, useCallback } from "react";
+import React, { useEffect, useRef, useCallback, useState } from "react";
 import RequireAdmin from "@components/RequireAdmin";
 import BlogEditorLayout from "@components/Blog/manage/BlogEditorLayout";
 import SectionHeader from "@components/Blog/manage/SectionHeader";
@@ -16,9 +16,10 @@ import { useTagForm, type UseTagFormReturn } from "@entities/models/tag/hooks";
 export default function CreateTagPage() {
     const formRef = useRef<HTMLFormElement>(null);
     const manager: UseTagFormReturn = useTagForm();
+    const [editingId, setEditingId] = useState<string | null>(null);
 
     const {
-        extras: { tags, posts, index },
+        extras: { tags, posts },
         loading,
         fetchAll,
         edit,
@@ -38,7 +39,32 @@ export default function CreateTagPage() {
 
     const handleSaved = useCallback(async () => {
         await fetchAll?.();
+        setEditingId(null);
     }, [fetchAll]);
+
+    const handleEditById = useCallback(
+        (id: string) => {
+            const idx = tags.findIndex((t) => t.id === id);
+            if (idx === -1) return;
+            edit(idx);
+            setEditingId(id);
+        },
+        [tags, edit]
+    );
+
+    const handleDeleteById = useCallback(
+        async (id: string) => {
+            const idx = tags.findIndex((t) => t.id === id);
+            if (idx === -1) return;
+            await remove(idx);
+        },
+        [tags, remove]
+    );
+
+    const handleCancel = useCallback(() => {
+        cancel();
+        setEditingId(null);
+    }, [cancel]);
 
     return (
         <RequireAdmin>
@@ -53,11 +79,11 @@ export default function CreateTagPage() {
                 <SectionHeader>Liste des tags</SectionHeader>
                 <TagList
                     tags={tags}
-                    editingIndex={index ?? null}
-                    onEdit={edit}
+                    editingId={editingId}
+                    onEditById={handleEditById}
                     onSave={submitForm}
-                    onCancel={cancel}
-                    onDelete={remove}
+                    onCancel={handleCancel}
+                    onDeleteById={handleDeleteById}
                 />
 
                 <SectionHeader loading={loading}>Associer les tags aux articles</SectionHeader>

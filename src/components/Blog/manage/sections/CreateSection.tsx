@@ -10,7 +10,7 @@ import { type SectionTypes, initialSectionForm, useSectionForm } from "@entities
 
 export default function SectionManagerPage() {
     const [editingSection, setEditingSection] = useState<SectionTypes | null>(null);
-    const [editingIndex, setEditingIndex] = useState<number | null>(null);
+    const [editingId, setEditingId] = useState<string | null>(null);
     const formRef = useRef<HTMLFormElement>(null);
     const manager = useSectionForm(editingSection);
     const {
@@ -25,24 +25,28 @@ export default function SectionManagerPage() {
         fetchList();
     }, [fetchList]);
 
-    const handleEdit = (idx: number) => {
+    const handleEditById = (id: string) => {
+        const idx = sections.findIndex((s) => s.id === id);
+        if (idx === -1) return;
         setEditingSection(sections[idx]);
-        setEditingIndex(idx);
+        setEditingId(id);
     };
 
-    const handleDelete = async (idx: number) => {
+    const handleDeleteById = async (id: string) => {
+        const idx = sections.findIndex((s) => s.id === id);
+        if (idx === -1) return;
         await remove(idx);
     };
 
     const handleSave = async () => {
         await fetchList();
         setEditingSection(null);
-        setEditingIndex(null);
+        setEditingId(null);
     };
 
     const handleCancel = () => {
         setEditingSection(null);
-        setEditingIndex(null);
+        setEditingId(null);
         setMode("create");
         setForm(initialSectionForm);
     };
@@ -54,19 +58,21 @@ export default function SectionManagerPage() {
                 <SectionForm
                     ref={formRef}
                     manager={manager}
-                    editingIndex={editingIndex}
+                    editingIndex={
+                        editingId !== null ? sections.findIndex((s) => s.id === editingId) : null
+                    }
                     onSave={handleSave}
                 />
                 <SectionHeader>Liste des sections</SectionHeader>
                 <SectionList
                     sections={sections}
-                    editingIndex={editingIndex}
-                    onEdit={handleEdit}
+                    editingId={editingId}
+                    onEditById={handleEditById}
                     onSave={() => {
                         formRef.current?.requestSubmit();
                     }}
                     onCancel={handleCancel}
-                    onDelete={handleDelete}
+                    onDeleteById={handleDeleteById}
                 />
             </BlogEditorLayout>
         </RequireAdmin>

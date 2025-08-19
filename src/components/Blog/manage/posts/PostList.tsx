@@ -6,20 +6,22 @@ import GenericList from "../GenericList";
 import { byOptionalOrder } from "../sorters";
 import { type PostType } from "@/src/entities/models/post";
 
+type IdLike = string | number;
+
 interface Props {
     posts: PostType[];
-    editingIndex: number | null;
-    onEdit: (idx: number) => void;
+    editingId: IdLike | null;
+    onEditById: (id: IdLike) => void;
     onSave: () => void;
     onCancel: () => void;
-    onDelete: (idx: number) => void;
+    onDeleteById: (id: IdLike) => void;
 }
 
 export default function PostList(props: Props) {
     return (
         <GenericList<PostType>
             items={props.posts}
-            editingIndex={props.editingIndex}
+            editingId={props.editingId}
             getKey={(p) => p.id}
             renderContent={(p) => (
                 <p className="self-center">
@@ -27,10 +29,10 @@ export default function PostList(props: Props) {
                 </p>
             )}
             sortBy={byOptionalOrder}
-            onEdit={props.onEdit}
+            onEdit={props.onEditById}
             onSave={props.onSave}
             onCancel={props.onCancel}
-            onDelete={props.onDelete}
+            onDelete={props.onDeleteById}
         />
     );
 }
