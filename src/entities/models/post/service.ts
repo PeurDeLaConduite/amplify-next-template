@@ -17,21 +17,25 @@ const base = crudService<
 export const postService = {
     ...base,
     async deleteCascade({ id }: { id: string }) {
-        const { data: comments } = await commentService.list({
-            filter: { postId: { eq: id } },
-        });
-        await deleteEdges(comments ?? [], (c) => commentService.delete({ id: c.id }));
+        await deleteEdges(
+            commentService.list,
+            (c) => commentService.delete({ id: c.id }),
+            "postId",
+            id
+        );
 
-        const { data: tagEdges } = await postTagService.list({
-            filter: { postId: { eq: id } },
-        });
-        await deleteEdges(tagEdges ?? [], (edge) => postTagService.delete(edge.postId, edge.tagId));
+        await deleteEdges(
+            postTagService.list,
+            (edge) => postTagService.delete(edge.postId, edge.tagId),
+            "postId",
+            id
+        );
 
-        const { data: sectionEdges } = await sectionPostService.list({
-            filter: { postId: { eq: id } },
-        });
-        await deleteEdges(sectionEdges ?? [], (edge) =>
-            sectionPostService.delete(edge.sectionId, edge.postId)
+        await deleteEdges(
+            sectionPostService.list,
+            (edge) => sectionPostService.delete(edge.sectionId, edge.postId),
+            "postId",
+            id
         );
 
         return base.delete({ id });

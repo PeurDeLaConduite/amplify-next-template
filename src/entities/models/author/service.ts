@@ -15,12 +15,7 @@ const base = crudService<
 export const authorService = {
     ...base,
     async deleteCascade({ id }: { id: string }) {
-        const { data: posts } = await postService.list({
-            filter: { authorId: { eq: id } },
-        });
-        await setNullBatch(posts ?? [], ["authorId"], (p) =>
-            postService.update({ id: p.id, authorId: p.authorId })
-        );
+        await setNullBatch(postService.list, (p) => postService.update(p), "authorId", id);
         return base.delete({ id });
     },
 };

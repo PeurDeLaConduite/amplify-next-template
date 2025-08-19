@@ -8,10 +8,12 @@ const base = crudService("Tag", {
 export const tagService = {
     ...base,
     async deleteCascade({ id }: { id: string }) {
-        const { data: edges } = await postTagService.list({
-            filter: { tagId: { eq: id } },
-        });
-        await deleteEdges(edges ?? [], (edge) => postTagService.delete(edge.postId, edge.tagId));
+        await deleteEdges(
+            postTagService.list,
+            (edge) => postTagService.delete(edge.postId, edge.tagId),
+            "tagId",
+            id
+        );
         return base.delete({ id });
     },
 };
