@@ -17,11 +17,11 @@ import {
 interface Props {
     manager: ReturnType<typeof useSectionForm>;
     onSave: () => void;
-    editingIndex: number | null;
+    editingId: string | null;
 }
 
 const SectionForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
-    { manager, onSave, editingIndex },
+    { manager, onSave, editingId },
     ref
 ) {
     const {
@@ -102,8 +102,8 @@ const SectionForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
                 readOnly={false}
             />
             <OrderSelector
-                sections={sections}
-                currentIndex={editingIndex ?? -1}
+                items={sections}
+                editingId={editingId}
                 value={form.order ?? 1}
                 onReorder={(_, newOrder) => handleChange("order", newOrder)}
             />
