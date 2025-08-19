@@ -1,5 +1,5 @@
 // src/entities/models/post/hooks.tsx
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useState } from "react";
 import { useModelForm } from "@entities/core/hooks";
 import { postService } from "@entities/models/post/service";
 import { postTagService } from "@entities/relations/postTag/service";
@@ -22,6 +22,8 @@ interface Extras extends Record<string, unknown> {
 }
 
 export function usePostForm(post: PostType | null) {
+    const [editingId, setEditingId] = useState<string | null>(post?.id ?? null);
+
     const modelForm = useModelForm<PostFormType, Extras>({
         initialForm: initialPostForm,
         initialExtras: { authors: [], tags: [], sections: [], posts: [] },
@@ -34,21 +36,23 @@ export function usePostForm(post: PostType | null) {
                 seo: form.seo,
             });
             if (!data) throw new Error("Erreur lors de la création de l'article");
+            setEditingId(data.id);
             return data.id;
         },
         update: async (form) => {
-            if (!post?.id) {
+            if (!editingId) {
                 throw new Error("ID du post manquant pour la mise à jour");
             }
             const { tagIds, sectionIds, ...postInput } = form;
             void tagIds;
             void sectionIds;
             const { data } = await postService.update({
-                id: post.id,
+                id: editingId,
                 ...postInput,
                 seo: form.seo,
             });
             if (!data) throw new Error("Erreur lors de la mise à jour de l'article");
+            setEditingId(data.id);
             return data.id;
         },
         syncRelations: async (id, form) => {
@@ -73,7 +77,7 @@ export function usePostForm(post: PostType | null) {
         },
     });
 
-    const { setForm, setExtras, setMode, extras } = modelForm;
+    const { setForm, setExtras, setMode, extras, reset } = modelForm;
 
     const fetchPosts = useCallback(async () => {
         const { data } = await postService.list();
@@ -106,9 +110,11 @@ export function usePostForm(post: PostType | null) {
                 ]);
                 setForm(toPostForm(post, tagIds, sectionIds));
                 setMode("edit");
+                setEditingId(post.id);
             } else {
                 setForm(initialPostForm);
                 setMode("create");
+                setEditingId(null);
             }
         })();
     }, [post, setForm, setMode]);
@@ -132,8 +138,22 @@ export function usePostForm(post: PostType | null) {
     }
 
     const selectById = useCallback(
-        (id: string) => extras.posts.find((p) => p.id === id) ?? null,
-        [extras.posts]
+        (id: string) => {
+            const postItem = extras.posts.find((p) => p.id === id) ?? null;
+            if (postItem) {
+                setEditingId(id);
+                void (async () => {
+                    const [tagIds, sectionIds] = await Promise.all([
+                        postTagService.listByParent(id),
+                        sectionPostService.listByChild(id),
+                    ]);
+                    setForm(toPostForm(postItem, tagIds, sectionIds));
+                    setMode("edit");
+                })();
+            }
+            return postItem;
+        },
+        [extras.posts, setForm, setMode]
     );
 
     const removeById = useCallback(
@@ -141,9 +161,21 @@ export function usePostForm(post: PostType | null) {
             if (!window.confirm("Supprimer ce post ?")) return;
             await postService.deleteCascade({ id });
             await fetchPosts();
+            if (editingId === id) {
+                setEditingId(null);
+                reset();
+            }
         },
-        [fetchPosts]
+        [fetchPosts, editingId, reset]
     );
 
-    return { ...modelForm, fetchPosts, selectById, removeById, toggleTag, toggleSection };
+    return {
+        ...modelForm,
+        editingId,
+        fetchPosts,
+        selectById,
+        removeById,
+        toggleTag,
+        toggleSection,
+    };
 }

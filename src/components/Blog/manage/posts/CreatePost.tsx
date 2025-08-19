@@ -10,6 +10,8 @@ import BlogEditorLayout from "@components/Blog/manage/BlogEditorLayout";
 import SectionHeader from "@components/Blog/manage/SectionHeader";
 import { usePostForm } from "@entities/models/post/hooks";
 
+type IdLike = string | number;
+
 export default function PostManagerPage() {
     const [editingPost, setEditingPost] = useState<PostType | null>(null);
     const [editingId, setEditingId] = useState<string | null>(null);
@@ -28,18 +30,18 @@ export default function PostManagerPage() {
     }, [fetchPosts]);
 
     const handleEditById = useCallback(
-        (id: string) => {
-            const post = selectById(id);
+        (id: IdLike) => {
+            const post = selectById(String(id));
             if (!post) return;
             setEditingPost(post);
-            setEditingId(id);
+            setEditingId(String(id));
         },
         [selectById]
     );
 
     const handleDeleteById = useCallback(
-        async (id: string) => {
-            await removeById(id);
+        async (id: IdLike) => {
+            await removeById(String(id));
         },
         [removeById]
     );

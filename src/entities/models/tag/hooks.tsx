@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { useModelForm } from "@entities/core/hooks";
 import { postService } from "@entities/models/post/service";
@@ -13,21 +13,19 @@ import { syncManyToMany } from "@entities/core/utils/syncManyToMany";
 type PostTagLink = { postId: string; tagId: string };
 
 export interface TagFormExtras extends Record<string, unknown> {
-    index: number | null; // purement UI, optionnel
     tags: TagType[];
     posts: PostType[];
     postTags: PostTagLink[]; // ⚠️ paires d'IDs uniquement côté UI
 }
 
 const initialExtras: TagFormExtras = {
-    index: null,
     tags: [],
     posts: [],
     postTags: [],
 };
 
 export function useTagForm() {
-    const currentId = useRef<string | null>(null);
+    const [editingId, setEditingId] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
     const modelForm = useModelForm<TagFormType, TagFormExtras>({
@@ -36,12 +34,14 @@ export function useTagForm() {
         create: async (form) => {
             const { data } = await tagService.create({ name: form.name });
             if (!data) throw new Error("Erreur lors de la création du tag");
+            setEditingId(data.id);
             return data.id;
         },
         update: async (form) => {
-            if (!currentId.current) throw new Error("ID du tag manquant pour la mise à jour");
-            const { data } = await tagService.update({ id: currentId.current, name: form.name });
+            if (!editingId) throw new Error("ID du tag manquant pour la mise à jour");
+            const { data } = await tagService.update({ id: editingId, name: form.name });
             if (!data) throw new Error("Erreur lors de la mise à jour du tag");
+            setEditingId(data.id);
             return data.id;
         },
         syncRelations: async (tagId, form) => {
@@ -59,7 +59,7 @@ export function useTagForm() {
         },
     });
 
-    const { extras, setExtras, setForm, setMode, submit } = modelForm;
+    const { extras, setExtras, setForm, setMode, submit, reset: formReset } = modelForm;
 
     const fetchAll = useCallback(async () => {
         setLoading(true);
@@ -88,38 +88,33 @@ export function useTagForm() {
 
     const selectById = useCallback(
         async (id: string) => {
-            const idx = extras.tags.findIndex((t) => t.id === id);
-            if (idx === -1) return;
-            const tag = extras.tags[idx];
+            const tag = extras.tags.find((t) => t.id === id);
+            if (!tag) return;
             const postIds = await postTagService.listByChild(tag.id);
-            currentId.current = tag.id;
             setForm(toTagForm(tag, postIds));
             setMode("edit");
-            setExtras((prev) => ({ ...prev, index: idx }));
+            setEditingId(tag.id);
         },
-        [extras.tags, setForm, setMode, setExtras]
+        [extras.tags, setForm, setMode]
     );
 
-    const cancel = useCallback(() => {
-        currentId.current = null;
-        setForm(initialTagForm);
-        setMode("create");
-        setExtras((prev) => ({ ...prev, index: null }));
-    }, [setForm, setMode, setExtras]);
+    const reset = useCallback(() => {
+        setEditingId(null);
+        formReset();
+    }, [formReset]);
 
     const removeById = useCallback(
         async (id: string) => {
-            const idx = extras.tags.findIndex((t) => t.id === id);
-            if (idx === -1) return;
-            const tag = extras.tags[idx];
+            const tag = extras.tags.find((t) => t.id === id);
+            if (!tag) return;
             if (!window.confirm("Supprimer ce tag ?")) return;
             await tagService.deleteCascade({ id: tag.id });
             await fetchAll();
-            if (extras.index === idx) {
-                cancel();
+            if (editingId === id) {
+                reset();
             }
         },
-        [extras.tags, extras.index, fetchAll, cancel]
+        [extras.tags, fetchAll, editingId, reset]
     );
 
     const toggle = useCallback(
@@ -161,23 +156,18 @@ export function useTagForm() {
         [extras.postTags]
     );
 
-    const save = useCallback(async () => {
-        await submit();
-        await fetchAll();
-        cancel();
-    }, [submit, fetchAll, cancel]);
-
     return {
         ...modelForm,
+        reset,
+        cancel: reset,
         loading,
         fetchAll,
         selectById,
-        cancel,
-        save,
         removeById,
         toggle,
         tagsForPost,
         isTagLinked,
+        editingId,
     };
 }
 

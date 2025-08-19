@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useModelForm } from "@entities/core/hooks";
 import { authorService } from "@entities/models/author/service";
 import { initialAuthorForm, toAuthorForm } from "@entities/models/author/form";
@@ -10,6 +10,8 @@ interface Extras extends Record<string, unknown> {
 }
 
 export function useAuthorForm(author: AuthorType | null) {
+    const [editingId, setEditingId] = useState<string | null>(author?.id ?? null);
+
     const modelForm = useModelForm<AuthorFormType, Extras>({
         initialForm: initialAuthorForm,
         initialExtras: { authors: [], loading: true },
@@ -18,22 +20,24 @@ export function useAuthorForm(author: AuthorType | null) {
             void postIds;
             const { data } = await authorService.create(authorInput);
             if (!data) throw new Error("Erreur lors de la création de l'auteur");
+            setEditingId(data.id);
             return data.id;
         },
         update: async (form) => {
-            if (!author?.id) throw new Error("ID de l'auteur manquant pour la mise à jour");
+            if (!editingId) throw new Error("ID de l'auteur manquant pour la mise à jour");
             const { postIds, ...authorInput } = form;
             void postIds;
             const { data } = await authorService.update({
-                id: author.id,
+                id: editingId,
                 ...authorInput,
             });
             if (!data) throw new Error("Erreur lors de la mise à jour de l'auteur");
+            setEditingId(data.id);
             return data.id;
         },
     });
 
-    const { setExtras, setForm, setMode, extras } = modelForm;
+    const { setExtras, setForm, setMode, extras, reset } = modelForm;
 
     const fetchAuthors = useCallback(async () => {
         setExtras((prev) => ({ ...prev, loading: true }));
@@ -50,8 +54,16 @@ export function useAuthorForm(author: AuthorType | null) {
     }, [setExtras]);
 
     const selectById = useCallback(
-        (id: string) => extras.authors.find((a) => a.id === id) ?? null,
-        [extras.authors]
+        (id: string) => {
+            const authorItem = extras.authors.find((a) => a.id === id) ?? null;
+            if (authorItem) {
+                setForm(toAuthorForm(authorItem, []));
+                setMode("edit");
+                setEditingId(id);
+            }
+            return authorItem;
+        },
+        [extras.authors, setForm, setMode]
     );
 
     const removeById = useCallback(
@@ -59,8 +71,12 @@ export function useAuthorForm(author: AuthorType | null) {
             if (!window.confirm("Supprimer cet auteur ?")) return;
             await authorService.deleteCascade({ id });
             await fetchAuthors();
+            if (editingId === id) {
+                setEditingId(null);
+                reset();
+            }
         },
-        [fetchAuthors]
+        [fetchAuthors, editingId, reset]
     );
 
     useEffect(() => {
@@ -71,11 +87,13 @@ export function useAuthorForm(author: AuthorType | null) {
         if (author) {
             setForm(toAuthorForm(author, []));
             setMode("edit");
+            setEditingId(author.id);
         } else {
             setForm(initialAuthorForm);
             setMode("create");
+            setEditingId(null);
         }
     }, [author, setForm, setMode]);
 
-    return { ...modelForm, fetchAuthors, selectById, removeById };
+    return { ...modelForm, editingId, fetchAuthors, selectById, removeById };
 }

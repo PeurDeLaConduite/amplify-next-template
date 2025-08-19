@@ -81,34 +81,34 @@ describe("useTagForm", () => {
         expect(result.current.extras.postTags).not.toContainEqual({ postId: "p1", tagId: "t2" });
     });
 
-    it("edit préremplit le formulaire et fixe l'index", async () => {
+    it("selectById préremplit le formulaire et fixe editingId", async () => {
         const { result } = renderHook(() => useTagForm());
         await act(async () => {
             await result.current.fetchAll();
         });
         await act(async () => {
-            await result.current.edit(0);
+            await result.current.selectById("t1");
         });
         expect(result.current.form).toEqual({ name: "Tag1", postIds: ["p1"] });
-        expect(result.current.extras.index).toBe(0);
+        expect(result.current.editingId).toBe("t1");
     });
 
-    it("cancel réinitialise le formulaire et l'index", async () => {
+    it("reset réinitialise le formulaire et l'id", async () => {
         const { result } = renderHook(() => useTagForm());
         await act(async () => {
             await result.current.fetchAll();
         });
         await act(async () => {
-            await result.current.edit(0);
+            await result.current.selectById("t1");
         });
         act(() => {
-            result.current.cancel();
+            result.current.reset();
         });
         expect(result.current.form).toEqual({ name: "", postIds: [] });
-        expect(result.current.extras.index).toBeNull();
+        expect(result.current.editingId).toBeNull();
     });
 
-    it("remove supprime le tag et réinitialise l'index", async () => {
+    it("removeById supprime le tag et réinitialise editingId", async () => {
         const deleteTagMock = tagService.deleteCascade as ReturnType<typeof vi.fn>;
         deleteTagMock.mockResolvedValue({});
         vi.spyOn(window, "confirm").mockReturnValue(true);
@@ -117,12 +117,12 @@ describe("useTagForm", () => {
             await result.current.fetchAll();
         });
         await act(async () => {
-            await result.current.edit(0);
+            await result.current.selectById("t1");
         });
         await act(async () => {
-            await result.current.remove(0);
+            await result.current.removeById("t1");
         });
         expect(deleteTagMock).toHaveBeenCalledWith({ id: "t1" });
-        expect(result.current.extras.index).toBeNull();
+        expect(result.current.editingId).toBeNull();
     });
 });

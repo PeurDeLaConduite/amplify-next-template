@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useModelForm } from "@entities/core/hooks";
 import { postService } from "@entities/models/post/service";
 import { sectionService } from "@entities/models/section/service";
@@ -11,6 +11,8 @@ import { syncManyToMany } from "@entities/core/utils/syncManyToMany";
 type Extras = { posts: PostType[]; sections: SectionTypes[] };
 
 export function useSectionForm(section: SectionTypes | null) {
+    const [editingId, setEditingId] = useState<string | null>(section?.id ?? null);
+
     const modelForm = useModelForm<SectionFormTypes, Extras>({
         initialForm: initialSectionForm,
         initialExtras: { posts: [], sections: [] },
@@ -19,19 +21,21 @@ export function useSectionForm(section: SectionTypes | null) {
             void postIds;
             const { data } = await sectionService.create(sectionInput);
             if (!data) throw new Error("Erreur lors de la création de la section");
+            setEditingId(data.id);
             return data.id;
         },
         update: async (form) => {
-            if (!section?.id) {
+            if (!editingId) {
                 throw new Error("ID de la section manquant pour la mise à jour");
             }
             const { postIds, ...sectionInput } = form;
             void postIds;
             const { data } = await sectionService.update({
-                id: section.id,
+                id: editingId,
                 ...sectionInput,
             });
             if (!data) throw new Error("Erreur lors de la mise à jour de la section");
+            setEditingId(data.id);
             return data.id;
         },
         syncRelations: async (id, form) => {
@@ -45,7 +49,7 @@ export function useSectionForm(section: SectionTypes | null) {
         },
     });
 
-    const { extras, setForm, setExtras, setMode } = modelForm;
+    const { extras, setForm, setExtras, setMode, reset } = modelForm;
 
     const fetchList = useCallback(async () => {
         const { data } = await sectionService.list();
@@ -53,8 +57,19 @@ export function useSectionForm(section: SectionTypes | null) {
     }, [setExtras]);
 
     const selectById = useCallback(
-        (id: string) => extras.sections.find((s) => s.id === id) ?? null,
-        [extras.sections]
+        (id: string) => {
+            const sectionItem = extras.sections.find((s) => s.id === id) ?? null;
+            if (sectionItem) {
+                setEditingId(id);
+                void (async () => {
+                    const postIds = await sectionPostService.listByParent(id);
+                    setForm(toSectionForm(sectionItem, postIds));
+                    setMode("edit");
+                })();
+            }
+            return sectionItem;
+        },
+        [extras.sections, setForm, setMode]
     );
 
     const removeById = useCallback(
@@ -64,8 +79,12 @@ export function useSectionForm(section: SectionTypes | null) {
             if (!window.confirm("Supprimer cette section ?")) return;
             await sectionService.deleteCascade({ id: sectionItem.id });
             await fetchList();
+            if (editingId === id) {
+                setEditingId(null);
+                reset();
+            }
         },
-        [selectById, fetchList]
+        [selectById, fetchList, editingId, reset]
     );
 
     useEffect(() => {
@@ -82,12 +101,14 @@ export function useSectionForm(section: SectionTypes | null) {
                 const postIds = await sectionPostService.listByParent(section.id);
                 setForm(toSectionForm(section, postIds));
                 setMode("edit");
+                setEditingId(section.id);
             } else {
                 setForm(initialSectionForm);
                 setMode("create");
+                setEditingId(null);
             }
         })();
     }, [section, setForm, setMode]);
 
-    return { ...modelForm, fetchList, selectById, removeById };
+    return { ...modelForm, editingId, fetchList, selectById, removeById };
 }

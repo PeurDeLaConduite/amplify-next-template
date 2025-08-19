@@ -8,6 +8,8 @@ import BlogEditorLayout from "@components/Blog/manage/BlogEditorLayout";
 import SectionHeader from "@components/Blog/manage/SectionHeader";
 import { type AuthorType, initialAuthorForm, useAuthorForm } from "@entities/models/author";
 
+type IdLike = string | number;
+
 export default function AuthorManagerPage() {
     const [editingAuthor, setEditingAuthor] = useState<AuthorType | null>(null);
     const [editingId, setEditingId] = useState<string | null>(null);
@@ -27,18 +29,18 @@ export default function AuthorManagerPage() {
     }, [fetchAuthors]);
 
     const handleEditById = useCallback(
-        (id: string) => {
-            const author = selectById(id);
+        (id: IdLike) => {
+            const author = selectById(String(id));
             if (!author) return;
             setEditingAuthor(author);
-            setEditingId(id);
+            setEditingId(String(id));
         },
         [selectById]
     );
 
     const handleDeleteById = useCallback(
-        async (id: string) => {
-            await removeById(id);
+        async (id: IdLike) => {
+            await removeById(String(id));
         },
         [removeById]
     );
