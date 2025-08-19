@@ -5,20 +5,22 @@ import GenericList from "@components/Blog/manage/GenericList";
 import { byAlpha } from "@components/Blog/manage/sorters";
 import type { TagType } from "@entities/models/tag/types";
 
+type IdLike = string | number;
+
 interface Props {
     tags: TagType[];
-    editingIndex: number | null;
-    onEdit: (idx: number) => void;
+    editingId: IdLike | null;
+    onEditById: (id: IdLike) => void;
     onSave: () => void;
     onCancel: () => void;
-    onDelete: (idx: number) => void;
+    onDeleteById: (id: IdLike) => void;
 }
 
-function TagListInner({ tags, editingIndex, onEdit, onSave, onCancel, onDelete }: Props) {
+function TagListInner({ tags, editingId, onEditById, onSave, onCancel, onDeleteById }: Props) {
     return (
         <GenericList<TagType>
             items={tags}
-            editingIndex={editingIndex}
+            editingId={editingId}
             getKey={(t) => t.id}
             renderContent={(t) => (
                 <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-blue-100 text-blue-800 text-sm font-semibold">
@@ -39,10 +41,10 @@ function TagListInner({ tags, editingIndex, onEdit, onSave, onCancel, onDelete }
                 ].join(" ")
             }
             sortBy={byAlpha((t) => t.name)}
-            onEdit={onEdit}
+            onEdit={onEditById}
             onSave={onSave}
             onCancel={onCancel}
-            onDelete={onDelete}
+            onDelete={onDeleteById}
         />
     );
 }

@@ -5,20 +5,22 @@ import GenericList from "@components/Blog/manage/GenericList";
 import { byOptionalOrder } from "@components/Blog/manage/sorters";
 import { type SectionTypes } from "@entities/models/section";
 
+type IdLike = string | number;
+
 interface Props {
     sections: SectionTypes[];
-    editingIndex: number | null;
-    onEdit: (idx: number) => void;
+    editingId: IdLike | null;
+    onEditById: (id: IdLike) => void;
     onSave: () => void;
     onCancel: () => void;
-    onDelete: (idx: number) => void;
+    onDeleteById: (id: IdLike) => void;
 }
 
 export default function SectionList(props: Props) {
     return (
         <GenericList<SectionTypes>
             items={props.sections}
-            editingIndex={props.editingIndex}
+            editingId={props.editingId}
             getKey={(s) => s.id}
             renderContent={(s) => (
                 <p className="self-center">
@@ -26,10 +28,10 @@ export default function SectionList(props: Props) {
                 </p>
             )}
             sortBy={byOptionalOrder}
-            onEdit={props.onEdit}
+            onEdit={props.onEditById}
             onSave={props.onSave}
             onCancel={props.onCancel}
-            onDelete={props.onDelete}
+            onDelete={props.onDeleteById}
         />
     );
 }

@@ -15,7 +15,7 @@ import {
 
 export default function AuthorManagerPage() {
     const [editingAuthor, setEditingAuthor] = useState<AuthorType | null>(null);
-    const [editingIndex, setEditingIndex] = useState<number | null>(null);
+    const [editingId, setEditingId] = useState<string | null>(null);
     const formRef = useRef<HTMLFormElement>(null);
     const manager = useAuthorForm(editingAuthor);
     const {
@@ -29,14 +29,15 @@ export default function AuthorManagerPage() {
         fetchAuthors();
     }, [fetchAuthors]);
 
-    const handleEdit = (idx: number) => {
-        setEditingAuthor(authors[idx]);
-        setEditingIndex(idx);
+    const handleEditById = (id: string) => {
+        const author = authors.find((a) => a.id === id);
+        if (!author) return;
+        setEditingAuthor(author);
+        setEditingId(id);
     };
 
-    const handleDelete = async (idx: number) => {
+    const handleDeleteById = async (id: string) => {
         if (!confirm("Supprimer cet auteur ?")) return;
-        const id = authors[idx].id;
         await authorService.delete({ id });
         await fetchAuthors();
     };
@@ -44,12 +45,12 @@ export default function AuthorManagerPage() {
     const handleSave = async () => {
         await fetchAuthors();
         setEditingAuthor(null);
-        setEditingIndex(null);
+        setEditingId(null);
     };
 
     const handleCancel = () => {
         setEditingAuthor(null);
-        setEditingIndex(null);
+        setEditingId(null);
         setMode("create");
         setForm(initialAuthorForm);
     };
@@ -62,13 +63,13 @@ export default function AuthorManagerPage() {
                 <SectionHeader loading={loading}>Liste d&apos;auteurs</SectionHeader>
                 <AuthorList
                     authors={authors}
-                    editingIndex={editingIndex}
-                    onEdit={handleEdit}
+                    editingId={editingId}
+                    onEditById={handleEditById}
                     onSave={() => {
                         formRef.current?.requestSubmit();
                     }}
                     onCancel={handleCancel}
-                    onDelete={handleDelete}
+                    onDeleteById={handleDeleteById}
                 />
             </BlogEditorLayout>
         </RequireAdmin>
