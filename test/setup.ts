@@ -1,8 +1,11 @@
 import { expect, beforeAll, afterEach, afterAll } from "vitest";
 import { setupServer } from "msw/node";
 import "whatwg-fetch";
+declare global {
+    var expect: (typeof import("vitest"))["expect"];
+}
 
-(globalThis as any).expect = expect;
+globalThis.expect = expect;
 await import("@testing-library/jest-dom");
 
 export const server = setupServer();
