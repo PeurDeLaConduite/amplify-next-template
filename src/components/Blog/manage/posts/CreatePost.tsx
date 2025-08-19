@@ -37,7 +37,7 @@ export default function PostManagerPage() {
 
     const handleDeleteById = async (id: string) => {
         if (!confirm("Supprimer ce post ?")) return;
-        await postService.delete({ id });
+        await postService.deleteCascade({ id });
         await fetchPosts();
     };
 
