@@ -28,55 +28,59 @@ export default function useTodosWithComments() {
     const commentClient = useCommentService();
     const { canModifyComment } = useCommentPermissions();
 
-    useEffect(() => {
-        let todoSub: { unsubscribe: () => void } | undefined;
-        let commentSub: { unsubscribe: () => void } | undefined;
+    useEffect(
+        () => {
+            let todoSub: { unsubscribe: () => void } | undefined;
+            let commentSub: { unsubscribe: () => void } | undefined;
 
-        (async () => {
-            const options: { authMode?: "apiKey" } = {};
-            try {
-                await getCurrentUser();
-            } catch {
-                options.authMode = "apiKey";
-            }
+            (async () => {
+                const options: { authMode?: "apiKey" } = {};
+                try {
+                    await getCurrentUser();
+                } catch {
+                    options.authMode = "apiKey";
+                }
 
-            // Liste des Todos
-            todoSub = todoClient.observeQuery(options).subscribe({
-                next: ({ items }: { items: Schema["Todo"]["type"][] }) => setTodos([...items]),
-                error: (error: unknown) => {
-                    console.error("Erreur lors de l'observation des todos", error);
-                    window.alert("Impossible de charger les todos");
-                },
-            });
-
-            // Comments
-            commentSub = commentClient
-                .observeQuery({
-                    ...options,
-                    selectionSet: [
-                        "id",
-                        "content",
-                        "createdAt",
-                        "todoId",
-                        "postId",
-                        "userNameId",
-                        "userName.userName",
-                    ],
-                })
-                .subscribe({
-                    next: ({ items }: { items: CommentWithTodoId[] }) => setComments([...items]),
+                // Liste des Todos
+                todoSub = todoClient.observeQuery(options).subscribe({
+                    next: ({ items }: { items: Schema["Todo"]["type"][] }) => setTodos([...items]),
                     error: (error: unknown) => {
-                        console.error("Erreur lors de l'observation des commentaires", error);
-                        window.alert("Impossible de charger les commentaires");
+                        console.error("Erreur lors de l'observation des todos", error);
+                        window.alert("Impossible de charger les todos");
                     },
                 });
-        })();
 
-        return () => {
-            todoSub?.unsubscribe();
-            commentSub?.unsubscribe();
-        };
-    }, [todoClient, commentClient]);
+                // Comments
+                commentSub = commentClient
+                    .observeQuery({
+                        ...options,
+                        selectionSet: [
+                            "id",
+                            "content",
+                            "createdAt",
+                            "todoId",
+                            "postId",
+                            "userNameId",
+                            "userName.userName",
+                        ],
+                    })
+                    .subscribe({
+                        next: ({ items }: { items: CommentWithTodoId[] }) =>
+                            setComments([...items]),
+                        error: (error: unknown) => {
+                            console.error("Erreur lors de l'observation des commentaires", error);
+                            window.alert("Impossible de charger les commentaires");
+                        },
+                    });
+            })();
+
+            return () => {
+                todoSub?.unsubscribe();
+                commentSub?.unsubscribe();
+            };
+        },
+        [todoClient, commentClient] as const
+    );
 
     const createTodo = () => {
         const content = window.prompt("Contenu du Todo ?");
