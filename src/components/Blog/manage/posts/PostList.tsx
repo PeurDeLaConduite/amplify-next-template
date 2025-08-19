@@ -2,9 +2,9 @@
 "use client";
 
 import React from "react";
-import GenericList from "../GenericList";
-import { byOptionalOrder } from "../sorters";
-import { type PostType } from "@/src/entities/models/post";
+import GenericList from "@components/Blog/manage/GenericList";
+import { byOptionalOrder } from "@components/Blog/manage/sorters";
+import { type PostType } from "@entities/models/post";
 
 type IdLike = string | number;
 
