@@ -51,13 +51,6 @@ export default function AuthorManagerPage() {
         setEditingId(null);
     }, [fetchAuthors]);
 
-    const handleCancel = useCallback(() => {
-        setEditingAuthor(null);
-        setEditingId(null);
-        setMode("create");
-        setForm(initialAuthorForm);
-    }, [setMode, setForm]);
-
     return (
         <RequireAdmin>
             <BlogEditorLayout title="Éditeur de blog : Auteurs">
@@ -71,7 +64,12 @@ export default function AuthorManagerPage() {
                     onSave={() => {
                         formRef.current?.requestSubmit();
                     }}
-                    onCancel={handleCancel}
+                    onCancel={() => {
+                        setEditingAuthor(null);
+                        setEditingId(null);
+                        setMode("create");
+                        setForm(initialAuthorForm);
+                    }}
                     onDeleteById={handleDeleteById}
                 />
             </BlogEditorLayout>
