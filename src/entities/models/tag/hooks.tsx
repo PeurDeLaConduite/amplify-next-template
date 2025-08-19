@@ -86,12 +86,12 @@ export function useTagForm() {
         void fetchAll();
     }, [fetchAll]);
 
-    const edit = useCallback(
-        async (idx: number) => {
+    const selectById = useCallback(
+        async (id: string) => {
+            const idx = extras.tags.findIndex((t) => t.id === id);
+            if (idx === -1) return;
             const tag = extras.tags[idx];
-            if (!tag) return;
-            const postIds = await postTagService.listByChild(tag.id); // idéal: string[]
-            // Si objets -> normalise : const postIds = (await postTagService.listByChild(tag.id)).map(x => x.postId);
+            const postIds = await postTagService.listByChild(tag.id);
             currentId.current = tag.id;
             setForm(toTagForm(tag, postIds));
             setMode("edit");
@@ -107,10 +107,11 @@ export function useTagForm() {
         setExtras((prev) => ({ ...prev, index: null }));
     }, [setForm, setMode, setExtras]);
 
-    const remove = useCallback(
-        async (idx: number) => {
+    const removeById = useCallback(
+        async (id: string) => {
+            const idx = extras.tags.findIndex((t) => t.id === id);
+            if (idx === -1) return;
             const tag = extras.tags[idx];
-            if (!tag) return;
             if (!window.confirm("Supprimer ce tag ?")) return;
             await tagService.deleteCascade({ id: tag.id });
             await fetchAll();
@@ -170,10 +171,10 @@ export function useTagForm() {
         ...modelForm,
         loading,
         fetchAll,
-        edit,
+        selectById,
         cancel,
         save,
-        remove,
+        removeById,
         toggle,
         tagsForPost,
         isTagLinked,

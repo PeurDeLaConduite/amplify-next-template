@@ -4,7 +4,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import PostList from "./PostList";
 import PostForm from "./PostForm";
-import { postService } from "@entities/models/post/service";
 import { type PostType } from "@entities/models/post/types";
 import RequireAdmin from "@components/RequireAdmin";
 import BlogEditorLayout from "@components/Blog/manage/BlogEditorLayout";
@@ -12,45 +11,49 @@ import SectionHeader from "@components/Blog/manage/SectionHeader";
 import { usePostForm } from "@entities/models/post/hooks";
 
 export default function PostManagerPage() {
-    const [posts, setPosts] = useState<PostType[]>([]);
     const [editingPost, setEditingPost] = useState<PostType | null>(null);
     const [editingId, setEditingId] = useState<string | null>(null);
     const formRef = useRef<HTMLFormElement>(null);
 
     const manager = usePostForm(editingPost);
-
-    const fetchPosts = useCallback(async () => {
-        const { data } = await postService.list();
-        setPosts(data ?? []);
-    }, []);
+    const {
+        extras: { posts },
+        fetchPosts,
+        selectById,
+        removeById,
+    } = manager;
 
     useEffect(() => {
         void fetchPosts();
     }, [fetchPosts]);
 
-    const handleEditById = (id: string) => {
-        const post = posts.find((p) => p.id === id);
-        if (!post) return;
-        setEditingPost(post);
-        setEditingId(id);
-    };
+    const handleEditById = useCallback(
+        (id: string) => {
+            const post = selectById(id);
+            if (!post) return;
+            setEditingPost(post);
+            setEditingId(id);
+        },
+        [selectById]
+    );
 
-    const handleDeleteById = async (id: string) => {
-        if (!confirm("Supprimer ce post ?")) return;
-        await postService.deleteCascade({ id });
-        await fetchPosts();
-    };
+    const handleDeleteById = useCallback(
+        async (id: string) => {
+            await removeById(id);
+        },
+        [removeById]
+    );
 
-    const handleSave = async () => {
+    const handleSave = useCallback(async () => {
         await fetchPosts();
         setEditingPost(null);
         setEditingId(null);
-    };
+    }, [fetchPosts]);
 
-    const handleCancel = () => {
+    const handleCancel = useCallback(() => {
         setEditingPost(null);
         setEditingId(null);
-    };
+    }, []);
 
     return (
         <RequireAdmin>

@@ -52,15 +52,20 @@ export function useSectionForm(section: SectionTypes | null) {
         setExtras((e) => ({ ...e, sections: data ?? [] }));
     }, [setExtras]);
 
-    const remove = useCallback(
-        async (idx: number) => {
-            const sectionItem = extras.sections[idx];
+    const selectById = useCallback(
+        (id: string) => extras.sections.find((s) => s.id === id) ?? null,
+        [extras.sections]
+    );
+
+    const removeById = useCallback(
+        async (id: string) => {
+            const sectionItem = selectById(id);
             if (!sectionItem) return;
             if (!window.confirm("Supprimer cette section ?")) return;
             await sectionService.deleteCascade({ id: sectionItem.id });
             await fetchList();
         },
-        [extras.sections, fetchList]
+        [selectById, fetchList]
     );
 
     useEffect(() => {
@@ -84,5 +89,5 @@ export function useSectionForm(section: SectionTypes | null) {
         })();
     }, [section, setForm, setMode]);
 
-    return { ...modelForm, fetchList, remove };
+    return { ...modelForm, fetchList, selectById, removeById };
 }

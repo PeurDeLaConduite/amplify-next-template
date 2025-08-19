@@ -1,17 +1,12 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import RequireAdmin from "@components/RequireAdmin";
 import AuthorForm from "@components/Blog/manage/authors/AuthorForm";
 import AuthorList from "@components/Blog/manage/authors/AuthorList";
 import BlogEditorLayout from "@components/Blog/manage/BlogEditorLayout";
 import SectionHeader from "@components/Blog/manage/SectionHeader";
-import {
-    type AuthorType,
-    initialAuthorForm,
-    useAuthorForm,
-    authorService,
-} from "@entities/models/author";
+import { type AuthorType, initialAuthorForm, useAuthorForm } from "@entities/models/author";
 
 export default function AuthorManagerPage() {
     const [editingAuthor, setEditingAuthor] = useState<AuthorType | null>(null);
@@ -21,6 +16,8 @@ export default function AuthorManagerPage() {
     const {
         extras: { authors, loading },
         fetchAuthors,
+        selectById,
+        removeById,
         setForm,
         setMode,
     } = manager;
@@ -29,31 +26,35 @@ export default function AuthorManagerPage() {
         fetchAuthors();
     }, [fetchAuthors]);
 
-    const handleEditById = (id: string) => {
-        const author = authors.find((a) => a.id === id);
-        if (!author) return;
-        setEditingAuthor(author);
-        setEditingId(id);
-    };
+    const handleEditById = useCallback(
+        (id: string) => {
+            const author = selectById(id);
+            if (!author) return;
+            setEditingAuthor(author);
+            setEditingId(id);
+        },
+        [selectById]
+    );
 
-    const handleDeleteById = async (id: string) => {
-        if (!confirm("Supprimer cet auteur ?")) return;
-        await authorService.deleteCascade({ id });
-        await fetchAuthors();
-    };
+    const handleDeleteById = useCallback(
+        async (id: string) => {
+            await removeById(id);
+        },
+        [removeById]
+    );
 
-    const handleSave = async () => {
+    const handleSave = useCallback(async () => {
         await fetchAuthors();
         setEditingAuthor(null);
         setEditingId(null);
-    };
+    }, [fetchAuthors]);
 
-    const handleCancel = () => {
+    const handleCancel = useCallback(() => {
         setEditingAuthor(null);
         setEditingId(null);
         setMode("create");
         setForm(initialAuthorForm);
-    };
+    }, [setMode, setForm]);
 
     return (
         <RequireAdmin>
