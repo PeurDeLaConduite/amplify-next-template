@@ -11,11 +11,11 @@ import TagForm from "@components/Blog/manage/tags/TagForm";
 import TagList from "@components/Blog/manage/tags/TagList";
 import PostTagsRelationManager from "@components/Blog/manage/tags/PostTagsRelationManager";
 
-import { useTagForm } from "@entities/models/tag/hooks";
+import { useTagForm, type UseTagFormReturn } from "@entities/models/tag/hooks";
 
 export default function CreateTagPage() {
     const formRef = useRef<HTMLFormElement>(null);
-    const manager = useTagForm();
+    const manager: UseTagFormReturn = useTagForm();
 
     const {
         extras: { tags, posts, index },
@@ -27,7 +27,7 @@ export default function CreateTagPage() {
         tagsForPost,
         isTagLinked,
         toggle,
-    } = manager as any;
+    } = manager;
 
     useEffect(() => {
         void fetchAll?.();
