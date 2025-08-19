@@ -2,6 +2,12 @@ import { describe, it, expect, vi } from "vitest";
 import { http, HttpResponse } from "msw";
 import { server } from "@test/setup";
 import { postTagService } from "@entities/relations/postTag/service";
+import type { ListRequest, CreateRequest, DeleteRequest } from "@test/fixtures/relations";
+
+interface PostTagIds {
+    postId: string;
+    tagId: string;
+}
 
 vi.mock("@entities/core/services/amplifyClient", () => {
     const mockModel = {
@@ -28,7 +34,10 @@ describe("postTagService", () => {
     it("listByParent retourne les IDs tag", async () => {
         server.use(
             http.post("https://api.test/postTag/list", async ({ request }) => {
-                const body = (await request.json()) as any;
+                const body = (await request.json()) as ListRequest<{
+                    postId?: { eq?: string };
+                    tagId?: { eq?: string };
+                }>;
                 if (typeof body === "object" && body?.args?.filter?.postId?.eq === "post1") {
                     return HttpResponse.json({
                         data: [
@@ -46,7 +55,10 @@ describe("postTagService", () => {
     it("listByChild retourne les IDs post", async () => {
         server.use(
             http.post("https://api.test/postTag/list", async ({ request }) => {
-                const body = (await request.json()) as any;
+                const body = (await request.json()) as ListRequest<{
+                    postId?: { eq?: string };
+                    tagId?: { eq?: string };
+                }>;
                 if (typeof body === "object" && body?.args?.filter?.tagId?.eq === "tag1") {
                     return HttpResponse.json({
                         data: [
@@ -62,10 +74,10 @@ describe("postTagService", () => {
     });
 
     it("create envoie les IDs corrects", async () => {
-        let received: any;
+        let received: CreateRequest<PostTagIds>;
         server.use(
             http.post("https://api.test/postTag/create", async ({ request }) => {
-                received = (await request.json()) as any;
+                received = (await request.json()) as CreateRequest<PostTagIds>;
                 return HttpResponse.json({ data: {} });
             })
         );
@@ -74,10 +86,10 @@ describe("postTagService", () => {
     });
 
     it("delete envoie les IDs corrects", async () => {
-        let received: any;
+        let received: DeleteRequest<PostTagIds>;
         server.use(
             http.post("https://api.test/postTag/delete", async ({ request }) => {
-                received = (await request.json()) as any;
+                received = (await request.json()) as DeleteRequest<PostTagIds>;
                 return HttpResponse.json({ data: {} });
             })
         );
@@ -86,10 +98,10 @@ describe("postTagService", () => {
     });
 
     it("échoue avec authMode apiKey", async () => {
-        let received: any;
+        let received: CreateRequest<PostTagIds>;
         server.use(
             http.post("https://api.test/postTag/create", async ({ request }) => {
-                received = (await request.json()) as any;
+                received = (await request.json()) as CreateRequest<PostTagIds>;
                 return HttpResponse.json({ message: "Unauthorized" }, { status: 401 });
             })
         );
@@ -100,10 +112,10 @@ describe("postTagService", () => {
     });
 
     it("échoue avec authMode userPool", async () => {
-        let received: any;
+        let received: DeleteRequest<PostTagIds>;
         server.use(
             http.post("https://api.test/postTag/delete", async ({ request }) => {
-                received = (await request.json()) as any;
+                received = (await request.json()) as DeleteRequest<PostTagIds>;
                 return HttpResponse.json({ message: "Unauthorized" }, { status: 401 });
             })
         );
