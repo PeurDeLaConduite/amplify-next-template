@@ -1,3 +1,5 @@
+import { byOptionalOrder } from "@components/Blog/manage/sorters";
+
 interface ItemSelectorProps<
     T extends Record<K, string> & { order?: number | null },
     K extends keyof T,
@@ -23,7 +25,7 @@ export default function ItemSelector<
     };
 
     // On trie par order si présent, sinon on garde l'ordre initial
-    const sortedItems = [...items].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    const sortedItems = items.slice().sort(byOptionalOrder);
 
     return (
         <div className="mb-4">

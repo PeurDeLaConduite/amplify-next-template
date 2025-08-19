@@ -50,7 +50,7 @@ export default function GenericList<T>({
 }: GenericListProps<T>) {
     const sorted = useMemo(() => {
         const indexed = items.map((item, idx) => ({ item, idx }));
-        return sortBy ? indexed.sort((a, b) => sortBy(a.item, b.item)) : indexed;
+        return sortBy ? indexed.slice().sort((a, b) => sortBy(a.item, b.item)) : indexed;
     }, [items, sortBy]);
 
     return (
