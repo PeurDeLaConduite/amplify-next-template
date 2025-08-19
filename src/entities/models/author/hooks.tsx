@@ -33,7 +33,7 @@ export function useAuthorForm(author: AuthorType | null) {
         },
     });
 
-    const { setExtras, setForm, setMode } = modelForm;
+    const { setExtras, setForm, setMode, extras } = modelForm;
 
     const fetchAuthors = useCallback(async () => {
         setExtras((prev) => ({ ...prev, loading: true }));
@@ -49,6 +49,20 @@ export function useAuthorForm(author: AuthorType | null) {
         }
     }, [setExtras]);
 
+    const selectById = useCallback(
+        (id: string) => extras.authors.find((a) => a.id === id) ?? null,
+        [extras.authors]
+    );
+
+    const removeById = useCallback(
+        async (id: string) => {
+            if (!window.confirm("Supprimer cet auteur ?")) return;
+            await authorService.deleteCascade({ id });
+            await fetchAuthors();
+        },
+        [fetchAuthors]
+    );
+
     useEffect(() => {
         void fetchAuthors();
     }, [fetchAuthors]);
@@ -63,5 +77,5 @@ export function useAuthorForm(author: AuthorType | null) {
         }
     }, [author, setForm, setMode]);
 
-    return { ...modelForm, fetchAuthors };
+    return { ...modelForm, fetchAuthors, selectById, removeById };
 }

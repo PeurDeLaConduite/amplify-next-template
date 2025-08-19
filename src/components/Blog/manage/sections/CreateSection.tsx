@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import RequireAdmin from "@components/RequireAdmin";
 import SectionForm from "./SectionsForm";
 import SectionList from "./SectionList";
@@ -16,7 +16,8 @@ export default function SectionManagerPage() {
     const {
         extras: { sections },
         fetchList,
-        remove,
+        selectById,
+        removeById,
         setForm,
         setMode,
     } = manager;
@@ -25,31 +26,35 @@ export default function SectionManagerPage() {
         fetchList();
     }, [fetchList]);
 
-    const handleEditById = (id: string) => {
-        const idx = sections.findIndex((s) => s.id === id);
-        if (idx === -1) return;
-        setEditingSection(sections[idx]);
-        setEditingId(id);
-    };
+    const handleEditById = useCallback(
+        (id: string) => {
+            const section = selectById(id);
+            if (!section) return;
+            setEditingSection(section);
+            setEditingId(id);
+        },
+        [selectById]
+    );
 
-    const handleDeleteById = async (id: string) => {
-        const idx = sections.findIndex((s) => s.id === id);
-        if (idx === -1) return;
-        await remove(idx);
-    };
+    const handleDeleteById = useCallback(
+        async (id: string) => {
+            await removeById(id);
+        },
+        [removeById]
+    );
 
-    const handleSave = async () => {
+    const handleSave = useCallback(async () => {
         await fetchList();
         setEditingSection(null);
         setEditingId(null);
-    };
+    }, [fetchList]);
 
-    const handleCancel = () => {
+    const handleCancel = useCallback(() => {
         setEditingSection(null);
         setEditingId(null);
         setMode("create");
         setForm(initialSectionForm);
-    };
+    }, [setMode, setForm]);
 
     return (
         <RequireAdmin>

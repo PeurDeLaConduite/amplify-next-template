@@ -1,5 +1,5 @@
 // src/entities/models/post/hooks.tsx
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { useModelForm } from "@entities/core/hooks";
 import { postService } from "@entities/models/post/service";
 import { postTagService } from "@entities/relations/postTag/service";
@@ -18,12 +18,13 @@ interface Extras extends Record<string, unknown> {
     authors: AuthorType[];
     tags: TagType[];
     sections: SectionTypes[];
+    posts: PostType[];
 }
 
 export function usePostForm(post: PostType | null) {
     const modelForm = useModelForm<PostFormType, Extras>({
         initialForm: initialPostForm,
-        initialExtras: { authors: [], tags: [], sections: [] },
+        initialExtras: { authors: [], tags: [], sections: [], posts: [] },
         create: async (form) => {
             const { tagIds, sectionIds, ...postInput } = form;
             void tagIds;
@@ -72,7 +73,12 @@ export function usePostForm(post: PostType | null) {
         },
     });
 
-    const { setForm, setExtras, setMode } = modelForm;
+    const { setForm, setExtras, setMode, extras } = modelForm;
+
+    const fetchPosts = useCallback(async () => {
+        const { data } = await postService.list();
+        setExtras((e) => ({ ...e, posts: data ?? [] }));
+    }, [setExtras]);
 
     useEffect(() => {
         void (async () => {
@@ -81,13 +87,15 @@ export function usePostForm(post: PostType | null) {
                 tagService.list(),
                 sectionService.list(),
             ]);
-            setExtras({
+            setExtras((e) => ({
+                ...e,
                 authors: a.data ?? [],
                 tags: t.data ?? [],
                 sections: s.data ?? [],
-            });
+            }));
         })();
-    }, [setExtras]);
+        void fetchPosts();
+    }, [setExtras, fetchPosts]);
 
     useEffect(() => {
         void (async () => {
@@ -123,5 +131,19 @@ export function usePostForm(post: PostType | null) {
         }));
     }
 
-    return { ...modelForm, toggleTag, toggleSection };
+    const selectById = useCallback(
+        (id: string) => extras.posts.find((p) => p.id === id) ?? null,
+        [extras.posts]
+    );
+
+    const removeById = useCallback(
+        async (id: string) => {
+            if (!window.confirm("Supprimer ce post ?")) return;
+            await postService.deleteCascade({ id });
+            await fetchPosts();
+        },
+        [fetchPosts]
+    );
+
+    return { ...modelForm, fetchPosts, selectById, removeById, toggleTag, toggleSection };
 }

@@ -22,9 +22,9 @@ export default function CreateTagPage() {
         extras: { tags, posts },
         loading,
         fetchAll,
-        edit,
+        selectById,
         cancel,
-        remove,
+        removeById,
         tagsForPost,
         isTagLinked,
         toggle,
@@ -44,21 +44,17 @@ export default function CreateTagPage() {
 
     const handleEditById = useCallback(
         (id: string) => {
-            const idx = tags.findIndex((t) => t.id === id);
-            if (idx === -1) return;
-            edit(idx);
+            void selectById(id);
             setEditingId(id);
         },
-        [tags, edit]
+        [selectById]
     );
 
     const handleDeleteById = useCallback(
         async (id: string) => {
-            const idx = tags.findIndex((t) => t.id === id);
-            if (idx === -1) return;
-            await remove(idx);
+            await removeById(id);
         },
-        [tags, remove]
+        [removeById]
     );
 
     const handleCancel = useCallback(() => {
