@@ -57,7 +57,7 @@ export function useSectionForm(section: SectionTypes | null) {
             const sectionItem = extras.sections[idx];
             if (!sectionItem) return;
             if (!window.confirm("Supprimer cette section ?")) return;
-            await sectionService.delete({ id: sectionItem.id });
+            await sectionService.deleteCascade({ id: sectionItem.id });
             await fetchList();
         },
         [extras.sections, fetchList]

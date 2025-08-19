@@ -112,10 +112,7 @@ export function useTagForm() {
             const tag = extras.tags[idx];
             if (!tag) return;
             if (!window.confirm("Supprimer ce tag ?")) return;
-            const linkedPostIds = await postTagService.listByChild(tag.id);
-            // Si objets -> normalise : const linkedPostIds = (await postTagService.listByChild(tag.id)).map(x => x.postId);
-            await Promise.all(linkedPostIds.map((postId) => postTagService.delete(postId, tag.id)));
-            await tagService.delete({ id: tag.id });
+            await tagService.deleteCascade({ id: tag.id });
             await fetchAll();
             if (extras.index === idx) {
                 cancel();

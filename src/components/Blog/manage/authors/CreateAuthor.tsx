@@ -38,7 +38,7 @@ export default function AuthorManagerPage() {
 
     const handleDeleteById = async (id: string) => {
         if (!confirm("Supprimer cet auteur ?")) return;
-        await authorService.delete({ id });
+        await authorService.deleteCascade({ id });
         await fetchAuthors();
     };
 

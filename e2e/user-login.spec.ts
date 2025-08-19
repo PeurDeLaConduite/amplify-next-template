@@ -14,7 +14,7 @@ test.describe("Authentification", () => {
             const tagName = `e2e-auth-${Date.now()}`;
             const created = await tagService.create({ name: tagName });
             expect(created.data.name).toBe(tagName);
-            await tagService.delete({ id: created.data.id });
+            await tagService.deleteCascade({ id: created.data.id });
             await signOutUser();
         }
     });

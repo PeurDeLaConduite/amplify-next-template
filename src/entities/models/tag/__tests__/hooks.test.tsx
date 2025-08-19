@@ -8,7 +8,7 @@ vi.mock("@entities/models/tag/service", () => ({
         list: vi.fn(),
         create: vi.fn(),
         update: vi.fn(),
-        delete: vi.fn(),
+        deleteCascade: vi.fn(),
     },
 }));
 
@@ -109,10 +109,8 @@ describe("useTagForm", () => {
     });
 
     it("remove supprime le tag et réinitialise l'index", async () => {
-        const deleteTagMock = tagService.delete as ReturnType<typeof vi.fn>;
-        const deleteRelationMock = postTagService.delete as ReturnType<typeof vi.fn>;
+        const deleteTagMock = tagService.deleteCascade as ReturnType<typeof vi.fn>;
         deleteTagMock.mockResolvedValue({});
-        deleteRelationMock.mockResolvedValue({});
         vi.spyOn(window, "confirm").mockReturnValue(true);
         const { result } = renderHook(() => useTagForm());
         await act(async () => {
@@ -124,7 +122,6 @@ describe("useTagForm", () => {
         await act(async () => {
             await result.current.remove(0);
         });
-        expect(deleteRelationMock).toHaveBeenCalledWith("p1", "t1");
         expect(deleteTagMock).toHaveBeenCalledWith({ id: "t1" });
         expect(result.current.extras.index).toBeNull();
     });

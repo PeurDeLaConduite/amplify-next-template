@@ -22,7 +22,7 @@ test.describe("Section", () => {
         const updated = await sectionService.update({ id, title: updatedTitle });
         expect(updated.data.title).toBe(updatedTitle);
 
-        await sectionService.delete({ id });
+        await sectionService.deleteCascade({ id });
         await signOutUser();
     });
 });

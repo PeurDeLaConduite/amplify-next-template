@@ -41,9 +41,8 @@ test.describe("Tag & Post", () => {
         expect(postIdsForTag).toContain(postId);
 
         // Nettoyage
-        await postTagService.delete(postId, tagId);
-        await postService.delete({ id: postId });
-        await tagService.delete({ id: tagId });
+        await postService.deleteCascade({ id: postId });
+        await tagService.deleteCascade({ id: tagId });
         await signOutUser();
     });
 });
