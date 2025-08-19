@@ -13,6 +13,8 @@ import PostTagsRelationManager from "@components/Blog/manage/tags/PostTagsRelati
 
 import { useTagForm, type UseTagFormReturn } from "@entities/models/tag/hooks";
 
+type IdLike = string | number;
+
 export default function CreateTagPage() {
     const formRef = useRef<HTMLFormElement>(null);
     const manager: UseTagFormReturn = useTagForm();
@@ -43,16 +45,16 @@ export default function CreateTagPage() {
     }, [fetchAll]);
 
     const handleEditById = useCallback(
-        (id: string) => {
-            void selectById(id);
-            setEditingId(id);
+        (id: IdLike) => {
+            void selectById(String(id));
+            setEditingId(String(id));
         },
         [selectById]
     );
 
     const handleDeleteById = useCallback(
-        async (id: string) => {
-            await removeById(id);
+        async (id: IdLike) => {
+            await removeById(String(id));
         },
         [removeById]
     );

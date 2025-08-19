@@ -8,6 +8,8 @@ import BlogEditorLayout from "@components/Blog/manage/BlogEditorLayout";
 import SectionHeader from "@components/Blog/manage/SectionHeader";
 import { type SectionTypes, initialSectionForm, useSectionForm } from "@entities/models/section";
 
+type IdLike = string | number;
+
 export default function SectionManagerPage() {
     const [editingSection, setEditingSection] = useState<SectionTypes | null>(null);
     const [editingId, setEditingId] = useState<string | null>(null);
@@ -27,18 +29,18 @@ export default function SectionManagerPage() {
     }, [fetchList]);
 
     const handleEditById = useCallback(
-        (id: string) => {
-            const section = selectById(id);
+        (id: IdLike) => {
+            const section = selectById(String(id));
             if (!section) return;
             setEditingSection(section);
-            setEditingId(id);
+            setEditingId(String(id));
         },
         [selectById]
     );
 
     const handleDeleteById = useCallback(
-        async (id: string) => {
-            await removeById(id);
+        async (id: IdLike) => {
+            await removeById(String(id));
         },
         [removeById]
     );

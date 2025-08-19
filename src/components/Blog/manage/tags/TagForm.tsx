@@ -15,12 +15,7 @@ interface Props {
 
 const TagForm = forwardRef<HTMLFormElement, Props>(function TagForm({ manager, onSave }, ref) {
     const { form, setForm } = manager;
-
-    // Normalise: certains hooks ont `save` au lieu de `submit`
-    const normalizedManager: EntityFormManager<TagFormType> = {
-        ...manager,
-        submit: manager.submit ?? manager.save,
-    };
+    const normalizedManager = manager as EntityFormManager<TagFormType>;
 
     return (
         <EntityFormShell
