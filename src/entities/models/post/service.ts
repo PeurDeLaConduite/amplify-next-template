@@ -19,7 +19,9 @@ export const postService = {
     async deleteCascade({ id }: { id: string }) {
         await deleteEdges(
             commentService.list,
-            (c) => commentService.delete({ id: c.id }),
+            async (c) => {
+                await commentService.delete({ id: c.id });
+            },
             "postId",
             id
         );
