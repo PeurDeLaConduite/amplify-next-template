@@ -3,6 +3,7 @@ import React from "react";
 import { Section, Post, Author } from "@src/types/blog";
 import BlogSectionCard from "./BlogSectionCard";
 import PostContent from "./PostContent";
+import { byOptionalOrder } from "@components/Blog/manage/sorters";
 
 type BlogProps = {
     data: {
@@ -33,7 +34,8 @@ const Blog: React.FC<BlogProps> = ({ data, singlePost, noWrapper }) => {
         <>
             <h1 className="text-4xl font-bold mb-8">Blog</h1>
             {sections
-                .sort((a, b) => a.order - b.order)
+                .slice()
+                .sort(byOptionalOrder)
                 .map((section) => {
                     const postsInSection = publishedPosts.filter((p) =>
                         p.sectionJsonIds.includes(section.sectionJsonId)
