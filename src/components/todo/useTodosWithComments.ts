@@ -76,7 +76,7 @@ export default function useTodosWithComments() {
             todoSub?.unsubscribe();
             commentSub?.unsubscribe();
         };
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [todoClient, commentClient]);
 
     const createTodo = () => {
         const content = window.prompt("Contenu du Todo ?");

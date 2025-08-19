@@ -13,6 +13,7 @@ import { type UserProfileMinimalType } from "@entities/models/userProfile/types"
 export default function UserProfileManager() {
     const { user } = useAuthenticator();
     const profile = useUserProfileForm();
+    const { fetchProfile } = profile;
 
     const getIcon = (field: keyof UserProfileMinimalType) => {
         switch (field) {
@@ -54,10 +55,9 @@ export default function UserProfileManager() {
     };
     useEffect(() => {
         if (user) {
-            void profile.fetchProfile();
+            void fetchProfile();
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user]);
+    }, [user, fetchProfile]);
 
     if (!user) return null;
 
