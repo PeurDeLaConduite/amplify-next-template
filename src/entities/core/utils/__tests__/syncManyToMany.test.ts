@@ -30,7 +30,7 @@ describe("syncManyToMany", () => {
         it("listByParent retourne les IDs enfant", async () => {
             server.use(
                 http.post("https://api.test/relation", async ({ request }) => {
-                    const body = await request.json();
+                    const body = (await request.json()) as { filter?: Record<string, any> };
                     if (body.filter?.parentId?.eq === "p1") {
                         return HttpResponse.json({
                             data: [
@@ -53,7 +53,7 @@ describe("syncManyToMany", () => {
         it("listByChild retourne les IDs parent", async () => {
             server.use(
                 http.post("https://api.test/relation", async ({ request }) => {
-                    const body = await request.json();
+                    const body = (await request.json()) as { filter?: Record<string, any> };
                     if (body.filter?.childId?.eq === "c1") {
                         return HttpResponse.json({
                             data: [
