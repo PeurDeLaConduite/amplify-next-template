@@ -3,6 +3,7 @@ import React, { useMemo } from "react";
 import { Section, Post, Author } from "@src/types/blog";
 import BlogSectionCard from "./BlogSectionCard";
 import PostContent from "./PostContent";
+import { byOptionalOrder } from "@components/Blog/manage/sorters";
 
 type BlogProps = {
     data: {
@@ -23,7 +24,7 @@ const Blog: React.FC<BlogProps> = ({ data, singlePost, noWrapper }) => {
         () =>
             sections
                 .slice()
-                .sort((a, b) => a.order - b.order)
+                .sort(byOptionalOrder)
                 .map((section) => {
                     const postsInSection = publishedPosts.filter((p) =>
                         p.sectionJsonIds.includes(section.sectionJsonId)
