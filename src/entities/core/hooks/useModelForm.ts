@@ -167,14 +167,12 @@ export default function useModelForm<
     // auto-load au mount
     useEffect(() => {
         if (autoLoad && load) void refresh();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [autoLoad, load]);
+    }, [autoLoad, load, refresh]);
 
     // auto-loadExtras au mount
     useEffect(() => {
         if (autoLoadExtras && loadExtras) void refreshExtras();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [autoLoadExtras, loadExtras]);
+    }, [autoLoadExtras, loadExtras, refreshExtras]);
 
     const setCreate = useCallback(
         (next?: F) => {
