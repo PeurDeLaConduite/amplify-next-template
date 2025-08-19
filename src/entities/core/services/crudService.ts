@@ -8,8 +8,12 @@ type ClientModels = typeof client.models;
 type ClientModelKey = keyof ClientModels;
 
 type BaseModel<K extends ClientModelKey> = Schema[K]["type"];
-type OperationArg<T, M extends PropertyKey> =
-    T extends Record<M, (arg: infer A, ...rest: unknown[]) => unknown> ? A : never;
+type OperationArg<T, M extends PropertyKey> = T[M] extends (
+    arg: infer A,
+    ...rest: unknown[]
+) => unknown
+    ? A
+    : never;
 
 type CreateArg<K extends ClientModelKey> = OperationArg<ClientModels[K], "create">;
 type UpdateArg<K extends ClientModelKey> = OperationArg<ClientModels[K], "update">;
