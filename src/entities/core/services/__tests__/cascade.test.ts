@@ -23,7 +23,14 @@ describe("cascade helpers", () => {
     it("deleteEdges liste et supprime les éléments", async () => {
         const listFn = vi.fn().mockResolvedValue({ data: [1, 2, 3] });
         const calls: number[] = [];
-        await deleteEdges(listFn as any, async (e: number) => calls.push(e), "fk", "1");
+        await deleteEdges(
+            listFn as any,
+            async (e: number) => {
+                calls.push(e);
+            },
+            "fk",
+            "1"
+        );
         expect(listFn).toHaveBeenCalledWith({ filter: { fk: { eq: "1" } } });
         expect(calls.sort()).toEqual([1, 2, 3]);
     });
@@ -36,10 +43,10 @@ describe("cascade helpers", () => {
             ],
         });
         const updated: Array<{ id: number; ref: number | null }> = [];
-        await setNullBatch(
-            listFn as any,
+        await setNullBatch<{ id: number; ref: number }, "ref">(
+            listFn,
             async (item) => {
-                updated.push(item as any);
+                updated.push(item);
             },
             "ref",
             "1"
