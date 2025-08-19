@@ -10,7 +10,9 @@ export const tagService = {
     async deleteCascade({ id }: { id: string }) {
         await deleteEdges(
             postTagService.list,
-            (edge) => postTagService.delete(edge.postId, edge.tagId),
+            async (edge) => {
+                await postTagService.delete(edge.postId, edge.tagId);
+            },
             "tagId",
             id
         );
