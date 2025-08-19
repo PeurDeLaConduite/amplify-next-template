@@ -24,16 +24,22 @@ export function useAutoGenFields({ configs }: UseAutoGenFieldsProps) {
     // édition indépendante de chaque champ source
     const [isEditing, setIsEditing] = useState<Record<string, boolean>>({});
 
-    // Génération automatique
+    // Génération automatique (avec délai)
     useEffect(() => {
-        configs.forEach((cfg) => {
-            if (isEditing[cfg.editingKey] && autoFlags[cfg.target]) {
-                const value = cfg.transform ? cfg.transform(cfg.source) : cfg.source;
-                if (value !== cfg.current) {
-                    cfg.setter(value ?? "");
+        const timer = setTimeout(() => {
+            configs.forEach((cfg) => {
+                if (isEditing[cfg.editingKey] && autoFlags[cfg.target]) {
+                    const value = cfg.transform ? cfg.transform(cfg.source) : cfg.source;
+                    if (value !== cfg.current) {
+                        cfg.setter(value ?? "");
+                    }
                 }
-            }
-        });
+            });
+        }, 200);
+
+        return () => {
+            clearTimeout(timer);
+        };
     }, [configs, autoFlags, isEditing]);
 
     function handleSourceFocus(key: string) {
