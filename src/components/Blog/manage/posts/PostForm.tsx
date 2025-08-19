@@ -155,7 +155,7 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
             />
             <OrderSelector
                 sections={posts}
-                currentIndex={posts.findIndex((p) => p.id === form.id)}
+                currentIndex={-1}
                 value={form.order ?? 1}
                 onReorder={(_, newOrder) => handleChange("order", newOrder)}
             />

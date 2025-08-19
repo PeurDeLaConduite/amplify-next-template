@@ -27,7 +27,7 @@ export interface GenericListProps<T> {
 
     /** Style */
     className?: string;
-    className?: string;
+    itemWrapperClassName?: string;
     itemClassName?: (active: boolean) => string;
     /** Arrondis/ombres cohérents */
     rounded?: boolean;
@@ -44,7 +44,7 @@ export default function GenericList<T>({
     onCancel,
     onDelete,
     className,
-    classNameD,
+    itemWrapperClassName,
     itemClassName,
     rounded = true,
 }: GenericListProps<T>) {
@@ -66,7 +66,7 @@ export default function GenericList<T>({
                 return (
                     <li
                         key={String(getKey(item, originalIdx))}
-                        className={`${liClass} ${classNameD}`}
+                        className={`${liClass} ${itemWrapperClassName ?? ""}`}
                     >
                         <div className="self-center">{renderContent(item, originalIdx)}</div>
                         <FormActionButtons
