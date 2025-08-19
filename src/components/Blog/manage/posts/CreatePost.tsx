@@ -1,7 +1,7 @@
 // src/components/Blog/manage/posts/CreatePost.tsx (refactored)
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import PostList from "./PostList";
 import PostForm from "./PostForm";
 import { postService } from "@entities/models/post/service";
@@ -19,14 +19,14 @@ export default function PostManagerPage() {
 
     const manager = usePostForm(editingPost);
 
-    const fetchPosts = async () => {
+    const fetchPosts = useCallback(async () => {
         const { data } = await postService.list();
         setPosts(data ?? []);
-    };
+    }, []);
 
     useEffect(() => {
         void fetchPosts();
-    }, []);
+    }, [fetchPosts]);
 
     const handleEdit = (idx: number) => {
         setEditingPost(posts[idx]);
