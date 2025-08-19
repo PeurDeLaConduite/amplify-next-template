@@ -59,7 +59,7 @@ export function useTagForm() {
         },
     });
 
-    const { extras, setExtras, setForm, setMode, submit, reset: formReset } = modelForm;
+    const { extras, setExtras, setForm, setMode, reset: formReset } = modelForm;
 
     const fetchAll = useCallback(async () => {
         setLoading(true);
