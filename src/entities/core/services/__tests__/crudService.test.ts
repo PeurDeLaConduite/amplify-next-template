@@ -72,7 +72,7 @@ beforeEach(() => {
 describe("crudService", () => {
     const svc = crudService("Test", {
         auth: { read: ["apiKey", "userPool"], write: ["apiKey", "userPool"] },
-    });
+    }) as ReturnType<typeof crudService<"Test">>;
 
     it("list utilise le fallback et filtre selon canAccess", async () => {
         const fetchSpy = vi.spyOn(global, "fetch");
