@@ -91,7 +91,7 @@ describe("sectionPostService", () => {
         expect(received.where).toEqual({ sectionId: "section1", postId: "post2" });
     });
 
-    it("échoue avec authMode public", async () => {
+    it("échoue avec authMode apiKey", async () => {
         let received: any;
         server.use(
             http.post("https://api.test/sectionPost/create", async ({ request }) => {
@@ -100,9 +100,9 @@ describe("sectionPostService", () => {
             })
         );
         await expect(
-            sectionPostService.create("section1", "post1", { authMode: "public" })
+            sectionPostService.create("section1", "post1", { authMode: "apiKey" })
         ).rejects.toThrow();
-        expect(received.opts.authMode).toBe("public");
+        expect(received.opts.authMode).toBe("apiKey");
     });
 
     it("échoue avec authMode userPool", async () => {
