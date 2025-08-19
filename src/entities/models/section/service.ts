@@ -10,7 +10,9 @@ export const sectionService = {
     async deleteCascade({ id }: { id: string }) {
         await deleteEdges(
             sectionPostService.list,
-            (edge) => sectionPostService.delete(edge.sectionId, edge.postId),
+            async (edge) => {
+                await sectionPostService.delete(edge.sectionId, edge.postId);
+            },
             "sectionId",
             id
         );

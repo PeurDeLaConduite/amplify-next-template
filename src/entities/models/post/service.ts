@@ -28,14 +28,18 @@ export const postService = {
 
         await deleteEdges(
             postTagService.list,
-            (edge) => postTagService.delete(edge.postId, edge.tagId),
+            async (edge) => {
+                await postTagService.delete(edge.postId, edge.tagId);
+            },
             "postId",
             id
         );
 
         await deleteEdges(
             sectionPostService.list,
-            (edge) => sectionPostService.delete(edge.sectionId, edge.postId),
+            async (edge) => {
+                await sectionPostService.delete(edge.sectionId, edge.postId);
+            },
             "postId",
             id
         );
