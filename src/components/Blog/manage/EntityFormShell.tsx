@@ -22,7 +22,7 @@ interface Props<F> {
     className?: string;
 }
 
-const EntityFormShell = forwardRef<HTMLFormElement, Props<any>>(function EntityFormShell(
+const EntityFormShell = <F,>(
     {
         manager,
         initialForm,
@@ -30,9 +30,9 @@ const EntityFormShell = forwardRef<HTMLFormElement, Props<any>>(function EntityF
         children,
         className,
         submitLabel = { create: "Créer", edit: "Mettre à jour" },
-    },
-    ref
-) {
+    }: Props<F>,
+    ref: React.ForwardedRef<HTMLFormElement>
+) => {
     const { submit, setForm, setMode, mode, saving, message } = manager;
 
     async function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -66,6 +66,6 @@ const EntityFormShell = forwardRef<HTMLFormElement, Props<any>>(function EntityF
             )}
         </div>
     );
-});
+};
 
-export default EntityFormShell;
+export default forwardRef(EntityFormShell);
