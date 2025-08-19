@@ -1,8 +1,10 @@
 "use client";
 
 import React, { forwardRef } from "react";
-import EntityFormShell from "@components/Blog/manage/EntityFormShell";
+import EntityFormShell, { type EntityFormManager } from "@components/Blog/manage/EntityFormShell";
 import { useTagForm } from "@entities/models/tag/hooks";
+import { initialTagForm } from "@entities/models/tag/form";
+import type { TagFormType } from "@entities/models/tag/types";
 
 type UseTagFormReturn = ReturnType<typeof useTagForm>;
 
@@ -15,25 +17,25 @@ const TagForm = forwardRef<HTMLFormElement, Props>(function TagForm({ manager, o
     const { form, setForm } = manager;
 
     // Normalise: certains hooks ont `save` au lieu de `submit`
-    const normalizedManager = {
+    const normalizedManager: EntityFormManager<TagFormType> = {
         ...manager,
-        submit: (manager as any).submit ?? (manager as any).save,
+        submit: manager.submit ?? manager.save,
     };
 
     return (
         <EntityFormShell
             ref={ref}
-            manager={normalizedManager as any}
-            initialForm={{ name: "" } as any}
+            manager={normalizedManager}
+            initialForm={initialTagForm}
             onSave={onSave}
             submitLabel={{ create: "Ajouter", edit: "Mettre à jour" }}
             className="!grid-cols-[1fr_auto]"
         >
             <input
                 type="text"
-                value={(form as any).name ?? ""}
+                value={form.name}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setForm((f: any) => ({ ...f, name: e.target.value }))
+                    setForm((f) => ({ ...f, name: e.target.value }))
                 }
                 placeholder="Nom du tag"
                 className="border rounded p-2 bg-white"
