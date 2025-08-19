@@ -15,7 +15,7 @@ vi.mock("@entities/core/services/amplifyClient", () => {
         });
 
     const models = {
-        Test: {
+        Todo: {
             list: (opts?: unknown) => baseFetch("list", opts as any),
             get: (args: unknown, opts?: unknown) =>
                 baseFetch("get", { ...(opts as any), body: args }),
@@ -27,7 +27,7 @@ vi.mock("@entities/core/services/amplifyClient", () => {
                 baseFetch("delete", { ...(opts as any), body: args }),
         },
     };
-    return { client: { models }, Schema: { Test: { type: {} as any } } };
+    return { client: { models }, Schema: { Todo: { type: {} as any } } };
 });
 
 vi.mock("@entities/core/auth", () => ({
@@ -70,9 +70,9 @@ beforeEach(() => {
 });
 
 describe("crudService", () => {
-    const svc = crudService("Test", {
+    const svc = crudService("Todo", {
         auth: { read: ["apiKey", "userPool"], write: ["apiKey", "userPool"] },
-    }) as ReturnType<typeof crudService<"Test">>;
+    }) as ReturnType<typeof crudService<"Todo">>;
 
     it("list utilise le fallback et filtre selon canAccess", async () => {
         const fetchSpy = vi.spyOn(global, "fetch");
