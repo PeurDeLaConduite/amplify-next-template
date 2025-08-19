@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { commentService } from "@entities/models/comment";
 import { http, HttpResponse } from "msw";
 import { server } from "@test/setup";
+import type { CommentCreateInput, CommentUpdateInput } from "@src/types/models/comment";
 
 vi.mock("@entities/core/services/amplifyClient", () => {
     const baseFetch = (op: string, { authMode, body }: { authMode?: string; body?: unknown }) =>
@@ -16,18 +17,18 @@ vi.mock("@entities/core/services/amplifyClient", () => {
 
     const models = {
         Comment: {
-            get: (args: unknown, opts?: unknown) =>
-                baseFetch("get", { ...(opts as any), body: args }),
-            create: (data: unknown, opts?: unknown) =>
-                baseFetch("create", { ...(opts as any), body: data }),
-            update: (data: unknown, opts?: unknown) =>
-                baseFetch("update", { ...(opts as any), body: data }),
-            delete: (args: unknown, opts?: unknown) =>
-                baseFetch("delete", { ...(opts as any), body: args }),
+            get: (args: { id: string }, opts?: { authMode?: string }) =>
+                baseFetch("get", { ...opts, body: args }),
+            create: (data: CommentCreateInput, opts?: { authMode?: string }) =>
+                baseFetch("create", { ...opts, body: data }),
+            update: (data: CommentUpdateInput & { id: string }, opts?: { authMode?: string }) =>
+                baseFetch("update", { ...opts, body: data }),
+            delete: (args: { id: string }, opts?: { authMode?: string }) =>
+                baseFetch("delete", { ...opts, body: args }),
         },
     };
 
-    return { client: { models }, Schema: { Comment: { type: {} as any } } };
+    return { client: { models }, Schema: { Comment: { type: {} as Record<string, never> } } };
 });
 
 vi.mock("@entities/core/auth", () => ({ canAccess: () => true }));
@@ -60,37 +61,52 @@ beforeEach(() => {
 describe("commentService", () => {
     it("get utilise le fallback d'authentification", async () => {
         const fetchSpy = vi.spyOn(global, "fetch");
-        const res = await commentService.get({ id: "1" } as any);
+        const res = await commentService.get({ id: "1" });
         expect(fetchSpy).toHaveBeenCalledTimes(2);
-        expect((fetchSpy.mock.calls[0][1] as any).headers["x-auth-mode"]).toBe("apiKey");
-        expect((fetchSpy.mock.calls[1][1] as any).headers["x-auth-mode"]).toBe("userPool");
+        const headers0 = (fetchSpy.mock.calls[0][1]?.headers as Record<string, string>)[
+            "x-auth-mode"
+        ];
+        const headers1 = (fetchSpy.mock.calls[1][1]?.headers as Record<string, string>)[
+            "x-auth-mode"
+        ];
+        expect(headers0).toBe("apiKey");
+        expect(headers1).toBe("userPool");
         expect(res.data).toEqual({ id: 1 });
         fetchSpy.mockRestore();
     });
 
     it("create utilise userPool", async () => {
         const fetchSpy = vi.spyOn(global, "fetch");
-        const res = await commentService.create({} as any);
+        const res = await commentService.create({ content: "", userNameId: "" });
         expect(fetchSpy).toHaveBeenCalledTimes(1);
-        expect((fetchSpy.mock.calls[0][1] as any).headers["x-auth-mode"]).toBe("userPool");
+        const headers = (fetchSpy.mock.calls[0][1]?.headers as Record<string, string>)[
+            "x-auth-mode"
+        ];
+        expect(headers).toBe("userPool");
         expect(res.data).toEqual({ id: 1 });
         fetchSpy.mockRestore();
     });
 
     it("update utilise userPool", async () => {
         const fetchSpy = vi.spyOn(global, "fetch");
-        const res = await commentService.update({ id: "1" } as any);
+        const res = await commentService.update({ id: "1", content: "" });
         expect(fetchSpy).toHaveBeenCalledTimes(1);
-        expect((fetchSpy.mock.calls[0][1] as any).headers["x-auth-mode"]).toBe("userPool");
+        const headers = (fetchSpy.mock.calls[0][1]?.headers as Record<string, string>)[
+            "x-auth-mode"
+        ];
+        expect(headers).toBe("userPool");
         expect(res.data).toEqual({ id: 1 });
         fetchSpy.mockRestore();
     });
 
     it("delete utilise userPool", async () => {
         const fetchSpy = vi.spyOn(global, "fetch");
-        const res = await commentService.delete({ id: "1" } as any);
+        const res = await commentService.delete({ id: "1" });
         expect(fetchSpy).toHaveBeenCalledTimes(1);
-        expect((fetchSpy.mock.calls[0][1] as any).headers["x-auth-mode"]).toBe("userPool");
+        const headers = (fetchSpy.mock.calls[0][1]?.headers as Record<string, string>)[
+            "x-auth-mode"
+        ];
+        expect(headers).toBe("userPool");
         expect(res.data).toEqual({ id: 1 });
         fetchSpy.mockRestore();
     });

@@ -2,6 +2,12 @@ import { describe, it, expect, vi } from "vitest";
 import { http, HttpResponse } from "msw";
 import { server } from "@test/setup";
 import { sectionPostService } from "@entities/relations/sectionPost/service";
+import type { ListRequest, CreateRequest, DeleteRequest } from "@test/fixtures/relations";
+
+interface SectionPostIds {
+    sectionId: string;
+    postId: string;
+}
 
 vi.mock("@entities/core/services/amplifyClient", () => {
     const mockModel = {
@@ -28,7 +34,10 @@ describe("sectionPostService", () => {
     it("listByParent retourne les IDs post", async () => {
         server.use(
             http.post("https://api.test/sectionPost/list", async ({ request }) => {
-                const body = (await request.json()) as any;
+                const body = (await request.json()) as ListRequest<{
+                    sectionId?: { eq?: string };
+                    postId?: { eq?: string };
+                }>;
                 if (typeof body === "object" && body?.args?.filter?.sectionId?.eq === "section1") {
                     return HttpResponse.json({
                         data: [
@@ -49,7 +58,10 @@ describe("sectionPostService", () => {
     it("listByChild retourne les IDs section", async () => {
         server.use(
             http.post("https://api.test/sectionPost/list", async ({ request }) => {
-                const body = (await request.json()) as any;
+                const body = (await request.json()) as ListRequest<{
+                    sectionId?: { eq?: string };
+                    postId?: { eq?: string };
+                }>;
                 if (typeof body === "object" && body?.args?.filter?.postId?.eq === "post1") {
                     return HttpResponse.json({
                         data: [
@@ -68,10 +80,10 @@ describe("sectionPostService", () => {
     });
 
     it("create envoie les IDs corrects", async () => {
-        let received: any;
+        let received: CreateRequest<SectionPostIds>;
         server.use(
             http.post("https://api.test/sectionPost/create", async ({ request }) => {
-                received = (await request.json()) as any;
+                received = (await request.json()) as CreateRequest<SectionPostIds>;
                 return HttpResponse.json({ data: {} });
             })
         );
@@ -80,10 +92,10 @@ describe("sectionPostService", () => {
     });
 
     it("delete envoie les IDs corrects", async () => {
-        let received: any;
+        let received: DeleteRequest<SectionPostIds>;
         server.use(
             http.post("https://api.test/sectionPost/delete", async ({ request }) => {
-                received = (await request.json()) as any;
+                received = (await request.json()) as DeleteRequest<SectionPostIds>;
                 return HttpResponse.json({ data: {} });
             })
         );
@@ -92,10 +104,10 @@ describe("sectionPostService", () => {
     });
 
     it("échoue avec authMode apiKey", async () => {
-        let received: any;
+        let received: CreateRequest<SectionPostIds>;
         server.use(
             http.post("https://api.test/sectionPost/create", async ({ request }) => {
-                received = (await request.json()) as any;
+                received = (await request.json()) as CreateRequest<SectionPostIds>;
                 return HttpResponse.json({ message: "Unauthorized" }, { status: 401 });
             })
         );
@@ -106,10 +118,10 @@ describe("sectionPostService", () => {
     });
 
     it("échoue avec authMode userPool", async () => {
-        let received: any;
+        let received: DeleteRequest<SectionPostIds>;
         server.use(
             http.post("https://api.test/sectionPost/delete", async ({ request }) => {
-                received = (await request.json()) as any;
+                received = (await request.json()) as DeleteRequest<SectionPostIds>;
                 return HttpResponse.json({ message: "Unauthorized" }, { status: 401 });
             })
         );
