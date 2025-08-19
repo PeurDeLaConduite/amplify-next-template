@@ -1,4 +1,5 @@
 // src/components/Blog/BlogCard.tsx
+import { memo } from "react";
 import Link from "next/link";
 import VideoEmbed from "./VideoEmbed";
 import type { Post, Author } from "@myTypes/blog";
@@ -8,7 +9,7 @@ type Props = {
     author: Author;
 };
 
-export default function BlogCard({ post, author }: Props) {
+function BlogCard({ post, author }: Props) {
     return (
         <article className="border rounded-2xl p-4 shadow-sm hover:shadow-md transition">
             {/* 🧭 En-tête sémantique */}
@@ -48,3 +49,5 @@ export default function BlogCard({ post, author }: Props) {
         </article>
     );
 }
+
+export default memo(BlogCard);

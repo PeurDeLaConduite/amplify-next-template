@@ -1,5 +1,5 @@
 // src/components/Blog/SectionCard.tsx
-import React from "react";
+import React, { memo, useMemo } from "react";
 import { Section, Post, Author } from "@src/types/blog";
 import BlogList from "./BlogList";
 import Link from "next/link";
@@ -10,7 +10,9 @@ interface SectionCardProps {
     authors: Author[];
 }
 
-export default function BlogSectionCard({ section, posts, authors }: SectionCardProps) {
+function BlogSectionCard({ section, posts, authors }: SectionCardProps) {
+    const list = useMemo(() => <BlogList posts={posts} authors={authors} />, [posts, authors]);
+
     return (
         <section
             className="mb-12 overflow-hidden rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition"
@@ -28,9 +30,9 @@ export default function BlogSectionCard({ section, posts, authors }: SectionCard
                 </Link>
             </div>
             {/* Contenu de la section */}
-            <div className="bg-white px-6 py-8">
-                <BlogList posts={posts} authors={authors} />
-            </div>
+            <div className="bg-white px-6 py-8">{list}</div>
         </section>
     );
 }
+
+export default memo(BlogSectionCard);
