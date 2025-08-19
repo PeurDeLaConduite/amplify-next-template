@@ -1,7 +1,7 @@
 import { crudService, deleteEdges } from "@entities/core";
 import { sectionPostService } from "@entities/relations/sectionPost/service";
 
-const base = crudService("Section", {
+const base = crudService<"Section">("Section", {
     auth: { read: ["apiKey", "userPool"], write: "userPool" },
 });
 
