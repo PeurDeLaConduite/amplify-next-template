@@ -20,10 +20,11 @@ interface Props {
     manager: ReturnType<typeof usePostForm>;
     onSave: () => void;
     posts: PostType[];
+    editingId: string | null;
 }
 
 const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
-    { manager, onSave, posts },
+    { manager, onSave, posts, editingId },
     ref
 ) {
     const {
@@ -154,8 +155,8 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
                 ]}
             />
             <OrderSelector
-                sections={posts}
-                currentIndex={-1}
+                items={posts}
+                editingId={editingId}
                 value={form.order ?? 1}
                 onReorder={(_, newOrder) => handleChange("order", newOrder)}
             />

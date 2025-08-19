@@ -56,7 +56,13 @@ export default function PostManagerPage() {
         <RequireAdmin>
             <BlogEditorLayout title="Gestion des Posts">
                 <SectionHeader className="mt-8">Nouvel article</SectionHeader>
-                <PostForm ref={formRef} manager={manager} posts={posts} onSave={handleSave} />
+                <PostForm
+                    ref={formRef}
+                    manager={manager}
+                    posts={posts}
+                    editingId={editingId}
+                    onSave={handleSave}
+                />
                 <SectionHeader>Liste des articles</SectionHeader>
                 <PostList
                     posts={posts}

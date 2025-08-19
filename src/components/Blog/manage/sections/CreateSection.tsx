@@ -58,9 +58,7 @@ export default function SectionManagerPage() {
                 <SectionForm
                     ref={formRef}
                     manager={manager}
-                    editingIndex={
-                        editingId !== null ? sections.findIndex((s) => s.id === editingId) : null
-                    }
+                    editingId={editingId}
                     onSave={handleSave}
                 />
                 <SectionHeader>Liste des sections</SectionHeader>
