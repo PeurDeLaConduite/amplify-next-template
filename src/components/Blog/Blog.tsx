@@ -1,9 +1,8 @@
 // src/components/Blog/Blog.tsx
-import React from "react";
+import React, { useMemo } from "react";
 import { Section, Post, Author } from "@src/types/blog";
 import BlogSectionCard from "./BlogSectionCard";
 import PostContent from "./PostContent";
-import { byOptionalOrder } from "@components/Blog/manage/sorters";
 
 type BlogProps = {
     data: {
@@ -18,24 +17,13 @@ type BlogProps = {
 const Blog: React.FC<BlogProps> = ({ data, singlePost, noWrapper }) => {
     const { sections = [], posts = [], authors = [] } = data || {};
 
-    if (singlePost) {
-        const author = authors.find((a) => a.authorJsonId === singlePost.authorJsonId);
-        if (!author) return <p>Auteur introuvable</p>;
-        return <PostContent post={singlePost} author={author} />;
-    }
+    const publishedPosts = useMemo(() => posts.filter((p) => p.status === "published"), [posts]);
 
-    if (posts.length === 0) {
-        return <p>Aucun article publié pour le moment.</p>;
-    }
-
-    const publishedPosts = posts.filter((p) => p.status === "published");
-
-    const content = (
-        <>
-            <h1 className="text-4xl font-bold mb-8">Blog</h1>
-            {sections
+    const sectionCards = useMemo(
+        () =>
+            sections
                 .slice()
-                .sort(byOptionalOrder)
+                .sort((a, b) => a.order - b.order)
                 .map((section) => {
                     const postsInSection = publishedPosts.filter((p) =>
                         p.sectionJsonIds.includes(section.sectionJsonId)
@@ -49,7 +37,24 @@ const Blog: React.FC<BlogProps> = ({ data, singlePost, noWrapper }) => {
                             authors={authors}
                         />
                     );
-                })}
+                }),
+        [sections, publishedPosts, authors]
+    );
+
+    if (singlePost) {
+        const author = authors.find((a) => a.authorJsonId === singlePost.authorJsonId);
+        if (!author) return <p>Auteur introuvable</p>;
+        return <PostContent post={singlePost} author={author} />;
+    }
+
+    if (posts.length === 0) {
+        return <p>Aucun article publié pour le moment.</p>;
+    }
+
+    const content = (
+        <>
+            <h1 className="text-4xl font-bold mb-8">Blog</h1>
+            {sectionCards}
         </>
     );
 
