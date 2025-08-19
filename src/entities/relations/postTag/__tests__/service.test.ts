@@ -85,7 +85,7 @@ describe("postTagService", () => {
         expect(received.where).toEqual({ postId: "post1", tagId: "tag2" });
     });
 
-    it("échoue avec authMode public", async () => {
+    it("échoue avec authMode apiKey", async () => {
         let received: any;
         server.use(
             http.post("https://api.test/postTag/create", async ({ request }) => {
@@ -94,9 +94,9 @@ describe("postTagService", () => {
             })
         );
         await expect(
-            postTagService.create("post1", "tag1", { authMode: "public" })
+            postTagService.create("post1", "tag1", { authMode: "apiKey" })
         ).rejects.toThrow();
-        expect(received.opts.authMode).toBe("public");
+        expect(received.opts.authMode).toBe("apiKey");
     });
 
     it("échoue avec authMode userPool", async () => {
