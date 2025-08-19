@@ -1,7 +1,8 @@
 // src/components/blog/manage/EntityFormShell.tsx
 "use client";
 
-import React, { forwardRef, type FormEvent } from "react";
+import React, { forwardRef, type FormEvent, type Ref } from "react";
+import type { JSX } from "react";
 
 export interface EntityFormManager<F> {
     form: F;
@@ -22,7 +23,7 @@ interface Props<F> {
     className?: string;
 }
 
-const EntityFormShell = <F,>(
+const EntityFormShellInner = <F,>(
     {
         manager,
         initialForm,
@@ -68,4 +69,6 @@ const EntityFormShell = <F,>(
     );
 };
 
-export default forwardRef(EntityFormShell);
+export default forwardRef(EntityFormShellInner) as <F>(
+    props: Props<F> & { ref?: Ref<HTMLFormElement> }
+) => JSX.Element;

@@ -3,7 +3,7 @@
 import React, { forwardRef, type ChangeEvent } from "react";
 import EditableField from "@components/forms/EditableField";
 import EditableTextArea from "@components/forms/EditableTextArea";
-import EntityFormShell from "../EntityFormShell";
+import EntityFormShell from "@components/Blog/manage/EntityFormShell";
 import { type AuthorFormType, initialAuthorForm, useAuthorForm } from "@entities/models/author";
 
 interface Props {
