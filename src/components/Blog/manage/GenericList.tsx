@@ -10,8 +10,8 @@ interface GenericListProps<T> {
     items: T[];
     editingId: IdLike | null;
 
-    /** Unique key pour chaque item */
-    getKey: (item: T, index: number) => IdLike;
+    /** Identifiant unique pour chaque item */
+    getId: (item: T) => IdLike;
 
     /** Contenu côté gauche (texte, balises, etc.) */
     renderContent: (item: T, index: number) => React.ReactNode;
@@ -20,10 +20,10 @@ interface GenericListProps<T> {
     sortBy?: (a: T, b: T) => number;
 
     /** Actions */
-    onEdit: (id: IdLike) => void;
+    onEditById: (id: IdLike) => void;
     onSave: () => void;
     onCancel: () => void;
-    onDelete: (id: IdLike) => void;
+    onDeleteById: (id: IdLike) => void;
 
     /** Style */
     className?: string;
@@ -36,27 +36,30 @@ interface GenericListProps<T> {
 export default function GenericList<T>({
     items,
     editingId,
-    getKey,
+    getId,
     renderContent,
     sortBy,
-    onEdit,
+    onEditById,
     onSave,
     onCancel,
-    onDelete,
+    onDeleteById,
     className,
     itemWrapperClassName,
     itemClassName,
     rounded = true,
 }: GenericListProps<T>) {
     const sorted = useMemo(() => {
-        const indexed = items.map((item, idx) => ({ item, idx }));
+        const indexed = items.map((item, originalIndex) => ({
+            item,
+            originalIndex,
+            id: getId(item),
+        }));
         return sortBy ? indexed.slice().sort((a, b) => sortBy(a.item, b.item)) : indexed;
-    }, [items, sortBy]);
+    }, [items, sortBy, getId]);
 
     return (
         <ul className={`mt-4 mb-6 space-y-2 ${className ?? ""}`}>
-            {sorted.map(({ item, idx: originalIdx }) => {
-                const id = getKey(item, originalIdx);
+            {sorted.map(({ item, originalIndex, id }) => {
                 const active = editingId === id;
                 const base =
                     "flex justify-between items-center p-4 gap-4 transition-colors duration-300";
@@ -66,14 +69,14 @@ export default function GenericList<T>({
 
                 return (
                     <li key={String(id)} className={`${liClass} ${itemWrapperClassName ?? ""}`}>
-                        <div className="self-center">{renderContent(item, originalIdx)}</div>
+                        <div className="self-center">{renderContent(item, originalIndex)}</div>
                         <FormActionButtons
                             editingId={editingId}
                             currentId={id}
-                            onEdit={() => onEdit(id)}
+                            onEdit={() => onEditById(id)}
                             onSave={onSave}
                             onCancel={onCancel}
-                            onDelete={() => onDelete(id)}
+                            onDelete={() => onDeleteById(id)}
                             isFormNew={false}
                         />
                     </li>

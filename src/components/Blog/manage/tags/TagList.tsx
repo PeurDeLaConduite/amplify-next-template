@@ -21,7 +21,7 @@ function TagListInner({ tags, editingId, onEditById, onSave, onCancel, onDeleteB
         <GenericList<TagType>
             items={tags}
             editingId={editingId}
-            getKey={(t) => t.id}
+            getId={(t) => t.id}
             renderContent={(t) => (
                 <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-blue-100 text-blue-800 text-sm font-semibold">
                     {t.name}
@@ -41,10 +41,10 @@ function TagListInner({ tags, editingId, onEditById, onSave, onCancel, onDeleteB
                 ].join(" ")
             }
             sortBy={byAlpha((t) => t.name)}
-            onEdit={onEditById}
+            onEditById={onEditById}
             onSave={onSave}
             onCancel={onCancel}
-            onDelete={onDeleteById}
+            onDeleteById={onDeleteById}
         />
     );
 }

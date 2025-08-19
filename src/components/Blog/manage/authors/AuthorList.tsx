@@ -22,17 +22,17 @@ export default function AuthorList(props: Props) {
         <GenericList<AuthorType>
             items={props.authors}
             editingId={props.editingId}
-            getKey={(a) => a.id}
+            getId={(a) => a.id}
             renderContent={(a) => (
                 <p className="self-center">
                     <strong>{a.authorName}</strong> — {a.email}
                 </p>
             )}
             sortBy={byAlpha((a) => a.authorName)}
-            onEdit={props.onEditById}
+            onEditById={props.onEditById}
             onSave={props.onSave}
             onCancel={props.onCancel}
-            onDelete={props.onDeleteById}
+            onDeleteById={props.onDeleteById}
         />
     );
 }
