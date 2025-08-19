@@ -45,7 +45,7 @@ export async function deleteEdges<T>(
  */
 export async function setNullBatch<T extends { id: string }, K extends keyof T & string>(
     listFn: (args: { filter: Record<string, unknown> }) => Promise<{ data?: T[] }>,
-    updateFn: (item: { id: string } & Partial<Record<K, any>>) => Promise<void>,
+    updateFn: (item: { id: string } & Partial<Record<K, unknown>>) => Promise<void>,
     field: K,
     id: string,
     concurrency = 10
@@ -53,6 +53,6 @@ export async function setNullBatch<T extends { id: string }, K extends keyof T &
     const { data } = await listFn({ filter: { [field]: { eq: id } } });
     const items = data ?? [];
     await withConcurrency(items, concurrency, async (item) => {
-        await updateFn({ id: item.id, [field]: null } as any);
+        await updateFn({ id: item.id, [field]: null });
     });
 }
