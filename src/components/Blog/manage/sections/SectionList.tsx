@@ -21,17 +21,17 @@ export default function SectionList(props: Props) {
         <GenericList<SectionTypes>
             items={props.sections}
             editingId={props.editingId}
-            getKey={(s) => s.id}
+            getId={(s) => s.id}
             renderContent={(s) => (
                 <p className="self-center">
                     <strong>{s.title}</strong> (ordre : {s.order})
                 </p>
             )}
             sortBy={byOptionalOrder}
-            onEdit={props.onEditById}
+            onEditById={props.onEditById}
             onSave={props.onSave}
             onCancel={props.onCancel}
-            onDelete={props.onDeleteById}
+            onDeleteById={props.onDeleteById}
         />
     );
 }

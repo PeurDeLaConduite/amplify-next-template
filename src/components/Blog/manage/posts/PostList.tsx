@@ -22,17 +22,17 @@ export default function PostList(props: Props) {
         <GenericList<PostType>
             items={props.posts}
             editingId={props.editingId}
-            getKey={(p) => p.id}
+            getId={(p) => p.id}
             renderContent={(p) => (
                 <p className="self-center">
                     <strong>{p.title}</strong> (ordre : {p.order})
                 </p>
             )}
             sortBy={byOptionalOrder}
-            onEdit={props.onEditById}
+            onEditById={props.onEditById}
             onSave={props.onSave}
             onCancel={props.onCancel}
-            onDelete={props.onDeleteById}
+            onDeleteById={props.onDeleteById}
         />
     );
 }
