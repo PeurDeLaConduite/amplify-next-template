@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { syncManyToMany } from "@entities/core/utils/syncManyToMany";
 import { relationService } from "@entities/core/services";
 import { http, HttpResponse } from "msw";
-import { server } from "@/test/setup";
+import { server } from "@test/setup";
 
 vi.mock("@entities/core/services/amplifyClient", () => {
     const mockModel = {

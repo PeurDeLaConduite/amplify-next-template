@@ -27,7 +27,8 @@
             "@services/*": ["src/services/*"],
             "@myTypes/*": ["src/types/*"],
             "@entities/*": ["src/entities/*"],
-            "@public/*": ["public/*"]
+            "@public/*": ["public/*"],
+            "@test/*": ["test/*"]
         },
         "plugins": [{ "name": "next" }]
     },
