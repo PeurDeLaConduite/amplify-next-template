@@ -28,8 +28,8 @@ describe("sectionPostService", () => {
     it("listByParent retourne les IDs post", async () => {
         server.use(
             http.post("https://api.test/sectionPost/list", async ({ request }) => {
-                const body = await request.json();
-                if (body.args?.filter?.sectionId?.eq === "section1") {
+                const body = (await request.json()) as any;
+                if (typeof body === "object" && body?.args?.filter?.sectionId?.eq === "section1") {
                     return HttpResponse.json({
                         data: [
                             { sectionId: "section1", postId: "post1" },
@@ -49,8 +49,8 @@ describe("sectionPostService", () => {
     it("listByChild retourne les IDs section", async () => {
         server.use(
             http.post("https://api.test/sectionPost/list", async ({ request }) => {
-                const body = await request.json();
-                if (body.args?.filter?.postId?.eq === "post1") {
+                const body = (await request.json()) as any;
+                if (typeof body === "object" && body?.args?.filter?.postId?.eq === "post1") {
                     return HttpResponse.json({
                         data: [
                             { sectionId: "section1", postId: "post1" },
@@ -71,7 +71,7 @@ describe("sectionPostService", () => {
         let received: any;
         server.use(
             http.post("https://api.test/sectionPost/create", async ({ request }) => {
-                received = await request.json();
+                received = (await request.json()) as any;
                 return HttpResponse.json({ data: {} });
             })
         );
@@ -83,7 +83,7 @@ describe("sectionPostService", () => {
         let received: any;
         server.use(
             http.post("https://api.test/sectionPost/delete", async ({ request }) => {
-                received = await request.json();
+                received = (await request.json()) as any;
                 return HttpResponse.json({ data: {} });
             })
         );
@@ -95,7 +95,7 @@ describe("sectionPostService", () => {
         let received: any;
         server.use(
             http.post("https://api.test/sectionPost/create", async ({ request }) => {
-                received = await request.json();
+                received = (await request.json()) as any;
                 return HttpResponse.json({ message: "Unauthorized" }, { status: 401 });
             })
         );
@@ -109,7 +109,7 @@ describe("sectionPostService", () => {
         let received: any;
         server.use(
             http.post("https://api.test/sectionPost/delete", async ({ request }) => {
-                received = await request.json();
+                received = (await request.json()) as any;
                 return HttpResponse.json({ message: "Unauthorized" }, { status: 401 });
             })
         );

@@ -28,8 +28,8 @@ describe("postTagService", () => {
     it("listByParent retourne les IDs tag", async () => {
         server.use(
             http.post("https://api.test/postTag/list", async ({ request }) => {
-                const body = await request.json();
-                if (body.args?.filter?.postId?.eq === "post1") {
+                const body = (await request.json()) as any;
+                if (typeof body === "object" && body?.args?.filter?.postId?.eq === "post1") {
                     return HttpResponse.json({
                         data: [
                             { postId: "post1", tagId: "tag1" },
@@ -46,8 +46,8 @@ describe("postTagService", () => {
     it("listByChild retourne les IDs post", async () => {
         server.use(
             http.post("https://api.test/postTag/list", async ({ request }) => {
-                const body = await request.json();
-                if (body.args?.filter?.tagId?.eq === "tag1") {
+                const body = (await request.json()) as any;
+                if (typeof body === "object" && body?.args?.filter?.tagId?.eq === "tag1") {
                     return HttpResponse.json({
                         data: [
                             { postId: "post1", tagId: "tag1" },
@@ -65,7 +65,7 @@ describe("postTagService", () => {
         let received: any;
         server.use(
             http.post("https://api.test/postTag/create", async ({ request }) => {
-                received = await request.json();
+                received = (await request.json()) as any;
                 return HttpResponse.json({ data: {} });
             })
         );
@@ -77,7 +77,7 @@ describe("postTagService", () => {
         let received: any;
         server.use(
             http.post("https://api.test/postTag/delete", async ({ request }) => {
-                received = await request.json();
+                received = (await request.json()) as any;
                 return HttpResponse.json({ data: {} });
             })
         );
@@ -89,7 +89,7 @@ describe("postTagService", () => {
         let received: any;
         server.use(
             http.post("https://api.test/postTag/create", async ({ request }) => {
-                received = await request.json();
+                received = (await request.json()) as any;
                 return HttpResponse.json({ message: "Unauthorized" }, { status: 401 });
             })
         );
@@ -103,7 +103,7 @@ describe("postTagService", () => {
         let received: any;
         server.use(
             http.post("https://api.test/postTag/delete", async ({ request }) => {
-                received = await request.json();
+                received = (await request.json()) as any;
                 return HttpResponse.json({ message: "Unauthorized" }, { status: 401 });
             })
         );
