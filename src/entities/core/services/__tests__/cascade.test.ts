@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { withConcurrency, deleteEdges, setNullBatch } from "@entities/core/services";
 
 function sleep(ms: number) {
@@ -20,28 +20,30 @@ describe("cascade helpers", () => {
         expect(max).toBeLessThanOrEqual(2);
     });
 
-    it("deleteEdges utilise withConcurrency", async () => {
-        const edges = [1, 2, 3];
+    it("deleteEdges liste et supprime les éléments", async () => {
+        const listFn = vi.fn().mockResolvedValue({ data: [1, 2, 3] });
         const calls: number[] = [];
-        await deleteEdges(
-            edges,
-            async (e) => {
-                calls.push(e);
-            },
-            2
-        );
-        expect(calls.sort()).toEqual(edges);
+        await deleteEdges(listFn as any, async (e: number) => calls.push(e), "fk", "1");
+        expect(listFn).toHaveBeenCalledWith({ filter: { fk: { eq: "1" } } });
+        expect(calls.sort()).toEqual([1, 2, 3]);
     });
 
     it("setNullBatch met les clés à null et appelle l'updater", async () => {
-        const items = [
-            { id: 1, ref: 10 },
-            { id: 2, ref: 20 },
-        ];
-        const updated: typeof items = [] as any;
-        await setNullBatch(items, ["ref"], async (item) => {
-            updated.push({ ...item });
+        const listFn = vi.fn().mockResolvedValue({
+            data: [
+                { id: 1, ref: 10 },
+                { id: 2, ref: 20 },
+            ],
         });
+        const updated: Array<{ id: number; ref: number | null }> = [];
+        await setNullBatch(
+            listFn as any,
+            async (item) => {
+                updated.push(item as any);
+            },
+            "ref",
+            "1"
+        );
         expect(updated).toEqual([
             { id: 1, ref: null },
             { id: 2, ref: null },

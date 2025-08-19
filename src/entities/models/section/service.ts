@@ -8,11 +8,11 @@ const base = crudService("Section", {
 export const sectionService = {
     ...base,
     async deleteCascade({ id }: { id: string }) {
-        const { data: edges } = await sectionPostService.list({
-            filter: { sectionId: { eq: id } },
-        });
-        await deleteEdges(edges ?? [], (edge) =>
-            sectionPostService.delete(edge.sectionId, edge.postId)
+        await deleteEdges(
+            sectionPostService.list,
+            (edge) => sectionPostService.delete(edge.sectionId, edge.postId),
+            "sectionId",
+            id
         );
         return base.delete({ id });
     },

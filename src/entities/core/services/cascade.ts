@@ -24,31 +24,35 @@ export async function withConcurrency<T, R>(
 }
 
 /**
- * Supprime des "edges" en utilisant une fonction fournie et une concurrence optionnelle.
+ * Liste et supprime les "edges" reliant une entité donnée.
  */
 export async function deleteEdges<T>(
-    edges: T[],
-    deleter: (edge: T) => Promise<void>,
+    listFn: (args: { filter: Record<string, unknown> }) => Promise<{ data?: T[] }>,
+    deleteFn: (edge: T) => Promise<void>,
+    foreignKey: string,
+    id: string,
     concurrency = 10
 ): Promise<void> {
-    await withConcurrency(edges, concurrency, async (edge, _i) => {
-        await deleter(edge);
+    const { data } = await listFn({ filter: { [foreignKey]: { eq: id } } });
+    const edges = data ?? [];
+    await withConcurrency(edges, concurrency, async (edge) => {
+        await deleteFn(edge);
     });
 }
 
 /**
- * Met certaines clés à `null` pour chaque élément et exécute une fonction d'update.
+ * Met un champ à `null` pour tous les éléments liés à une entité.
  */
-export async function setNullBatch<T extends Record<string, any>>(
-    items: T[],
-    keys: (keyof T)[],
-    updater: (item: T) => Promise<void>,
+export async function setNullBatch<T extends { id: string }, K extends keyof T & string>(
+    listFn: (args: { filter: Record<string, unknown> }) => Promise<{ data?: T[] }>,
+    updateFn: (item: { id: string } & Partial<Record<K, any>>) => Promise<void>,
+    field: K,
+    id: string,
     concurrency = 10
 ): Promise<void> {
+    const { data } = await listFn({ filter: { [field]: { eq: id } } });
+    const items = data ?? [];
     await withConcurrency(items, concurrency, async (item) => {
-        for (const key of keys) {
-            (item as any)[key] = null;
-        }
-        await updater(item);
+        await updateFn({ id: item.id, [field]: null } as any);
     });
 }
