@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 export type FormMode = "create" | "edit";
 export type FieldKey<T> = keyof T & string;
 
-export interface UseModelFormOptions<F, E = Record<string, unknown>> {
+export interface UseModelFormOptions<F extends object, E = Record<string, unknown>> {
     initialForm: F;
     initialExtras?: E;
     mode?: FormMode;
@@ -80,7 +80,7 @@ function deepEqual(a: unknown, b: unknown) {
 }
 
 export default function useModelForm<
-    F extends Record<string, unknown>,
+    F extends object,
     E extends Record<string, unknown> = Record<string, unknown>,
 >(options: UseModelFormOptions<F, E>): UseModelFormResult<F, E> {
     const {
