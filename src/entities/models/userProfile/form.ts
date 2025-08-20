@@ -15,6 +15,7 @@ export const {
     UserProfileTypeUpdateInput
 >({
     zodSchema: z.object({
+        id: z.string().optional(),
         firstName: z.string(),
         familyName: z.string(),
         address: z.string(),
@@ -24,6 +25,7 @@ export const {
         phoneNumber: z.string(),
     }) as ZodType<UserProfileFormType>,
     initialForm: {
+        id: "",
         firstName: "",
         familyName: "",
         address: "",
@@ -33,6 +35,7 @@ export const {
         phoneNumber: "",
     },
     toForm: (profile) => ({
+        id: profile.id ?? "",
         firstName: profile.firstName ?? "",
         familyName: profile.familyName ?? "",
         address: profile.address ?? "",

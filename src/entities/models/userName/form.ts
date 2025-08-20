@@ -21,16 +21,19 @@ export const {
     [string[], string[]]
 >({
     zodSchema: z.object({
+        id: z.string().optional(),
         userName: z.string(),
         commentsIds: z.array(z.string()),
         postCommentsIds: z.array(z.string()),
     }) as ZodType<UserNameFormType>,
     initialForm: {
+        id: "",
         userName: "",
         commentsIds: [],
         postCommentsIds: [],
     },
     toForm: (userName, commentsIds: string[] = [], postCommentsIds: string[] = []) => ({
+        id: userName.id ?? "",
         userName: userName.userName ?? "",
         commentsIds,
         postCommentsIds,
