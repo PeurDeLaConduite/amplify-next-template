@@ -12,6 +12,9 @@
         "node_modules",
         "amplify",
         ".Help",
-        ".next" // ← on force l’exclusion ici
+        ".next", // ← on force l’exclusion ici
+        "__tests__",
+        "**/*.test.ts",
+        "**/*.test.tsx"
     ]
 }
