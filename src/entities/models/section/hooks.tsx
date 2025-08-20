@@ -39,13 +39,15 @@ export function useSectionForm(section: SectionTypes | null) {
             return data.id;
         },
         syncRelations: async (id, form) => {
-            const currentPostIds = await sectionPostService.listByParent(id);
-            await syncManyToMany(
-                currentPostIds,
-                form.postIds,
-                (postId) => sectionPostService.create(id, postId),
-                (postId) => sectionPostService.delete(id, postId)
-            );
+            const [currentPostIds] = await Promise.all([sectionPostService.listByParent(id)]);
+            await Promise.all([
+                syncManyToMany(
+                    currentPostIds,
+                    form.postIds,
+                    (postId) => sectionPostService.create(id, postId),
+                    (postId) => sectionPostService.delete(id, postId)
+                ),
+            ]);
         },
     });
 
@@ -55,6 +57,29 @@ export function useSectionForm(section: SectionTypes | null) {
         const { data } = await sectionService.list();
         setExtras((e) => ({ ...e, sections: data ?? [] }));
     }, [setExtras]);
+
+    useEffect(() => {
+        void (async () => {
+            const { data } = await postService.list();
+            setExtras((e) => ({ ...e, posts: data ?? [] }));
+        })();
+        void fetchList();
+    }, [setExtras, fetchList]);
+
+    useEffect(() => {
+        void (async () => {
+            if (section) {
+                const postIds = await sectionPostService.listByParent(section.id);
+                setForm(toSectionForm(section, postIds));
+                setMode("edit");
+                setEditingId(section.id);
+            } else {
+                setForm(initialSectionForm);
+                setMode("create");
+                setEditingId(null);
+            }
+        })();
+    }, [section, setForm, setMode]);
 
     const selectById = useCallback(
         (id: string) => {
@@ -86,29 +111,6 @@ export function useSectionForm(section: SectionTypes | null) {
         },
         [selectById, fetchList, editingId, reset]
     );
-
-    useEffect(() => {
-        void (async () => {
-            const { data } = await postService.list();
-            setExtras((e) => ({ ...e, posts: data ?? [] }));
-        })();
-        void fetchList();
-    }, [setExtras, fetchList]);
-
-    useEffect(() => {
-        void (async () => {
-            if (section) {
-                const postIds = await sectionPostService.listByParent(section.id);
-                setForm(toSectionForm(section, postIds));
-                setMode("edit");
-                setEditingId(section.id);
-            } else {
-                setForm(initialSectionForm);
-                setMode("create");
-                setEditingId(null);
-            }
-        })();
-    }, [section, setForm, setMode]);
 
     return { ...modelForm, editingId, fetchList, selectById, removeById };
 }
