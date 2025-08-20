@@ -1,10 +1,5 @@
 // src/entities/models/tag/manager.ts
-import type {
-    ManagerContract,
-    ManagerState,
-    ListResult,
-    MaybePromise,
-} from "@entities/core/managerContract";
+import type { ManagerContract, ListResult, MaybePromise } from "@entities/core/managerContract";
 import { tagService } from "@entities/models/tag/service";
 import { postService } from "@entities/models/post/service";
 import { postTagService } from "@entities/relations/postTag/service";
@@ -28,9 +23,9 @@ export function createTagManager(): ManagerContract<TagType, TagFormType, Id, Ex
     let loadingList = false,
         loadingEntity = false,
         loadingExtras = false;
-    let errorList: unknown = null,
-        errorEntity: unknown = null,
-        errorExtras: unknown = null;
+    let errorList: Error | null = null,
+        errorEntity: Error | null = null,
+        errorExtras: Error | null = null;
 
     let savingCreate = false,
         savingUpdate = false,
@@ -89,7 +84,7 @@ export function createTagManager(): ManagerContract<TagType, TagFormType, Id, Ex
             const { items } = await listEntities({ limit: pageSize });
             entities = items;
         } catch (e) {
-            errorList = e;
+            errorList = e as Error;
         } finally {
             loadingList = false;
         }
@@ -102,7 +97,7 @@ export function createTagManager(): ManagerContract<TagType, TagFormType, Id, Ex
             const { data } = await postService.list({ limit: 999 });
             extras = { posts: data ?? [] };
         } catch (e) {
-            errorExtras = e;
+            errorExtras = e as Error;
         } finally {
             loadingExtras = false;
         }
@@ -118,7 +113,7 @@ export function createTagManager(): ManagerContract<TagType, TagFormType, Id, Ex
             form = toTagForm(t, postIds);
             enterEdit(id);
         } catch (e) {
-            errorEntity = e;
+            errorEntity = e as Error;
         } finally {
             loadingEntity = false;
         }
@@ -192,7 +187,7 @@ export function createTagManager(): ManagerContract<TagType, TagFormType, Id, Ex
     }> => ({ valid: true, errors: {} });
 
     // ------- snapshot -------
-    const getState = (): ManagerState<TagType, TagFormType, Extras> => ({
+    const getState = () => ({
         entities,
         form,
         extras,
