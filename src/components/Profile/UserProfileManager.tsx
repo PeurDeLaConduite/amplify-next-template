@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useCallback } from "react";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 import EntityEditor from "@components/forms/EntityEditor";
@@ -8,12 +8,8 @@ import { label as fieldLabel } from "./utilsUserProfile";
 import PhoneIcon from "@mui/icons-material/Phone";
 import PersonIcon from "@mui/icons-material/Person";
 import HomeIcon from "@mui/icons-material/Home";
-import { useUserProfileForm } from "@entities/models/userProfile/hooks";
-import {
-    type UserProfileFormType,
-    type UserProfileType,
-    initialUserProfileForm,
-} from "@entities/models/userProfile";
+import { useUserProfileManager } from "@entities/models/userProfile";
+import { type UserProfileFormType, initialUserProfileForm } from "@entities/models/userProfile";
 
 type IdLike = string | number;
 
@@ -29,22 +25,14 @@ const fields: (keyof UserProfileFormType)[] = [
 
 export default function UserProfileManager() {
     const { user } = useAuthenticator();
-    const [editingProfile, setEditingProfile] = useState<UserProfileType | null>(null);
-    const [editingId, setEditingId] = useState<string | null>(null);
-
-    // ✅ même signature que les autres managers (ex: useAuthorForm)
-    const manager = useUserProfileForm(editingProfile);
-    const { removeById, setForm, setMode, form } = manager;
+    const manager = useUserProfileManager();
+    const { form, isEditing, editingId } = manager;
 
     const handleDeleteById = useCallback(
         async (id: IdLike) => {
-            await removeById(String(id));
-            setEditingProfile(null);
-            setEditingId(null);
-            setMode("create");
-            setForm(initialUserProfileForm);
+            await manager.deleteById(String(id));
         },
-        [removeById, setMode, setForm]
+        [manager]
     );
 
     if (!user) return null;
@@ -88,6 +76,38 @@ export default function UserProfileManager() {
         );
     };
 
+    const handleChange = (field: keyof UserProfileFormType, value: unknown) => {
+        manager.updateField(field, value as any);
+    };
+
+    const submit = async () => {
+        if (isEditing && editingId) {
+            await manager.updateEntity(editingId, form, { form });
+        } else {
+            const id = await manager.createEntity(form);
+            manager.enterEdit(id);
+        }
+    };
+
+    const reset = () => {
+        manager.cancelEdit();
+    };
+
+    const setForm: React.Dispatch<React.SetStateAction<UserProfileFormType>> = (value) => {
+        const next = typeof value === "function" ? value(form) : value;
+        manager.patchForm(next);
+    };
+
+    const saveField = async (field: keyof UserProfileFormType, value: string) => {
+        manager.updateField(field, value as any);
+        await submit();
+    };
+
+    const clearField = async (field: keyof UserProfileFormType) => {
+        manager.clearField(field);
+        await submit();
+    };
+
     return (
         <div className="mt-6">
             {/* Même approche que le modèle : un “header formulaire” + bouton enregistrer via ref */}
@@ -103,21 +123,16 @@ export default function UserProfileManager() {
                     }
                 }}
                 form={form}
-                mode={manager.mode}
-                dirty={manager.dirty}
-                handleChange={
-                    manager.handleChange as (
-                        field: keyof UserProfileFormType,
-                        value: unknown
-                    ) => void
-                }
-                submit={manager.submit}
-                reset={manager.reset}
-                setForm={manager.setForm}
+                mode={isEditing ? "edit" : "create"}
+                dirty={JSON.stringify(form) !== JSON.stringify(initialUserProfileForm)}
+                handleChange={handleChange}
+                submit={submit}
+                reset={reset}
+                setForm={setForm}
                 fields={fields}
                 labels={(f) => fieldLabel(f as any)}
-                saveField={manager.saveField}
-                clearField={manager.clearField}
+                saveField={saveField}
+                clearField={clearField}
                 // Wrapper “à la AuthorList.onDeleteById”
                 deleteEntity={async (id?: string) => {
                     const target = id ?? editingId ?? user?.userId ?? user?.username ?? undefined;

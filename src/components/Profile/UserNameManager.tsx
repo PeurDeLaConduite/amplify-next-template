@@ -1,28 +1,22 @@
 // src/app/profile/UserNameManager.tsx
 "use client";
-import React, { useState, useCallback } from "react";
+import React, { useCallback } from "react";
 import { Authenticator, useAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 import EntityEditor from "@components/forms/EntityEditor";
 import { label as fieldLabel } from "./utilsUserName";
 import PersonIcon from "@mui/icons-material/Person";
-import { useUserNameForm } from "@entities/models/userName/hooks";
+import { useUserNameManager } from "@entities/models/userName";
 import { useUserNameRefresh } from "@entities/models/userName/useUserNameRefresh";
-import {
-    type UserNameFormType,
-    type UserNameType,
-    initialUserNameForm,
-} from "@entities/models/userName";
+import { type UserNameFormType, initialUserNameForm } from "@entities/models/userName";
 
 type IdLike = string | number;
 const fields: (keyof UserNameFormType)[] = ["userName"];
 
 export default function UserNameManager() {
     const { user } = useAuthenticator();
-    const [editingProfile, setEditingProfile] = useState<UserNameType | null>(null);
-    const [editingId, setEditingId] = useState<string | null>(null);
-    const manager = useUserNameForm(editingProfile);
-    const { removeById, setForm, setMode, refresh } = manager;
+    const manager = useUserNameManager();
+    const { refresh, form, isEditing, editingId } = manager;
 
     // ⚡ un seul hook pour auth-change + bus
     useUserNameRefresh({
@@ -31,15 +25,43 @@ export default function UserNameManager() {
         onAuthChange: true,
     });
 
+    const handleChange = (field: keyof UserNameFormType, value: unknown) => {
+        manager.updateField(field, value as any);
+    };
+
+    const submit = async () => {
+        if (isEditing && editingId) {
+            await manager.updateEntity(editingId, form, { form });
+        } else {
+            const id = await manager.createEntity(form);
+            manager.enterEdit(id);
+        }
+    };
+
+    const reset = () => {
+        manager.cancelEdit();
+    };
+
+    const setForm: React.Dispatch<React.SetStateAction<UserNameFormType>> = (value) => {
+        const next = typeof value === "function" ? value(form) : value;
+        manager.patchForm(next);
+    };
+
+    const saveField = async (field: keyof UserNameFormType, value: string) => {
+        manager.updateField(field, value as any);
+        await submit();
+    };
+
+    const clearField = async (field: keyof UserNameFormType) => {
+        manager.clearField(field);
+        await submit();
+    };
+
     const handleDeleteById = useCallback(
         async (id: IdLike) => {
-            await removeById(String(id));
-            setEditingProfile(null);
-            setEditingId(null);
-            setMode("create");
-            setForm(initialUserNameForm);
+            await manager.deleteById(String(id));
         },
-        [removeById, setMode, setForm]
+        [manager]
     );
 
     if (!user) return <Authenticator />;
@@ -55,19 +77,17 @@ export default function UserNameManager() {
                     void clear(field);
                 }
             }}
-            form={manager.form}
-            mode={manager.mode}
-            dirty={manager.dirty}
-            handleChange={
-                manager.handleChange as (field: keyof UserNameFormType, value: unknown) => void
-            }
-            submit={manager.submit}
-            reset={manager.reset}
-            setForm={manager.setForm}
+            form={form}
+            mode={isEditing ? "edit" : "create"}
+            dirty={JSON.stringify(form) !== JSON.stringify(initialUserNameForm)}
+            handleChange={handleChange}
+            submit={submit}
+            reset={reset}
+            setForm={setForm}
             fields={fields}
             labels={fieldLabel as (field: keyof UserNameFormType) => string}
-            saveField={manager.saveField}
-            clearField={manager.clearField}
+            saveField={saveField}
+            clearField={clearField}
             deleteEntity={async (id?: string) => {
                 const target = id ?? editingId ?? user?.userId ?? user?.username ?? undefined;
                 if (!target) return;

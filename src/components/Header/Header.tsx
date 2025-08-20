@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import { PowerButton } from "@src/components/buttons";
-import { useUserNameForm } from "@entities/models/userName/hooks";
+import { useUserNameManager } from "@entities/models/userName";
 import UserNameModal from "@src/components/Profile/UserNameModal";
 import { useUserNameRefresh } from "@entities/models/userName/useUserNameRefresh";
 
@@ -15,10 +15,8 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ className }) => {
     const { user, signOut } = useAuthenticator();
-    const {
-        form: { userName },
-        refresh,
-    } = useUserNameForm(null);
+    const { form, refresh } = useUserNameManager();
+    const { userName } = form;
 
     const [showModal, setShowModal] = useState(false);
 

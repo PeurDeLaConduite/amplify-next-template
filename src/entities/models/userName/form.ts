@@ -21,28 +21,33 @@ export const {
     [string[], string[]]
 >({
     zodSchema: z.object({
+        id: z.string(),
         userName: z.string(),
         commentsIds: z.array(z.string()),
         postCommentsIds: z.array(z.string()),
     }) as ZodType<UserNameFormType>,
     initialForm: {
+        id: "",
         userName: "",
         commentsIds: [],
         postCommentsIds: [],
     },
     toForm: (userName, commentsIds: string[] = [], postCommentsIds: string[] = []) => ({
+        id: userName.id,
         userName: userName.userName ?? "",
         commentsIds,
         postCommentsIds,
     }),
     toCreate: (form: UserNameFormType): UserNameTypeCreateInput => {
-        const { commentsIds, postCommentsIds, ...values } = form;
+        const { id, commentsIds, postCommentsIds, ...values } = form;
+        void id;
         void commentsIds;
         void postCommentsIds;
         return values;
     },
     toUpdate: (form: UserNameFormType): UserNameTypeUpdateInput => {
-        const { commentsIds, postCommentsIds, ...values } = form;
+        const { id, commentsIds, postCommentsIds, ...values } = form;
+        void id;
         void commentsIds;
         void postCommentsIds;
         return values;
