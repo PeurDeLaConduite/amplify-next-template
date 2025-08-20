@@ -1,41 +1,55 @@
 "use client";
 
-import React, { forwardRef } from "react";
-import EntityFormShell, { type EntityFormManager } from "@components/Blog/manage/EntityFormShell";
-import { useTagForm } from "@entities/models/tag/hooks";
+import React, { forwardRef, type FormEvent } from "react";
+import { SaveButton, CancelButton } from "@components/buttons";
 import { initialTagForm } from "@entities/models/tag/form";
-import type { TagFormType } from "@entities/models/tag/types";
-
-type UseTagFormReturn = ReturnType<typeof useTagForm>;
+import { useTagManager } from "@entities/models/tag";
 
 interface Props {
-    manager: UseTagFormReturn;
+    manager: ReturnType<typeof useTagManager>;
     onSave: () => void;
 }
 
 const TagForm = forwardRef<HTMLFormElement, Props>(function TagForm({ manager, onSave }, ref) {
-    const { form, setForm } = manager;
-    const normalizedManager = manager as EntityFormManager<TagFormType>;
+    const { state, patchForm, updateField, createEntity, updateEntity, cancelEdit, refresh } =
+        manager;
+    const { form, editingId } = state;
+
+    const handleSubmit = async (e?: FormEvent) => {
+        e?.preventDefault();
+        if (editingId) {
+            await updateEntity(editingId, form);
+        } else {
+            await createEntity(form);
+        }
+        await refresh();
+        patchForm(initialTagForm);
+        cancelEdit();
+        onSave();
+    };
+
+    const handleCancel = () => {
+        patchForm(initialTagForm);
+        cancelEdit();
+    };
 
     return (
-        <EntityFormShell
-            ref={ref}
-            manager={normalizedManager}
-            initialForm={initialTagForm}
-            onSave={onSave}
-            submitLabel={{ create: "Ajouter", edit: "Mettre à jour" }}
-            className="!grid-cols-[1fr_auto]"
-        >
+        <form ref={ref} onSubmit={handleSubmit} className="grid gap-2 !grid-cols-[1fr_auto]">
             <input
                 type="text"
                 value={form.name}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setForm((f) => ({ ...f, name: e.target.value }))
-                }
+                onChange={(e) => updateField("name", e.target.value)}
                 placeholder="Nom du tag"
                 className="border rounded p-2 bg-white"
             />
-        </EntityFormShell>
+            <div className="flex space-x-2">
+                <SaveButton
+                    onClick={() => void handleSubmit()}
+                    label={editingId ? "Mettre à jour" : "Ajouter"}
+                />
+                <CancelButton onClick={handleCancel} label="Annuler" />
+            </div>
+        </form>
     );
 });
 

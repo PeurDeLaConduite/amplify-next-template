@@ -3,6 +3,7 @@
 
 import React, { forwardRef, type FormEvent, type Ref } from "react";
 import type { JSX } from "react";
+import { AddButton, SaveButton } from "@components/buttons";
 
 export interface EntityFormManager<F> {
     form: F;
@@ -36,8 +37,8 @@ const EntityFormShellInner = <F,>(
 ) => {
     const { submit, setForm, setMode, mode, saving, message } = manager;
 
-    async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-        e.preventDefault();
+    async function handleSubmit(e?: FormEvent<HTMLFormElement>) {
+        e?.preventDefault();
         await submit();
         setMode("create");
         setForm(initialForm);
@@ -49,13 +50,25 @@ const EntityFormShellInner = <F,>(
             <form ref={ref} onSubmit={handleSubmit} className={`grid gap-2 ${className ?? ""}`}>
                 {children}
                 <div className="flex space-x-2">
-                    <button
-                        type="submit"
-                        disabled={!!saving}
-                        className="bg-blue-500 text-white px-4 py-2 rounded"
-                    >
-                        {mode === "edit" ? submitLabel.edit : submitLabel.create}
-                    </button>
+                    {mode === "edit" ? (
+                        <SaveButton
+                            onClick={() => {
+                                void handleSubmit();
+                            }}
+                            label={submitLabel.edit}
+                            className="min-w-[120px]"
+                            disabled={!!saving}
+                        />
+                    ) : (
+                        <AddButton
+                            onClick={() => {
+                                void handleSubmit();
+                            }}
+                            label={submitLabel.create}
+                            className="min-w-[120px]"
+                            disabled={!!saving}
+                        />
+                    )}
                 </div>
             </form>
             {message && (

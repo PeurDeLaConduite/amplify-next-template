@@ -24,9 +24,10 @@ type ButtonProps = {
     className?: string;
     sx?: SxProps<Theme>;
     color?: string;
+    disabled?: boolean;
 };
 
-export function EditButton({ onClick, label, className, color }: ButtonProps) {
+export function EditButton({ onClick, label, className, color, disabled }: ButtonProps) {
     return (
         <ButtonBase
             label={label}
@@ -34,13 +35,14 @@ export function EditButton({ onClick, label, className, color }: ButtonProps) {
             onClick={onClick}
             icon={<EditIcon fontSize="small" />}
             className={className}
+            disabled={disabled}
             variant="outlined"
             sx={getEditButtonStyles(color)}
         />
     );
 }
 
-export function DeleteButton({ onClick, label, className }: ButtonProps) {
+export function DeleteButton({ onClick, label, className, disabled }: ButtonProps) {
     return (
         <ButtonBase
             label={label}
@@ -49,6 +51,7 @@ export function DeleteButton({ onClick, label, className }: ButtonProps) {
             icon={<DeleteIcon fontSize="small" />}
             color="error"
             className={className}
+            disabled={disabled}
             variant="outlined"
             sx={deleteButtonStyles}
         />
@@ -70,7 +73,7 @@ export function BackButton({ href, onClick, label = "Retour", className, sx }: B
         />
     );
 }
-export function SaveButton({ onClick, label, className }: ButtonProps) {
+export function SaveButton({ onClick, label, className, disabled }: ButtonProps) {
     return (
         <ButtonBase
             label={label}
@@ -79,12 +82,13 @@ export function SaveButton({ onClick, label, className }: ButtonProps) {
             icon={<SaveIcon />}
             color="primary"
             className={className}
+            disabled={disabled}
             variant="contained"
         />
     );
 }
 
-export function CancelButton({ onClick, label, className }: ButtonProps) {
+export function CancelButton({ onClick, label, className, disabled }: ButtonProps) {
     return (
         <ButtonBase
             label={label}
@@ -93,12 +97,13 @@ export function CancelButton({ onClick, label, className }: ButtonProps) {
             icon={<CancelIcon />}
             color="inherit"
             className={className}
+            disabled={disabled}
             variant="outlined"
         />
     );
 }
 
-export function AddButton({ onClick, label, className }: ButtonProps) {
+export function AddButton({ onClick, label, className, disabled }: ButtonProps) {
     return (
         <ButtonBase
             label={label}
@@ -107,12 +112,13 @@ export function AddButton({ onClick, label, className }: ButtonProps) {
             icon={<AddIcon />}
             color="success"
             className={className}
+            disabled={disabled}
             variant="contained"
         />
     );
 }
 
-export function SubmitButton({ onClick, label, className }: ButtonProps) {
+export function SubmitButton({ onClick, label, className, disabled }: ButtonProps) {
     return (
         <ButtonBase
             label={label}
@@ -121,12 +127,13 @@ export function SubmitButton({ onClick, label, className }: ButtonProps) {
             icon={<SendIcon />}
             color="primary"
             className={className}
+            disabled={disabled}
             variant="contained"
         />
     );
 }
 
-export function ClearFieldButton({ onClick, label, className }: ButtonProps) {
+export function ClearFieldButton({ onClick, label, className, disabled }: ButtonProps) {
     return (
         <ButtonBase
             label={label}
@@ -135,11 +142,12 @@ export function ClearFieldButton({ onClick, label, className }: ButtonProps) {
             icon={<BackspaceIcon />}
             color="warning"
             className={className}
+            disabled={disabled}
             variant="outlined"
         />
     );
 }
-export function PowerButton({ onClick, label, className }: ButtonProps) {
+export function PowerButton({ onClick, label, className, disabled }: ButtonProps) {
     return (
         <ButtonBase
             label={label}
@@ -148,12 +156,13 @@ export function PowerButton({ onClick, label, className }: ButtonProps) {
             icon={<PowerIcon />}
             color="error" // rouge pour indiquer la déconnexion
             className={className}
+            disabled={disabled}
             variant="outlined"
             sx={{ ...(deleteButtonStyles || {}) }}
         />
     );
 }
-export function RefreshButton({ onClick, label, className }: ButtonProps) {
+export function RefreshButton({ onClick, label, className, disabled }: ButtonProps) {
     return (
         <ButtonBase
             label={label}
@@ -162,6 +171,7 @@ export function RefreshButton({ onClick, label, className }: ButtonProps) {
             icon={<RefreshIcon />}
             color="primary"
             className={className}
+            disabled={disabled}
             variant="contained"
         />
     );

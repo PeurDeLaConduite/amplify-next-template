@@ -33,7 +33,7 @@ export const {
         postCommentsIds: [],
     },
     toForm: (userName, commentsIds: string[] = [], postCommentsIds: string[] = []) => ({
-        id: userName.id,
+        id: userName.id ?? "",
         userName: userName.userName ?? "",
         commentsIds,
         postCommentsIds,

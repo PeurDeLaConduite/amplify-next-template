@@ -1,5 +1,5 @@
 import ActionButtons from "./buttons/ActionButtons";
-import { EditButton, DeleteButton } from "@components/buttons";
+import { EditButton, DeleteButton, AddButton } from "@components/buttons";
 
 type IdLike = string | number;
 
@@ -27,15 +27,7 @@ export default function FormActionButtons({
     className = "",
 }: FormActionButtonsProps): React.ReactElement {
     if (isFormNew && editingId === null) {
-        return (
-            <button
-                type="button"
-                onClick={onSave}
-                className="bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition"
-            >
-                {addButtonLabel}
-            </button>
-        );
+        return <AddButton onClick={onSave} label={addButtonLabel} className="!p-2 !h-8" />;
     }
 
     if (editingId === currentId) {

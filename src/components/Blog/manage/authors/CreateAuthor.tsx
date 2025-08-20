@@ -1,62 +1,52 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useRef, useCallback } from "react";
 import RequireAdmin from "@components/RequireAdmin";
 import AuthorForm from "@components/Blog/manage/authors/AuthorForm";
 import AuthorList from "@components/Blog/manage/authors/AuthorList";
 import BlogEditorLayout from "@components/Blog/manage/BlogEditorLayout";
 import SectionHeader from "@components/Blog/manage/SectionHeader";
-import { type AuthorType, initialAuthorForm, useAuthorForm } from "@entities/models/author";
+import { initialAuthorForm, useAuthorManager } from "@entities/models/author";
 
 type IdLike = string | number;
 
 export default function AuthorManagerPage() {
-    const [editingAuthor, setEditingAuthor] = useState<AuthorType | null>(null);
-    const [editingId, setEditingId] = useState<string | null>(null);
     const formRef = useRef<HTMLFormElement>(null);
-    const manager = useAuthorForm(editingAuthor);
+    const manager = useAuthorManager();
     const {
-        extras: { authors, loading },
-        fetchAuthors,
-        selectById,
-        removeById,
-        setForm,
-        setMode,
+        entities: authors,
+        loadingList,
+        editingId,
+        loadEntityById,
+        deleteById,
+        cancelEdit,
+        patchForm,
     } = manager;
-
-    useEffect(() => {
-        fetchAuthors();
-    }, [fetchAuthors]);
 
     const handleEditById = useCallback(
         (id: IdLike) => {
-            const author = selectById(String(id));
-            if (!author) return;
-            setEditingAuthor(author);
-            setEditingId(String(id));
+            void loadEntityById(String(id));
         },
-        [selectById]
+        [loadEntityById]
     );
 
     const handleDeleteById = useCallback(
         async (id: IdLike) => {
-            await removeById(String(id));
+            await deleteById(String(id));
         },
-        [removeById]
+        [deleteById]
     );
 
-    const handleSave = useCallback(async () => {
-        await fetchAuthors();
-        setEditingAuthor(null);
-        setEditingId(null);
-    }, [fetchAuthors]);
+    const handleSave = useCallback(() => {
+        // la liste est rafraîchie automatiquement par le manager
+    }, []);
 
     return (
         <RequireAdmin>
             <BlogEditorLayout title="Éditeur de blog : Auteurs">
                 <SectionHeader className="mt-8">Nouvel auteur</SectionHeader>
                 <AuthorForm ref={formRef} manager={manager} onSave={handleSave} />
-                <SectionHeader loading={loading}>Liste d&apos;auteurs</SectionHeader>
+                <SectionHeader loading={loadingList}>Liste d&apos;auteurs</SectionHeader>
                 <AuthorList
                     authors={authors}
                     editingId={editingId}
@@ -65,10 +55,8 @@ export default function AuthorManagerPage() {
                         formRef.current?.requestSubmit();
                     }}
                     onCancel={() => {
-                        setEditingAuthor(null);
-                        setEditingId(null);
-                        setMode("create");
-                        setForm(initialAuthorForm);
+                        cancelEdit();
+                        patchForm(initialAuthorForm);
                     }}
                     onDeleteById={handleDeleteById}
                 />

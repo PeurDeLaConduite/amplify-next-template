@@ -11,58 +11,89 @@ import TagForm from "@components/Blog/manage/tags/TagForm";
 import TagList from "@components/Blog/manage/tags/TagList";
 import PostTagsRelationManager from "@components/Blog/manage/tags/PostTagsRelationManager";
 
-import { useTagForm, type UseTagFormReturn } from "@entities/models/tag/hooks";
+import { useTagManager } from "@entities/models/tag";
+import { postTagService } from "@entities/relations/postTag/service";
 
 type IdLike = string | number;
 
 export default function CreateTagPage() {
     const formRef = useRef<HTMLFormElement>(null);
-    const manager: UseTagFormReturn = useTagForm();
-    const [editingId, setEditingId] = useState<string | null>(null);
-
+    const manager = useTagManager();
+    const { state, refresh, refreshExtras, loadEntityById, cancelEdit, deleteById } = manager;
     const {
-        extras: { tags, posts },
-        loading,
-        fetchAll,
-        selectById,
-        cancel,
-        removeById,
-        tagsForPost,
-        isTagLinked,
-        toggle,
-    } = manager;
+        entities: tags,
+        extras: { posts },
+        editingId,
+        loadingList,
+        loadingExtras,
+    } = state;
+    const loading = loadingList || loadingExtras;
+
+    const [postTags, setPostTags] = useState<{ postId: string; tagId: string }[]>([]);
+
+    const fetchAll = useCallback(async () => {
+        await Promise.all([refresh(), refreshExtras()]);
+        const { data } = await postTagService.list({ limit: 999 });
+        setPostTags(data ?? []);
+    }, [refresh, refreshExtras]);
 
     useEffect(() => {
-        void fetchAll?.();
+        void fetchAll();
     }, [fetchAll]);
 
-    // ⇧ stable: évite de casser la mémo de TagList
     const submitForm = useCallback(() => formRef.current?.requestSubmit(), []);
 
     const handleSaved = useCallback(async () => {
-        await fetchAll?.();
-        setEditingId(null);
+        await fetchAll();
     }, [fetchAll]);
 
     const handleEditById = useCallback(
         (id: IdLike) => {
-            void selectById(String(id));
-            setEditingId(String(id));
+            void loadEntityById(String(id));
         },
-        [selectById]
+        [loadEntityById]
     );
 
     const handleDeleteById = useCallback(
         async (id: IdLike) => {
-            await removeById(String(id));
+            await deleteById(String(id));
+            await fetchAll();
         },
-        [removeById]
+        [deleteById, fetchAll]
     );
 
     const handleCancel = useCallback(() => {
-        cancel();
-        setEditingId(null);
-    }, [cancel]);
+        cancelEdit();
+    }, [cancelEdit]);
+
+    const tagsForPost = useCallback(
+        (postId: string) => {
+            const ids = postTags.filter((pt) => pt.postId === postId).map((pt) => pt.tagId);
+            return tags.filter((t) => ids.includes(t.id));
+        },
+        [postTags, tags]
+    );
+
+    const isTagLinked = useCallback(
+        (postId: string, tagId: string) =>
+            postTags.some((pt) => pt.postId === postId && pt.tagId === tagId),
+        [postTags]
+    );
+
+    const toggle = useCallback(
+        async (postId: string, tagId: string) => {
+            if (isTagLinked(postId, tagId)) {
+                await postTagService.delete(postId, tagId);
+                setPostTags((pts) =>
+                    pts.filter((pt) => !(pt.postId === postId && pt.tagId === tagId))
+                );
+            } else {
+                await postTagService.create(postId, tagId);
+                setPostTags((pts) => [...pts, { postId, tagId }]);
+            }
+        },
+        [isTagLinked]
+    );
 
     return (
         <RequireAdmin>

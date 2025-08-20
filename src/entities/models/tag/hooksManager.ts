@@ -1,21 +1,19 @@
 import { useEffect, useMemo, useSyncExternalStore } from "react";
 import { createTagManager } from "./manager";
 
-/**
- * Hook React pour gérer l'entité Tag.
- */
 export function useTagManager() {
     const mgr = useMemo(() => createTagManager(), []);
     const state = useSyncExternalStore(
-        mgr.subscribe,
+        mgr.subscribe!,
         () => mgr.getState(),
         () => mgr.getState()
     );
 
     useEffect(() => {
+        // charge liste + extras au mount
         void mgr.refresh();
         void mgr.refreshExtras();
     }, [mgr]);
 
-    return { state, ...mgr };
+    return { ...state, ...mgr }; // .form, .extras, .updateField, .createEntity, etc.
 }

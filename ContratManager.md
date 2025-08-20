@@ -83,6 +83,7 @@ De nouvelles étapes nécessaires peuvent être ajoutées au fur et à mesure.
 ## 5. Migration UI
 
 - [ ] Remplacer anciens hooks (`useTagForm`, `usePostForm`, …) par `useXxxManager`
+- [x] `useAuthorForm` → `useAuthorManager`
 - [ ] Mappage fonctions :
     - `setForm → patchForm`
     - `handleChange → updateField`
