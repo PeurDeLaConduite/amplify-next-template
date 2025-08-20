@@ -1,7 +1,14 @@
 import { crudService, deleteEdges } from "@entities/core";
 import { postTagService } from "@entities/relations/postTag/service";
+import type { TagTypeOmit, TagTypeUpdateInput } from "@entities/models/tag/types";
 
-const base: ReturnType<typeof crudService<"Tag">> = crudService("Tag", {
+const base = crudService<
+    "Tag",
+    Omit<TagTypeOmit, "Post">,
+    TagTypeUpdateInput & { id: string },
+    { id: string },
+    { id: string }
+>("Tag", {
     auth: { read: ["apiKey", "userPool"], write: "userPool" },
 });
 
