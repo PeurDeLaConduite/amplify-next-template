@@ -18,7 +18,7 @@ export const authorService = {
         await setNullBatch(
             postService.list,
             async (p) => {
-                await postService.update(p);
+                await postService.update(p as AuthorTypeUpdateInput & { id: string });
             },
             "authorId",
             id
