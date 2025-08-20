@@ -1,61 +1,42 @@
 // src/components/Blog/manage/posts/CreatePost.tsx (refactored)
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useRef, useCallback } from "react";
 import PostList from "./PostList";
 import PostForm from "./PostForm";
-import { type PostType } from "@entities/models/post/types";
 import RequireAdmin from "@components/RequireAdmin";
 import BlogEditorLayout from "@components/Blog/manage/BlogEditorLayout";
 import SectionHeader from "@components/Blog/manage/SectionHeader";
-import { usePostForm } from "@entities/models/post/hooks";
+import { usePostManager } from "@entities/models/post";
 
 type IdLike = string | number;
 
 export default function PostManagerPage() {
-    const [editingPost, setEditingPost] = useState<PostType | null>(null);
-    const [editingId, setEditingId] = useState<string | null>(null);
     const formRef = useRef<HTMLFormElement>(null);
-
-    const manager = usePostForm(editingPost);
-    const {
-        extras: { posts },
-        fetchPosts,
-        selectById,
-        removeById,
-    } = manager;
-
-    useEffect(() => {
-        void fetchPosts();
-    }, [fetchPosts]);
+    const manager = usePostManager();
+    const { entities: posts, editingId, loadEntityById, deleteById, refresh, cancelEdit } = manager;
 
     const handleEditById = useCallback(
         (id: IdLike) => {
-            const post = selectById(String(id));
-            if (!post) return;
-            setEditingPost(post);
-            setEditingId(String(id));
+            void loadEntityById(String(id));
         },
-        [selectById]
+        [loadEntityById]
     );
 
     const handleDeleteById = useCallback(
         async (id: IdLike) => {
-            await removeById(String(id));
+            await deleteById(String(id));
         },
-        [removeById]
+        [deleteById]
     );
 
     const handleSave = useCallback(async () => {
-        await fetchPosts();
-        setEditingPost(null);
-        setEditingId(null);
-    }, [fetchPosts]);
+        await refresh();
+    }, [refresh]);
 
     const handleCancel = useCallback(() => {
-        setEditingPost(null);
-        setEditingId(null);
-    }, []);
+        cancelEdit();
+    }, [cancelEdit]);
 
     return (
         <RequireAdmin>
