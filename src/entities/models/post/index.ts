@@ -1,6 +1,6 @@
 export * from "./types";
 export * from "./form";
 export { postService } from "./service";
-export * from "./hooks";
+export { createPostManager } from "./manager";
 export { postConfig } from "./config";
 export { usePostManager } from "./usePostManager";
