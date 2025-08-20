@@ -1,7 +1,7 @@
 import { crudService, deleteEdges } from "@entities/core";
 import { postTagService } from "@entities/relations/postTag/service";
 
-const base = crudService<"Tag">("Tag", {
+const base: ReturnType<typeof crudService<"Tag">> = crudService("Tag", {
     auth: { read: ["apiKey", "userPool"], write: "userPool" },
 });
 
