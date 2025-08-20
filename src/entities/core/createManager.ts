@@ -173,47 +173,29 @@ export function createManager<E, F, Id = string, Extras = Record<string, unknown
         }
     };
 
-    const loadNextPage = async () => {
-        if (!nextToken) return;
-        loadingList = true;
-        errorList = null;
-        try {
-            prevTokens.push(currentToken);
-            const { items, nextToken: token } = await listEntities({
-                limit: pageSize,
-                nextToken,
-            });
-            entities = items;
-            currentToken = nextToken;
-            nextToken = token ?? null;
-        } catch (e) {
-            errorList = e as Error;
-        } finally {
-            loadingList = false;
-        }
-    };
-
-    const loadPrevPage = async () => {
-        const token = prevTokens.pop();
-        if (token === undefined) return;
-        loadingList = true;
-        errorList = null;
-        try {
-            const { items, nextToken: tokenNext } = await listEntities({
-                limit: pageSize,
-                nextToken: token ?? undefined,
-            });
-            entities = items;
-            currentToken = token ?? null;
-            nextToken = tokenNext ?? null;
-        } catch (e) {
-            errorList = e as Error;
-        } finally {
-            loadingList = false;
-        }
-    };
+    // ---- snapshot ----
+    const getState = (): ManagerState<E, F, Extras, Id> => ({
+        entities,
+        form,
+        extras,
+        editingId,
+        isEditing,
+        loadingList,
+        loadingEntity,
+        loadingExtras,
+        errorList,
+        errorEntity,
+        errorExtras,
+        savingCreate,
+        savingUpdate,
+        savingDelete,
+        pageSize,
+        hasNext,
+        hasPrev,
+    });
 
     return {
+        getState,
         get entities() {
             return entities;
         },
@@ -239,13 +221,13 @@ export function createManager<E, F, Id = string, Extras = Record<string, unknown
             return loadingExtras;
         },
         get errorList() {
-            return errorList;
+            return errorList as Error | null;
         },
         get errorEntity() {
-            return errorEntity;
+            return errorEntity as Error | null;
         },
         get errorExtras() {
-            return errorExtras;
+            return errorExtras as Error | null;
         },
         get savingCreate() {
             return savingCreate;
@@ -259,20 +241,12 @@ export function createManager<E, F, Id = string, Extras = Record<string, unknown
         get pageSize() {
             return pageSize;
         },
-        get nextToken() {
-            return nextToken;
-        },
-        get prevTokens() {
-            return prevTokens;
-        },
         get hasNext() {
-            return Boolean(nextToken);
+            return hasNext;
         },
         get hasPrev() {
-            return prevTokens.length > 0;
+            return hasPrev;
         },
-        loadNextPage,
-        loadPrevPage,
         listEntities,
         getEntityById,
         refresh,
@@ -291,5 +265,5 @@ export function createManager<E, F, Id = string, Extras = Record<string, unknown
         syncManyToMany,
         validateField,
         validateForm,
-    } as ManagerContract<E, F, Id, Extras>;
+    };
 }
