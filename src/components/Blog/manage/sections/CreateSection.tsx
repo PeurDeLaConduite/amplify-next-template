@@ -6,12 +6,12 @@ import SectionForm from "./SectionsForm";
 import SectionList from "./SectionList";
 import BlogEditorLayout from "@components/Blog/manage/BlogEditorLayout";
 import SectionHeader from "@components/Blog/manage/SectionHeader";
-import { type SectionTypes, initialSectionForm, useSectionForm } from "@entities/models/section";
+import { type SectionType, initialSectionForm, useSectionForm } from "@entities/models/section";
 
 type IdLike = string | number;
 
 export default function SectionManagerPage() {
-    const [editingSection, setEditingSection] = useState<SectionTypes | null>(null);
+    const [editingSection, setEditingSection] = useState<SectionType | null>(null);
     const [editingId, setEditingId] = useState<string | null>(null);
     const formRef = useRef<HTMLFormElement>(null);
     const manager = useSectionForm(editingSection);

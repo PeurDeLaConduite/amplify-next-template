@@ -3,12 +3,12 @@
 import React from "react";
 import GenericList from "@components/Blog/manage/GenericList";
 import { byOptionalOrder } from "@components/Blog/manage/sorters";
-import { type SectionTypes } from "@entities/models/section";
+import { type SectionType } from "@entities/models/section";
 
 type IdLike = string | number;
 
 interface Props {
-    sections: SectionTypes[];
+    sections: SectionType[];
     editingId: IdLike | null;
     onEditById: (id: IdLike) => void;
     onSave: () => void;
@@ -18,7 +18,7 @@ interface Props {
 
 export default function SectionList(props: Props) {
     return (
-        <GenericList<SectionTypes>
+        <GenericList<SectionType>
             items={props.sections}
             editingId={props.editingId}
             getId={(s) => s.id}

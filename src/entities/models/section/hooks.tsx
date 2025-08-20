@@ -4,13 +4,13 @@ import { postService } from "@entities/models/post/service";
 import { sectionService } from "@entities/models/section/service";
 import { sectionPostService } from "@entities/relations/sectionPost/service";
 import { initialSectionForm, toSectionForm } from "@entities/models/section/form";
-import { type SectionFormTypes, type SectionTypes } from "@entities/models/section/types";
+import { type SectionFormTypes, type SectionType } from "@entities/models/section/types";
 import { type PostType } from "@entities/models/post/types";
 import { syncManyToMany } from "@entities/core/utils/syncManyToMany";
 
-type Extras = { posts: PostType[]; sections: SectionTypes[] };
+type Extras = { posts: PostType[]; sections: SectionType[] };
 
-export function useSectionForm(section: SectionTypes | null) {
+export function useSectionForm(section: SectionType | null) {
     const [editingId, setEditingId] = useState<string | null>(section?.id ?? null);
 
     const modelForm = useModelForm<SectionFormTypes, Extras>({

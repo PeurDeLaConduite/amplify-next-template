@@ -11,13 +11,13 @@ import { initialPostForm, toPostForm } from "@entities/models/post/form";
 import { type PostFormType, type PostType } from "@entities/models/post/types";
 import { type AuthorType } from "@entities/models/author/types";
 import { type TagType } from "@entities/models/tag/types";
-import { type SectionTypes } from "@entities/models/section/types";
+import { type SectionType } from "@entities/models/section/types";
 import { syncManyToMany } from "@entities/core/utils/syncManyToMany";
 
 interface Extras extends Record<string, unknown> {
     authors: AuthorType[];
     tags: TagType[];
-    sections: SectionTypes[];
+    sections: SectionType[];
     posts: PostType[];
 }
 

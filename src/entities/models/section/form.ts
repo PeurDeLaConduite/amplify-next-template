@@ -1,8 +1,8 @@
 import { z, type ZodType } from "zod";
 import {
-    type SectionTypes,
+    type SectionType,
     type SectionFormTypes,
-    type SectionTypesUpdateInput,
+    type SectionTypeUpdateInput,
 } from "@entities/models/section/types";
 import { toSeoForm, initialSeoForm, seoSchema } from "@entities/customTypes/seo";
 import type { SeoType } from "@entities/customTypes/seo";
@@ -15,10 +15,10 @@ export const {
     toCreate: toSectionCreate,
     toUpdate: toSectionUpdate,
 } = createModelForm<
-    SectionTypes,
+    SectionType,
     SectionFormTypes,
-    SectionTypesUpdateInput,
-    SectionTypesUpdateInput,
+    SectionTypeUpdateInput,
+    SectionTypeUpdateInput,
     [string[]]
 >({
     zodSchema: z.object({
@@ -45,12 +45,12 @@ export const {
         seo: toSeoForm((section.seo ?? {}) as SeoType),
         postIds,
     }),
-    toCreate: (form: SectionFormTypes): SectionTypesUpdateInput => {
+    toCreate: (form: SectionFormTypes): SectionTypeUpdateInput => {
         const { postIds, ...values } = form;
         void postIds;
         return values;
     },
-    toUpdate: (form: SectionFormTypes): SectionTypesUpdateInput => {
+    toUpdate: (form: SectionFormTypes): SectionTypeUpdateInput => {
         const { postIds, ...values } = form;
         void postIds;
         return values;
