@@ -53,6 +53,8 @@ export async function setNullBatch<T extends { id: string }, K extends keyof T &
     const { data } = await listFn({ filter: { [field]: { eq: id } } });
     const items = data ?? [];
     await withConcurrency(items, concurrency, async (item) => {
-        await updateFn({ id: item.id, [field]: null });
+        await updateFn({ id: item.id, [field]: null } as {
+            id: string;
+        } & Partial<Record<K, unknown>>);
     });
 }
