@@ -1,5 +1,5 @@
 // src/entities/core/createManager.ts
-import type { ManagerContract, ManagerState, ListParams, ListResult } from "./managerContract";
+import type { ManagerContract, ListParams, ListResult } from "./managerContract";
 
 export interface ManagerFactoryOptions<E, F, Id = string, Extras = Record<string, unknown>> {
     getInitialForm: () => F;
@@ -47,17 +47,18 @@ export function createManager<E, F, Id = string, Extras = Record<string, unknown
     let loadingList = false,
         loadingEntity = false,
         loadingExtras = false;
-    let errorList: unknown = null,
-        errorEntity: unknown = null,
-        errorExtras: unknown = null;
+    let errorList: Error | null = null,
+        errorEntity: Error | null = null,
+        errorExtras: Error | null = null;
 
     let savingCreate = false,
         savingUpdate = false,
         savingDelete = false;
 
     let pageSize = initialPageSize;
-    let hasNext = false;
-    const hasPrev = false; // limit-only pagination
+    let nextToken: string | null = null;
+    let prevTokens: (string | null)[] = [];
+    let currentToken: string | null = null;
 
     // ---- helpers ----
     const updateField = <K extends keyof F>(name: K, value: F[K]) => {
@@ -92,11 +93,13 @@ export function createManager<E, F, Id = string, Extras = Record<string, unknown
         loadingList = true;
         errorList = null;
         try {
-            const { items, nextToken } = await listEntities({ limit: pageSize });
+            const { items, nextToken: token } = await listEntities({ limit: pageSize });
             entities = items;
-            hasNext = Boolean(nextToken);
+            nextToken = token ?? null;
+            prevTokens = [];
+            currentToken = null;
         } catch (e) {
-            errorList = e;
+            errorList = e as Error;
         } finally {
             loadingList = false;
         }
@@ -109,7 +112,7 @@ export function createManager<E, F, Id = string, Extras = Record<string, unknown
         try {
             extras = await loadExtras();
         } catch (e) {
-            errorExtras = e;
+            errorExtras = e as Error;
         } finally {
             loadingExtras = false;
         }
@@ -130,7 +133,7 @@ export function createManager<E, F, Id = string, Extras = Record<string, unknown
             form = f;
             enterEdit(id);
         } catch (e) {
-            errorEntity = e;
+            errorEntity = e as Error;
         } finally {
             loadingEntity = false;
         }

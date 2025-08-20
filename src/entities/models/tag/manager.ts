@@ -1,81 +1,38 @@
-// src/entities/core/managerContract.ts
-export type MaybePromise<T> = T | Promise<T>;
+import { createManager } from "@entities/core/createManager";
+import { tagService } from "./service";
+import { postService } from "@entities/models/post/service";
+import { postTagService } from "@entities/relations/postTag/service";
+import { initialTagForm, toTagForm, toTagCreate, toTagUpdate } from "./form";
+import type { TagType, TagFormType } from "./types";
 
-export type ListParams = { limit?: number };
-export type ListResult<E> = { items: E[]; nextToken?: string };
+type Extras = { posts: { id: string; title?: string }[] };
 
-export interface ManagerContract<E, F, Id = string, Extras = Record<string, unknown>> {
-    // --- états exposés ---
-    readonly entities: E[];
-    readonly form: F;
-    readonly extras: Extras;
-
-    readonly editingId: Id | null;
-    readonly isEditing: boolean;
-
-    // --- chargement / erreurs ---
-    readonly loadingList: boolean;
-    readonly loadingEntity: boolean;
-    readonly loadingExtras: boolean;
-    readonly errorList: Error | null;
-    readonly errorEntity: Error | null;
-    readonly errorExtras: Error | null;
-
-    // --- sauvegardes réseau ---
-    readonly savingCreate: boolean;
-    readonly savingUpdate: boolean;
-    readonly savingDelete: boolean;
-
-    // --- pagination ---
-    readonly pageSize: number;
-    readonly nextToken: string | null;
-    readonly prevTokens: string[];
-    readonly hasNext: boolean;
-    readonly hasPrev: boolean;
-    loadNextPage(): MaybePromise<void>;
-    loadPrevPage(): MaybePromise<void>;
-
-    // --- data pur ---
-    listEntities(params?: ListParams): Promise<ListResult<E>>;
-    getEntityById(id: Id): Promise<E | null>;
-
-    // --- cycle de vie ---
-    refresh(): Promise<void>;
-    refreshExtras(): Promise<void>;
-    loadEntityById(id: Id): Promise<void>;
-
-    // --- CRUD ---
-    createEntity(data: F): Promise<Id>;
-    updateEntity(id: Id, data: Partial<F>): Promise<void>;
-    deleteById(id: Id): Promise<void>;
-
-    // --- form local ---
-    getInitialForm(): F;
-    updateField<K extends keyof F>(name: K, value: F[K]): void;
-    patchForm(partial: Partial<F>): void;
-    clearField<K extends keyof F>(name: K): void;
-    clearForm(): void;
-    enterEdit(id: Id | null): void;
-    cancelEdit(): void;
-
-    // ---- relations ----
-    syncManyToMany?(
-        id: Id,
-        link: { add?: Id[]; remove?: Id[]; replace?: Id[] },
-        options?: { relation?: string }
-    ): Promise<void>;
-
-    // ---- validation (sync/async) ----
-    validateField?<K extends keyof F>(
-        name: K,
-        value: F[K],
-        ctx?: { form?: F; entities?: E[]; editingId?: Id; extras?: Extras }
-    ): MaybePromise<string | null>;
-
-    validateForm?(ctx?: {
-        form?: F;
-        entities?: E[];
-        editingId?: Id;
-        extras?: Extras;
-    }): MaybePromise<{ valid: boolean; errors: Partial<Record<keyof F, string>> }>;
+export function createTagManager() {
+  return createManager<TagType, TagFormType, string, Extras>({
+    service: {
+      list: tagService.list,
+      get: tagService.get,
+      create: tagService.create,
+      update: tagService.update,
+      delete: tagService.delete,
+    },
+    initialForm: initialTagForm,
+    toCreate: toTagCreate,
+    toUpdate: toTagUpdate,
+    toForm: (tag) => toTagForm(tag, []),
+    loadExtras: async () => {
+      const [posts] = await Promise.all([postService.list()]);
+      return { posts: posts.data ?? [] };
+    },
+    // N:N via PostTag
+    syncManyToMany: async (tagId, link) => {
+      const { add = [], remove = [], replace } = link;
+      const toAdd = replace ? replace : add;
+      // add
+      await Promise.all(toAdd.map((postId) => postTagService.create(postId, tagId)));
+      // remove
+      await Promise.all((replace ? [] : remove).map((postId) => postTagService.delete(postId, tagId)));
+      // NB: si replace défini on peut l’implémenter autrement (liste actuelle → replace)
+    },
+  });
 }

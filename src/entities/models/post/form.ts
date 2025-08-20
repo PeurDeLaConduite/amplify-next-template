@@ -22,6 +22,7 @@ export const {
     [string[], string[]]
 >({
     zodSchema: z.object({
+        id: z.string().optional(),
         slug: z.string(),
         title: z.string(),
         excerpt: z.string(),
@@ -36,6 +37,7 @@ export const {
         sectionIds: z.array(z.string()),
     }) as ZodType<PostFormType>,
     initialForm: {
+        id: "",
         slug: "",
         title: "",
         excerpt: "",
@@ -50,6 +52,7 @@ export const {
         sectionIds: [],
     },
     toForm: (post, tagIds: string[] = [], sectionIds: string[] = []) => ({
+        id: post.id ?? "",
         slug: post.slug ?? "",
         title: post.title ?? "",
         excerpt: post.excerpt ?? "",

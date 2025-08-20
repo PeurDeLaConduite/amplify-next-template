@@ -43,7 +43,7 @@ type CrudAuth = { read?: AuthMode | AuthMode[]; write?: AuthMode | AuthMode[] };
 type AmplifyOpOptions = { authMode?: AuthMode } & Record<string, unknown>;
 
 interface CrudModel<K extends ModelKey> {
-    list: (opts?: AmplifyOpOptions) => Promise<{ data: BaseModel<K>[] }>;
+    list: (opts?: AmplifyOpOptions) => Promise<{ data: BaseModel<K>[]; nextToken?: string }>;
     get: (args: GetArg<K>, opts?: AmplifyOpOptions) => Promise<{ data?: BaseModel<K> }>;
     create: (
         data: CreateArg<K>,
@@ -96,13 +96,16 @@ export function crudService<
 
     return {
         async list(params?: Record<string, unknown>) {
-            const { data } = await tryModes(readModes, (authMode) =>
+            const { data, nextToken } = await tryModes(readModes, (authMode) =>
                 model.list({
                     ...(params ?? {}),
                     ...(authMode ? { authMode } : {}),
                 } as AmplifyOpOptions)
             );
-            return { data: data.filter((item) => canAccess(null, item, rules)) };
+            return {
+                data: data.filter((item) => canAccess(null, item, rules)),
+                nextToken,
+            };
         },
 
         async get(args: G) {
