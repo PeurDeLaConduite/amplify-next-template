@@ -171,7 +171,7 @@ export function createManager<E, F, Id = string, Extras = Record<string, unknown
     };
 
     // ---- snapshot ----
-    const getState = (): ManagerState<E, F, Extras> => ({
+    const getState = (): ManagerState<E, F, Extras, Id> => ({
         entities,
         form,
         extras,
@@ -193,6 +193,57 @@ export function createManager<E, F, Id = string, Extras = Record<string, unknown
 
     return {
         getState,
+        get entities() {
+            return entities;
+        },
+        get form() {
+            return form;
+        },
+        get extras() {
+            return extras;
+        },
+        get editingId() {
+            return editingId;
+        },
+        get isEditing() {
+            return isEditing;
+        },
+        get loadingList() {
+            return loadingList;
+        },
+        get loadingEntity() {
+            return loadingEntity;
+        },
+        get loadingExtras() {
+            return loadingExtras;
+        },
+        get errorList() {
+            return errorList as Error | null;
+        },
+        get errorEntity() {
+            return errorEntity as Error | null;
+        },
+        get errorExtras() {
+            return errorExtras as Error | null;
+        },
+        get savingCreate() {
+            return savingCreate;
+        },
+        get savingUpdate() {
+            return savingUpdate;
+        },
+        get savingDelete() {
+            return savingDelete;
+        },
+        get pageSize() {
+            return pageSize;
+        },
+        get hasNext() {
+            return hasNext;
+        },
+        get hasPrev() {
+            return hasPrev;
+        },
         listEntities,
         getEntityById,
         refresh,

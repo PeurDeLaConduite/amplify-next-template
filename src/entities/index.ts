@@ -11,3 +11,9 @@ export * from "./models/todo";
 export * from "./models/comment";
 export * from "./models/post/manager"; // ← AJOUT
 export * from "./models/tag/manager";
+export * from "./models/section/manager";
+export * from "./models/author/manager";
+export * from "./models/userName/manager";
+export * from "./models/userProfile/manager";
+export * from "./models/todo/manager";
+export * from "./models/comment/manager";

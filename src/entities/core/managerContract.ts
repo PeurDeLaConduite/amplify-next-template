@@ -4,7 +4,29 @@ export type MaybePromise<T> = T | Promise<T>;
 export type ListParams = { limit?: number };
 export type ListResult<E> = { items: E[]; nextToken?: string };
 
+export type ManagerState<E, F, Extras = Record<string, unknown>, Id = string> = {
+    entities: E[];
+    form: F;
+    extras: Extras;
+    editingId: Id | null;
+    isEditing: boolean;
+    loadingList: boolean;
+    loadingEntity: boolean;
+    loadingExtras: boolean;
+    errorList: unknown;
+    errorEntity: unknown;
+    errorExtras: unknown;
+    savingCreate: boolean;
+    savingUpdate: boolean;
+    savingDelete: boolean;
+    pageSize: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+};
+
 export interface ManagerContract<E, F, Id = string, Extras = Record<string, unknown>> {
+    getState(): ManagerState<E, F, Extras, Id>;
+
     // --- états exposés ---
     readonly entities: E[];
     readonly form: F;
