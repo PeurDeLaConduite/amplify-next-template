@@ -1,242 +1,81 @@
-// src/entities/models/tag/manager.ts
-import type { ManagerContract, ListResult, MaybePromise } from "@entities/core/managerContract";
-import { tagService } from "@entities/models/tag/service";
-import { postService } from "@entities/models/post/service";
-import { postTagService } from "@entities/relations/postTag/service";
-import { syncManyToMany as syncNN } from "@entities/core/utils/syncManyToMany";
-import { initialTagForm, toTagForm, toTagCreate, toTagUpdate } from "@entities/models/tag/form";
-import type { TagType, TagFormType } from "@entities/models/tag/types";
-import type { PostType } from "@entities/models/post/types";
+// src/entities/core/managerContract.ts
+export type MaybePromise<T> = T | Promise<T>;
 
-type Id = string;
-type Extras = { posts: PostType[] };
+export type ListParams = { limit?: number };
+export type ListResult<E> = { items: E[]; nextToken?: string };
 
-export function createTagManager(): ManagerContract<TagType, TagFormType, Id, Extras> {
-    // ------- état interne -------
-    let entities: TagType[] = [];
-    let form: TagFormType = { ...initialTagForm };
-    let extras: Extras = { posts: [] };
+export interface ManagerContract<E, F, Id = string, Extras = Record<string, unknown>> {
+    // --- états exposés ---
+    readonly entities: E[];
+    readonly form: F;
+    readonly extras: Extras;
 
-    let editingId: Id | null = null;
-    let isEditing = false;
+    readonly editingId: Id | null;
+    readonly isEditing: boolean;
 
-    let loadingList = false,
-        loadingEntity = false,
-        loadingExtras = false;
-    let errorList: Error | null = null,
-        errorEntity: Error | null = null,
-        errorExtras: Error | null = null;
+    // --- chargement / erreurs ---
+    readonly loadingList: boolean;
+    readonly loadingEntity: boolean;
+    readonly loadingExtras: boolean;
+    readonly errorList: Error | null;
+    readonly errorEntity: Error | null;
+    readonly errorExtras: Error | null;
 
-    let savingCreate = false,
-        savingUpdate = false,
-        savingDelete = false;
+    // --- sauvegardes réseau ---
+    readonly savingCreate: boolean;
+    readonly savingUpdate: boolean;
+    readonly savingDelete: boolean;
 
-    let pageSize = 20;
-    const hasNext = false,
-        hasPrev = false; // limit-only
+    // --- pagination ---
+    readonly pageSize: number;
+    readonly nextToken: string | null;
+    readonly prevTokens: string[];
+    readonly hasNext: boolean;
+    readonly hasPrev: boolean;
+    loadNextPage(): MaybePromise<void>;
+    loadPrevPage(): MaybePromise<void>;
 
-    // ------- helpers -------
-    const getInitialForm = () => ({ ...initialTagForm });
+    // --- data pur ---
+    listEntities(params?: ListParams): Promise<ListResult<E>>;
+    getEntityById(id: Id): Promise<E | null>;
 
-    const updateField = <K extends keyof TagFormType>(name: K, value: TagFormType[K]) => {
-        form = { ...form, [name]: value };
-    };
+    // --- cycle de vie ---
+    refresh(): Promise<void>;
+    refreshExtras(): Promise<void>;
+    loadEntityById(id: Id): Promise<void>;
 
-    const patchForm = (partial: Partial<TagFormType>) => {
-        form = { ...form, ...partial };
-    };
+    // --- CRUD ---
+    createEntity(data: F): Promise<Id>;
+    updateEntity(id: Id, data: Partial<F>): Promise<void>;
+    deleteById(id: Id): Promise<void>;
 
-    const clearField = <K extends keyof TagFormType>(name: K) => {
-        const init = getInitialForm();
-        form = { ...form, [name]: init[name] };
-    };
+    // --- form local ---
+    getInitialForm(): F;
+    updateField<K extends keyof F>(name: K, value: F[K]): void;
+    patchForm(partial: Partial<F>): void;
+    clearField<K extends keyof F>(name: K): void;
+    clearForm(): void;
+    enterEdit(id: Id | null): void;
+    cancelEdit(): void;
 
-    const clearForm = () => {
-        form = getInitialForm();
-    };
+    // ---- relations ----
+    syncManyToMany?(
+        id: Id,
+        link: { add?: Id[]; remove?: Id[]; replace?: Id[] },
+        options?: { relation?: string }
+    ): Promise<void>;
 
-    const enterEdit = (id: Id | null) => {
-        editingId = id;
-        isEditing = id !== null;
-    };
+    // ---- validation (sync/async) ----
+    validateField?<K extends keyof F>(
+        name: K,
+        value: F[K],
+        ctx?: { form?: F; entities?: E[]; editingId?: Id; extras?: Extras }
+    ): MaybePromise<string | null>;
 
-    const cancelEdit = () => {
-        clearForm();
-        enterEdit(null);
-    };
-
-    // ------- data pur -------
-    const listEntities = async (_?: { limit?: number }): Promise<ListResult<TagType>> => {
-        const { data } = await tagService.list({ limit: pageSize });
-        return { items: data ?? [] };
-    };
-
-    const getEntityById = async (id: Id) => {
-        const { data } = await tagService.get({ id });
-        return data ?? null;
-    };
-
-    // ------- cycle de vie -------
-    const refresh = async () => {
-        loadingList = true;
-        errorList = null;
-        try {
-            const { items } = await listEntities({ limit: pageSize });
-            entities = items;
-        } catch (e) {
-            errorList = e as Error;
-        } finally {
-            loadingList = false;
-        }
-    };
-
-    const refreshExtras = async () => {
-        loadingExtras = true;
-        errorExtras = null;
-        try {
-            const { data } = await postService.list({ limit: 999 });
-            extras = { posts: data ?? [] };
-        } catch (e) {
-            errorExtras = e as Error;
-        } finally {
-            loadingExtras = false;
-        }
-    };
-
-    const loadEntityById = async (id: Id) => {
-        loadingEntity = true;
-        errorEntity = null;
-        try {
-            const t = await getEntityById(id);
-            if (!t) throw new Error("Tag introuvable");
-            const postIds = await postTagService.listByChild(id);
-            form = toTagForm(t, postIds);
-            enterEdit(id);
-        } catch (e) {
-            errorEntity = e as Error;
-        } finally {
-            loadingEntity = false;
-        }
-    };
-
-    // ------- CRUD (réseau) -------
-    const createEntity = async (data: TagFormType) => {
-        savingCreate = true;
-        try {
-            const { data: created, errors } = await tagService.create(toTagCreate(data));
-            if (!created) throw new Error(errors?.[0]?.message ?? "Création tag échouée");
-            await refresh();
-            enterEdit(created.id);
-            return created.id;
-        } finally {
-            savingCreate = false;
-        }
-    };
-
-    const updateEntity = async (id: Id, data: Partial<TagFormType>) => {
-        savingUpdate = true;
-        try {
-            const { errors } = await tagService.update({
-                id,
-                ...toTagUpdate({ ...form, ...data }),
-            });
-            if (errors?.length) throw new Error(errors[0].message);
-            await refresh();
-        } finally {
-            savingUpdate = false;
-        }
-    };
-
-    const deleteById = async (id: Id) => {
-        savingDelete = true;
-        try {
-            await tagService.deleteCascade({ id });
-            if (editingId === id) cancelEdit();
-            await refresh();
-        } finally {
-            savingDelete = false;
-        }
-    };
-
-    // ------- relations N:N -------
-    const syncManyToMany = async (id: Id, link: { add?: Id[]; remove?: Id[]; replace?: Id[] }) => {
-        const current = await postTagService.listByChild(id);
-        const target = link.replace ?? [
-            ...new Set([
-                ...current.filter((x) => !(link.remove ?? []).includes(x)),
-                ...(link.add ?? []),
-            ]),
-        ];
-        await syncNN(
-            current,
-            target,
-            (postId) => postTagService.create(postId, id),
-            (postId) => postTagService.delete(postId, id)
-        );
-    };
-
-    // ------- validation (stubs) -------
-    const validateField = async <K extends keyof TagFormType>(
-        _name: K,
-        _value: TagFormType[K]
-    ): MaybePromise<string | null> => null;
-
-    const validateForm = async (): MaybePromise<{
-        valid: boolean;
-        errors: Partial<Record<keyof TagFormType, string>>;
-    }> => ({ valid: true, errors: {} });
-
-    // ------- snapshot -------
-    const getState = () => ({
-        entities,
-        form,
-        extras,
-        editingId,
-        isEditing,
-        loadingList,
-        loadingEntity,
-        loadingExtras,
-        errorList,
-        errorEntity,
-        errorExtras,
-        savingCreate,
-        savingUpdate,
-        savingDelete,
-        pageSize,
-        hasNext,
-        hasPrev,
-    });
-
-    return {
-        // état
-        getState,
-
-        // data pur
-        listEntities,
-        getEntityById,
-
-        // cycle de vie
-        refresh,
-        refreshExtras,
-        loadEntityById,
-
-        // CRUD
-        createEntity,
-        updateEntity,
-        deleteById,
-
-        // form local
-        getInitialForm,
-        updateField,
-        patchForm,
-        clearField,
-        clearForm,
-        enterEdit,
-        cancelEdit,
-
-        // relations & validation
-        syncManyToMany,
-        validateField,
-        validateForm,
-    };
+    validateForm?(ctx?: {
+        form?: F;
+        entities?: E[];
+        editingId?: Id;
+        extras?: Extras;
+    }): MaybePromise<{ valid: boolean; errors: Partial<Record<keyof F, string>> }>;
 }
