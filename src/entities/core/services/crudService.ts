@@ -8,14 +8,10 @@ type ClientModels = typeof client.models;
 type ClientModelKey = keyof ClientModels;
 
 type BaseModel<K extends ClientModelKey> = Schema[K]["type"];
-type OperationArg<T, M extends keyof T> = T[M] extends { (...args: infer P): unknown }
-    ? P[0]
-    : never;
-
-type CreateArg<K extends ClientModelKey> = OperationArg<ClientModels[K], "create">;
-type UpdateArg<K extends ClientModelKey> = OperationArg<ClientModels[K], "update">;
-type GetArg<K extends ClientModelKey> = OperationArg<ClientModels[K], "get">;
-type DeleteArg<K extends ClientModelKey> = OperationArg<ClientModels[K], "delete">;
+type CreateArg<K extends ClientModelKey> = Parameters<ClientModels[K]["create"]>[0];
+type UpdateArg<K extends ClientModelKey> = Parameters<ClientModels[K]["update"]>[0];
+type GetArg<K extends ClientModelKey> = Parameters<ClientModels[K]["get"]>[0];
+type DeleteArg<K extends ClientModelKey> = Parameters<ClientModels[K]["delete"]>[0];
 
 export type AuthMode = "apiKey" | "userPool" | "identityPool" | "iam" | "lambda";
 type CrudAuth = { read?: AuthMode | AuthMode[]; write?: AuthMode | AuthMode[] };
