@@ -20,6 +20,8 @@ export type ManagerState<E, F, Extras = Record<string, unknown>, Id = string> = 
     savingUpdate: boolean;
     savingDelete: boolean;
     pageSize: number;
+    nextToken: string | null;
+    prevTokens: (string | null)[];
     hasNext: boolean;
     hasPrev: boolean;
 };
