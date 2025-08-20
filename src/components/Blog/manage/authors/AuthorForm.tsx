@@ -1,13 +1,13 @@
 // src/components/Blog/manage/authors/AuthorForm.tsx
 "use client";
-import React, { forwardRef, type ChangeEvent } from "react";
+import React, { forwardRef, type ChangeEvent, type FormEvent } from "react";
 import EditableField from "@components/forms/EditableField";
 import EditableTextArea from "@components/forms/EditableTextArea";
-import EntityFormShell from "@components/Blog/manage/EntityFormShell";
-import { type AuthorFormType, initialAuthorForm, useAuthorForm } from "@entities/models/author";
+import { SaveButton, CancelButton, DeleteButton } from "@components/buttons";
+import { type AuthorFormType, useAuthorManager } from "@entities/models/author";
 
 interface Props {
-    manager: ReturnType<typeof useAuthorForm>;
+    manager: ReturnType<typeof useAuthorManager>;
     onSave: () => void;
 }
 
@@ -15,21 +15,50 @@ const AuthorForm = forwardRef<HTMLFormElement, Props>(function AuthorForm(
     { manager, onSave },
     ref
 ) {
-    const { form, handleChange } = manager;
+    const {
+        form,
+        updateField,
+        createEntity,
+        updateEntity,
+        deleteById,
+        cancelEdit,
+        isEditing,
+        editingId,
+    } = manager;
 
     const onChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        handleChange(name as keyof AuthorFormType, value as never);
+        updateField(name as keyof AuthorFormType, value as never);
+    };
+
+    const handleSave = async () => {
+        if (isEditing && editingId) {
+            await updateEntity(editingId, form);
+        } else {
+            await createEntity(form);
+        }
+        cancelEdit();
+        onSave();
+    };
+
+    const handleDelete = async () => {
+        if (!editingId) return;
+        await deleteById(editingId);
+        cancelEdit();
+        onSave();
+    };
+
+    const handleCancel = () => {
+        cancelEdit();
+    };
+
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        await handleSave();
     };
 
     return (
-        <EntityFormShell
-            ref={ref}
-            manager={manager}
-            initialForm={initialAuthorForm}
-            onSave={onSave}
-            submitLabel={{ create: "Ajouter un auteur", edit: "Mettre à jour" }}
-        >
+        <form ref={ref} onSubmit={handleSubmit} className="grid gap-2 mb-6">
             <EditableField
                 name="authorName"
                 label="Nom"
@@ -58,7 +87,19 @@ const AuthorForm = forwardRef<HTMLFormElement, Props>(function AuthorForm(
                 onChange={onChange}
                 readOnly={false}
             />
-        </EntityFormShell>
+            <div className="flex space-x-2 mt-2">
+                <SaveButton
+                    onClick={handleSave}
+                    label={isEditing ? "Mettre à jour" : "Ajouter un auteur"}
+                />
+                {isEditing && (
+                    <>
+                        <CancelButton onClick={handleCancel} label="Annuler" />
+                        <DeleteButton onClick={handleDelete} label="Supprimer" />
+                    </>
+                )}
+            </div>
+        </form>
     );
 });
 
