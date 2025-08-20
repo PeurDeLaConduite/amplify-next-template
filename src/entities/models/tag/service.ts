@@ -4,7 +4,7 @@ import type { TagTypeOmit, TagTypeUpdateInput } from "@entities/models/tag/types
 
 const base = crudService<
     "Tag",
-    Omit<TagTypeOmit, "Post">,
+    Omit<TagTypeOmit, "posts">,
     TagTypeUpdateInput & { id: string },
     { id: string },
     { id: string }

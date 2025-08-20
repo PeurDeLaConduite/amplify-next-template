@@ -31,13 +31,12 @@ export function useUserProfileForm(): UserProfileFormResult {
         country: "",
     };
 
+    // src/entities/models/userProfile/hooks.tsx
     const create = async (form: UserProfileMinimalType) => {
         if (!sub) throw new Error("id manquant");
         try {
             setError(null);
-            await userProfileService.create({ id: sub, ...form } as unknown as Parameters<
-                typeof userProfileService.create
-            >[0]);
+            await userProfileService.create({ id: sub, ...form });
         } catch (e) {
             setError(e as Error);
         }
