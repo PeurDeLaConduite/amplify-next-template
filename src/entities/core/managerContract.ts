@@ -1,7 +1,7 @@
 // src/entities/core/managerContract.ts
 export type MaybePromise<T> = T | Promise<T>;
 
-export type ListParams = { limit?: number };
+export type ListParams = { limit?: number; nextToken?: string };
 export type ListResult<E> = { items: E[]; nextToken?: string };
 
 export interface ManagerContract<E, F, Id = string, Extras = Record<string, unknown>> {
@@ -29,7 +29,7 @@ export interface ManagerContract<E, F, Id = string, Extras = Record<string, unkn
     // --- pagination ---
     readonly pageSize: number;
     readonly nextToken: string | null;
-    readonly prevTokens: string[];
+    readonly prevTokens: (string | null)[];
     readonly hasNext: boolean;
     readonly hasPrev: boolean;
     loadNextPage(): MaybePromise<void>;

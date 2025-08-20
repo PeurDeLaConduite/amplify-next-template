@@ -5,8 +5,8 @@
 //     const mgr = useMemo(() => createTagManager(), []);
 //     const state = useSyncExternalStore(
 //         mgr.subscribe!,
-//         () => mgr.getState(),
-//         () => mgr.getState()
+//         () => ({ ...mgr }),
+//         () => ({ ...mgr })
 //     );
 
 //     useEffect(() => {
