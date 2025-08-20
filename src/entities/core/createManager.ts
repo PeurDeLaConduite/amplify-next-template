@@ -1,5 +1,5 @@
 // src/entities/core/createManager.ts
-import type { ManagerContract, ListParams, ListResult } from "./managerContract";
+import type { ManagerContract, ListParams, ListResult, ManagerState } from "./managerContract";
 
 export interface ManagerFactoryOptions<E, F, Id = string, Extras = Record<string, unknown>> {
     getInitialForm: () => F;
