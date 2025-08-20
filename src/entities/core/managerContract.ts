@@ -22,6 +22,8 @@ export type ManagerState<E, F, Extras = Record<string, unknown>, Id = string> = 
     pageSize: number;
     hasNext: boolean;
     hasPrev: boolean;
+    nextToken: string | null;
+    prevTokens: (string | null)[];
 };
 
 export interface ManagerContract<E, F, Id = string, Extras = Record<string, unknown>> {

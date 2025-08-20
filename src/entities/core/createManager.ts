@@ -1,5 +1,6 @@
 // src/entities/core/createManager.ts
-import type { ManagerContract, ListParams, ListResult } from "./managerContract";
+// src/entities/core/createManager.ts
+import type { ManagerContract, ListParams, ListResult, ManagerState } from "./managerContract";
 
 export interface ManagerFactoryOptions<E, F, Id = string, Extras = Record<string, unknown>> {
     getInitialForm: () => F;
@@ -113,9 +114,60 @@ export function createManager<E, F, Id = string, Extras = Record<string, unknown
             const { items, nextToken: token } = await listEntities({ limit: pageSize });
             entities = items;
             nextToken = token ?? null;
-            prevTokens = [];
+            prevTokens = [null];
             hasNext = nextToken !== null;
-            hasPrev = prevTokens.length > 0;
+            hasPrev = prevTokens.length > 1;
+            notify();
+        } catch (e) {
+            errorList = e as Error;
+            notify();
+        } finally {
+            loadingList = false;
+            notify();
+        }
+    };
+
+    const loadNextPage = async () => {
+        if (!nextToken) return;
+        loadingList = true;
+        errorList = null;
+        notify();
+        try {
+            prevTokens.push(nextToken);
+            const { items, nextToken: token } = await listEntities({
+                limit: pageSize,
+                nextToken,
+            });
+            entities = items;
+            nextToken = token ?? null;
+            hasNext = nextToken !== null;
+            hasPrev = prevTokens.length > 1;
+            notify();
+        } catch (e) {
+            errorList = e as Error;
+            notify();
+        } finally {
+            loadingList = false;
+            notify();
+        }
+    };
+
+    const loadPrevPage = async () => {
+        if (prevTokens.length <= 1) return;
+        loadingList = true;
+        errorList = null;
+        notify();
+        try {
+            prevTokens.pop();
+            const token = prevTokens[prevTokens.length - 1] ?? null;
+            const { items, nextToken: tokenNext } = await listEntities({
+                limit: pageSize,
+                nextToken: token ?? undefined,
+            });
+            entities = items;
+            nextToken = tokenNext ?? null;
+            hasNext = nextToken !== null;
+            hasPrev = prevTokens.length > 1;
             notify();
         } catch (e) {
             errorList = e as Error;
@@ -289,6 +341,8 @@ export function createManager<E, F, Id = string, Extras = Record<string, unknown
         get hasPrev() {
             return hasPrev;
         },
+        loadNextPage,
+        loadPrevPage,
         listEntities,
         getEntityById,
         refresh,
