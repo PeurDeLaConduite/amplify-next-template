@@ -1,5 +1,5 @@
 // src/entities/core/createManager.ts
-import type { ManagerContract, ManagerState, ListParams, ListResult } from "./managerContract";
+import type { ManagerContract, ListParams, ListResult } from "./managerContract";
 
 export interface ManagerFactoryOptions<E, F, Id = string, Extras = Record<string, unknown>> {
     getInitialForm: () => F;
@@ -47,17 +47,18 @@ export function createManager<E, F, Id = string, Extras = Record<string, unknown
     let loadingList = false,
         loadingEntity = false,
         loadingExtras = false;
-    let errorList: unknown = null,
-        errorEntity: unknown = null,
-        errorExtras: unknown = null;
+    let errorList: Error | null = null,
+        errorEntity: Error | null = null,
+        errorExtras: Error | null = null;
 
     let savingCreate = false,
         savingUpdate = false,
         savingDelete = false;
 
     let pageSize = initialPageSize;
-    let hasNext = false;
-    const hasPrev = false; // limit-only pagination
+    let nextToken: string | null = null;
+    let prevTokens: (string | null)[] = [];
+    let currentToken: string | null = null;
 
     // ---- helpers ----
     const updateField = <K extends keyof F>(name: K, value: F[K]) => {
@@ -92,11 +93,13 @@ export function createManager<E, F, Id = string, Extras = Record<string, unknown
         loadingList = true;
         errorList = null;
         try {
-            const { items, nextToken } = await listEntities({ limit: pageSize });
+            const { items, nextToken: token } = await listEntities({ limit: pageSize });
             entities = items;
-            hasNext = Boolean(nextToken);
+            nextToken = token ?? null;
+            prevTokens = [];
+            currentToken = null;
         } catch (e) {
-            errorList = e;
+            errorList = e as Error;
         } finally {
             loadingList = false;
         }
@@ -109,7 +112,7 @@ export function createManager<E, F, Id = string, Extras = Record<string, unknown
         try {
             extras = await loadExtras();
         } catch (e) {
-            errorExtras = e;
+            errorExtras = e as Error;
         } finally {
             loadingExtras = false;
         }
@@ -130,7 +133,7 @@ export function createManager<E, F, Id = string, Extras = Record<string, unknown
             form = f;
             enterEdit(id);
         } catch (e) {
-            errorEntity = e;
+            errorEntity = e as Error;
         } finally {
             loadingEntity = false;
         }
@@ -170,29 +173,106 @@ export function createManager<E, F, Id = string, Extras = Record<string, unknown
         }
     };
 
-    // ---- snapshot ----
-    const getState = (): ManagerState<E, F, Extras> => ({
-        entities,
-        form,
-        extras,
-        editingId,
-        isEditing,
-        loadingList,
-        loadingEntity,
-        loadingExtras,
-        errorList,
-        errorEntity,
-        errorExtras,
-        savingCreate,
-        savingUpdate,
-        savingDelete,
-        pageSize,
-        hasNext,
-        hasPrev,
-    });
+    const loadNextPage = async () => {
+        if (!nextToken) return;
+        loadingList = true;
+        errorList = null;
+        try {
+            prevTokens.push(currentToken);
+            const { items, nextToken: token } = await listEntities({
+                limit: pageSize,
+                nextToken,
+            });
+            entities = items;
+            currentToken = nextToken;
+            nextToken = token ?? null;
+        } catch (e) {
+            errorList = e as Error;
+        } finally {
+            loadingList = false;
+        }
+    };
+
+    const loadPrevPage = async () => {
+        const token = prevTokens.pop();
+        if (token === undefined) return;
+        loadingList = true;
+        errorList = null;
+        try {
+            const { items, nextToken: tokenNext } = await listEntities({
+                limit: pageSize,
+                nextToken: token ?? undefined,
+            });
+            entities = items;
+            currentToken = token ?? null;
+            nextToken = tokenNext ?? null;
+        } catch (e) {
+            errorList = e as Error;
+        } finally {
+            loadingList = false;
+        }
+    };
 
     return {
-        getState,
+        get entities() {
+            return entities;
+        },
+        get form() {
+            return form;
+        },
+        get extras() {
+            return extras;
+        },
+        get editingId() {
+            return editingId;
+        },
+        get isEditing() {
+            return isEditing;
+        },
+        get loadingList() {
+            return loadingList;
+        },
+        get loadingEntity() {
+            return loadingEntity;
+        },
+        get loadingExtras() {
+            return loadingExtras;
+        },
+        get errorList() {
+            return errorList;
+        },
+        get errorEntity() {
+            return errorEntity;
+        },
+        get errorExtras() {
+            return errorExtras;
+        },
+        get savingCreate() {
+            return savingCreate;
+        },
+        get savingUpdate() {
+            return savingUpdate;
+        },
+        get savingDelete() {
+            return savingDelete;
+        },
+        get pageSize() {
+            return pageSize;
+        },
+        get nextToken() {
+            return nextToken;
+        },
+        get prevTokens() {
+            return prevTokens;
+        },
+        get hasNext() {
+            return Boolean(nextToken);
+        },
+        get hasPrev() {
+            return prevTokens.length > 0;
+        },
+        loadNextPage,
+        loadPrevPage,
         listEntities,
         getEntityById,
         refresh,
@@ -211,5 +291,5 @@ export function createManager<E, F, Id = string, Extras = Record<string, unknown
         syncManyToMany,
         validateField,
         validateForm,
-    };
+    } as ManagerContract<E, F, Id, Extras>;
 }
