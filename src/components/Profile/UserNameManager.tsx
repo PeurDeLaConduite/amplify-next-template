@@ -1,13 +1,13 @@
 // src/app/profile/UserNameManager.tsx
 "use client";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { Authenticator, useAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 import EntityEditor from "@components/forms/EntityEditor";
 import { label as fieldLabel } from "./utilsUserName";
 import PersonIcon from "@mui/icons-material/Person";
 import { useUserNameForm } from "@entities/models/userName/hooks";
-import { onUserNameUpdated } from "@entities/models/userName/bus";
+import { useUserNameRefresh } from "@entities/models/userName/useUserNameRefresh";
 import {
     type UserNameFormType,
     type UserNameType,
@@ -22,20 +22,14 @@ export default function UserNameManager() {
     const [editingProfile, setEditingProfile] = useState<UserNameType | null>(null);
     const [editingId, setEditingId] = useState<string | null>(null);
     const manager = useUserNameForm(editingProfile);
-    const { removeById, setForm, setMode } = manager;
+    const { removeById, setForm, setMode, refresh } = manager;
 
-    // 🔄 Charger/rafraîchir au montage et quand l'utilisateur change
-    useEffect(() => {
-        if (user) void manager.refresh();
-    }, [user, manager.refresh]);
-
-    // 🔔 se resynchroniser si un autre écran met à jour le pseudo
-    useEffect(() => {
-        const unsub = onUserNameUpdated(() => {
-            void manager.refresh();
-        });
-        return unsub;
-    }, [manager.refresh]);
+    // ⚡ un seul hook pour auth-change + bus
+    useUserNameRefresh({
+        refresh,
+        enabled: Boolean(user),
+        onAuthChange: true,
+    });
 
     const handleDeleteById = useCallback(
         async (id: IdLike) => {

@@ -9,3 +9,5 @@ export * from "./models/userName";
 export * from "./models/userProfile";
 export * from "./models/todo";
 export * from "./models/comment";
+export * from "./models/post/manager"; // ← AJOUT
+export * from "./models/tag/manager";

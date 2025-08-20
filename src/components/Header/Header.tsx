@@ -7,35 +7,29 @@ import { useAuthenticator } from "@aws-amplify/ui-react";
 import { PowerButton } from "@src/components/buttons";
 import { useUserNameForm } from "@entities/models/userName/hooks";
 import UserNameModal from "@src/components/Profile/UserNameModal";
-import { onUserNameUpdated } from "@entities/models/userName/bus";
-import type { UserNameType } from "@entities/models/userName";
+import { useUserNameRefresh } from "@entities/models/userName/useUserNameRefresh";
+
 interface HeaderProps {
     className?: string;
 }
 
 const Header: React.FC<HeaderProps> = ({ className }) => {
     const { user, signOut } = useAuthenticator();
-    const [editingProfile] = useState<UserNameType | null>(null);
     const {
         form: { userName },
         refresh,
-    } = useUserNameForm(editingProfile); // ✅ sans argument
+    } = useUserNameForm(null);
 
     const [showModal, setShowModal] = useState(false);
 
-    useEffect(() => {
-        if (user) void refresh();
-        else setShowModal(false);
-    }, [user, refresh]);
+    // ⚡ un seul hook pour tout gérer
+    useUserNameRefresh({
+        refresh,
+        enabled: Boolean(user), // on écoute le bus seulement si connecté
+        onAuthChange: true, // et on refresh aussi au login/logout
+    });
 
-    useEffect(() => {
-        if (!user) return;
-        const unsub = onUserNameUpdated(() => {
-            void refresh();
-        });
-        return unsub;
-    }, [user, refresh]);
-
+    // Ouvrir/fermer le modal selon présence du userName
     useEffect(() => {
         if (user && !userName) setShowModal(true);
         if (userName) setShowModal(false);
