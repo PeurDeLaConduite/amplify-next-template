@@ -3,13 +3,31 @@ import { postService } from "@entities/models/post/service";
 import { postTagService } from "@entities/relations/postTag/service";
 import { syncManyToMany as syncNN } from "@entities/core/utils/syncManyToMany";
 import { tagService } from "./service";
-import { initialTagForm, toTagForm, toTagCreate, toTagUpdate } from "./form";
+import { tagSchema, initialTagForm, toTagForm, toTagCreate, toTagUpdate } from "./form";
 import type { TagType, TagFormType } from "./types";
 
 type Id = string;
 type Extras = { posts: { id: string; title?: string }[] };
 
 export function createTagManager() {
+    async function validateName(
+        value: string,
+        ctx?: { entities?: TagType[]; editingId?: Id }
+    ): Promise<string | null> {
+        const val = value.trim();
+        if (!val) return "Nom requis";
+        const { entities = [], editingId } = ctx ?? {};
+        if (entities.some((t) => t.name === val && t.id !== editingId)) {
+            return "Nom déjà utilisé";
+        }
+        const { data } = await tagService.list({
+            filter: { name: { eq: val } },
+            limit: 1,
+        });
+        const exists = (data ?? []).some((t) => t.id !== editingId);
+        return exists ? "Nom déjà utilisé" : null;
+    }
+
     return createManager<TagType, TagFormType, Id, Extras>({
         getInitialForm: () => ({ ...initialTagForm }),
         listEntities: async ({ limit, nextToken }) => {
@@ -61,18 +79,28 @@ export function createTagManager() {
             );
         },
         validateField: async (name, value, ctx) => {
-            if (name !== "name") return null;
-            const val = (value as string).trim();
-            const { entities = [], editingId } = ctx ?? {};
-            if (entities.some((t) => t.name === val && t.id !== editingId)) {
-                return "Nom déjà utilisé";
+            if (name === "name") return validateName(value as string, ctx);
+            const schema = (tagSchema as any).pick({ [name]: true });
+            const result = schema.safeParse({ [name]: value });
+            if (!result.success) {
+                return result.error.errors[0]?.message ?? "Champ invalide";
             }
-            const { data } = await tagService.list({
-                filter: { name: { eq: val } },
-                limit: 1,
-            });
-            const exists = (data ?? []).some((t) => t.id !== editingId);
-            return exists ? "Nom déjà utilisé" : null;
+            return null;
+        },
+        validateForm: async (ctx) => {
+            const form = ctx?.form ?? initialTagForm;
+            const errors: Partial<Record<keyof TagFormType, string>> = {};
+            const parsed = tagSchema.safeParse(form);
+            if (!parsed.success) {
+                const fieldErrors = parsed.error.flatten().fieldErrors;
+                for (const [field, msgs] of Object.entries(fieldErrors)) {
+                    const msg = (msgs as string[] | undefined)?.[0];
+                    if (msg) errors[field as keyof TagFormType] = msg;
+                }
+            }
+            const nameErr = await validateName(form.name, ctx);
+            if (nameErr) errors.name = nameErr;
+            return { valid: Object.keys(errors).length === 0, errors };
         },
     });
 }
