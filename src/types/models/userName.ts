@@ -1,6 +1,6 @@
 export type {
     UserNameType as UserNameModel,
-    UserNameCreateInput,
-    UserNameUpdateInput,
+    UserNameTypeCreateInput,
+    UserNameTypeUpdateInput,
     UserNameFormType,
 } from "@entities/models/userName/types";

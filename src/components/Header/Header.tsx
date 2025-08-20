@@ -8,28 +8,26 @@ import { PowerButton } from "@src/components/buttons";
 import { useUserNameForm } from "@entities/models/userName/hooks";
 import UserNameModal from "@src/components/Profile/UserNameModal";
 import { onUserNameUpdated } from "@entities/models/userName/bus";
-
+import type { UserNameType } from "@entities/models/userName";
 interface HeaderProps {
     className?: string;
 }
 
 const Header: React.FC<HeaderProps> = ({ className }) => {
     const { user, signOut } = useAuthenticator();
-
+    const [editingProfile] = useState<UserNameType | null>(null);
     const {
         form: { userName },
         refresh,
-    } = useUserNameForm();
+    } = useUserNameForm(editingProfile); // ✅ sans argument
 
     const [showModal, setShowModal] = useState(false);
 
-    // Rafraîchir au login/logout
     useEffect(() => {
         if (user) void refresh();
         else setShowModal(false);
     }, [user, refresh]);
 
-    // Rafraîchir quand un autre écran met à jour le pseudo
     useEffect(() => {
         if (!user) return;
         const unsub = onUserNameUpdated(() => {
@@ -38,7 +36,6 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
         return unsub;
     }, [user, refresh]);
 
-    // Ouvrir/fermer le modal selon présence du userName
     useEffect(() => {
         if (user && !userName) setShowModal(true);
         if (userName) setShowModal(false);

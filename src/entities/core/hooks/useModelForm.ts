@@ -2,8 +2,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 export type FormMode = "create" | "edit";
-export type FieldKey<T> = keyof T & string;
-
+// export type FieldKey<T> = keyof T & string;
+export type FieldKey<T> = Extract<keyof T, string>;
 export interface UseModelFormOptions<F extends object, E = Record<string, unknown>> {
     initialForm: F;
     initialExtras?: E;
@@ -25,6 +25,9 @@ export interface UseModelFormOptions<F extends object, E = Record<string, unknow
     autoLoadExtras?: boolean;
     /** Réinitialiser le formulaire si load() renvoie null */
     resetOnNull?: boolean;
+
+    /** ⚙️ Comparateur optionnel pour calculer `dirty` (sinon deepEqual JSON) */
+    isEqual?: (a: F, b: F) => boolean;
 }
 
 export interface UseModelFormResult<F, E> {
@@ -96,6 +99,7 @@ export default function useModelForm<
         autoLoad = true,
         autoLoadExtras = true,
         resetOnNull = false,
+        isEqual, // ← 🔸 nouveau
     } = options;
 
     const initialRef = useRef(initialForm);
@@ -108,7 +112,10 @@ export default function useModelForm<
     const [error, setError] = useState<unknown>(null);
     const [message, setMessage] = useState<string | null>(null);
 
-    const dirty = useMemo(() => !deepEqual(form, initialRef.current), [form]);
+    const dirty = useMemo(() => {
+        const equals = isEqual ?? deepEqual;
+        return !equals(form, initialRef.current);
+    }, [form, isEqual]);
 
     const handleChange = useCallback(<K extends keyof F>(field: K, value: F[K]) => {
         setForm((f) => ({ ...f, [field]: value }));

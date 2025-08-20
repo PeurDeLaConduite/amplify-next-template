@@ -20,25 +20,9 @@ export function useUserNameForm(userName: UserNameType | null) {
 
     const [editingId, setEditingId] = useState<string | null>(userName?.id ?? sub ?? null);
 
-    // Comparateur pour un dirty "propre"
-    const isEqual = useCallback(
-        (a: UserNameFormType, b: UserNameFormType) =>
-            (a.userName ?? "").trim() === (b.userName ?? "").trim(),
-        []
-    );
-
-    // Fournir load() pour que refresh() refonctionne partout
-    const load = useCallback(async () => {
-        const id = editingId ?? sub;
-        if (!id) return null;
-        const { data } = await userNameService.get({ id });
-        return data ? toUserNameForm(data, [], []) : null;
-    }, [editingId, sub]);
-
     const modelForm = useModelForm<UserNameFormType, Extras>({
         initialForm: initialUserNameForm,
         initialExtras: { userNames: [] },
-        load, // ✅ permet refresh()
         create: async (form) => {
             const id = sub;
             if (!id) throw new Error("ID utilisateur introuvable");
@@ -65,14 +49,13 @@ export function useUserNameForm(userName: UserNameType | null) {
             emitUserNameUpdated();
             return data.id;
         },
-        autoLoad: true, // ✅ hydrate si id dispo
+        autoLoad: false,
         autoLoadExtras: false,
-        isEqual, // ✅ dirty stable
     });
 
-    const { setForm, setMode, setExtras, reset, patch, extras, refresh, adoptInitial } = modelForm;
+    const { setForm, setMode, setExtras, reset, patch, extras } = modelForm;
 
-    // Liste (cohérence avec author/tag/section)
+    // Liste (pour cohérence avec author/tag/section)
     const fetchUserNames = useCallback(async () => {
         const { data } = await userNameService.list();
         setExtras((e) => ({ ...e, userNames: data ?? [] }));
@@ -86,32 +69,42 @@ export function useUserNameForm(userName: UserNameType | null) {
     useEffect(() => {
         void (async () => {
             if (userName) {
+                setForm(toUserNameForm(userName, [], []));
+                setMode("edit");
                 setEditingId(userName.id);
-                adoptInitial(toUserNameForm(userName, [], []), "edit");
                 return;
             }
-            if (!sub) {
+            const id = sub ?? null;
+            if (!id) {
                 setForm(initialUserNameForm);
                 setMode("create");
                 setEditingId(null);
                 return;
             }
-            // autoLoad + load() s'occuperont de l’hydratation
-            setEditingId(sub);
+            const { data } = await userNameService.get({ id });
+            if (data) {
+                setForm(toUserNameForm(data, [], []));
+                setMode("edit");
+                setEditingId(data.id);
+            } else {
+                setForm(initialUserNameForm);
+                setMode("create");
+                setEditingId(id);
+            }
         })();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [userName?.id, sub]);
+    }, [userName, sub, setForm, setMode]);
 
     const selectById = useCallback(
         (id: string) => {
             const item = extras.userNames.find((u) => u.id === id) ?? null;
             if (item) {
+                setForm(toUserNameForm(item, [], []));
+                setMode("edit");
                 setEditingId(item.id);
-                adoptInitial(toUserNameForm(item, [], []), "edit");
             }
             return item;
         },
-        [extras.userNames, adoptInitial]
+        [extras.userNames, setForm, setMode]
     );
 
     const removeById = useCallback(
@@ -121,26 +114,23 @@ export function useUserNameForm(userName: UserNameType | null) {
             await fetchUserNames();
             if (editingId === id) {
                 setEditingId(null);
-                adoptInitial(initialUserNameForm, "create");
                 reset();
             }
-            await refresh(); // 🔄 maintenant effectif
             emitUserNameUpdated();
         },
-        [editingId, reset, fetchUserNames, refresh, adoptInitial]
+        [editingId, reset, fetchUserNames]
     );
 
-    // Helpers “champ par champ”
+    // Helpers “champ par champ” (à la manière des toggles dans tag/post)
     const saveField = useCallback(
         async (field: keyof UserNameFormType, value: string) => {
             const id = editingId ?? sub;
             if (!id) return;
             await userNameService.update({ id, [field]: value } as any);
-            patch({ [field]: value } as Partial<UserNameFormType>); // optimiste
-            await refresh(); // vérité serveur
+            patch({ [field]: value } as Partial<UserNameFormType>);
             emitUserNameUpdated();
         },
-        [editingId, sub, patch, refresh]
+        [editingId, sub, patch]
     );
 
     const clearField = useCallback(

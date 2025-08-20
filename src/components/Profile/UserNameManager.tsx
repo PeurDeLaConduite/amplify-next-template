@@ -1,33 +1,52 @@
 // src/app/profile/UserNameManager.tsx
 "use client";
-import { useEffect } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Authenticator, useAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 import EntityEditor from "@components/forms/EntityEditor";
 import { label as fieldLabel } from "./utilsUserName";
 import PersonIcon from "@mui/icons-material/Person";
 import { useUserNameForm } from "@entities/models/userName/hooks";
-import { onUserNameUpdated } from "@entities/models/userName/bus"; // ← optionnel
-import { type UserNameFormType, type UserNameUpdateInput } from "@entities/models/userName/types";
+import { onUserNameUpdated } from "@entities/models/userName/bus";
+import {
+    type UserNameFormType,
+    type UserNameType,
+    initialUserNameForm,
+} from "@entities/models/userName";
 
+type IdLike = string | number;
 const fields: (keyof UserNameFormType)[] = ["userName"];
 
 export default function UserNameManager() {
     const { user } = useAuthenticator();
-    const manager = useUserNameForm();
+    const [editingProfile, setEditingProfile] = useState<UserNameType | null>(null);
+    const [editingId, setEditingId] = useState<string | null>(null);
+    const manager = useUserNameForm(editingProfile);
+    const { removeById, setForm, setMode } = manager;
 
     // 🔄 Charger/rafraîchir au montage et quand l'utilisateur change
     useEffect(() => {
         if (user) void manager.refresh();
-    }, [user, manager.refresh]); // ✅ dépend seulement de la fonction stable
+    }, [user, manager.refresh]);
 
-    // 🔔 (optionnel) se resynchroniser si un autre écran met à jour le pseudo
+    // 🔔 se resynchroniser si un autre écran met à jour le pseudo
     useEffect(() => {
         const unsub = onUserNameUpdated(() => {
             void manager.refresh();
         });
         return unsub;
     }, [manager.refresh]);
+
+    const handleDeleteById = useCallback(
+        async (id: IdLike) => {
+            await removeById(String(id));
+            setEditingProfile(null);
+            setEditingId(null);
+            setMode("create");
+            setForm(initialUserNameForm);
+        },
+        [removeById, setMode, setForm]
+    );
 
     if (!user) return <Authenticator />;
 
@@ -38,29 +57,28 @@ export default function UserNameManager() {
             deleteLabel="Supprimer le pseudo"
             renderIcon={() => <PersonIcon fontSize="small" className="text-gray-800" />}
             onClearField={(field, clear) => {
-                if (
-                    confirm(
-                        `Supprimer le contenu du champ "${fieldLabel(field as keyof UserNameUpdateInput)}" ?`
-                    )
-                ) {
+                if (confirm(`Supprimer le contenu du champ "Pseudo public" ?`)) {
                     void clear(field);
                 }
             }}
             form={manager.form}
             mode={manager.mode}
             dirty={manager.dirty}
-            // Typage propre : pas besoin de cast si UserNameFormType est correct
             handleChange={
                 manager.handleChange as (field: keyof UserNameFormType, value: unknown) => void
             }
-            submit={manager.submit} // submit refetch via useModelForm + event-bus côté hook
+            submit={manager.submit}
             reset={manager.reset}
             setForm={manager.setForm}
             fields={fields}
             labels={fieldLabel as (field: keyof UserNameFormType) => string}
-            saveField={manager.saveField} // saveField → refresh + event-bus
+            saveField={manager.saveField}
             clearField={manager.clearField}
-            deleteEntity={manager.remove} // remove → refresh + event-bus
+            deleteEntity={async (id?: string) => {
+                const target = id ?? editingId ?? user?.userId ?? user?.username ?? undefined;
+                if (!target) return;
+                await handleDeleteById(target);
+            }}
         />
     );
 }

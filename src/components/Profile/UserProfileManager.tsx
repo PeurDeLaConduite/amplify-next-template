@@ -1,5 +1,6 @@
 "use client";
-import { useEffect } from "react";
+
+import React, { useState, useCallback } from "react";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 import EntityEditor from "@components/forms/EntityEditor";
@@ -8,9 +9,15 @@ import PhoneIcon from "@mui/icons-material/Phone";
 import PersonIcon from "@mui/icons-material/Person";
 import HomeIcon from "@mui/icons-material/Home";
 import { useUserProfileForm } from "@entities/models/userProfile/hooks";
-import { type UserProfileMinimalType } from "@entities/models/userProfile/types";
+import {
+    type UserProfileFormType,
+    type UserProfileType,
+    initialUserProfileForm,
+} from "@entities/models/userProfile";
 
-const fields: (keyof UserProfileMinimalType)[] = [
+type IdLike = string | number;
+
+const fields: (keyof UserProfileFormType)[] = [
     "firstName",
     "familyName",
     "phoneNumber",
@@ -22,10 +29,27 @@ const fields: (keyof UserProfileMinimalType)[] = [
 
 export default function UserProfileManager() {
     const { user } = useAuthenticator();
-    const profile = useUserProfileForm();
-    const { fetchProfile } = profile;
+    const [editingProfile, setEditingProfile] = useState<UserProfileType | null>(null);
+    const [editingId, setEditingId] = useState<string | null>(null);
 
-    const getIcon = (field: keyof UserProfileMinimalType) => {
+    // ✅ même signature que les autres managers (ex: useAuthorForm)
+    const manager = useUserProfileForm(editingProfile);
+    const { removeById, setForm, setMode, form } = manager;
+
+    const handleDeleteById = useCallback(
+        async (id: IdLike) => {
+            await removeById(String(id));
+            setEditingProfile(null);
+            setEditingId(null);
+            setMode("create");
+            setForm(initialUserProfileForm);
+        },
+        [removeById, setMode, setForm]
+    );
+
+    if (!user) return null;
+
+    const getIcon = (field: keyof UserProfileFormType) => {
         switch (field) {
             case "phoneNumber":
                 return <PhoneIcon fontSize="small" className="text-gray-800" />;
@@ -47,7 +71,7 @@ export default function UserProfileManager() {
         return number.replace(/(\d{2})(?=\d)/g, "$1 ").trim();
     }
 
-    const renderValue = (field: keyof UserProfileMinimalType, value: string) => {
+    const renderValue = (field: keyof UserProfileFormType, value: string) => {
         if (field === "phoneNumber") {
             return value ? (
                 <a href={`tel:${value}`} className="text-base text-gray-900 hover:underline">
@@ -63,43 +87,44 @@ export default function UserProfileManager() {
             <p className="text-sm text-gray-400 italic">Information non disponible</p>
         );
     };
-    useEffect(() => {
-        if (user) {
-            void fetchProfile();
-        }
-    }, [user, fetchProfile]);
-
-    if (!user) return null;
 
     return (
-        <EntityEditor<UserProfileMinimalType>
-            title="Mon profil"
-            requiredFields={["firstName", "familyName"]}
-            renderIcon={getIcon}
-            renderValue={renderValue}
-            deleteLabel="Supprimer le profil"
-            onClearField={(field, clear) => {
-                if (confirm(`Supprimer le contenu du champ "${fieldLabel(field)}" ?`)) {
-                    void clear(field);
+        <div className="mt-6">
+            {/* Même approche que le modèle : un “header formulaire” + bouton enregistrer via ref */}
+            <EntityEditor<UserProfileFormType>
+                title="Mon profil"
+                requiredFields={["firstName", "familyName"]}
+                renderIcon={getIcon}
+                renderValue={renderValue}
+                deleteLabel="Supprimer le profil"
+                onClearField={(field, clear) => {
+                    if (confirm(`Supprimer le contenu du champ "${fieldLabel(field)}" ?`)) {
+                        void clear(field);
+                    }
+                }}
+                form={form}
+                mode={manager.mode}
+                dirty={manager.dirty}
+                handleChange={
+                    manager.handleChange as (
+                        field: keyof UserProfileFormType,
+                        value: unknown
+                    ) => void
                 }
-            }}
-            form={profile.form}
-            mode={profile.mode}
-            dirty={profile.dirty}
-            handleChange={
-                profile.handleChange as (
-                    field: keyof UserProfileMinimalType,
-                    value: unknown
-                ) => void
-            }
-            submit={profile.submit}
-            reset={profile.reset}
-            setForm={profile.setForm}
-            fields={fields}
-            labels={profile.labels}
-            saveField={profile.saveField}
-            clearField={profile.clearField}
-            deleteEntity={profile.deleteProfile}
-        />
+                submit={manager.submit}
+                reset={manager.reset}
+                setForm={manager.setForm}
+                fields={fields}
+                labels={(f) => fieldLabel(f as any)}
+                saveField={manager.saveField}
+                clearField={manager.clearField}
+                // Wrapper “à la AuthorList.onDeleteById”
+                deleteEntity={async (id?: string) => {
+                    const target = id ?? editingId ?? user?.userId ?? user?.username ?? undefined;
+                    if (!target) return;
+                    await handleDeleteById(target);
+                }}
+            />
+        </div>
     );
 }
