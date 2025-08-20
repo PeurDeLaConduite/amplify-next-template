@@ -1,21 +1,21 @@
 // src/components/Blog/manage/sections/SectionForm.tsx
 "use client";
-import React, { forwardRef, type ChangeEvent } from "react";
+import React, { forwardRef, type ChangeEvent, type FormEvent } from "react";
 import EditableField from "@components/forms/EditableField";
 import EditableTextArea from "@components/forms/EditableTextArea";
 import SeoFields from "@components/forms/SeoFields";
 import OrderSelector from "@components/forms/OrderSelector";
 import ItemSelector from "@components/forms/ItemSelector";
+import { SaveButton } from "@components/buttons";
 import { useAutoGenFields, slugify } from "@hooks/useAutoGenFields";
-import EntityFormShell from "../EntityFormShell";
 import {
     type SectionFormTypes,
     initialSectionForm,
-    useSectionForm,
+    useSectionManager,
 } from "@entities/models/section";
 
 interface Props {
-    manager: ReturnType<typeof useSectionForm>;
+    manager: ReturnType<typeof useSectionManager>;
     onSave: () => void;
     editingId: string | null;
 }
@@ -26,9 +26,14 @@ const SectionForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
 ) {
     const {
         form,
-        extras: { posts, sections },
-        handleChange,
-        setForm,
+        entities: sections,
+        extras: { posts },
+        updateField,
+        patchForm,
+        editingId: currentEditingId,
+        cancelEdit,
+        createEntity,
+        updateEntity,
     } = manager;
 
     const { handleSourceFocus, handleManualEdit } = useAutoGenFields({
@@ -38,7 +43,7 @@ const SectionForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
                 source: form.title ?? "",
                 current: form.slug ?? "",
                 target: "slug",
-                setter: (v) => handleChange("slug", slugify(v ?? "")),
+                setter: (v) => updateField("slug", slugify(v ?? "")),
                 transform: slugify,
             },
             {
@@ -46,14 +51,14 @@ const SectionForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
                 source: form.title ?? "",
                 current: form.seo.title ?? "",
                 target: "seo.title",
-                setter: (v) => handleChange("seo", { ...form.seo, title: v ?? "" }),
+                setter: (v) => updateField("seo", { ...form.seo, title: v ?? "" }),
             },
             {
                 editingKey: "description",
                 source: form.description ?? "",
                 current: form.seo.description ?? "",
                 target: "seo.description",
-                setter: (v) => handleChange("seo", { ...form.seo, description: v ?? "" }),
+                setter: (v) => updateField("seo", { ...form.seo, description: v ?? "" }),
             },
         ],
     });
@@ -63,23 +68,30 @@ const SectionForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
         if (name === "title" || name === "description") handleSourceFocus(name);
         if (name.startsWith("seo.")) {
             const key = name.split(".")[1] as keyof SectionFormTypes["seo"];
-            handleChange("seo", { ...form.seo, [key]: value });
+            updateField("seo", { ...form.seo, [key]: value });
             handleManualEdit(`seo.${key}`);
         } else if (name === "slug") {
-            handleChange("slug", slugify(value));
+            updateField("slug", slugify(value));
             handleManualEdit("slug");
         } else {
-            handleChange(name as keyof SectionFormTypes, value as never);
+            updateField(name as keyof SectionFormTypes, value as never);
         }
     };
 
+    const handleSubmit = async (e?: FormEvent<HTMLFormElement>) => {
+        e?.preventDefault();
+        if (currentEditingId) {
+            await updateEntity(currentEditingId, form);
+        } else {
+            await createEntity(form);
+        }
+        cancelEdit();
+        patchForm(initialSectionForm);
+        onSave();
+    };
+
     return (
-        <EntityFormShell
-            ref={ref}
-            manager={manager}
-            initialForm={initialSectionForm}
-            onSave={onSave}
-        >
+        <form ref={ref} onSubmit={handleSubmit} className="mb-6 grid gap-2">
             <EditableField
                 name="title"
                 label="Titre"
@@ -105,7 +117,7 @@ const SectionForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
                 items={sections}
                 editingId={editingId}
                 value={form.order ?? 1}
-                onReorder={(_, newOrder) => handleChange("order", newOrder)}
+                onReorder={(_, newOrder) => updateField("order", newOrder)}
             />
             <SeoFields
                 seo={{
@@ -120,11 +132,17 @@ const SectionForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
                 items={posts}
                 idKey="id"
                 selectedIds={form.postIds}
-                onChange={(postIds) => setForm((f) => ({ ...f, postIds }))}
+                onChange={(postIds) => patchForm({ postIds })}
                 label="Articles associés :"
                 getLabel={(post) => post.title}
             />
-        </EntityFormShell>
+            <div className="flex space-x-2">
+                <SaveButton
+                    onClick={() => void handleSubmit()}
+                    label={currentEditingId ? "Mettre à jour" : "Créer"}
+                />
+            </div>
+        </form>
     );
 });
 

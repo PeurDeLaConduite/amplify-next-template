@@ -1,62 +1,52 @@
 "use client";
 
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 import RequireAdmin from "@components/RequireAdmin";
 import SectionForm from "./SectionsForm";
 import SectionList from "./SectionList";
 import BlogEditorLayout from "@components/Blog/manage/BlogEditorLayout";
 import SectionHeader from "@components/Blog/manage/SectionHeader";
-import { type SectionType, initialSectionForm, useSectionForm } from "@entities/models/section";
+import { useSectionManager } from "@entities/models/section";
 
 type IdLike = string | number;
 
 export default function SectionManagerPage() {
-    const [editingSection, setEditingSection] = useState<SectionType | null>(null);
-    const [editingId, setEditingId] = useState<string | null>(null);
     const formRef = useRef<HTMLFormElement>(null);
-    const manager = useSectionForm(editingSection);
+    const manager = useSectionManager();
     const {
-        extras: { sections },
-        fetchList,
-        selectById,
-        removeById,
-        setForm,
-        setMode,
+        entities: sections,
+        refresh,
+        loadEntityById,
+        deleteById,
+        editingId,
+        cancelEdit,
     } = manager;
 
     useEffect(() => {
-        fetchList();
-    }, [fetchList]);
+        void refresh();
+    }, [refresh]);
 
     const handleEditById = useCallback(
         (id: IdLike) => {
-            const section = selectById(String(id));
-            if (!section) return;
-            setEditingSection(section);
-            setEditingId(String(id));
+            void loadEntityById(String(id));
         },
-        [selectById]
+        [loadEntityById]
     );
 
     const handleDeleteById = useCallback(
         async (id: IdLike) => {
-            await removeById(String(id));
+            await deleteById(String(id));
         },
-        [removeById]
+        [deleteById]
     );
 
     const handleSave = useCallback(async () => {
-        await fetchList();
-        setEditingSection(null);
-        setEditingId(null);
-    }, [fetchList]);
+        await refresh();
+    }, [refresh]);
 
     const handleCancel = useCallback(() => {
-        setEditingSection(null);
-        setEditingId(null);
-        setMode("create");
-        setForm(initialSectionForm);
-    }, [setMode, setForm]);
+        cancelEdit();
+    }, [cancelEdit]);
 
     return (
         <RequireAdmin>
