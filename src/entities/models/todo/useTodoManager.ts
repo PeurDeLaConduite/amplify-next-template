@@ -7,7 +7,7 @@ import { createTodoManager } from "./manager";
 export function useTodoManager() {
     const mgr = useMemo(() => createTodoManager(), []);
     const state = useSyncExternalStore(
-        mgr.subscribe?.bind(mgr) ?? (() => () => {}),
+        mgr.subscribe,
         () => mgr.getState(),
         () => mgr.getState()
     );

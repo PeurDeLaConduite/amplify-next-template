@@ -7,7 +7,7 @@ import { createUserNameManager } from "./manager";
 export function useUserNameManager() {
     const mgr = useMemo(() => createUserNameManager(), []);
     const state = useSyncExternalStore(
-        mgr.subscribe?.bind(mgr) ?? (() => () => {}),
+        mgr.subscribe,
         () => mgr.getState(),
         () => mgr.getState()
     );

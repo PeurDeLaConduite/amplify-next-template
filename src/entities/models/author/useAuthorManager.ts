@@ -7,7 +7,7 @@ import { createAuthorManager } from "./manager";
 export function useAuthorManager() {
     const mgr = useMemo(() => createAuthorManager(), []);
     const state = useSyncExternalStore(
-        mgr.subscribe?.bind(mgr) ?? (() => () => {}),
+        mgr.subscribe,
         () => mgr.getState(),
         () => mgr.getState()
     );

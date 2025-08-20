@@ -26,6 +26,7 @@ export type ManagerState<E, F, Extras = Record<string, unknown>, Id = string> = 
 
 export interface ManagerContract<E, F, Id = string, Extras = Record<string, unknown>> {
     getState(): ManagerState<E, F, Extras, Id>;
+    subscribe(listener: () => void): () => void;
 
     // --- états exposés ---
     readonly entities: E[];
