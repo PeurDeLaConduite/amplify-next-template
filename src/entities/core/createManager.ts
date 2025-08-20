@@ -58,29 +58,45 @@ export function createManager<E, F, Id = string, Extras = Record<string, unknown
     let pageSize = initialPageSize;
     let nextToken: string | null = null;
     let prevTokens: (string | null)[] = [];
-    let currentToken: string | null = null;
+    let hasNext = false;
+    let hasPrev = false;
+
+    const listeners = new Set<() => void>();
+    const notify = () => {
+        listeners.forEach((l) => l());
+    };
+
+    const subscribe = (listener: () => void) => {
+        listeners.add(listener);
+        return () => listeners.delete(listener);
+    };
 
     // ---- helpers ----
     const updateField = <K extends keyof F>(name: K, value: F[K]) => {
         form = { ...form, [name]: value };
+        notify();
     };
 
     const patchForm = (partial: Partial<F>) => {
         form = { ...form, ...partial };
+        notify();
     };
 
     const clearField = <K extends keyof F>(name: K) => {
         const init = getInitialForm();
         form = { ...form, [name]: init[name] };
+        notify();
     };
 
     const clearForm = () => {
         form = getInitialForm();
+        notify();
     };
 
     const enterEdit = (id: Id | null) => {
         editingId = id;
         isEditing = id !== null;
+        notify();
     };
 
     const cancelEdit = () => {
@@ -92,16 +108,21 @@ export function createManager<E, F, Id = string, Extras = Record<string, unknown
     const refresh = async () => {
         loadingList = true;
         errorList = null;
+        notify();
         try {
             const { items, nextToken: token } = await listEntities({ limit: pageSize });
             entities = items;
             nextToken = token ?? null;
             prevTokens = [];
-            currentToken = null;
+            hasNext = nextToken !== null;
+            hasPrev = prevTokens.length > 0;
+            notify();
         } catch (e) {
             errorList = e as Error;
+            notify();
         } finally {
             loadingList = false;
+            notify();
         }
     };
 
@@ -109,18 +130,23 @@ export function createManager<E, F, Id = string, Extras = Record<string, unknown
         if (!loadExtras) return;
         loadingExtras = true;
         errorExtras = null;
+        notify();
         try {
             extras = await loadExtras();
+            notify();
         } catch (e) {
             errorExtras = e as Error;
+            notify();
         } finally {
             loadingExtras = false;
+            notify();
         }
     };
 
     const loadEntityById = async (id: Id) => {
         loadingEntity = true;
         errorEntity = null;
+        notify();
         try {
             let f: F;
             if (loadEntityForm) {
@@ -132,16 +158,20 @@ export function createManager<E, F, Id = string, Extras = Record<string, unknown
             }
             form = f;
             enterEdit(id);
+            notify();
         } catch (e) {
             errorEntity = e as Error;
+            notify();
         } finally {
             loadingEntity = false;
+            notify();
         }
     };
 
     // ---- CRUD ----
     const createEntity = async (data: F) => {
         savingCreate = true;
+        notify();
         try {
             const id = await createNet(data);
             await refresh();
@@ -149,27 +179,32 @@ export function createManager<E, F, Id = string, Extras = Record<string, unknown
             return id;
         } finally {
             savingCreate = false;
+            notify();
         }
     };
 
     const updateEntity = async (id: Id, data: Partial<F>) => {
         savingUpdate = true;
+        notify();
         try {
             await updateNet(id, data, { form });
             await refresh();
         } finally {
             savingUpdate = false;
+            notify();
         }
     };
 
     const deleteById = async (id: Id) => {
         savingDelete = true;
+        notify();
         try {
             await deleteNet(id);
             if (editingId === id) cancelEdit();
             await refresh();
         } finally {
             savingDelete = false;
+            notify();
         }
     };
 
@@ -196,6 +231,7 @@ export function createManager<E, F, Id = string, Extras = Record<string, unknown
 
     return {
         getState,
+        subscribe,
         get entities() {
             return entities;
         },
@@ -240,6 +276,12 @@ export function createManager<E, F, Id = string, Extras = Record<string, unknown
         },
         get pageSize() {
             return pageSize;
+        },
+        get nextToken() {
+            return nextToken;
+        },
+        get prevTokens() {
+            return prevTokens;
         },
         get hasNext() {
             return hasNext;

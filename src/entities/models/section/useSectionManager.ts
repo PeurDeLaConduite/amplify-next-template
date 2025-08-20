@@ -7,7 +7,7 @@ import { createSectionManager } from "./manager";
 export function useSectionManager() {
     const mgr = useMemo(() => createSectionManager(), []);
     const state = useSyncExternalStore(
-        mgr.subscribe?.bind(mgr) ?? (() => () => {}),
+        mgr.subscribe,
         () => mgr.getState(),
         () => mgr.getState()
     );

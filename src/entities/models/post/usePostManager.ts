@@ -7,7 +7,7 @@ import { createPostManager } from "./manager";
 export function usePostManager() {
     const mgr = useMemo(() => createPostManager(), []);
     const state = useSyncExternalStore(
-        mgr.subscribe?.bind(mgr) ?? (() => () => {}),
+        mgr.subscribe,
         () => mgr.getState(),
         () => mgr.getState()
     );

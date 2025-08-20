@@ -7,7 +7,7 @@ import { createTagManager } from "./manager";
 export function useTagManager() {
     const mgr = useMemo(() => createTagManager(), []);
     const state = useSyncExternalStore(
-        mgr.subscribe?.bind(mgr) ?? (() => () => {}),
+        mgr.subscribe,
         () => mgr.getState(),
         () => mgr.getState()
     );

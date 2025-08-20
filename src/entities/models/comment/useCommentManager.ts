@@ -7,7 +7,7 @@ import { createCommentManager } from "./manager";
 export function useCommentManager() {
     const mgr = useMemo(() => createCommentManager(), []);
     const state = useSyncExternalStore(
-        mgr.subscribe?.bind(mgr) ?? (() => () => {}),
+        mgr.subscribe,
         () => mgr.getState(),
         () => mgr.getState()
     );
