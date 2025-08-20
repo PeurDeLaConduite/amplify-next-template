@@ -2,7 +2,7 @@
 "use client";
 
 import React, { forwardRef, type ChangeEvent } from "react";
-import { usePostForm } from "@entities/models/post/hooks";
+import { usePostManager } from "@entities/models/post";
 import { initialPostForm } from "@entities/models/post/form";
 import { useAutoGenFields, slugify } from "@hooks/useAutoGenFields";
 import EditableField from "@components/forms/EditableField";
@@ -10,14 +10,14 @@ import EditableTextArea from "@components/forms/EditableTextArea";
 import SeoFields from "@components/forms/SeoFields";
 import OrderSelector from "@components/forms/OrderSelector";
 import SelectField from "@components/forms/SelectField";
-import EntityFormShell from "@components/Blog/manage/EntityFormShell";
+import EntityFormShell, { type EntityFormManager } from "@components/Blog/manage/EntityFormShell";
 import { byAlpha, byOptionalOrder } from "@components/Blog/manage/sorters";
 import { type SeoFormType } from "@entities/customTypes/seo/types";
 import { type PostFormType } from "@entities/models/post/types";
 import { type PostType } from "@entities/models/post";
 
 interface Props {
-    manager: ReturnType<typeof usePostForm>;
+    manager: ReturnType<typeof usePostManager>;
     onSave: () => void;
     posts: PostType[];
     editingId: string | null;
@@ -30,10 +30,66 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
     const {
         form,
         extras: { authors, tags, sections },
-        handleChange,
-        toggleTag,
-        toggleSection,
+        updateField,
+        patchForm,
+        createEntity,
+        updateEntity,
+        syncManyToMany,
+        cancelEdit,
     } = manager;
+
+    const handleChange = <K extends keyof PostFormType>(field: K, value: PostFormType[K]) => {
+        updateField(field, value);
+    };
+
+    const toggleTag = (id: string) => {
+        const tagIds = form.tagIds.includes(id)
+            ? form.tagIds.filter((t) => t !== id)
+            : [...form.tagIds, id];
+        updateField("tagIds", tagIds);
+    };
+
+    const toggleSection = (id: string) => {
+        const sectionIds = form.sectionIds.includes(id)
+            ? form.sectionIds.filter((s) => s !== id)
+            : [...form.sectionIds, id];
+        updateField("sectionIds", sectionIds);
+    };
+
+    const submit = async () => {
+        let id = editingId;
+        if (id) {
+            await updateEntity(id, form);
+        } else {
+            id = await createEntity(form);
+        }
+        await syncManyToMany?.(id, { replace: form.tagIds }, { relation: "tags" });
+        await syncManyToMany?.(id, { replace: form.sectionIds }, { relation: "sections" });
+    };
+
+    const setForm: React.Dispatch<React.SetStateAction<PostFormType>> = (updater) => {
+        if (typeof updater === "function") {
+            patchForm(updater(form));
+        } else {
+            patchForm(updater);
+        }
+    };
+
+    const setMode: React.Dispatch<React.SetStateAction<"create" | "edit">> = (mode) => {
+        if (mode === "create") {
+            cancelEdit();
+        }
+    };
+
+    const normalizedManager: EntityFormManager<PostFormType> = {
+        form,
+        submit,
+        setForm,
+        setMode,
+        mode: editingId ? "edit" : "create",
+        saving: manager.savingCreate || manager.savingUpdate,
+        message: null,
+    };
 
     const { handleSourceFocus, handleManualEdit } = useAutoGenFields({
         configs: [
@@ -82,7 +138,7 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
     return (
         <EntityFormShell
             ref={ref}
-            manager={manager}
+            manager={normalizedManager}
             initialForm={initialPostForm}
             onSave={onSave}
             submitLabel={{ create: "Créer l'article", edit: "Mettre à jour" }}
