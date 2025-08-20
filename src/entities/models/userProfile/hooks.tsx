@@ -12,7 +12,6 @@ export interface UserProfileFormResult
     saveField: (field: keyof UserProfileMinimalType, value: string) => Promise<void>;
     clearField: (field: keyof UserProfileMinimalType) => Promise<void>;
     deleteProfile: () => Promise<void>;
-    fields: (keyof UserProfileMinimalType)[];
     labels: (field: keyof UserProfileMinimalType) => string;
     error: Error | null;
 }
@@ -114,23 +113,12 @@ export function useUserProfileForm(): UserProfileFormResult {
         }
     };
 
-    const fields: (keyof UserProfileMinimalType)[] = [
-        "firstName",
-        "familyName",
-        "phoneNumber",
-        "address",
-        "postalCode",
-        "city",
-        "country",
-    ];
-
     return {
         ...formManager,
         fetchProfile,
         saveField,
         clearField,
         deleteProfile,
-        fields,
         labels: fieldLabel,
         error,
     };

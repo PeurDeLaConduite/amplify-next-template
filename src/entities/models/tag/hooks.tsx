@@ -32,9 +32,7 @@ export function useTagForm() {
         initialForm: initialTagForm,
         initialExtras,
         create: async (form) => {
-            const { postIds, ...tagInput } = form;
-            void postIds;
-            const { data } = await tagService.create({ tagInput });
+            const { data } = await tagService.create({ name: form.name });
             if (!data) throw new Error("Erreur lors de la création du tag");
             setEditingId(data.id);
             return data.id;

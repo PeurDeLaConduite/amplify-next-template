@@ -1,5 +1,5 @@
 // src/entities/models/userName/service.ts
-import { crudService } from "@entities/core/services/crudService";
+import { crudService } from "@entities/core";
 import type { UserNameCreateInput, UserNameUpdateInput } from "@entities/models/userName/types";
 
 // ✅ Lecture en public (API key), écritures avec User Pool

@@ -10,6 +10,16 @@ import HomeIcon from "@mui/icons-material/Home";
 import { useUserProfileForm } from "@entities/models/userProfile/hooks";
 import { type UserProfileMinimalType } from "@entities/models/userProfile/types";
 
+const fields: (keyof UserProfileMinimalType)[] = [
+    "firstName",
+    "familyName",
+    "phoneNumber",
+    "address",
+    "postalCode",
+    "city",
+    "country",
+];
+
 export default function UserProfileManager() {
     const { user } = useAuthenticator();
     const profile = useUserProfileForm();
@@ -85,7 +95,7 @@ export default function UserProfileManager() {
             submit={profile.submit}
             reset={profile.reset}
             setForm={profile.setForm}
-            fields={profile.fields}
+            fields={fields}
             labels={profile.labels}
             saveField={profile.saveField}
             clearField={profile.clearField}
