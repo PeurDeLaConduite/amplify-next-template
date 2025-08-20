@@ -17,5 +17,5 @@ export function useTagManager() {
         void mgr.refreshExtras();
     }, [mgr]);
 
-    return { ...state, ...mgr };
+    return { state, ...mgr };
 }
