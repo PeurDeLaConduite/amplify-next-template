@@ -42,5 +42,14 @@
         "public/**/*.json",
         ".next/types/**/*.ts"
     ],
-    "exclude": ["node_modules", "amplify", ".Help/examples", ".next", "dist"]
+    "exclude": [
+        "node_modules",
+        "amplify",
+        ".Help/examples",
+        ".next",
+        "dist",
+        "__tests__",
+        "**/*.test.ts",
+        "**/*.test.tsx"
+    ]
 }
