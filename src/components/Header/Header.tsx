@@ -22,7 +22,6 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
 
     // ✅ wrapper: recharge le FORM (self) quand on rafraîchit
     const refreshSelf = useCallback(async () => {
-
         try {
             const sub = user?.userId;
             await manager.loadEntityById(sub);
@@ -41,6 +40,40 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
         if (user && !userName) setShowModal(true);
         if (userName) setShowModal(false);
     }, [user, userName]);
+
+    const renderRight = () => {
+        if (!user) {
+            return (
+                <Link href="/connection" className="text-gray-700 hover:text-blue-600">
+                    Connexion
+                </Link>
+            );
+        }
+
+        if (userName) {
+            return (
+                <>
+                    <p className="text-sm text-gray-700">
+                        Connecté en tant que : <strong>{userName}</strong>
+                    </p>
+                    <PowerButton
+                        onClick={signOut}
+                        className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
+                    />
+                </>
+            );
+        }
+
+        return (
+            <>
+                <span className="text-sm text-gray-400">Aucun pseudo</span>
+                <PowerButton
+                    onClick={signOut}
+                    className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
+                />
+            </>
+        );
+    };
 
     return (
         <>
@@ -70,33 +103,7 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
                         </Link>
                     </div>
 
-                    <div className="flex items-center gap-4">
-                        {user ? (
-                            userName ? (
-                                <>
-                                    <p className="text-sm text-gray-700">
-                                        Connecté en tant que : <strong>{userName}</strong>
-                                    </p>
-                                    <PowerButton
-                                        onClick={signOut}
-                                        className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
-                                    />
-                                </>
-                            ) : (
-                                <>
-                                    <span className="text-sm text-gray-400">Aucun pseudo</span>
-                                    <PowerButton
-                                        onClick={signOut}
-                                        className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
-                                    />
-                                </>
-                            )
-                        ) : (
-                            <Link href="/connection" className="text-gray-700 hover:text-blue-600">
-                                Connexion
-                            </Link>
-                        )}
-                    </div>
+                    <div className="flex items-center gap-4">{renderRight()}</div>
                 </nav>
             </header>
 
