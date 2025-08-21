@@ -1,6 +1,11 @@
 import { z, type ZodType } from "zod";
 import { createModelForm } from "@entities/core";
-import type { UserProfileType, UserProfileFormType, UserProfileTypeUpdateInput } from "./types";
+import type {
+    UserProfileType,
+    UserProfileFormType,
+    UserProfileTypeUpdateInput,
+    UserProfileTypeOmit,
+} from "./types";
 
 export const {
     zodSchema: userProfileSchema,
@@ -11,7 +16,7 @@ export const {
 } = createModelForm<
     UserProfileType,
     UserProfileFormType,
-    UserProfileTypeUpdateInput,
+    Omit<UserProfileTypeOmit, "id">,
     UserProfileTypeUpdateInput
 >({
     zodSchema: z.object({
@@ -44,7 +49,7 @@ export const {
         country: profile.country ?? "",
         phoneNumber: profile.phoneNumber ?? "",
     }),
-    toCreate: (form: UserProfileFormType): UserProfileTypeUpdateInput => {
+    toCreate: (form: UserProfileFormType): Omit<UserProfileTypeOmit, "id"> => {
         const { id, ...values } = form;
         void id;
         return { ...values };
