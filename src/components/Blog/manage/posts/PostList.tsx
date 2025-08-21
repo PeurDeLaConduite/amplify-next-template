@@ -33,8 +33,8 @@ export default function PostList(props: Props) {
             onSave={props.onSave}
             onCancel={props.onCancel}
             onDeleteById={props.onDeleteById}
-            editButtonlabel="Modifier"
-            deleteButtonlabel="Supprimer"
+            editButtonLabel="Modifier"
+            deleteButtonLabel="Supprimer"
         />
     );
 }
