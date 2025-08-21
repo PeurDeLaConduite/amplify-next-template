@@ -1,7 +1,9 @@
 import { renderHook, act } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { TagType } from "@entities/models/tag/types";
-import type { PostType } from "@entities/models/post/types";
+import type { PostSummary } from "@entities/models/post/types";
+
+type PostSummary = Pick<PostType, "id" | "title">;
 
 vi.mock("@entities/models/tag/service", () => ({
     tagService: {
@@ -36,7 +38,7 @@ const tags: TagType[] = [
     { id: "t1", name: "Tag1" } as TagType,
     { id: "t2", name: "Tag2" } as TagType,
 ];
-const posts: PostType[] = [{ id: "p1", title: "Post1" } as PostType];
+const posts: PostSummary[] = [{ id: "p1", title: "Post1" }];
 const postTags = [{ postId: "p1", tagId: "t1" }];
 
 beforeEach(() => {

@@ -1,5 +1,10 @@
 import { z, type ZodType } from "zod";
-import type { AuthorType, AuthorFormType, AuthorTypeUpdateInput } from "./types";
+import type {
+    AuthorType,
+    AuthorFormType,
+    AuthorTypeCreateInput,
+    AuthorTypeUpdateInput,
+} from "./types";
 import { createModelForm } from "@entities/core";
 
 export const {
@@ -11,7 +16,7 @@ export const {
 } = createModelForm<
     AuthorType,
     AuthorFormType,
-    AuthorTypeUpdateInput,
+    AuthorTypeCreateInput,
     AuthorTypeUpdateInput,
     [string[]]
 >({
@@ -39,13 +44,13 @@ export const {
         email: author.email ?? "",
         postIds,
     }),
-    toCreate: (form: AuthorFormType): AuthorTypeUpdateInput => {
-        const { postIds, ...values } = form;
+    toCreate: (form: AuthorFormType): AuthorTypeCreateInput => {
+        const { postIds, id: _id, ...values } = form;
         void postIds;
         return values;
     },
     toUpdate: (form: AuthorFormType): AuthorTypeUpdateInput => {
-        const { postIds, ...values } = form;
+        const { postIds, id: _id, ...values } = form;
         void postIds;
         return values;
     },
