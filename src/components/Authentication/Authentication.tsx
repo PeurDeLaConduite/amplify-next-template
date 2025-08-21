@@ -18,7 +18,6 @@ export default function Authentication() {
             if (!userId) throw new Error("userId manquant");
             try {
                 await userNameService.create({
-                    id: userId,
                     userName: formData.username,
                 });
             } catch (err) {
