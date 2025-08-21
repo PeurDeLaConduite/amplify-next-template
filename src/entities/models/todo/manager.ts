@@ -9,10 +9,10 @@ import {
     toTodoUpdate,
 } from "@entities/models/todo/form";
 import type { TodoModel, TodoFormType } from "@entities/models/todo/types";
-import type { CommentModel } from "@src/types/models/comment";
+import type { CommentType } from "@src/types/models/comment";
 
 type Id = string;
-type Extras = { comments: CommentModel[] };
+type Extras = { comments: CommentType[] };
 
 export function createTodoManager() {
     return createManager<TodoModel, TodoFormType, Id, Extras>({
