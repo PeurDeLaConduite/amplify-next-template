@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
+import { fetchAuthSession } from "aws-amplify/auth";
+import { getUserSub } from "@src/entities/core/auth";
 
 export function useCommentPermissions() {
     const [userId, setUserId] = useState<string | null>(null);
@@ -8,7 +9,7 @@ export function useCommentPermissions() {
     useEffect(() => {
         void (async () => {
             try {
-                const { userId } = await getCurrentUser();
+                const userId = await getUserSub();
                 setUserId(userId);
             } catch {
                 setUserId(null);

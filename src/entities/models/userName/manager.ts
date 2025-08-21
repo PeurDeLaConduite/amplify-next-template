@@ -1,8 +1,7 @@
-import { createManager } from "@entities/core";
+import { createManager, getUserSub } from "@entities/core";
 import { userNameService } from "@entities/models/userName/service";
 import { commentService } from "@entities/models/comment/service";
 import { syncManyToMany as syncNN } from "@entities/core/utils/syncManyToMany";
-import { getCurrentUser } from "aws-amplify/auth";
 import {
     initialUserNameForm,
     toUserNameForm,
@@ -33,7 +32,7 @@ export function createUserNameManager() {
             return (data ?? null) as UserNameType | null;
         },
         createEntity: async (form) => {
-            const { userId } = await getCurrentUser();
+            const userId = await getUserSub();
             const { data, errors } = await userNameService.create(
                 toUserNameCreate({ ...form, id: userId })
             );
