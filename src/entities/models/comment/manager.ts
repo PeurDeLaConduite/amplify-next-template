@@ -17,18 +17,26 @@ type Id = string;
 type Extras = { userNames: UserNameType[]; todos: TodoModel[]; posts: PostType[] };
 
 const initialCommentForm: CommentFormType = {
+    id: "",
     content: "",
     todoId: "",
     postId: "",
     userNameId: "",
+    todo: null,
+    post: null,
+    userName: null,
 };
 
 function toCommentForm(comment: CommentModel): CommentFormType {
     return {
+        id: comment.id ?? "",
         content: comment.content ?? "",
         todoId: comment.todoId ?? "",
         postId: comment.postId ?? "",
         userNameId: comment.userNameId ?? "",
+        todo: comment.todo ?? null,
+        post: comment.post ?? null,
+        userName: comment.userName ?? null,
     };
 }
 

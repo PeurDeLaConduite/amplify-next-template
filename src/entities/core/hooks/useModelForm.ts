@@ -52,7 +52,7 @@ export interface UseModelFormResult<F, E> {
 
     /** Enchaîne create/update (+ syncRelations) puis refresh/load */
     submit: () => Promise<void>;
-    reset: () => void;
+    reset: () => F;
 
     setForm: React.Dispatch<React.SetStateAction<F>>;
     setExtras: React.Dispatch<React.SetStateAction<E>>;
@@ -125,10 +125,11 @@ export default function useModelForm<
         setForm((prev) => ({ ...prev, ...partial }));
     }, []);
 
-    const reset = useCallback(() => {
+    const reset = useCallback((): F => {
         setForm(initialRef.current);
         setMode(initialMode);
         setError(null);
+        return initialRef.current;
     }, [initialMode]);
 
     const adoptInitial = useCallback((next: F, nextMode: FormMode = "edit") => {
