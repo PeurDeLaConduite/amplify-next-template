@@ -1,13 +1,13 @@
 // src/entities/models/userProfile/service.ts
 import { crudService } from "@entities/core";
 import type {
-    UserProfileTypeOmit,
+    UserProfileTypeCreateInput,
     UserProfileTypeUpdateInput,
 } from "@entities/models/userProfile/types";
 
 export const userProfileService = crudService<
     "UserProfile",
-    Omit<UserProfileTypeOmit, "id">,
+    UserProfileTypeCreateInput,
     UserProfileTypeUpdateInput & { id: string },
     { id: string },
     { id: string }
