@@ -28,6 +28,15 @@ export function usePostForm(post: PostType | null) {
     const modelForm = useModelForm<PostFormType, Extras>({
         initialForm: initialPostForm,
         initialExtras: { authors: [], tags: [], sections: [], posts: [] },
+
+        validate: (form) => {
+            if (!form.authorId) {
+                alert("Veuillez sélectionner un auteur.");
+                return false;
+            }
+            return true;
+        },
+
         create: async (form) => {
             const { tagIds, sectionIds, ...postInput } = form;
             void tagIds;
@@ -106,7 +115,7 @@ export function usePostForm(post: PostType | null) {
         })();
     }, [post, setForm, setMode]);
 
-    function syncTagM2M(tagId: string) {
+    function toggleTag(tagId: string) {
         setForm((prev) => ({
             ...prev,
             tagIds: prev.tagIds.includes(tagId)
@@ -115,7 +124,7 @@ export function usePostForm(post: PostType | null) {
         }));
     }
 
-    function syncSectionM2M(sectionId: string) {
+    function toggleSection(sectionId: string) {
         setForm((prev) => ({
             ...prev,
             sectionIds: prev.sectionIds.includes(sectionId)
@@ -162,7 +171,7 @@ export function usePostForm(post: PostType | null) {
         fetchPosts,
         selectById,
         removeById,
-        syncTagM2M,
-        syncSectionM2M,
+        toggleTag,
+        toggleSection,
     };
 }

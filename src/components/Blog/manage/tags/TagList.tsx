@@ -14,6 +14,8 @@ interface Props {
     onSave: () => void;
     onCancel: () => void;
     onDeleteById: (id: IdLike) => void;
+    editButtonLabel: string;
+    deleteButtonLabel: string;
 }
 
 function TagListInner({
@@ -23,8 +25,8 @@ function TagListInner({
     onSave,
     onCancel,
     onDeleteById,
-    editButtonlabel,
-    deleteButtonlabel,
+    editButtonLabel,
+    deleteButtonLabel,
 }: Props) {
     return (
         <GenericList<TagType>
@@ -54,8 +56,8 @@ function TagListInner({
             onSave={onSave}
             onCancel={onCancel}
             onDeleteById={onDeleteById}
-            editButtonlabel={editButtonlabel}
-            deleteButtonlabel={deleteButtonlabel}
+            editButtonLabel={editButtonLabel}
+            deleteButtonLabel={deleteButtonLabel}
         />
     );
 }

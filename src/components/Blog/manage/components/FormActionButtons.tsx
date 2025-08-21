@@ -14,6 +14,8 @@ interface FormActionButtonsProps {
     addButtonLabel?: string;
     className?: string;
     variant?: "no-Icon" | "normal";
+    editButtonLabel?: string;
+    deleteButtonLabel?: string;
 }
 
 export default function FormActionButtons({
@@ -27,8 +29,8 @@ export default function FormActionButtons({
     addButtonLabel = "Ajouter",
     className = "",
     variant = "normal",
-    editButtonlabel,
-    deleteButtonlabel,
+    editButtonLabel,
+    deleteButtonLabel,
 }: FormActionButtonsProps): React.ReactElement {
     if (isFormNew && editingId === null) {
         return (
@@ -91,13 +93,13 @@ export default function FormActionButtons({
                 onClick={onEdit}
                 className="!p-2 !h-8"
                 color="#1976d2"
-                label={editButtonlabel}
+                label={editButtonLabel}
                 size="small"
             />
             <DeleteButton
                 onClick={onDelete}
                 className="!p-2 !h-8"
-                label={deleteButtonlabel}
+                label={deleteButtonLabel}
                 size="small"
             />
         </div>

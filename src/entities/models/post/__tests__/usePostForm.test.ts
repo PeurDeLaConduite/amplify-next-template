@@ -50,8 +50,8 @@ describe("usePostForm", () => {
 
         act(() => {
             result.current.handleChange("title", "Titre");
-            result.current.syncTagM2M("tag1");
-            result.current.syncSectionM2M("section1");
+            result.current.syncM2MTag("tag1");
+            result.current.toggleSection("section1");
         });
 
         await act(async () => {
@@ -83,10 +83,10 @@ describe("usePostForm", () => {
         });
 
         act(() => {
-            result.current.syncTagM2M("tag1");
-            result.current.syncTagM2M("tag2");
-            result.current.syncSectionM2M("section1");
-            result.current.syncSectionM2M("section2");
+            result.current.syncM2MTag("tag1");
+            result.current.syncM2MTag("tag2");
+            result.current.toggleSection("section1");
+            result.current.toggleSection("section2");
         });
 
         await act(async () => {

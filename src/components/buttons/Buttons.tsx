@@ -37,7 +37,7 @@ export function EditButton({ onClick, label, className, color, size, sx = {} }: 
             className={className}
             variant="outlined"
             size={size}
-            sx={{ ...getEditButtonStyles(color), ...sx }}
+            sx={{ ...getEditButtonStyles(color), ...(sx as object) }}
         />
     );
 }
@@ -53,7 +53,7 @@ export function DeleteButton({ onClick, label, className, size, sx = {} }: Butto
             className={className}
             variant="outlined"
             size={size}
-            sx={{ ...deleteButtonStyles, ...sx }}
+            sx={{ ...deleteButtonStyles, ...(sx as object) }}
         />
     );
 }
@@ -171,7 +171,7 @@ export function PowerButton({ onClick, label, className, size, sx = {} }: Button
             className={className}
             variant="outlined"
             size={size}
-            sx={{ ...deleteButtonStyles, ...sx }}
+            sx={{ ...deleteButtonStyles, ...(sx as object) }}
         />
     );
 }

@@ -9,5 +9,13 @@ export async function syncPostTags(postId: string, targetTagIds: string[]) {
         targetTagIds,
         (tagId) => postTagService.create(postId, tagId),
         (tagId) => postTagService.delete(postId, tagId)
+
+export async function syncTagPosts(tagId: string, targetPostIds: string[]) {
+    const currentPostIds = await postTagService.listByChild(tagId);
+    await syncManyToMany(
+        currentPostIds,
+        targetPostIds,
+        (postId) => postTagService.create(postId, tagId),
+        (postId) => postTagService.delete(postId, tagId)
     );
 }
