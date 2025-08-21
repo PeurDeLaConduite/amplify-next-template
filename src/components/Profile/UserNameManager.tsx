@@ -15,7 +15,7 @@ const fields: (keyof UserNameFormType)[] = ["userName"];
 
 export default function UserNameManager() {
     const { user } = useAuthenticator();
-    const manager = useUserNameManager();
+    const manager = useUserNameManager(user?.userId ?? user?.username);
     const { refresh, form, isEditing, editingId } = manager;
 
     // ⚡ un seul hook pour auth-change + bus
