@@ -1,10 +1,10 @@
 import { client, crudService } from "@src/entities/core";
-import type { TodoCreateInput, TodoUpdateInput } from "@src/types/models/todo";
+import type { TodoTypeCreateInput, TodoTypeUpdateInput } from "@entities/models/todo/types";
 
 export const todoService = crudService<
     "Todo",
-    TodoCreateInput,
-    TodoUpdateInput & { id: string },
+    TodoTypeCreateInput,
+    TodoTypeUpdateInput & { id: string },
     { id: string },
     { id: string }
 >("Todo", {

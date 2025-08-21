@@ -1,16 +1,62 @@
 import { createManager } from "@entities/core";
-import { commentService } from "./service";
+import { commentService } from "@entities/models/comment/service";
 import { userNameService } from "@entities/models/userName/service";
 import { todoService } from "@entities/models/todo/service";
 import { postService } from "@entities/models/post/service";
-import { initialCommentForm, toCommentForm, toCommentCreate, toCommentUpdate } from "./form";
-import type { CommentType, CommentFormType } from "./types";
+import type {
+    CommentModel,
+    CommentFormType,
+    CommentCreateInput,
+    CommentUpdateInput,
+} from "@src/types/models/comment";
 import type { UserNameType } from "@entities/models/userName/types";
 import type { TodoModel } from "@src/types/models/todo";
 import type { PostType } from "@entities/models/post/types";
 
 type Id = string;
 type Extras = { userNames: UserNameType[]; todos: TodoModel[]; posts: PostType[] };
+
+const initialCommentForm: CommentFormType = {
+    id: "",
+    content: "",
+    todoId: "",
+    postId: "",
+    userNameId: "",
+    todo: null as unknown as CommentFormType["todo"],
+    post: null as unknown as CommentFormType["post"],
+    userName: null as unknown as CommentFormType["userName"],
+};
+
+function toCommentForm(comment: CommentModel): CommentFormType {
+    return {
+        id: comment.id ?? "",
+        content: comment.content ?? "",
+        todoId: comment.todoId ?? "",
+        postId: comment.postId ?? "",
+        userNameId: comment.userNameId ?? "",
+        todo: (comment.todo ?? null) as unknown as CommentFormType["todo"],
+        post: (comment.post ?? null) as unknown as CommentFormType["post"],
+        userName: (comment.userName ?? null) as unknown as CommentFormType["userName"],
+    };
+}
+
+function toCommentCreate(form: CommentFormType): CommentCreateInput {
+    return {
+        content: form.content,
+        todoId: form.todoId || undefined,
+        postId: form.postId || undefined,
+        userNameId: form.userNameId,
+    };
+}
+
+function toCommentUpdate(form: CommentFormType): CommentUpdateInput {
+    return {
+        content: form.content,
+        todoId: form.todoId || undefined,
+        postId: form.postId || undefined,
+        userNameId: form.userNameId,
+    } as CommentUpdateInput;
+}
 
 export function createCommentManager() {
     return createManager<CommentType, CommentFormType, Id, Extras>({
