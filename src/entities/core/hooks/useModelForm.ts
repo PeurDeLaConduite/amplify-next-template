@@ -127,6 +127,7 @@ export default function useModelForm<
 
     const reset = useCallback(() => {
         setForm(initialRef.current);
+        setMessage("Suppression effectué");
         setMode(initialMode);
         setError(null);
     }, [initialMode]);

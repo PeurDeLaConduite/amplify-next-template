@@ -23,6 +23,7 @@ module.exports = {
                 "app/**/loading.{ts,tsx}",
                 "app/**/not-found.{ts,tsx}",
                 "app/**/route.{ts,tsx}",
+                "app/**/amplify.{ts,tsx}",
             ],
             rules: { "import/no-unused-modules": "off" },
         },
