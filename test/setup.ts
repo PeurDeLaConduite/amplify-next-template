@@ -6,7 +6,7 @@ declare global {
 }
 
 globalThis.expect = expect;
-import "@testing-library/jest-dom";
+await import("@testing-library/jest-dom");
 
 export const server = setupServer();
 
