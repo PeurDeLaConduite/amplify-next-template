@@ -2,6 +2,7 @@ import React from "react";
 import type { Schema } from "@/amplify/data/resource";
 import { CommentWithTodoId } from "@/src/components/todo/useTodosWithComments";
 import CommentList from "@/src/components/todo/CommentList";
+import { DeleteButton, AddButton } from "@/src/components/buttons/Buttons";
 
 interface TodoListProps {
     todos: Schema["Todo"]["type"][];
@@ -37,18 +38,16 @@ export default function TodoList({
                         <div className="flex items-center justify-between">
                             <strong className="text-lg">{todo.content}</strong>
                             <div className="flex gap-2">
-                                <button
+                                <DeleteButton
                                     onClick={() => onDeleteTodo(todo.id)}
-                                    className="px-3 py-1 rounded-md bg-red-500 text-white hover:bg-red-600 text-sm transition"
-                                >
-                                    🗑️ Supprimer
-                                </button>
-                                <button
+                                    label="Supprimer"
+                                    className="text-sm"
+                                />
+                                <AddButton
                                     onClick={() => onAddComment(todo.id)}
-                                    className="px-3 py-1 rounded-md bg-green-500 text-white hover:bg-green-600 text-sm transition"
-                                >
-                                    💬 Ajouter un commentaire
-                                </button>
+                                    label="Ajouter un commentaire"
+                                    className="text-sm"
+                                />
                             </div>
                         </div>
                         {todoComments.length > 0 && (

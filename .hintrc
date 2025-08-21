@@ -1,8 +1,6 @@
 {
-  "extends": [
-    "development"
-  ],
-  "hints": {
-    "apple-touch-icons": "off"
-  }
+    "extends": ["development"],
+    "hints": {
+        "apple-touch-icons": "off",
+    },
 }

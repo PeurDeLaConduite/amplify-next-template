@@ -1,6 +1,6 @@
 import ActionButtons from "./buttons/ActionButtons";
 import { EditButton, DeleteButton } from "@components/buttons";
-
+import ButtonBase from "@components/buttons/ButtonBase";
 type IdLike = string | number;
 
 interface FormActionButtonsProps {
@@ -51,9 +51,48 @@ export default function FormActionButtons({
     }
 
     return (
-        <div className="flex gap-2 ">
-            <EditButton onClick={onEdit} className="!p-2 !h-8" color="#1976d2" label="Modifier" />
-            <DeleteButton onClick={onDelete} className="!p-2 !h-8" label="Supprimer" />
-        </div>
+        <>
+            <div className="flex gap-2 ">
+                <EditButton
+                    onClick={onEdit}
+                    className="!p-2 !h-8"
+                    color="#1976d2"
+                    label="Modifier"
+                />
+                <DeleteButton onClick={onDelete} className="!p-2 !h-8" label="Supprimer" />
+            </div>
+            <div className="flex gap-2 ">
+                <ButtonBase
+                    label="Modifier"
+                    onClick={onEdit}
+                    color={onClick() ? "primary" : "inherit"}
+                    variant={onClick() ? "contained" : "outlined"}
+                    sx={{
+                        fontWeight: onClick() ? 700 : 400,
+                        opacity: onClick() ? 1 : 0.7,
+                        borderColor: "#bbb",
+                        minHeight: 32,
+                        borderRadius: 2,
+                        fontSize: 14,
+                        transition: "all .15s",
+                    }}
+                />
+                <ButtonBase
+                    label="Supprimer"
+                    onClick={onDelete}
+                    color={onClick() ? "primary" : "inherit"}
+                    variant={onClick() ? "contained" : "outlined"}
+                    sx={{
+                        fontWeight: onClick() ? 700 : 400,
+                        opacity: onClick() ? 1 : 0.7,
+                        borderColor: "#bbb",
+                        minHeight: 32,
+                        borderRadius: 2,
+                        fontSize: 14,
+                        transition: "all .15s",
+                    }}
+                />
+            </div>
+        </>
     );
 }
