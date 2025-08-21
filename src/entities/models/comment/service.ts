@@ -1,10 +1,10 @@
 import { client, crudService } from "@src/entities/core";
-import type { CommentCreateInput, CommentUpdateInput } from "@src/types/models/comment";
+import type { CommentTypeCreateInput, CommentTypeUpdateInput } from "./types";
 
 export const commentService = crudService<
     "Comment",
-    CommentCreateInput,
-    CommentUpdateInput & { id: string },
+    CommentTypeCreateInput,
+    CommentTypeUpdateInput & { id: string },
     { id: string },
     { id: string }
 >("Comment", {
