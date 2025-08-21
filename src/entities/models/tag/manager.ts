@@ -5,6 +5,7 @@ import { syncManyToMany as syncNN } from "@entities/core/utils/syncManyToMany";
 import { tagService } from "./service";
 import { tagSchema, initialTagForm, toTagForm, toTagCreate, toTagUpdate } from "./form";
 import type { TagType, TagFormType } from "./types";
+import type { ZodObject, ZodRawShape } from "zod";
 
 type Id = string;
 type Extras = { posts: { id: string; title?: string }[] };
@@ -78,12 +79,23 @@ export function createTagManager() {
                 (postId) => postTagService.delete(postId, id)
             );
         },
-        validateField: async (name, value, ctx) => {
+        validateField: async <K extends keyof TagFormType>(
+            name: K,
+            value: TagFormType[K],
+            ctx?: {
+                form?: TagFormType;
+                entities?: TagType[];
+                editingId?: Id;
+                extras?: Extras;
+            }
+        ) => {
             if (name === "name") return validateName(value as string, ctx);
-            const schema = (tagSchema as any).pick({ [name]: true });
+            const schema = (tagSchema as unknown as ZodObject<ZodRawShape>).pick({
+                [name]: true,
+            } as Record<keyof TagFormType, true>);
             const result = schema.safeParse({ [name]: value });
             if (!result.success) {
-                return result.error.errors[0]?.message ?? "Champ invalide";
+                return result.error.issues[0]?.message ?? "Champ invalide";
             }
             return null;
         },
@@ -104,4 +116,3 @@ export function createTagManager() {
         },
     });
 }
-
