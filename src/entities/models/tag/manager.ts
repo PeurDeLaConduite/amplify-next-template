@@ -5,7 +5,6 @@ import { syncManyToMany as syncNN } from "@entities/core/utils/syncManyToMany";
 import { tagService } from "./service";
 import { tagSchema, initialTagForm, toTagForm, toTagCreate, toTagUpdate } from "./form";
 import type { TagType, TagFormType } from "./types";
-import type { ZodObject, ZodRawShape } from "zod";
 
 type Id = string;
 type Extras = { posts: { id: string; title?: string }[] };
@@ -113,7 +112,7 @@ export function createTagManager() {
             }
         ) => {
             if (name === "name") return validateName(value as string, ctx);
-            const schema = (tagSchema as unknown as ZodObject<ZodRawShape>).pick({
+            const schema = tagSchema.pick({
                 [name]: true,
             } as Record<keyof TagFormType, true>);
             const result = schema.safeParse({ [name]: value });
