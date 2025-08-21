@@ -5,11 +5,9 @@ import { syncManyToMany as syncNN } from "@entities/core/utils/syncManyToMany";
 import { tagService } from "./service";
 import { tagSchema, initialTagForm, toTagForm, toTagCreate, toTagUpdate } from "./form";
 import type { TagType, TagFormType } from "./types";
-import type { PostType } from "@entities/models/post/types";
+import type { PostSummary } from "@entities/models/post/types";
 
 type Id = string;
-type PostSummary = Pick<PostType, "id" | "title">;
-
 type Extras = { posts: PostSummary[] };
 
 export function createTagManager() {
