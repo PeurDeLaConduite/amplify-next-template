@@ -7,7 +7,7 @@ import { postTagService } from "@entities/relations/postTag/service";
 import { type TagFormType, type TagType } from "@entities/models/tag/types";
 import { type PostType } from "@entities/models/post/types";
 import { initialTagForm, toTagForm } from "@entities/models/tag/form";
-import { syncManyToMany } from "@entities/core/utils/syncManyToMany";
+import { syncTagPosts } from "@entities/relations/postTag/sync";
 
 // Pivot léger côté UI
 type PostTagLink = { postId: string; tagId: string };
@@ -45,17 +45,7 @@ export function useTagForm() {
             return data.id;
         },
         syncRelations: async (tagId, form) => {
-            // 🔁 compare des IDs (postIds actuels vs désirés)
-            const currentPostIds = await postTagService.listByChild(tagId); // idéal: string[]
-            // Si ton service renvoie des objets, décommente la normalisation :
-            // const currentPostIds = (await postTagService.listByChild(tagId)).map(x => x.postId);
-
-            await syncManyToMany(
-                currentPostIds,
-                form.postIds,
-                (postId) => postTagService.create(postId, tagId),
-                (postId) => postTagService.delete(postId, tagId)
-            );
+            await syncTagPosts(tagId, form.postIds);
         },
     });
 
