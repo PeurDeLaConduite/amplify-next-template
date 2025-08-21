@@ -4,8 +4,11 @@ import type { Schema } from "@/amplify/data/resource";
 export type BaseModel<K extends keyof Schema> = Schema[K]["type"];
 
 export type CreateOmit<K extends keyof Schema> = Omit<BaseModel<K>, "createdAt" | "updatedAt">;
+<<<<<<< Updated upstream
 
 export type CreateInput<K extends keyof Schema> = CreateOmit<K>;
+=======
+>>>>>>> Stashed changes
 
 export type UpdateInput<K extends keyof Schema> = Partial<CreateOmit<K>>;
 
