@@ -3,11 +3,12 @@ import { createModelForm } from "@entities/core";
 import {
     type TagType,
     type TagFormType,
+    type TagTypeCreateInput,
     type TagTypeUpdateInput,
 } from "@entities/models/tag/types";
 
 export const tagSchema = z.object({
-    id: z.string(),
+    id: z.string().optional().default(""),
     name: z.string().min(1),
     postIds: z.array(z.string()),
 });
@@ -17,7 +18,7 @@ export const {
     toForm: toTagForm,
     toCreate: toTagCreate,
     toUpdate: toTagUpdate,
-} = createModelForm<TagType, TagFormType, TagTypeUpdateInput, TagTypeUpdateInput, [string[]]>({
+} = createModelForm<TagType, TagFormType, TagTypeCreateInput, TagTypeUpdateInput, [string[]]>({
     zodSchema: tagSchema,
     initialForm: {
         id: "",
@@ -30,9 +31,10 @@ export const {
         postIds,
     }),
 
-    toCreate: (form: TagFormType): TagTypeUpdateInput => {
-        const { postIds, ...values } = form;
+    toCreate: (form: TagFormType): TagTypeCreateInput => {
+        const { postIds, id: _id, ...values } = form;
         void postIds;
+        void _id;
         return values;
     },
     toUpdate: (form: TagFormType): TagTypeUpdateInput => {
