@@ -4,10 +4,10 @@ import { userNameService } from "@entities/models/userName/service";
 import { todoService } from "@entities/models/todo/service";
 import { postService } from "@entities/models/post/service";
 import type {
-    CommentModel,
+    CommentType,
     CommentFormType,
-    CommentCreateInput,
-    CommentUpdateInput,
+    CommentTypeCreateInput,
+    CommentTypeUpdateInput,
 } from "@src/types/models/comment";
 import type { UserNameType } from "@entities/models/userName/types";
 import type { TodoModel } from "@src/types/models/todo";
@@ -22,25 +22,19 @@ const initialCommentForm: CommentFormType = {
     todoId: "",
     postId: "",
     userNameId: "",
-    todo: null as unknown as CommentFormType["todo"],
-    post: null as unknown as CommentFormType["post"],
-    userName: null as unknown as CommentFormType["userName"],
 };
 
-function toCommentForm(comment: CommentModel): CommentFormType {
+function toCommentForm(comment: CommentType): CommentFormType {
     return {
         id: comment.id ?? "",
         content: comment.content ?? "",
         todoId: comment.todoId ?? "",
         postId: comment.postId ?? "",
         userNameId: comment.userNameId ?? "",
-        todo: (comment.todo ?? null) as unknown as CommentFormType["todo"],
-        post: (comment.post ?? null) as unknown as CommentFormType["post"],
-        userName: (comment.userName ?? null) as unknown as CommentFormType["userName"],
     };
 }
 
-function toCommentCreate(form: CommentFormType): CommentCreateInput {
+function toCommentCreate(form: CommentFormType): CommentTypeCreateInput {
     return {
         content: form.content,
         todoId: form.todoId || undefined,
@@ -49,13 +43,13 @@ function toCommentCreate(form: CommentFormType): CommentCreateInput {
     };
 }
 
-function toCommentUpdate(form: CommentFormType): CommentUpdateInput {
+function toCommentUpdate(form: CommentFormType): CommentTypeUpdateInput {
     return {
         content: form.content,
         todoId: form.todoId || undefined,
         postId: form.postId || undefined,
         userNameId: form.userNameId,
-    } as CommentUpdateInput;
+    } as CommentTypeUpdateInput;
 }
 
 export function createCommentManager() {
