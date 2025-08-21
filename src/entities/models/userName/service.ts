@@ -8,7 +8,7 @@ import type {
 // ✅ Lecture en public (API key), écritures avec User Pool
 export const userNameService = crudService<
     "UserName",
-    UserNameTypeCreateInput,
+    UserNameTypeCreateInput & { id: string },
     UserNameTypeUpdateInput & { id: string },
     { id: string },
     { id: string }
