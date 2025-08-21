@@ -15,7 +15,8 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ className }) => {
     const { user, signOut } = useAuthenticator();
-    const { form, refresh } = useUserNameManager();
+    const sub = user?.userId ?? user?.username;
+    const { form, refresh } = useUserNameManager(sub);
     const { userName } = form;
 
     const [showModal, setShowModal] = useState(false);
