@@ -13,6 +13,7 @@ De nouvelles étapes nécessaires peuvent être ajoutées au fur et à mesure.
 ## 2. Fabrique générique
 
 - [x] Créer `src/entities/core/createManager.ts` (gestion état local + services + flags)
+- [x] Conserver un objet `state` unique et notifications immutables
 
 ---
 
