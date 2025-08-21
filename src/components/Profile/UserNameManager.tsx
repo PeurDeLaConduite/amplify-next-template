@@ -25,13 +25,16 @@ export default function UserNameManager() {
         onAuthChange: true,
     });
 
-    const handleChange = <K extends keyof UserNameFormType>(field: K, value: UserNameFormType[K]) => {
+    const handleChange = <K extends keyof UserNameFormType>(
+        field: K,
+        value: UserNameFormType[K]
+    ) => {
         manager.updateField(field, value);
     };
 
     const submit = async () => {
         if (isEditing && editingId) {
-            await manager.updateEntity(editingId, form, { form });
+            await manager.updateEntity(editingId, form);
         } else {
             const id = await manager.createEntity(form);
             manager.enterEdit(id);
@@ -47,7 +50,10 @@ export default function UserNameManager() {
         manager.patchForm(next);
     };
 
-    const saveField = async <K extends keyof UserNameFormType>(field: K, value: UserNameFormType[K]) => {
+    const saveField = async <K extends keyof UserNameFormType>(
+        field: K,
+        value: UserNameFormType[K]
+    ) => {
         manager.updateField(field, value);
         await submit();
     };
