@@ -5,13 +5,18 @@ import type {
     UserNameTypeUpdateInput,
 } from "@entities/models/userName/types";
 
-// ✅ Lecture et écriture privées via User Pool
-export const userNameService = crudService<
+// ✅ Lecture publique (API Key ou User Pool) & écriture via User Pool
+const base = crudService<
     "UserName",
     UserNameTypeCreateInput & { id: string },
     UserNameTypeUpdateInput & { id: string },
     { id: string },
     { id: string }
 >("UserName", {
-    auth: { read: "userPool", write: "userPool" },
+    auth: { read: ["userPool", "apiKey"], write: "userPool" },
 });
+
+export const userNameService = {
+    ...base,
+    defaultSelection: ["id", "userName"] as const,
+};
