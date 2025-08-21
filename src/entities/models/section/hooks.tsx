@@ -6,7 +6,7 @@ import { sectionPostService } from "@entities/relations/sectionPost/service";
 import { initialSectionForm, toSectionForm } from "@entities/models/section/form";
 import { type SectionFormTypes, type SectionType } from "@entities/models/section/types";
 import { type PostType } from "@entities/models/post/types";
-import { syncSection2Posts } from "../../relations/sectionPost";
+import { syncSection2Posts } from "@entities/relations/sectionPost";
 
 type Extras = { posts: PostType[]; sections: SectionType[] };
 

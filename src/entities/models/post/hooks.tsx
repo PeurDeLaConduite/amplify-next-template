@@ -12,7 +12,6 @@ import { type PostFormType, type PostType } from "@entities/models/post/types";
 import { type AuthorType } from "@entities/models/author/types";
 import { type TagType } from "@entities/models/tag/types";
 import { type SectionType } from "@entities/models/section/types";
-import { syncManyToMany } from "@entities/core/utils/syncManyToMany";
 import { syncPost2Tags } from "@entities/relations/postTag";
 import { syncPost2Sections } from "@entities/relations/sectionPost";
 interface Extras extends Record<string, unknown> {
