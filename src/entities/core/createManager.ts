@@ -311,13 +311,13 @@ export function createManager<E, F, Id = string, Extras = Record<string, unknown
             return loadingExtras;
         },
         get errorList() {
-            return errorList as Error | null;
+            return errorList;
         },
         get errorEntity() {
-            return errorEntity as Error | null;
+            return errorEntity;
         },
         get errorExtras() {
-            return errorExtras as Error | null;
+            return errorExtras;
         },
         get savingCreate() {
             return savingCreate;
