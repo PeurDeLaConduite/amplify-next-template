@@ -31,8 +31,8 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
         form,
         extras: { authors, tags, sections },
         handleChange,
-        toggleTag,
-        toggleSection,
+        syncTagM2M,
+        syncSectionM2M,
     } = manager;
 
     const { handleSourceFocus, handleManualEdit } = useAutoGenFields({
@@ -170,7 +170,7 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
                             <input
                                 type="checkbox"
                                 checked={form.tagIds.includes(tag.id)}
-                                onChange={() => toggleTag(tag.id)}
+                                onChange={() => syncTagM2M(tag.id)}
                             />
                             <span className="ml-2">{tag.name}</span>
                         </label>
@@ -186,7 +186,7 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
                             <input
                                 type="checkbox"
                                 checked={form.sectionIds.includes(section.id)}
-                                onChange={() => toggleSection(section.id)}
+                                onChange={() => syncSectionM2M(section.id)}
                             />
                             <span className="ml-2">{section.title}</span>
                             <span className="ml-2">ordre : {section.order}</span>

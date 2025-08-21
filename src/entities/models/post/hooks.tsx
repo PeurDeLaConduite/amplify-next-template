@@ -119,7 +119,7 @@ export function usePostForm(post: PostType | null) {
         })();
     }, [post, setForm, setMode]);
 
-    function toggleTag(tagId: string) {
+    function syncTagM2M(tagId: string) {
         setForm((prev) => ({
             ...prev,
             tagIds: prev.tagIds.includes(tagId)
@@ -128,7 +128,7 @@ export function usePostForm(post: PostType | null) {
         }));
     }
 
-    function toggleSection(sectionId: string) {
+    function syncSectionM2M(sectionId: string) {
         setForm((prev) => ({
             ...prev,
             sectionIds: prev.sectionIds.includes(sectionId)
@@ -175,7 +175,7 @@ export function usePostForm(post: PostType | null) {
         fetchPosts,
         selectById,
         removeById,
-        toggleTag,
-        toggleSection,
+        syncTagM2M,
+        syncSectionM2M,
     };
 }
