@@ -3,7 +3,7 @@
 import React from "react";
 import { Authenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
-import { signUp } from "aws-amplify/auth";
+import { getCurrentUser, signIn, signUp } from "aws-amplify/auth";
 import { configureI18n, formFields } from "@entities/core";
 import { userNameService } from "@src/entities/models/userName";
 
@@ -13,14 +13,19 @@ configureI18n();
 export default function Authentication() {
     const services = {
         async handleSignUp(formData: Parameters<typeof signUp>[0]) {
-            const result = await signUp(formData);
-            const { userId } = result;
-            if (!userId) throw new Error("userId manquant");
+            return signUp(formData);
+        },
+        async handleSignIn(formData: Parameters<typeof signIn>[0]) {
+            const result = await signIn(formData);
             try {
-                await userNameService.create({
-                    id: userId,
-                    userName: formData.username,
-                });
+                const current = await getCurrentUser();
+                const id = current.userId ?? (current as any).userSub;
+                if (!id) throw new Error("userId manquant");
+                const { data } = await userNameService.get({ id });
+                if (!data) {
+                    const userName = (formData as any).username ?? (formData as any).email;
+                    await userNameService.create({ id, userName });
+                }
             } catch (err) {
                 console.error("Erreur création pseudo", err);
             }
