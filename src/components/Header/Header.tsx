@@ -21,11 +21,8 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
     const { userName } = form;
 
     // ✅ wrapper: recharge le FORM (self) quand on rafraîchit
-<<<<<<< Updated upstream
-    const refreshSelf = React.useCallback(async () => {
-=======
     const refreshSelf = useCallback(async () => {
->>>>>>> Stashed changes
+
         try {
             const sub = user?.userId;
             await manager.loadEntityById(sub);
