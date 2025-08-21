@@ -13,7 +13,8 @@ import { type AuthorType } from "@entities/models/author/types";
 import { type TagType } from "@entities/models/tag/types";
 import { type SectionType } from "@entities/models/section/types";
 import { syncManyToMany } from "@entities/core/utils/syncManyToMany";
-
+import { syncPost2Tags } from "@entities/relations/postTag";
+import { syncPost2Sections } from "@entities/relations/sectionPost";
 interface Extras extends Record<string, unknown> {
     authors: AuthorType[];
     tags: TagType[];
@@ -65,23 +66,9 @@ export function usePostForm(post: PostType | null) {
             return data.id;
         },
         syncRelations: async (id, form) => {
-            const [currentTagIds, currentSectionIds] = await Promise.all([
-                postTagService.listByParent(id),
-                sectionPostService.listByChild(id),
-            ]);
             await Promise.all([
-                syncManyToMany(
-                    currentTagIds,
-                    form.tagIds,
-                    (tagId) => postTagService.create(id, tagId),
-                    (tagId) => postTagService.delete(id, tagId)
-                ),
-                syncManyToMany(
-                    currentSectionIds,
-                    form.sectionIds,
-                    (sectionId) => sectionPostService.create(sectionId, id),
-                    (sectionId) => sectionPostService.delete(sectionId, id)
-                ),
+                syncPost2Tags(id, form.tagIds),
+                syncPost2Sections(id, form.sectionIds),
             ]);
         },
     });

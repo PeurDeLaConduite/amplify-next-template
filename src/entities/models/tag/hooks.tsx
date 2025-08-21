@@ -7,7 +7,7 @@ import { postTagService } from "@entities/relations/postTag/service";
 import { type TagFormType, type TagType } from "@entities/models/tag/types";
 import { type PostType } from "@entities/models/post/types";
 import { initialTagForm, toTagForm } from "@entities/models/tag/form";
-import { syncTagPosts } from "@entities/relations/postTag/sync";
+import { syncTag2Posts } from "@entities/relations/postTag/sync";
 
 // Pivot léger côté UI
 type PostTagLink = { postId: string; tagId: string };
@@ -45,7 +45,7 @@ export function useTagForm() {
             return data.id;
         },
         syncRelations: async (tagId, form) => {
-            await syncTagPosts(tagId, form.postIds);
+            await syncTag2Posts(tagId, form.postIds);
         },
     });
 

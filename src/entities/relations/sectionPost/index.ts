@@ -1,2 +1,3 @@
 export * from "./types";
-export { sectionPostService } from "./service";
+export * from "./service";
+export * from "./sync";

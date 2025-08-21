@@ -6,7 +6,7 @@ import { sectionPostService } from "@entities/relations/sectionPost/service";
 import { initialSectionForm, toSectionForm } from "@entities/models/section/form";
 import { type SectionFormTypes, type SectionType } from "@entities/models/section/types";
 import { type PostType } from "@entities/models/post/types";
-import { syncManyToMany } from "@entities/core/utils/syncManyToMany";
+import { syncSection2Posts } from "../../relations/sectionPost";
 
 type Extras = { posts: PostType[]; sections: SectionType[] };
 
@@ -39,15 +39,8 @@ export function useSectionForm(section: SectionType | null) {
             return data.id;
         },
         syncRelations: async (id, form) => {
-            const [currentPostIds] = await Promise.all([sectionPostService.listByParent(id)]);
-            await Promise.all([
-                syncManyToMany(
-                    currentPostIds,
-                    form.postIds,
-                    (postId) => sectionPostService.create(id, postId),
-                    (postId) => sectionPostService.delete(id, postId)
-                ),
-            ]);
+            // 🔗 Section ↔ Post (via createM2MSync)
+            await syncSection2Posts(id, form.postIds);
         },
     });
 

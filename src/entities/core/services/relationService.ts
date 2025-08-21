@@ -6,7 +6,7 @@ type AmplifyOpOptions = { authMode?: AuthMode } & Record<string, unknown>;
 
 type ModelKey = keyof typeof client.models;
 type BaseModel<K extends ModelKey> = Schema[K]["type"];
-type CreateData<K extends ModelKey> = Omit<BaseModel<K>, "id" | "createdAt" | "updatedAt">;
+type CreateData<K extends ModelKey> = Omit<BaseModel<K>, "createdAt" | "updatedAt">;
 interface RelationCrudModel<K extends ModelKey> {
     create: (
         data: Partial<CreateData<K>>,

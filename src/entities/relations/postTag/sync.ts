@@ -1,12 +1,13 @@
-import { syncManyToMany } from "@entities/core/utils/syncManyToMany";
+// src/entities/relations/postTag/sync.ts
+import { createM2MSync } from "@entities/core/utils/createM2MSync";
 import { postTagService } from "./service";
 
-export async function syncTagPosts(tagId: string, targetPostIds: string[]) {
-    const currentPostIds = await postTagService.listByChild(tagId);
-    await syncManyToMany(
-        currentPostIds,
-        targetPostIds,
-        (postId) => postTagService.create(postId, tagId),
-        (postId) => postTagService.delete(postId, tagId)
-    );
-}
+// postTagService doit venir de:
+// relationService("PostTag", "postId", "tagId")
+
+export const {
+    /** Pour un TAG donné, synchroniser ses POSTS */
+    syncByChild: syncTag2Posts,
+    /** Pour un POST donné, synchroniser ses TAGS */
+    syncByParent: syncPost2Tags,
+} = createM2MSync(postTagService);
