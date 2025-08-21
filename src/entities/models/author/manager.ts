@@ -9,7 +9,7 @@ import {
     toAuthorUpdate,
 } from "@entities/models/author/form";
 import type { AuthorType, AuthorFormType } from "@entities/models/author/types";
-import type { PostType, PostTypeUpdateInput } from "@entities/models/post/types";
+import type { PostType } from "@entities/models/post/types";
 
 type Id = string;
 type Extras = { posts: PostType[] };
@@ -67,12 +67,12 @@ export function createAuthorManager() {
                     postService.update({
                         id: postId,
                         authorId: id,
-                    } as PostTypeUpdateInput & { id: string }),
+                    }),
                 (postId) =>
                     postService.update({
                         id: postId,
                         authorId: null,
-                    } as PostTypeUpdateInput & { id: string })
+                    })
             );
         },
     });
