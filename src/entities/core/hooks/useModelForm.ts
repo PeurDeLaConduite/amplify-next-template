@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 export type FormMode = "create" | "edit";
 // export type FieldKey<T> = keyof T & string;
 export type FieldKey<T> = Extract<keyof T, string>;
-export type FieldValue<T> = T[FieldKey<T>];
+export type FieldValue<T> = Extract<T[FieldKey<T>], string | number | boolean>;
 export interface UseModelFormOptions<F extends object, E = Record<string, unknown>> {
     initialForm: F;
     initialExtras?: E;
