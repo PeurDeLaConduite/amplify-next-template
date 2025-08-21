@@ -7,5 +7,7 @@ export type CommentCreateInput = {
     postId?: string;
     userNameId: string;
 };
-export type CommentUpdateInput = UpdateInput<"Comment">;
+export type CommentUpdateInput = Omit<UpdateInput<"Comment">, "userNameId"> & {
+    userNameId?: string | null;
+};
 export type CommentFormType = ModelForm<"Comment">;
