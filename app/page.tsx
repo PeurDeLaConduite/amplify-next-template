@@ -16,8 +16,8 @@ export default function TodosPublicPage() {
                 authMode: "apiKey", // 👈 force l'accès public même sans connexion
             })
             .subscribe({
-                next: ({ items }) => setTodos(items),
-                error: (err) => console.error("observeQuery error", err),
+                next: ({ items }: { items: Schema["Todo"]["type"][] }) => setTodos(items),
+                error: (err: unknown) => console.error("observeQuery error", err),
             });
 
         return () => sub.unsubscribe();
