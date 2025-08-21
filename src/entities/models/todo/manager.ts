@@ -10,11 +10,17 @@ import type {
 type Id = string;
 
 const initialTodoForm: TodoFormType = {
+    id: "",
     content: "",
+    comments: [] as unknown as TodoModel["comments"],
 };
 
 function toTodoForm(todo: TodoModel): TodoFormType {
-    return { content: todo.content ?? "" };
+    return {
+        id: todo.id ?? "",
+        content: todo.content ?? "",
+        comments: todo.comments ?? ([] as unknown as TodoModel["comments"]),
+    };
 }
 
 function toTodoCreate(form: TodoFormType): TodoCreateInput {
