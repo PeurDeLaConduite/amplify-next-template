@@ -1,7 +1,7 @@
 // src/entities/models/userProfile/manager.ts
 import { createManager } from "@entities/core";
 import { userProfileService } from "@entities/models/userProfile/service";
-import { getUserSub } from "@entities/core/auth/getUserSub";
+import { tryGetUserSub } from "@entities/core/auth/getUserSub";
 import {
     initialUserProfileForm,
     toUserProfileForm,
@@ -18,7 +18,7 @@ export function createUserProfileManager() {
 
         // 🔒 liste "self-only" : renvoie au plus 1 item (moi)
         listEntities: async () => {
-            const sub = await getUserSub().catch(() => null);
+            const sub = await tryGetUserSub();
             if (!sub) return { items: [] };
             const { data } = await userProfileService.get({ id: sub });
             return { items: data ? [data as UserProfileType] : [] };
@@ -26,7 +26,7 @@ export function createUserProfileManager() {
 
         // 🔒 getEntityById "self-only" : refuse tout id ≠ sub
         getEntityById: async (idArg) => {
-            const sub = await getUserSub().catch(() => null);
+            const sub = await tryGetUserSub();
             if (!sub) return null;
             if (idArg && idArg !== sub) return null;
             const { data } = await userProfileService.get({ id: sub });
@@ -35,7 +35,8 @@ export function createUserProfileManager() {
 
         // 🆕 create : id = sub
         createEntity: async (form) => {
-            const sub = await getUserSub();
+            const sub = await tryGetUserSub();
+            if (!sub) throw new Error("User not authenticated");
             const { errors } = await userProfileService.create(
                 toUserProfileCreate({ ...form, id: sub })
             );
@@ -45,7 +46,8 @@ export function createUserProfileManager() {
 
         // ♻️ update avec upsert défensif (évite ConditionalCheckFailed)
         updateEntity: async (id, patch, { form }) => {
-            const sub = await getUserSub();
+            const sub = await tryGetUserSub();
+            if (!sub) throw new Error("User not authenticated");
             if (id !== sub) throw new Error("Forbidden: cannot edit another profile");
             const { data: existing } = await userProfileService.get({ id: sub });
             if (!existing) {
@@ -64,7 +66,8 @@ export function createUserProfileManager() {
 
         // 🔒 delete "self-only"
         deleteById: async (id) => {
-            const sub = await getUserSub();
+            const sub = await tryGetUserSub();
+            if (!sub) throw new Error("User not authenticated");
             if (id !== sub) throw new Error("Forbidden: cannot delete another profile");
             await userProfileService.delete({ id: sub });
         },
