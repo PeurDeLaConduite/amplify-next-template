@@ -47,10 +47,11 @@ export const {
     toCreate: (form: AuthorFormType): AuthorTypeCreateInput => {
         const { postIds, id: _id, ...values } = form;
         void postIds;
+        void _id;
         return values;
     },
     toUpdate: (form: AuthorFormType): AuthorTypeUpdateInput => {
-        const { postIds, id: _id, ...values } = form;
+        const { postIds, ...values } = form;
         void postIds;
         return values;
     },

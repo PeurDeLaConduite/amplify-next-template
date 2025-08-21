@@ -32,8 +32,8 @@ export function createAuthorManager() {
         },
         updateEntity: async (id, data, { form }) => {
             const { errors } = await authorService.update({
-                id,
                 ...toAuthorUpdate({ ...form, ...data }),
+                id,
             });
             if (errors?.length) throw new Error(errors[0].message);
         },
