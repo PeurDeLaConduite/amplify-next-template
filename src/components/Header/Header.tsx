@@ -1,7 +1,7 @@
 // src/components/layout/Header.tsx
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import { PowerButton } from "@src/components/buttons";
@@ -21,7 +21,11 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
     const { userName } = form;
 
     // ✅ wrapper: recharge le FORM (self) quand on rafraîchit
+<<<<<<< Updated upstream
     const refreshSelf = React.useCallback(async () => {
+=======
+    const refreshSelf = useCallback(async () => {
+>>>>>>> Stashed changes
         try {
             const sub = user?.userId;
             await manager.loadEntityById(sub);
