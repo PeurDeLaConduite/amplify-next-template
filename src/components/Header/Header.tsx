@@ -8,26 +8,33 @@ import { PowerButton } from "@src/components/buttons";
 import { useUserNameManager } from "@entities/models/userName";
 import UserNameModal from "@src/components/Profile/UserNameModal";
 import { useUserNameRefresh } from "@entities/models/userName/useUserNameRefresh";
-
+import { getUserSub } from "@entities/core/auth/getUserSub";
 interface HeaderProps {
     className?: string;
 }
 
 const Header: React.FC<HeaderProps> = ({ className }) => {
+    const [showModal, setShowModal] = useState(false);
     const { user, signOut } = useAuthenticator();
-    const sub = user?.userId ?? user?.username;
-    const { form, refresh } = useUserNameManager(sub);
+    const manager = useUserNameManager();
+    const { form } = manager;
     const { userName } = form;
 
-    const [showModal, setShowModal] = useState(false);
+    // ✅ wrapper: recharge le FORM (self) quand on rafraîchit
+    const refreshSelf = React.useCallback(async () => {
+        try {
+            const sub = await getUserSub();
+            await manager.loadEntityById(sub);
+        } catch {
+            // pas connecté: ignore
+        }
+    }, [manager]);
 
-    // ⚡ un seul hook pour tout gérer
     useUserNameRefresh({
-        refresh,
-        enabled: Boolean(user), // on écoute le bus seulement si connecté
-        onAuthChange: true, // et on refresh aussi au login/logout
+        refresh: refreshSelf,
+        enabled: Boolean(user),
+        onAuthChange: true,
     });
-
     // Ouvrir/fermer le modal selon présence du userName
     useEffect(() => {
         if (user && !userName) setShowModal(true);

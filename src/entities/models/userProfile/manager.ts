@@ -1,6 +1,7 @@
+// src/entities/models/userProfile/manager.ts
 import { createManager } from "@entities/core";
 import { userProfileService } from "@entities/models/userProfile/service";
-import { getCurrentUser } from "aws-amplify/auth";
+import { getUserSub } from "@entities/core/auth/getUserSub";
 import {
     initialUserProfileForm,
     toUserProfileForm,
@@ -12,54 +13,63 @@ import type { UserProfileType, UserProfileFormType } from "@entities/models/user
 type Id = string;
 
 export function createUserProfileManager() {
-    let manager: ReturnType<typeof createManager<UserProfileType, UserProfileFormType, Id>>;
-
-    const listEntities = async () => {
-        const id = manager.getState().editingId;
-        if (!id) return { items: [] };
-        const { data } = await userProfileService.get({ id });
-        return { items: data ? [data as UserProfileType] : [] };
-    };
-
-    manager = createManager<UserProfileType, UserProfileFormType, Id>({
+    return createManager<UserProfileType, UserProfileFormType, Id>({
         getInitialForm: () => ({ ...initialUserProfileForm }),
-        listEntities,
-        getEntityById: async (id) => {
-            const { data } = await userProfileService.get({ id });
+
+        // 🔒 liste "self-only" : renvoie au plus 1 item (moi)
+        listEntities: async () => {
+            const sub = await getUserSub().catch(() => null);
+            if (!sub) return { items: [] };
+            const { data } = await userProfileService.get({ id: sub });
+            return { items: data ? [data as UserProfileType] : [] };
+        },
+
+        // 🔒 getEntityById "self-only" : refuse tout id ≠ sub
+        getEntityById: async (idArg) => {
+            const sub = await getUserSub().catch(() => null);
+            if (!sub) return null;
+            if (idArg && idArg !== sub) return null;
+            const { data } = await userProfileService.get({ id: sub });
             return (data ?? null) as UserProfileType | null;
         },
+
+        // 🆕 create : id = sub
         createEntity: async (form) => {
-            const { userId } = await getCurrentUser();
-            const formWithId = { ...form, id: userId };
-            const { errors } = await userProfileService.create(toUserProfileCreate(formWithId));
+            const sub = await getUserSub();
+            const { errors } = await userProfileService.create(
+                toUserProfileCreate({ ...form, id: sub })
+            );
             if (errors?.length) throw new Error(errors[0].message);
-            return userId;
+            return sub;
         },
-        updateEntity: async (id, data, { form }) => {
+
+        // ♻️ update avec upsert défensif (évite ConditionalCheckFailed)
+        updateEntity: async (id, patch, { form }) => {
+            const sub = await getUserSub();
+            if (id !== sub) throw new Error("Forbidden: cannot edit another profile");
+            const { data: existing } = await userProfileService.get({ id: sub });
+            if (!existing) {
+                const { errors } = await userProfileService.create(
+                    toUserProfileCreate({ ...form, id: sub })
+                );
+                if (errors?.length) throw new Error(errors[0].message);
+                return;
+            }
             const { errors } = await userProfileService.update({
-                id,
-                ...toUserProfileUpdate({ ...form, ...data }),
+                id: sub,
+                ...toUserProfileUpdate({ ...form, ...patch }),
             });
             if (errors?.length) throw new Error(errors[0].message);
         },
+
+        // 🔒 delete "self-only"
         deleteById: async (id) => {
-            await userProfileService.delete({ id });
+            const sub = await getUserSub();
+            if (id !== sub) throw new Error("Forbidden: cannot delete another profile");
+            await userProfileService.delete({ id: sub });
         },
+
+        // mapping entity -> form
         toForm: toUserProfileForm,
     });
-
-    const baseRefresh = manager.refresh.bind(manager);
-    manager.refresh = async () => {
-        const id = manager.getState().editingId;
-        if (!id) return;
-        await baseRefresh();
-    };
-
-    const baseEnterEdit = manager.enterEdit.bind(manager);
-    manager.enterEdit = (id) => {
-        baseEnterEdit(id);
-        if (id) manager.patchForm({ id });
-    };
-
-    return manager;
 }

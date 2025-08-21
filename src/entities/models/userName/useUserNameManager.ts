@@ -1,20 +1,28 @@
+// src/entities/models/userName/hooks.ts
 import { useEffect, useMemo, useSyncExternalStore } from "react";
 import { createUserNameManager } from "./manager";
+import { getUserSub } from "@entities/core/auth/getUserSub";
 
-/**
- * Hook React pour gérer l'entité UserName.
- */
-export function useUserNameManager(sub?: string) {
+export function useUserNameManager() {
     const mgr = useMemo(() => createUserNameManager(), []);
-    const serverSnapshot = useMemo(() => mgr.getState(), [mgr]);
-    const state = useSyncExternalStore(mgr.subscribe, mgr.getState, () => serverSnapshot);
+    const state = useSyncExternalStore(mgr.subscribe, mgr.getState, mgr.getState);
 
     useEffect(() => {
-        if (!sub) return;
-        mgr.enterEdit(sub);
-        void mgr.refresh();
-        void mgr.refreshExtras();
-    }, [mgr, sub]);
+        let alive = true;
+        (async () => {
+            try {
+                const sub = await getUserSub(); // ✅ sub fiable
+                if (!alive) return;
+                await mgr.loadEntityById(sub); // ✅ CHARGEMENT DU FORM
+                await mgr.refreshExtras(); // optionnel
+            } catch {
+                // pas connecté : on laisse le form initial
+            }
+        })();
+        return () => {
+            alive = false;
+        };
+    }, [mgr]);
 
     return { ...state, ...mgr };
 }

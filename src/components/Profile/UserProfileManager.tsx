@@ -1,8 +1,7 @@
+// src/components/profile/UserProfileManager.tsx
 "use client";
-
 import React, { useCallback } from "react";
-import { useAuthenticator } from "@aws-amplify/ui-react";
-import "@aws-amplify/ui-react/styles.css";
+import { Authenticator, useAuthenticator } from "@aws-amplify/ui-react";
 import EntityEditor from "@components/forms/EntityEditor";
 import { label as fieldLabel } from "./utilsUserProfile";
 import PhoneIcon from "@mui/icons-material/Phone";
@@ -10,6 +9,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import HomeIcon from "@mui/icons-material/Home";
 import { useUserProfileManager } from "@entities/models/userProfile";
 import { type UserProfileFormType, initialUserProfileForm } from "@entities/models/userProfile";
+import { getUserSub } from "@entities/core/auth/getUserSub";
 
 type IdLike = string | number;
 
@@ -25,18 +25,19 @@ const fields: (keyof UserProfileFormType)[] = [
 
 export default function UserProfileManager() {
     const { user } = useAuthenticator();
-    const manager = useUserProfileManager(user?.userId);
+    const manager = useUserProfileManager(); // ✅ toujours appelé
     const { form, isEditing, editingId } = manager;
 
+    // ✅ ce hook doit être AVANT tout return conditionnel
     const handleDeleteById = useCallback(
-        async (id: IdLike) => {
+        async (id: string) => {
             await manager.deleteById(String(id));
         },
         [manager]
     );
-
-    if (!user) return null;
-
+    if (!user) {
+        return <Authenticator />;
+    }
     const getIcon = (field: keyof UserProfileFormType) => {
         switch (field) {
             case "phoneNumber":
@@ -86,15 +87,12 @@ export default function UserProfileManager() {
         if (isEditing && editingId) {
             await manager.updateEntity(editingId, form);
         } else {
-            const id = await manager.createEntity({ ...form, id: user.userId });
-            void id;
-            manager.enterEdit(user.userId);
+            const id = await manager.createEntity(form); // id = sub résolu côté manager
+            manager.enterEdit(id);
         }
     };
 
-    const reset = () => {
-        manager.cancelEdit();
-    };
+    const reset = () => manager.cancelEdit();
 
     const setForm: React.Dispatch<React.SetStateAction<UserProfileFormType>> = (value) => {
         const next = typeof value === "function" ? value(form) : value;
@@ -113,7 +111,6 @@ export default function UserProfileManager() {
 
     return (
         <div className="mt-6">
-            {/* Même approche que le modèle : un “header formulaire” + bouton enregistrer via ref */}
             <EntityEditor<UserProfileFormType>
                 title="Mon profil"
                 requiredFields={["firstName", "familyName"]}
@@ -138,7 +135,7 @@ export default function UserProfileManager() {
                 clearField={clearField}
                 // Wrapper “à la AuthorList.onDeleteById”
                 deleteEntity={async (id?: string) => {
-                    const target = id ?? editingId ?? user?.userId ?? undefined;
+                    const target = id ?? editingId ?? (await getUserSub()).toString(); // fallback sub (fiable)
                     if (!target) return;
                     await handleDeleteById(target);
                 }}
