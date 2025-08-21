@@ -19,7 +19,7 @@ export default function UserNameManager() {
 
     const manager = useUserNameManager(); // <-- le hook charge via getUserSub() en interne
 
-    const { refresh, form, isEditing, editingId, savingCreate, savingUpdate } = manager;
+    const { refresh, form, isEditing, editingId } = manager;
 
     // ⚡ un seul hook pour auth-change + bus
     useUserNameRefresh({
