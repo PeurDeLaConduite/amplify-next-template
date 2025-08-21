@@ -15,6 +15,8 @@ interface Props {
     onSave: () => void;
     onCancel: () => void;
     onDeleteById: (id: IdLike) => void;
+    editButtonlabel: string;
+    deleteButtonlabel: string;
 }
 
 export default function PostList(props: Props) {
@@ -33,6 +35,8 @@ export default function PostList(props: Props) {
             onSave={props.onSave}
             onCancel={props.onCancel}
             onDeleteById={props.onDeleteById}
+            editButtonlabel={"Modifier"}
+            deleteButtonlabel={"Supprimer"}
         />
     );
 }

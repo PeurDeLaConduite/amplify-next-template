@@ -31,6 +31,9 @@ interface GenericListProps<T> {
     itemClassName?: (active: boolean) => string;
     /** Arrondis/ombres cohérents */
     rounded?: boolean;
+    variant?: string;
+    editButtonlabel?: string;
+    deleteButtonlabel?: string;
 }
 
 export default function GenericList<T>({
@@ -47,6 +50,9 @@ export default function GenericList<T>({
     itemWrapperClassName,
     itemClassName,
     rounded = true,
+    editButtonlabel,
+    deleteButtonlabel,
+    variant,
 }: GenericListProps<T>) {
     const sorted = useMemo(() => {
         const indexed = items.map((item, originalIndex) => ({
@@ -78,6 +84,9 @@ export default function GenericList<T>({
                             onCancel={onCancel}
                             onDelete={() => onDeleteById(id)}
                             isFormNew={false}
+                            // variant="no-Icon"
+                            editButtonlabel={editButtonlabel}
+                            deleteButtonlabel={deleteButtonlabel}
                         />
                     </li>
                 );

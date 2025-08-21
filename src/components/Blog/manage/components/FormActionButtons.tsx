@@ -13,7 +13,7 @@ interface FormActionButtonsProps {
     isFormNew: boolean;
     addButtonLabel?: string;
     className?: string;
-    variant?: "mini" | "normal";
+    variant?: "no-Icon" | "normal";
 }
 
 export default function FormActionButtons({
@@ -27,6 +27,8 @@ export default function FormActionButtons({
     addButtonLabel = "Ajouter",
     className = "",
     variant = "normal",
+    editButtonlabel,
+    deleteButtonlabel,
 }: FormActionButtonsProps): React.ReactElement {
     if (isFormNew && editingId === null) {
         return (
@@ -61,7 +63,7 @@ export default function FormActionButtons({
         transition: "all .15s",
     };
 
-    if (variant === "mini") {
+    if (variant === "no-Icon") {
         return (
             <div className="flex gap-2">
                 <ButtonBase
@@ -89,10 +91,15 @@ export default function FormActionButtons({
                 onClick={onEdit}
                 className="!p-2 !h-8"
                 color="#1976d2"
-                label="Modifier"
+                label={editButtonlabel}
                 size="small"
             />
-            <DeleteButton onClick={onDelete} className="!p-2 !h-8" label="Supprimer" size="small" />
+            <DeleteButton
+                onClick={onDelete}
+                className="!p-2 !h-8"
+                label={deleteButtonlabel}
+                size="small"
+            />
         </div>
     );
 }
