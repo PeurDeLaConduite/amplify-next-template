@@ -41,6 +41,15 @@ export default function AuthorManagerPage() {
         // la liste est rafraîchie automatiquement par le manager
     }, []);
 
+    const handleRequestSubmit = useCallback(() => {
+        formRef.current?.requestSubmit();
+    }, []);
+
+    const handleCancel = useCallback(() => {
+        cancelEdit();
+        patchForm(initialAuthorForm);
+    }, [cancelEdit, patchForm]);
+
     return (
         <RequireAdmin>
             <BlogEditorLayout title="Éditeur de blog : Auteurs">
@@ -51,13 +60,8 @@ export default function AuthorManagerPage() {
                     authors={authors}
                     editingId={editingId}
                     onEditById={handleEditById}
-                    onSave={() => {
-                        formRef.current?.requestSubmit();
-                    }}
-                    onCancel={() => {
-                        cancelEdit();
-                        patchForm(initialAuthorForm);
-                    }}
+                    onSave={handleRequestSubmit}
+                    onCancel={handleCancel}
                     onDeleteById={handleDeleteById}
                 />
             </BlogEditorLayout>

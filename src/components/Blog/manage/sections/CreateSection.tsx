@@ -48,6 +48,10 @@ export default function SectionManagerPage() {
         cancelEdit();
     }, [cancelEdit]);
 
+    const handleRequestSubmit = useCallback(() => {
+        formRef.current?.requestSubmit();
+    }, []);
+
     return (
         <RequireAdmin>
             <BlogEditorLayout title="Gestion des Sections">
@@ -63,9 +67,7 @@ export default function SectionManagerPage() {
                     sections={sections}
                     editingId={editingId}
                     onEditById={handleEditById}
-                    onSave={() => {
-                        formRef.current?.requestSubmit();
-                    }}
+                    onSave={handleRequestSubmit}
                     onCancel={handleCancel}
                     onDeleteById={handleDeleteById}
                 />
