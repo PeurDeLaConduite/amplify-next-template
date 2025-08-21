@@ -25,8 +25,8 @@ export default function UserNameManager() {
         onAuthChange: true,
     });
 
-    const handleChange = (field: keyof UserNameFormType, value: unknown) => {
-        manager.updateField(field, value as any);
+    const handleChange = <K extends keyof UserNameFormType>(field: K, value: UserNameFormType[K]) => {
+        manager.updateField(field, value);
     };
 
     const submit = async () => {
@@ -47,8 +47,8 @@ export default function UserNameManager() {
         manager.patchForm(next);
     };
 
-    const saveField = async (field: keyof UserNameFormType, value: string) => {
-        manager.updateField(field, value as any);
+    const saveField = async <K extends keyof UserNameFormType>(field: K, value: UserNameFormType[K]) => {
+        manager.updateField(field, value);
         await submit();
     };
 
@@ -80,13 +80,13 @@ export default function UserNameManager() {
             form={form}
             mode={isEditing ? "edit" : "create"}
             dirty={JSON.stringify(form) !== JSON.stringify(initialUserNameForm)}
-            handleChange={handleChange}
+            handleChange={handleChange as (field: keyof UserNameFormType, value: unknown) => void}
             submit={submit}
             reset={reset}
             setForm={setForm}
             fields={fields}
-            labels={fieldLabel as (field: keyof UserNameFormType) => string}
-            saveField={saveField}
+            labels={fieldLabel}
+            saveField={saveField as (field: keyof UserNameFormType, value: string) => Promise<void>}
             clearField={clearField}
             deleteEntity={async (id?: string) => {
                 const target = id ?? editingId ?? user?.userId ?? user?.username ?? undefined;
