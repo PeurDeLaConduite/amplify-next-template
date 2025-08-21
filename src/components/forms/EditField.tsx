@@ -40,11 +40,17 @@ export default function EditField<T extends Record<string, unknown>>({
             />
 
             <div className="flex justify-between mt-5 gap-10">
-                <SaveButton onClick={saveSingleField} label="Sauvegarder" className="flex-1 mr-2" />
+                <SaveButton
+                    onClick={saveSingleField}
+                    label="Sauvegarder"
+                    className="flex-1 mr-2"
+                    size="medium"
+                />
                 <BackButton
                     onClick={() => setEditModeField(null)}
                     label="Retour"
                     className="flex-1 ml-2"
+                    size="medium"
                 />
             </div>
         </fieldset>

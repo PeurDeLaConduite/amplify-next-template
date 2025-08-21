@@ -69,7 +69,7 @@ export default function CreateTagPage() {
             <BlogEditorLayout title="Gestion des Tags">
                 <div className="flex items-center gap-2">
                     <SectionHeader className="!mb-0 flex-1">Nouveau tag</SectionHeader>
-                    <RefreshButton onClick={fetchAll} label="Rafraîchir" />
+                    <RefreshButton onClick={fetchAll} label="Rafraîchir" size="small" />
                 </div>
 
                 <TagForm ref={formRef} manager={manager} onSave={handleSaved} />

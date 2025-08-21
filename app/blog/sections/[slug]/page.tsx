@@ -64,7 +64,7 @@ export default async function SectionPage({ params }: { params: Promise<{ slug: 
             </div>
 
             <div className="text-right mt-12">
-                <BackButton href="/blog" label="Retour" className="inline-block" />
+                <BackButton href="/blog" label="Retour" className="inline-block" size="medium" />
             </div>
         </div>
     );

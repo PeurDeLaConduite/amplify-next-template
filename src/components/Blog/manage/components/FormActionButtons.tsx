@@ -85,8 +85,14 @@ export default function FormActionButtons({
 
     return (
         <div className="flex gap-2">
-            <EditButton onClick={onEdit} className="!p-2 !h-8" color="#1976d2" label="Modifier" />
-            <DeleteButton onClick={onDelete} className="!p-2 !h-8" label="Supprimer" />
+            <EditButton
+                onClick={onEdit}
+                className="!p-2 !h-8"
+                color="#1976d2"
+                label="Modifier"
+                size="small"
+            />
+            <DeleteButton onClick={onDelete} className="!p-2 !h-8" label="Supprimer" size="small" />
         </div>
     );
 }

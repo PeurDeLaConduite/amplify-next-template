@@ -42,11 +42,13 @@ export default function TodoList({
                                     onClick={() => onDeleteTodo(todo.id)}
                                     label="Supprimer"
                                     className="text-sm"
+                                    size="small"
                                 />
                                 <AddButton
                                     onClick={() => onAddComment(todo.id)}
                                     label="Ajouter un commentaire"
                                     className="text-sm"
+                                    size="small"
                                 />
                             </div>
                         </div>
