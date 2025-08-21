@@ -13,9 +13,9 @@ export type ManagerState<E, F, Extras = Record<string, unknown>, Id = string> = 
     loadingList: boolean;
     loadingEntity: boolean;
     loadingExtras: boolean;
-    errorList: unknown;
-    errorEntity: unknown;
-    errorExtras: unknown;
+    errorList: Error | null;
+    errorEntity: Error | null;
+    errorExtras: Error | null;
     savingCreate: boolean;
     savingUpdate: boolean;
     savingDelete: boolean;
