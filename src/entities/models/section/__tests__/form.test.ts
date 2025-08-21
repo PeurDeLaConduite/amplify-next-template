@@ -31,8 +31,9 @@ describe("toSectionForm", () => {
 });
 
 describe("toSectionCreate / toSectionUpdate", () => {
-    it("supprime postIds", () => {
+    it("supprime id et postIds", () => {
         const form: SectionFormTypes = {
+            id: faker.string.uuid(),
             slug: faker.lorem.slug(),
             title: faker.lorem.words(3),
             description: faker.lorem.sentence(),

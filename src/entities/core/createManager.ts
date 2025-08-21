@@ -38,50 +38,26 @@ export function createManager<E, F, Id = string, Extras = Record<string, unknown
     } = options;
 
     // ---- état interne ----
-    let entities: E[] = [];
-    let form: F = getInitialForm();
-    let extras: Extras = {} as Extras;
-
-    let editingId: Id | null = null;
-    let isEditing = false;
-
-    let loadingList = false,
-        loadingEntity = false,
-        loadingExtras = false;
-    let errorList: Error | null = null,
-        errorEntity: Error | null = null,
-        errorExtras: Error | null = null;
-
-    let savingCreate = false,
-        savingUpdate = false,
-        savingDelete = false;
-
-    let pageSize = initialPageSize;
-    let nextToken: string | null = null;
-    let prevTokens: (string | null)[] = [];
-    let hasNext = false;
-    let hasPrev = false;
-
     let state: ManagerState<E, F, Extras, Id> = {
-        entities,
-        form,
-        extras,
-        editingId,
-        isEditing,
-        loadingList,
-        loadingEntity,
-        loadingExtras,
-        errorList,
-        errorEntity,
-        errorExtras,
-        savingCreate,
-        savingUpdate,
-        savingDelete,
-        pageSize,
-        hasNext,
-        hasPrev,
-        nextToken,
-        prevTokens,
+        entities: [],
+        form: getInitialForm(),
+        extras: {} as Extras,
+        editingId: null,
+        isEditing: false,
+        loadingList: false,
+        loadingEntity: false,
+        loadingExtras: false,
+        errorList: null,
+        errorEntity: null,
+        errorExtras: null,
+        savingCreate: false,
+        savingUpdate: false,
+        savingDelete: false,
+        pageSize: initialPageSize,
+        hasNext: false,
+        hasPrev: false,
+        nextToken: null,
+        prevTokens: [],
     };
 
     const listeners = new Set<() => void>();
@@ -97,35 +73,29 @@ export function createManager<E, F, Id = string, Extras = Record<string, unknown
 
     // ---- helpers ----
     const updateField = <K extends keyof F>(name: K, value: F[K]) => {
-        form = { ...form, [name]: value };
-        state.form = form;
+        state.form = { ...state.form, [name]: value };
         notify();
     };
 
     const patchForm = (partial: Partial<F>) => {
-        form = { ...form, ...partial };
-        state.form = form;
+        state.form = { ...state.form, ...partial };
         notify();
     };
 
     const clearField = <K extends keyof F>(name: K) => {
         const init = getInitialForm();
-        form = { ...form, [name]: init[name] };
-        state.form = form;
+        state.form = { ...state.form, [name]: init[name] };
         notify();
     };
 
     const clearForm = () => {
-        form = getInitialForm();
-        state.form = form;
+        state.form = getInitialForm();
         notify();
     };
 
     const enterEdit = (id: Id | null) => {
-        editingId = id;
-        isEditing = id !== null;
-        state.editingId = editingId;
-        state.isEditing = isEditing;
+        state.editingId = id;
+        state.isEditing = id !== null;
         notify();
     };
 
@@ -136,131 +106,98 @@ export function createManager<E, F, Id = string, Extras = Record<string, unknown
 
     // ---- cycle de vie ----
     const refresh = async () => {
-        loadingList = true;
-        errorList = null;
-        state.loadingList = loadingList;
-        state.errorList = errorList;
+        state.loadingList = true;
+        state.errorList = null;
         notify();
         try {
-            const { items, nextToken: token } = await listEntities({ limit: pageSize });
-            entities = items;
-            nextToken = token ?? null;
-            prevTokens = [null];
-            hasNext = nextToken !== null;
-            hasPrev = prevTokens.length > 1;
-            state.entities = entities;
-            state.nextToken = nextToken;
-            state.prevTokens = prevTokens;
-            state.hasNext = hasNext;
-            state.hasPrev = hasPrev;
+            const { items, nextToken: token } = await listEntities({ limit: state.pageSize });
+            state.entities = items;
+            state.nextToken = token ?? null;
+            state.prevTokens = [null];
+            state.hasNext = state.nextToken !== null;
+            state.hasPrev = state.prevTokens.length > 1;
             notify();
         } catch (e) {
-            errorList = e as Error;
-            state.errorList = errorList;
+            state.errorList = e as Error;
             notify();
         } finally {
-            loadingList = false;
-            state.loadingList = loadingList;
+            state.loadingList = false;
             notify();
         }
     };
 
     const loadNextPage = async () => {
-        if (!nextToken) return;
-        loadingList = true;
-        errorList = null;
-        state.loadingList = loadingList;
-        state.errorList = errorList;
+        if (!state.nextToken) return;
+        state.loadingList = true;
+        state.errorList = null;
         notify();
         try {
-            prevTokens.push(nextToken);
+            state.prevTokens = [...state.prevTokens, state.nextToken];
             const { items, nextToken: token } = await listEntities({
-                limit: pageSize,
-                nextToken,
+                limit: state.pageSize,
+                nextToken: state.nextToken,
             });
-            entities = items;
-            nextToken = token ?? null;
-            hasNext = nextToken !== null;
-            hasPrev = prevTokens.length > 1;
-            state.entities = entities;
-            state.nextToken = nextToken;
-            state.hasNext = hasNext;
-            state.hasPrev = hasPrev;
-            state.prevTokens = prevTokens;
+            state.entities = items;
+            state.nextToken = token ?? null;
+            state.hasNext = state.nextToken !== null;
+            state.hasPrev = state.prevTokens.length > 1;
             notify();
         } catch (e) {
-            errorList = e as Error;
-            state.errorList = errorList;
+            state.errorList = e as Error;
             notify();
         } finally {
-            loadingList = false;
-            state.loadingList = loadingList;
+            state.loadingList = false;
             notify();
         }
     };
 
     const loadPrevPage = async () => {
-        if (prevTokens.length <= 1) return;
-        loadingList = true;
-        errorList = null;
-        state.loadingList = loadingList;
-        state.errorList = errorList;
+        if (state.prevTokens.length <= 1) return;
+        state.loadingList = true;
+        state.errorList = null;
         notify();
         try {
-            prevTokens.pop();
-            const token = prevTokens[prevTokens.length - 1] ?? null;
+            const prev = state.prevTokens.slice(0, -1);
+            const token = prev[prev.length - 1] ?? null;
             const { items, nextToken: tokenNext } = await listEntities({
-                limit: pageSize,
+                limit: state.pageSize,
                 nextToken: token ?? undefined,
             });
-            entities = items;
-            nextToken = tokenNext ?? null;
-            hasNext = nextToken !== null;
-            hasPrev = prevTokens.length > 1;
-            state.entities = entities;
-            state.nextToken = nextToken;
-            state.hasNext = hasNext;
-            state.hasPrev = hasPrev;
-            state.prevTokens = prevTokens;
+            state.entities = items;
+            state.nextToken = tokenNext ?? null;
+            state.hasNext = state.nextToken !== null;
+            state.prevTokens = prev;
+            state.hasPrev = state.prevTokens.length > 1;
             notify();
         } catch (e) {
-            errorList = e as Error;
-            state.errorList = errorList;
+            state.errorList = e as Error;
             notify();
         } finally {
-            loadingList = false;
-            state.loadingList = loadingList;
+            state.loadingList = false;
             notify();
         }
     };
 
     const refreshExtras = async () => {
         if (!loadExtras) return;
-        loadingExtras = true;
-        errorExtras = null;
-        state.loadingExtras = loadingExtras;
-        state.errorExtras = errorExtras;
+        state.loadingExtras = true;
+        state.errorExtras = null;
         notify();
         try {
-            extras = await loadExtras();
-            state.extras = extras;
+            state.extras = await loadExtras();
             notify();
         } catch (e) {
-            errorExtras = e as Error;
-            state.errorExtras = errorExtras;
+            state.errorExtras = e as Error;
             notify();
         } finally {
-            loadingExtras = false;
-            state.loadingExtras = loadingExtras;
+            state.loadingExtras = false;
             notify();
         }
     };
 
     const loadEntityById = async (id: Id) => {
-        loadingEntity = true;
-        errorEntity = null;
-        state.loadingEntity = loadingEntity;
-        state.errorEntity = errorEntity;
+        state.loadingEntity = true;
+        state.errorEntity = null;
         notify();
         try {
             let f: F;
@@ -271,25 +208,20 @@ export function createManager<E, F, Id = string, Extras = Record<string, unknown
                 if (!entity) throw new Error("Entity not found");
                 f = toForm ? await toForm(entity) : (entity as unknown as F);
             }
-            form = f;
-            state.form = form;
+            state.form = f;
             enterEdit(id);
-            notify();
         } catch (e) {
-            errorEntity = e as Error;
-            state.errorEntity = errorEntity;
+            state.errorEntity = e as Error;
             notify();
         } finally {
-            loadingEntity = false;
-            state.loadingEntity = loadingEntity;
+            state.loadingEntity = false;
             notify();
         }
     };
 
     // ---- CRUD ----
     const createEntity = async (data: F) => {
-        savingCreate = true;
-        state.savingCreate = savingCreate;
+        state.savingCreate = true;
         notify();
         try {
             const id = await createNet(data);
@@ -297,37 +229,32 @@ export function createManager<E, F, Id = string, Extras = Record<string, unknown
             enterEdit(id);
             return id;
         } finally {
-            savingCreate = false;
-            state.savingCreate = savingCreate;
+            state.savingCreate = false;
             notify();
         }
     };
 
     const updateEntity = async (id: Id, data: Partial<F>) => {
-        savingUpdate = true;
-        state.savingUpdate = savingUpdate;
+        state.savingUpdate = true;
         notify();
         try {
-            await updateNet(id, data, { form });
+            await updateNet(id, data, { form: state.form });
             await refresh();
         } finally {
-            savingUpdate = false;
-            state.savingUpdate = savingUpdate;
+            state.savingUpdate = false;
             notify();
         }
     };
 
     const deleteById = async (id: Id) => {
-        savingDelete = true;
-        state.savingDelete = savingDelete;
+        state.savingDelete = true;
         notify();
         try {
             await deleteNet(id);
-            if (editingId === id) cancelEdit();
+            if (state.editingId === id) cancelEdit();
             await refresh();
         } finally {
-            savingDelete = false;
-            state.savingDelete = savingDelete;
+            state.savingDelete = false;
             notify();
         }
     };
@@ -339,61 +266,61 @@ export function createManager<E, F, Id = string, Extras = Record<string, unknown
         getState,
         subscribe,
         get entities() {
-            return entities;
+            return state.entities;
         },
         get form() {
-            return form;
+            return state.form;
         },
         get extras() {
-            return extras;
+            return state.extras;
         },
         get editingId() {
-            return editingId;
+            return state.editingId;
         },
         get isEditing() {
-            return isEditing;
+            return state.isEditing;
         },
         get loadingList() {
-            return loadingList;
+            return state.loadingList;
         },
         get loadingEntity() {
-            return loadingEntity;
+            return state.loadingEntity;
         },
         get loadingExtras() {
-            return loadingExtras;
+            return state.loadingExtras;
         },
         get errorList() {
-            return errorList;
+            return state.errorList;
         },
         get errorEntity() {
-            return errorEntity;
+            return state.errorEntity;
         },
         get errorExtras() {
-            return errorExtras;
+            return state.errorExtras;
         },
         get savingCreate() {
-            return savingCreate;
+            return state.savingCreate;
         },
         get savingUpdate() {
-            return savingUpdate;
+            return state.savingUpdate;
         },
         get savingDelete() {
-            return savingDelete;
+            return state.savingDelete;
         },
         get pageSize() {
-            return pageSize;
+            return state.pageSize;
         },
         get nextToken() {
-            return nextToken;
+            return state.nextToken;
         },
         get prevTokens() {
-            return prevTokens;
+            return state.prevTokens;
         },
         get hasNext() {
-            return hasNext;
+            return state.hasNext;
         },
         get hasPrev() {
-            return hasPrev;
+            return state.hasPrev;
         },
         loadNextPage,
         loadPrevPage,

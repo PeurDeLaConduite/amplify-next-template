@@ -2,6 +2,7 @@ import type { BaseModel, CreateOmit, UpdateInput, ModelForm } from "@entities/co
 import { type SeoTypeOmit } from "@entities/customTypes/seo/types";
 
 export type PostType = BaseModel<"Post">;
+export type PostSummary = Pick<PostType, "id" | "title">;
 export type PostTypeOmit = CreateOmit<"Post">;
 export type PostTypeUpdateInput = UpdateInput<"Post">;
 

@@ -1,10 +1,13 @@
 import { crudService, deleteEdges } from "@entities/core";
 import { sectionPostService } from "@entities/relations/sectionPost/service";
-import type { SectionTypeOmit, SectionTypeUpdateInput } from "@entities/models/section/types";
+import type {
+    SectionTypeCreateInput,
+    SectionTypeUpdateInput,
+} from "@entities/models/section/types";
 
 const base = crudService<
     "Section",
-    Omit<SectionTypeOmit, "posts">,
+    SectionTypeCreateInput,
     SectionTypeUpdateInput & { id: string },
     { id: string },
     { id: string }

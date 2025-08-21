@@ -76,15 +76,15 @@ export default function UserProfileManager() {
         );
     };
 
-    type UserProfileFieldValue = UserProfileFormType[keyof UserProfileFormType];
+    type FieldValue = UserProfileFormType[keyof UserProfileFormType];
 
-    const handleChange = (field: keyof UserProfileFormType, value: UserProfileFieldValue) => {
+    const handleChange = (field: keyof UserProfileFormType, value: FieldValue) => {
         manager.updateField(field, value);
     };
 
     const submit = async () => {
         if (isEditing && editingId) {
-            await manager.updateEntity(editingId, form, { form });
+            await manager.updateEntity(editingId, form);
         } else {
             const id = await manager.createEntity(form);
             manager.enterEdit(id);
@@ -100,7 +100,7 @@ export default function UserProfileManager() {
         manager.patchForm(next);
     };
 
-    const saveField = async (field: keyof UserProfileFormType, value: UserProfileFieldValue) => {
+    const saveField = async (field: keyof UserProfileFormType, value: FieldValue) => {
         manager.updateField(field, value);
         await submit();
     };

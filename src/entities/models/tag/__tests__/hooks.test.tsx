@@ -1,7 +1,7 @@
 import { renderHook, act } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { TagType } from "@entities/models/tag/types";
-import type { PostType } from "@entities/models/post/types";
+import type { PostSummary } from "@entities/models/post/types";
 
 type PostSummary = Pick<PostType, "id" | "title">;
 
