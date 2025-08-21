@@ -15,18 +15,19 @@ import {
     Refresh as RefreshIcon,
 } from "@mui/icons-material";
 
-import type { SxProps, Theme } from "@mui/material";
-export type BackButtonProps = Pick<ButtonBaseProps, "href" | "label" | "className" | "sx">;
+import type { ButtonProps as MuiButtonProps, SxProps, Theme } from "@mui/material";
+export type BackButtonProps = Pick<ButtonBaseProps, "href" | "label" | "className" | "sx" | "size">;
 type ButtonProps = {
     onClick: () => void;
     href?: string;
     label?: string;
     className?: string;
     sx?: SxProps<Theme>;
+    size?: MuiButtonProps["size"];
     color?: string;
 };
 
-export function EditButton({ onClick, label, className, color }: ButtonProps) {
+export function EditButton({ onClick, label, className, color, size, sx = {} }: ButtonProps) {
     return (
         <ButtonBase
             label={label}
@@ -35,12 +36,13 @@ export function EditButton({ onClick, label, className, color }: ButtonProps) {
             icon={<EditIcon fontSize="small" />}
             className={className}
             variant="outlined"
-            sx={getEditButtonStyles(color)}
+            size={size}
+            sx={{ ...getEditButtonStyles(color), ...sx }}
         />
     );
 }
 
-export function DeleteButton({ onClick, label, className }: ButtonProps) {
+export function DeleteButton({ onClick, label, className, size, sx = {} }: ButtonProps) {
     return (
         <ButtonBase
             label={label}
@@ -50,12 +52,20 @@ export function DeleteButton({ onClick, label, className }: ButtonProps) {
             color="error"
             className={className}
             variant="outlined"
-            sx={deleteButtonStyles}
+            size={size}
+            sx={{ ...deleteButtonStyles, ...sx }}
         />
     );
 }
 
-export function BackButton({ href, onClick, label = "Retour", className, sx }: ButtonBaseProps) {
+export function BackButton({
+    href,
+    onClick,
+    label = "Retour",
+    className,
+    sx = {},
+    size,
+}: ButtonBaseProps) {
     return (
         <ButtonBase
             href={href}
@@ -67,10 +77,11 @@ export function BackButton({ href, onClick, label = "Retour", className, sx }: B
             variant="contained"
             className={className}
             sx={sx}
+            size={size}
         />
     );
 }
-export function SaveButton({ onClick, label, className }: ButtonProps) {
+export function SaveButton({ onClick, label, className, size, sx = {} }: ButtonProps) {
     return (
         <ButtonBase
             label={label}
@@ -80,11 +91,13 @@ export function SaveButton({ onClick, label, className }: ButtonProps) {
             color="primary"
             className={className}
             variant="contained"
+            size={size}
+            sx={sx}
         />
     );
 }
 
-export function CancelButton({ onClick, label, className }: ButtonProps) {
+export function CancelButton({ onClick, label, className, size, sx = {} }: ButtonProps) {
     return (
         <ButtonBase
             label={label}
@@ -94,11 +107,13 @@ export function CancelButton({ onClick, label, className }: ButtonProps) {
             color="inherit"
             className={className}
             variant="outlined"
+            size={size}
+            sx={sx}
         />
     );
 }
 
-export function AddButton({ onClick, label, className }: ButtonProps) {
+export function AddButton({ onClick, label, className, size, sx = {} }: ButtonProps) {
     return (
         <ButtonBase
             label={label}
@@ -108,11 +123,13 @@ export function AddButton({ onClick, label, className }: ButtonProps) {
             color="success"
             className={className}
             variant="contained"
+            size={size}
+            sx={sx}
         />
     );
 }
 
-export function SubmitButton({ onClick, label, className }: ButtonProps) {
+export function SubmitButton({ onClick, label, className, size, sx = {} }: ButtonProps) {
     return (
         <ButtonBase
             label={label}
@@ -122,11 +139,13 @@ export function SubmitButton({ onClick, label, className }: ButtonProps) {
             color="primary"
             className={className}
             variant="contained"
+            size={size}
+            sx={sx}
         />
     );
 }
 
-export function ClearFieldButton({ onClick, label, className }: ButtonProps) {
+export function ClearFieldButton({ onClick, label, className, size, sx = {} }: ButtonProps) {
     return (
         <ButtonBase
             label={label}
@@ -136,10 +155,12 @@ export function ClearFieldButton({ onClick, label, className }: ButtonProps) {
             color="warning"
             className={className}
             variant="outlined"
+            size={size}
+            sx={sx}
         />
     );
 }
-export function PowerButton({ onClick, label, className }: ButtonProps) {
+export function PowerButton({ onClick, label, className, size, sx = {} }: ButtonProps) {
     return (
         <ButtonBase
             label={label}
@@ -149,11 +170,12 @@ export function PowerButton({ onClick, label, className }: ButtonProps) {
             color="error" // rouge pour indiquer la déconnexion
             className={className}
             variant="outlined"
-            sx={{ ...(deleteButtonStyles || {}) }}
+            size={size}
+            sx={{ ...deleteButtonStyles, ...sx }}
         />
     );
 }
-export function RefreshButton({ onClick, label, className }: ButtonProps) {
+export function RefreshButton({ onClick, label, className, size, sx = {} }: ButtonProps) {
     return (
         <ButtonBase
             label={label}
@@ -163,6 +185,8 @@ export function RefreshButton({ onClick, label, className }: ButtonProps) {
             color="primary"
             className={className}
             variant="contained"
+            size={size}
+            sx={sx}
         />
     );
 }
