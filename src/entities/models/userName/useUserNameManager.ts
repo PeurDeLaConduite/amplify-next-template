@@ -6,13 +6,9 @@ import { createUserNameManager } from "./manager";
  */
 export function useUserNameManager() {
     const mgr = useMemo(() => createUserNameManager(), []);
-    const initialState = useMemo(() => mgr.getState(), [mgr]);
-    // prettier-ignore
-    const state = useSyncExternalStore(
-        mgr.subscribe,
-        mgr.getState,
-        () => initialState
-    );
+    const serverSnapshot = useMemo(() => mgr.getState(), [mgr]);
+    const state = useSyncExternalStore(mgr.subscribe, mgr.getState, () => serverSnapshot);
+
 
     useEffect(() => {
         void mgr.refresh();

@@ -6,11 +6,8 @@ import { createTagManager } from "./manager";
  */
 export function useTagManager() {
     const mgr = useMemo(() => createTagManager(), []);
-    const state = useSyncExternalStore(
-        mgr.subscribe,
-        () => mgr.getState(),
-        () => mgr.getState()
-    );
+    const serverSnapshot = useMemo(() => mgr.getState(), [mgr]);
+    const state = useSyncExternalStore(mgr.subscribe, mgr.getState, () => serverSnapshot);
 
     useEffect(() => {
         void mgr.refresh();

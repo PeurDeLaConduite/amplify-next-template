@@ -6,11 +6,8 @@ import { createUserProfileManager } from "./manager";
  */
 export function useUserProfileManager() {
     const mgr = useMemo(() => createUserProfileManager(), []);
-    const state = useSyncExternalStore(
-        mgr.subscribe,
-        () => mgr.getState(),
-        () => mgr.getState()
-    );
+    const serverSnapshot = useMemo(() => mgr.getState(), [mgr]);
+    const state = useSyncExternalStore(mgr.subscribe, mgr.getState, () => serverSnapshot);
 
     useEffect(() => {
         void mgr.refresh();
