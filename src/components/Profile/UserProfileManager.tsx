@@ -86,8 +86,9 @@ export default function UserProfileManager() {
         if (isEditing && editingId) {
             await manager.updateEntity(editingId, form);
         } else {
-            const id = await manager.createEntity(form);
-            manager.enterEdit(id);
+            const id = await manager.createEntity({ ...form, id: user.userId });
+            void id;
+            manager.enterEdit(user.userId);
         }
     };
 
@@ -137,7 +138,7 @@ export default function UserProfileManager() {
                 clearField={clearField}
                 // Wrapper “à la AuthorList.onDeleteById”
                 deleteEntity={async (id?: string) => {
-                    const target = id ?? editingId ?? user?.userId ?? user?.username ?? undefined;
+                    const target = id ?? editingId ?? user?.userId ?? undefined;
                     if (!target) return;
                     await handleDeleteById(target);
                 }}

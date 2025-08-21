@@ -16,7 +16,7 @@ export const {
 } = createModelForm<
     UserProfileType,
     UserProfileFormType,
-    Omit<UserProfileTypeOmit, "id">,
+    UserProfileTypeOmit,
     UserProfileTypeUpdateInput
 >({
     zodSchema: z.object({
@@ -49,11 +49,7 @@ export const {
         country: profile.country ?? "",
         phoneNumber: profile.phoneNumber ?? "",
     }),
-    toCreate: (form: UserProfileFormType): Omit<UserProfileTypeOmit, "id"> => {
-        const { id, ...values } = form;
-        void id;
-        return { ...values };
-    },
+    toCreate: (form: UserProfileFormType): UserProfileTypeOmit => ({ ...form }),
     toUpdate: (form: UserProfileFormType): UserProfileTypeUpdateInput => {
         const { id, ...values } = form;
         void id;
