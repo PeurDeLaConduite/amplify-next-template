@@ -3,7 +3,7 @@ import { createManager } from "@entities/core";
 import { userNameService } from "@entities/models/userName/service";
 import { commentService } from "@entities/models/comment/service";
 import { syncManyToMany as syncNN } from "@entities/core/utils/syncManyToMany";
-import { getUserSub } from "@entities/core/auth/getUserSub"; // <- assure-toi du bon chemin
+import { tryGetUserSub } from "@entities/core/auth/getUserSub"; // <- assure-toi du bon chemin
 import {
     initialUserNameForm,
     toUserNameForm,
@@ -34,7 +34,8 @@ export function createUserNameManager() {
         },
 
         createEntity: async (form) => {
-            const id = await getUserSub();
+            const id = await tryGetUserSub();
+            if (!id) throw new Error("User not authenticated");
             const { data, errors } = await userNameService.create(
                 toUserNameCreate({ ...form, id })
             );
@@ -44,6 +45,8 @@ export function createUserNameManager() {
         },
 
         updateEntity: async (id, patch, { form }) => {
+            const sub = await tryGetUserSub();
+            if (!sub || sub !== id) throw new Error("User not authenticated");
             const { data: existing } = await userNameService.get({ id });
             if (!existing) {
                 const { errors } = await userNameService.create(toUserNameCreate({ ...form, id }));
@@ -60,6 +63,8 @@ export function createUserNameManager() {
         },
 
         deleteById: async (id) => {
+            const sub = await tryGetUserSub();
+            if (!sub || sub !== id) throw new Error("User not authenticated");
             await userNameService.delete({ id });
             emitUserNameUpdated();
         },
