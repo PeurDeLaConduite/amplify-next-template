@@ -12,5 +12,5 @@ export const userProfileService = crudService<
     { id: string },
     { id: string }
 >("UserProfile", {
-    auth: { read: ["apiKey", "userPool"], write: "userPool" },
+    auth: { read: "userPool", write: "userPool" },
 });
