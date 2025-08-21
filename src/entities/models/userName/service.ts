@@ -8,7 +8,7 @@ import type {
 // ✅ Lecture et écriture privées via User Pool
 export const userNameService = crudService<
     "UserName",
-    UserNameTypeCreateInput,
+    UserNameTypeCreateInput & { id: string },
     UserNameTypeUpdateInput & { id: string },
     { id: string },
     { id: string }

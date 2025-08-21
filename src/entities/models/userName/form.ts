@@ -16,7 +16,7 @@ export const {
 } = createModelForm<
     UserNameType,
     UserNameFormType,
-    UserNameTypeCreateInput,
+    UserNameTypeCreateInput & { id: string },
     UserNameTypeUpdateInput,
     [string[], string[]]
 >({
@@ -38,9 +38,8 @@ export const {
         commentsIds,
         postCommentsIds,
     }),
-    toCreate: (form: UserNameFormType): UserNameTypeCreateInput => {
-        const { id, commentsIds, postCommentsIds, ...values } = form;
-        void id;
+    toCreate: (form: UserNameFormType): UserNameTypeCreateInput & { id: string } => {
+        const { commentsIds, postCommentsIds, ...values } = form;
         void commentsIds;
         void postCommentsIds;
         return values;

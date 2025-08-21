@@ -6,6 +6,7 @@ import type { UserNameType, UserNameFormType } from "@entities/models/userName/t
 describe("toUserNameForm", () => {
     it("convertit UserNameType en UserNameFormType", () => {
         const userName = {
+            id: faker.string.uuid(),
             userName: faker.internet.username(),
         } as unknown as UserNameType;
 
@@ -13,6 +14,7 @@ describe("toUserNameForm", () => {
         const postCommentsIds = [faker.string.uuid()];
         const form = toUserNameForm(userName, commentsIds, postCommentsIds);
         expect(form).toEqual({
+            id: userName.id,
             userName: userName.userName,
             commentsIds,
             postCommentsIds,
@@ -21,15 +23,17 @@ describe("toUserNameForm", () => {
 });
 
 describe("toUserNameCreate / toUserNameUpdate", () => {
-    it("supprime commentsIds et postCommentsIds", () => {
+    it("conserve id et supprime commentsIds et postCommentsIds", () => {
         const form: UserNameFormType = {
+            id: faker.string.uuid(),
             userName: faker.internet.username(),
             commentsIds: [faker.string.uuid()],
             postCommentsIds: [faker.string.uuid()],
         };
 
-        const expected = { userName: form.userName };
-        expect(toUserNameCreate(form)).toEqual(expected);
-        expect(toUserNameUpdate(form)).toEqual(expected);
+        const expectedCreate = { id: form.id, userName: form.userName };
+        const expectedUpdate = { userName: form.userName };
+        expect(toUserNameCreate(form)).toEqual(expectedCreate);
+        expect(toUserNameUpdate(form)).toEqual(expectedUpdate);
     });
 });

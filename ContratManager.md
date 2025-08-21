@@ -52,6 +52,7 @@ De nouvelles étapes nécessaires peuvent être ajoutées au fur et à mesure.
 - [x] Implémenter `ManagerContract<UserName, UserNameForm>`
 - [x] CRUD + form local (`updateField/patchForm/clear*`)
 - [x] `loadEntityById` (profil simple)
+- [x] `createEntity` renseigne `id` via le `sub` courant
 
 ### UserProfile
 
