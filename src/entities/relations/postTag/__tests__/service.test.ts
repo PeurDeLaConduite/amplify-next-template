@@ -2,12 +2,8 @@ import { describe, it, expect, vi } from "vitest";
 import { http, HttpResponse } from "msw";
 import { server } from "@test/setup";
 import { postTagService } from "@entities/relations/postTag/service";
+import type { PostTagTypeCreateInput } from "@entities/relations/postTag/types";
 import type { ListRequest, CreateRequest, DeleteRequest } from "@test/fixtures/relations";
-
-interface PostTagIds {
-    postId: string;
-    tagId: string;
-}
 
 vi.mock("@entities/core/services/amplifyClient", () => {
     const mockModel = {
@@ -74,10 +70,10 @@ describe("postTagService", () => {
     });
 
     it("create envoie les IDs corrects", async () => {
-        let received: CreateRequest<PostTagIds>;
+        let received: CreateRequest<PostTagTypeCreateInput>;
         server.use(
             http.post("https://api.test/postTag/create", async ({ request }) => {
-                received = (await request.json()) as CreateRequest<PostTagIds>;
+                received = (await request.json()) as CreateRequest<PostTagTypeCreateInput>;
                 return HttpResponse.json({ data: {} });
             })
         );
@@ -86,10 +82,10 @@ describe("postTagService", () => {
     });
 
     it("delete envoie les IDs corrects", async () => {
-        let received: DeleteRequest<PostTagIds>;
+        let received: DeleteRequest<PostTagTypeCreateInput>;
         server.use(
             http.post("https://api.test/postTag/delete", async ({ request }) => {
-                received = (await request.json()) as DeleteRequest<PostTagIds>;
+                received = (await request.json()) as DeleteRequest<PostTagTypeCreateInput>;
                 return HttpResponse.json({ data: {} });
             })
         );
@@ -98,10 +94,10 @@ describe("postTagService", () => {
     });
 
     it("échoue avec authMode apiKey", async () => {
-        let received: CreateRequest<PostTagIds>;
+        let received: CreateRequest<PostTagTypeCreateInput>;
         server.use(
             http.post("https://api.test/postTag/create", async ({ request }) => {
-                received = (await request.json()) as CreateRequest<PostTagIds>;
+                received = (await request.json()) as CreateRequest<PostTagTypeCreateInput>;
                 return HttpResponse.json({ message: "Unauthorized" }, { status: 401 });
             })
         );
@@ -112,10 +108,10 @@ describe("postTagService", () => {
     });
 
     it("échoue avec authMode userPool", async () => {
-        let received: DeleteRequest<PostTagIds>;
+        let received: DeleteRequest<PostTagTypeCreateInput>;
         server.use(
             http.post("https://api.test/postTag/delete", async ({ request }) => {
-                received = (await request.json()) as DeleteRequest<PostTagIds>;
+                received = (await request.json()) as DeleteRequest<PostTagTypeCreateInput>;
                 return HttpResponse.json({ message: "Unauthorized" }, { status: 401 });
             })
         );
