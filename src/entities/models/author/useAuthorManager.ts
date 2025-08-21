@@ -6,11 +6,8 @@ import { createAuthorManager } from "./manager";
  */
 export function useAuthorManager() {
     const mgr = useMemo(() => createAuthorManager(), []);
-    const state = useSyncExternalStore(
-        mgr.subscribe,
-        () => mgr.getState(),
-        () => mgr.getState()
-    );
+    const serverSnapshot = useMemo(() => mgr.getState(), [mgr]);
+    const state = useSyncExternalStore(mgr.subscribe, mgr.getState, () => serverSnapshot);
 
     useEffect(() => {
         void mgr.refresh();

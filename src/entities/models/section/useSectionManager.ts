@@ -6,11 +6,8 @@ import { createSectionManager } from "./manager";
  */
 export function useSectionManager() {
     const mgr = useMemo(() => createSectionManager(), []);
-    const state = useSyncExternalStore(
-        mgr.subscribe,
-        () => mgr.getState(),
-        () => mgr.getState()
-    );
+    const serverSnapshot = useMemo(() => mgr.getState(), [mgr]);
+    const state = useSyncExternalStore(mgr.subscribe, mgr.getState, () => serverSnapshot);
 
     useEffect(() => {
         void mgr.refresh();

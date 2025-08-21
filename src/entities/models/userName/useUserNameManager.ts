@@ -6,11 +6,8 @@ import { createUserNameManager } from "./manager";
  */
 export function useUserNameManager() {
     const mgr = useMemo(() => createUserNameManager(), []);
-    const state = useSyncExternalStore(
-        mgr.subscribe,
-        () => mgr.getState(),
-        () => mgr.getState()
-    );
+    const serverSnapshot = useMemo(() => mgr.getState(), [mgr]);
+    const state = useSyncExternalStore(mgr.subscribe, mgr.getState, () => serverSnapshot);
 
     useEffect(() => {
         void mgr.refresh();
