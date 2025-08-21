@@ -29,7 +29,7 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
 ) {
     const {
         form,
-        extras: { authors, tags, sections },
+        extras: { authors = [], tags = [], sections = [] },
         updateField,
         patchForm,
         createEntity,
