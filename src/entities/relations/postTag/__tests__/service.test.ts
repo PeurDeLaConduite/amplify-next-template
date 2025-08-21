@@ -4,6 +4,8 @@ import { server } from "@test/setup";
 import { postTagService } from "@entities/relations/postTag/service";
 import type { PostTagTypeCreateInput } from "@entities/relations/postTag/types";
 import type { ListRequest, CreateRequest, DeleteRequest } from "@test/fixtures/relations";
+import type { PostTagTypeCreateInput } from "@entities/relations/postTag/types";
+
 
 vi.mock("@entities/core/services/amplifyClient", () => {
     const mockModel = {
