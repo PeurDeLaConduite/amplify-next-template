@@ -102,7 +102,7 @@ export function createTagManager() {
                 (postId) => postTagService.delete(postId, id)
             );
         },
-        validateField: async <K extends keyof TagFormType>(
+        validateField: <K extends keyof TagFormType>(
             name: K,
             value: TagFormType[K],
             ctx?: {

@@ -14,13 +14,7 @@ export const {
     toForm: toPostForm,
     toCreate: toPostCreate,
     toUpdate: toPostUpdate,
-} = createModelForm<
-    PostType,
-    PostFormType,
-    PostTypeUpdateInput,
-    PostTypeUpdateInput,
-    [string[], string[]]
->({
+} = createModelForm<PostType, PostFormType, PostTypeUpdateInput, PostTypeUpdateInput>({
     zodSchema: z.object({
         id: z.string().optional(),
         slug: z.string(),
@@ -51,7 +45,7 @@ export const {
         tagIds: [],
         sectionIds: [],
     },
-    toForm: (post, tagIds: string[] = [], sectionIds: string[] = []) => ({
+    toForm: (post): PostFormType => ({
         id: post.id ?? "",
         slug: post.slug ?? "",
         title: post.title ?? "",
@@ -63,19 +57,21 @@ export const {
         videoUrl: post.videoUrl ?? "",
         type: post.type ?? "",
         seo: toSeoForm((post.seo ?? {}) as SeoType),
-        tagIds,
-        sectionIds,
+        tagIds: (post.tags ?? []).map((t) => t.tagId),
+        sectionIds: (post.sections ?? []).map((s) => s.sectionId),
     }),
     toCreate: (form: PostFormType): PostTypeUpdateInput => {
-        const { tagIds, sectionIds, ...values } = form;
+        const { id: _id, tagIds, sectionIds, ...values } = form;
         void tagIds;
         void sectionIds;
+        void _id;
         return values;
     },
     toUpdate: (form: PostFormType): PostTypeUpdateInput => {
-        const { tagIds, sectionIds, ...values } = form;
+        const { id: _id, tagIds, sectionIds, ...values } = form;
         void tagIds;
         void sectionIds;
+        void _id;
         return values;
     },
 });

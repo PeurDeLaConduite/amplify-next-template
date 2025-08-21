@@ -5,6 +5,9 @@ import type { PostType, PostFormType } from "@entities/models/post/types";
 
 describe("toPostForm", () => {
     it("convertit PostType en PostFormType", () => {
+        const tagIds = [faker.string.uuid(), faker.string.uuid()];
+        const sectionIds = [faker.string.uuid()];
+
         const post = {
             slug: faker.lorem.slug(),
             title: faker.lorem.words(3),
@@ -20,12 +23,11 @@ describe("toPostForm", () => {
                 description: faker.lorem.sentence(),
                 image: faker.image.url(),
             },
+            tags: tagIds.map((tagId) => ({ tagId })),
+            sections: sectionIds.map((sectionId) => ({ sectionId })),
         } as unknown as PostType;
 
-        const tagIds = [faker.string.uuid(), faker.string.uuid()];
-        const sectionIds = [faker.string.uuid()];
-
-        const form = toPostForm(post, tagIds, sectionIds);
+        const form = toPostForm(post);
         expect(form).toEqual({
             slug: post.slug,
             title: post.title,

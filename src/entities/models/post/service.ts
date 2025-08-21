@@ -6,7 +6,7 @@ import type { PostTypeOmit, PostTypeUpdateInput } from "@entities/models/post/ty
 
 const base = crudService<
     "Post",
-    Omit<PostTypeOmit, "comments" | "author" | "sections" | "tags">,
+    Omit<PostTypeOmit, "comments" | "author" | "sections" | "tags" | "id">,
     PostTypeUpdateInput & { id: string },
     { id: string },
     { id: string }
