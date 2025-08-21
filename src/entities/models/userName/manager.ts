@@ -77,7 +77,7 @@ export function createUserNameManager() {
                 current,
                 target,
                 (commentId) => commentService.update({ id: commentId, userNameId: id }),
-                (commentId) => commentService.update({ id: commentId, userNameId: null as any })
+                (commentId) => commentService.update({ id: commentId, userNameId: null })
             );
         },
     });
