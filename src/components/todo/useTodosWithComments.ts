@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Schema } from "@/amplify/data/resource";
 import { getCurrentUser } from "aws-amplify/auth";
+import { getUserSub } from "@src/entities/core/auth";
 import { useTodoService, todoService } from "@src/entities/models/todo";
 import { useCommentService, commentService } from "@src/entities/models/comment";
 import { userNameService } from "@src/entities/models/userName";
@@ -90,7 +91,7 @@ export default function useTodosWithComments() {
     const addComment = async (todoId: string) => {
         const content = window.prompt("Contenu du commentaire ?");
         if (!content) return;
-        const { userId: userNameId } = await getCurrentUser();
+        const userNameId = await getUserSub();
         const { data } = await userNameService.get({ id: userNameId });
         if (!data?.userName) {
             window.alert("Pseudo manquant");

@@ -1,4 +1,4 @@
-import type { AuthRule } from "./types";
+import type { AuthRule } from "../types";
 
 export interface AuthUser {
     username?: string;
@@ -42,3 +42,5 @@ export function canAccess(
     }
     return false;
 }
+
+export { getUserSub } from "./getUserSub";
