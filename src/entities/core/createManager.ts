@@ -279,6 +279,8 @@ export function createManager<E, F, Id = string, Extras = Record<string, unknown
         pageSize,
         hasNext,
         hasPrev,
+        nextToken,
+        prevTokens,
     });
 
     return {
