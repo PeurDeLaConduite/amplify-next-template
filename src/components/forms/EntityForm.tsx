@@ -43,7 +43,7 @@ export default function EntityForm<T extends Record<string, unknown>>({
                         name={String(field)}
                         placeholder={labels(field)}
                         value={String(formData[field] ?? "")}
-                        onChange={(e) => handleChange(field, e.target.value)}
+                        onChange={(e) => handleChange(field, e.target.value as FieldValue<T>)}
                         className="w-full p-2 border rounded"
                         required={requiredFields.includes(field)}
                     />
