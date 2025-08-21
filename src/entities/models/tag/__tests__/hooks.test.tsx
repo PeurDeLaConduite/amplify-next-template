@@ -3,6 +3,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { TagType } from "@entities/models/tag/types";
 import type { PostSummary } from "@entities/models/post/types";
 
+type PostSummary = Pick<PostType, "id" | "title">;
+
 vi.mock("@entities/models/tag/service", () => ({
     tagService: {
         list: vi.fn(),

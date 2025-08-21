@@ -5,6 +5,8 @@ import ButtonBase from "@components/buttons/ButtonBase";
 import type { TagType } from "@entities/models/tag/types";
 import type { PostSummary } from "@entities/models/post/types";
 
+type PostSummary = Pick<PostType, "id" | "title">;
+
 interface Props {
     posts: PostSummary[];
     tags: TagType[];
