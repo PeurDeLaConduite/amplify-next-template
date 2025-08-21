@@ -1,38 +1,21 @@
 import { createManager } from "@entities/core";
 import { todoService } from "@entities/models/todo/service";
-import type {
-    TodoModel,
-    TodoFormType,
-    TodoCreateInput,
-    TodoUpdateInput,
-} from "@src/types/models/todo";
+import { commentService } from "@entities/models/comment/service";
+import { syncManyToMany as syncNN } from "@entities/core/utils/syncManyToMany";
+import {
+    initialTodoForm,
+    toTodoForm,
+    toTodoCreate,
+    toTodoUpdate,
+} from "@entities/models/todo/form";
+import type { TodoModel, TodoFormType } from "@entities/models/todo/types";
+import type { CommentModel } from "@src/types/models/comment";
 
 type Id = string;
-
-const initialTodoForm: TodoFormType = {
-    id: "",
-    content: "",
-    comments: [] as unknown as TodoModel["comments"],
-};
-
-function toTodoForm(todo: TodoModel): TodoFormType {
-    return {
-        id: todo.id ?? "",
-        content: todo.content ?? "",
-        comments: todo.comments ?? ([] as unknown as TodoModel["comments"]),
-    };
-}
-
-function toTodoCreate(form: TodoFormType): TodoCreateInput {
-    return { content: form.content || undefined };
-}
-
-function toTodoUpdate(form: TodoFormType): TodoUpdateInput {
-    return { content: form.content || undefined } as TodoUpdateInput;
-}
+type Extras = { comments: CommentModel[] };
 
 export function createTodoManager() {
-    return createManager<TodoModel, TodoFormType, Id>({
+    return createManager<TodoModel, TodoFormType, Id, Extras>({
         getInitialForm: () => ({ ...initialTodoForm }),
         listEntities: async ({ limit }) => {
             const { data } = await todoService.list({ limit });
@@ -47,20 +30,44 @@ export function createTodoManager() {
             if (errors?.length) throw new Error(errors[0].message);
             return data.id;
         },
-        updateEntity: async (id, data, { form }) => {
+        updateEntity: async (id, patch, { form }) => {
             const { errors } = await todoService.update({
                 id,
-                ...toTodoUpdate({ ...form, ...data }),
+                ...toTodoUpdate({ ...form, ...patch }),
             });
             if (errors?.length) throw new Error(errors[0].message);
         },
         deleteById: async (id) => {
             await todoService.delete({ id });
         },
+        loadExtras: async () => {
+            const { data } = await commentService.list({ limit: 999 });
+            return { comments: data ?? [] };
+        },
         loadEntityForm: async (id) => {
-            const { data } = await todoService.get({ id });
+            const [{ data }, { data: commentsData }] = await Promise.all([
+                todoService.get({ id }),
+                commentService.list({ limit: 999, filter: { todoId: { eq: id } } }),
+            ]);
             if (!data) throw new Error("Todo not found");
-            return toTodoForm(data as TodoModel);
+            const commentIds = (commentsData ?? []).map((c) => c.id);
+            return toTodoForm(data as TodoModel, commentIds);
+        },
+        syncManyToMany: async (id, link) => {
+            const { data } = await commentService.list({ limit: 999 });
+            const current = (data ?? []).filter((c) => c.todoId === id).map((c) => c.id);
+            const target = link.replace ?? [
+                ...new Set([
+                    ...current.filter((x) => !(link.remove ?? []).includes(x)),
+                    ...(link.add ?? []),
+                ]),
+            ];
+            await syncNN(
+                current,
+                target,
+                (commentId) => commentService.update({ id: commentId, todoId: id }),
+                (commentId) => commentService.update({ id: commentId, todoId: null })
+            );
         },
     });
 }

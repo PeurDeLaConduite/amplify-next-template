@@ -22,9 +22,9 @@ const initialCommentForm: CommentFormType = {
     todoId: "",
     postId: "",
     userNameId: "",
-    todo: null,
-    post: null,
-    userName: null,
+    todo: null as unknown as CommentFormType["todo"],
+    post: null as unknown as CommentFormType["post"],
+    userName: null as unknown as CommentFormType["userName"],
 };
 
 function toCommentForm(comment: CommentModel): CommentFormType {
@@ -34,9 +34,9 @@ function toCommentForm(comment: CommentModel): CommentFormType {
         todoId: comment.todoId ?? "",
         postId: comment.postId ?? "",
         userNameId: comment.userNameId ?? "",
-        todo: comment.todo ?? null,
-        post: comment.post ?? null,
-        userName: comment.userName ?? null,
+        todo: (comment.todo ?? null) as unknown as CommentFormType["todo"],
+        post: (comment.post ?? null) as unknown as CommentFormType["post"],
+        userName: (comment.userName ?? null) as unknown as CommentFormType["userName"],
     };
 }
 
