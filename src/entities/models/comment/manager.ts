@@ -43,18 +43,18 @@ function toCommentForm(comment: CommentModel): CommentFormType {
 function toCommentCreate(form: CommentFormType): CommentCreateInput {
     return {
         content: form.content,
-        todoId: form.todoId || undefined,
-        postId: form.postId || undefined,
-        userNameId: form.userNameId,
+        todoId: form.todoId || null,
+        postId: form.postId || null,
+        userNameId: form.userNameId || null,
     };
 }
 
 function toCommentUpdate(form: CommentFormType): CommentUpdateInput {
     return {
         content: form.content,
-        todoId: form.todoId || undefined,
-        postId: form.postId || undefined,
-        userNameId: form.userNameId,
+        todoId: form.todoId || null,
+        postId: form.postId || null,
+        userNameId: form.userNameId || null,
     } as CommentUpdateInput;
 }
 

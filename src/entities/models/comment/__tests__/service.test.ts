@@ -75,9 +75,14 @@ describe("commentService", () => {
         fetchSpy.mockRestore();
     });
 
-    it("create utilise userPool", async () => {
+    it("create accepte les ID null et utilise userPool", async () => {
         const fetchSpy = vi.spyOn(global, "fetch");
-        const res = await commentService.create({ content: "", userNameId: "" });
+        const res = await commentService.create({
+            content: "",
+            todoId: null,
+            postId: null,
+            userNameId: null,
+        });
         expect(fetchSpy).toHaveBeenCalledTimes(1);
         const headers = (fetchSpy.mock.calls[0][1]?.headers as Record<string, string>)[
             "x-auth-mode"
