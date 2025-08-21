@@ -22,9 +22,9 @@ export function createUserProfileManager() {
             return (data ?? null) as UserProfileType | null;
         },
         createEntity: async (form) => {
-            const { data, errors } = await userProfileService.create(toUserProfileCreate(form));
+            const { errors } = await userProfileService.create(toUserProfileCreate(form));
             if (errors?.length) throw new Error(errors[0].message);
-            return data.id;
+            return form.id;
         },
         updateEntity: async (id, data, { form }) => {
             const { errors } = await userProfileService.update({

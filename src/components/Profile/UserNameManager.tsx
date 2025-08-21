@@ -91,7 +91,7 @@ export default function UserNameManager() {
             saveField={saveField}
             clearField={clearField}
             deleteEntity={async (id?: string) => {
-                const target = id ?? editingId ?? user?.userId ?? user?.username ?? undefined;
+                const target = id ?? editingId ?? user?.userId ?? undefined;
                 if (!target) return;
                 await handleDeleteById(target);
             }}

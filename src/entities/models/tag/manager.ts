@@ -1,14 +1,11 @@
 import { createManager } from "@entities/core";
 import { postService } from "@entities/models/post/service";
-import type { PostSummary } from "@entities/models/post/types";
 import { postTagService } from "@entities/relations/postTag/service";
 import { syncManyToMany as syncNN } from "@entities/core/utils/syncManyToMany";
 import { tagService } from "./service";
 import { tagSchema, initialTagForm, toTagForm, toTagCreate, toTagUpdate } from "./form";
 import type { TagType, TagFormType } from "./types";
 import type { PostType } from "@entities/models/post/types";
-import type { ZodObject, ZodRawShape } from "zod";
-
 
 type Id = string;
 type PostSummary = Pick<PostType, "id" | "title">;
@@ -86,7 +83,6 @@ export function createTagManager() {
             const { data } = await postService.list({ limit: 999 });
             const posts: PostSummary[] = (data ?? []).map(({ id, title }) => ({ id, title }));
             return { posts };
-
         },
         loadEntityForm: async (id) => {
             const { data } = await tagService.get({ id });
