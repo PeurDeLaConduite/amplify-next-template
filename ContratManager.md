@@ -8,11 +8,11 @@ De nouvelles étapes nécessaires peuvent être ajoutées au fur et à mesure.
 
 ## 1. Contrat commun
 
-- [ ] Créer `src/entities/core/managerContract.ts` (interface `ManagerContract` + `MaybePromise`)
+- [x] Créer `src/entities/core/managerContract.ts` (interface `ManagerContract` + `MaybePromise`)
 
 ## 2. Fabrique générique
 
-- [ ] Créer `src/entities/core/createManager.ts` (gestion état local + services + flags)
+- [x] Créer `src/entities/core/createManager.ts` (gestion état local + services + flags)
 
 ---
 
@@ -20,71 +20,71 @@ De nouvelles étapes nécessaires peuvent être ajoutées au fur et à mesure.
 
 ### Tag
 
-- [ ] Implémenter `ManagerContract<Tag, TagForm, string, { posts: Post[] }>`
-- [ ] État (`entities`, `form`, `editingId/isEditing`, flags, pagination)
-- [ ] Méthodes `listEntities`, `refresh`, `refreshExtras`, `getEntityById`, `loadEntityById`
-- [ ] CRUD : `createEntity`, `updateEntity`, `deleteById`
-- [ ] Relations : `syncManyToMany(postId, { add/remove/replace })` via service `PostTag`
-- [ ] Validation : `validateField('name', …)` anti-doublon local + check serveur
-- [ ] Cascade delete : pivots `PostTag`
+- [x] Implémenter `ManagerContract<Tag, TagForm, string, { posts: Post[] }>`
+- [x] État (`entities`, `form`, `editingId/isEditing`, flags, pagination)
+- [x] Méthodes `listEntities`, `refresh`, `refreshExtras`, `getEntityById`, `loadEntityById`
+- [x] CRUD : `createEntity`, `updateEntity`, `deleteById`
+- [x] Relations : `syncManyToMany(postId, { add/remove/replace })` via service `PostTag`
+- [x] Validation : `validateField('name', …)` anti-doublon local + check serveur
+- [x] Cascade delete : pivots `PostTag`
 
 ### Post
 
-- [ ] Implémenter `ManagerContract<Post, PostForm, string, { authors: Author[], tags: Tag[], sections: Section[] }>`
-- [ ] CRUD + extras (authors, tags, sections)
-- [ ] Relations : `syncManyToMany` (tags, sections)
-- [ ] Cascade delete : `PostTag`, `SectionPost`, `Comment`
+- [x] Implémenter `ManagerContract<Post, PostForm, string, { authors: Author[], tags: Tag[], sections: Section[] }>`
+- [x] CRUD + extras (authors, tags, sections)
+- [x] Relations : `syncManyToMany` (tags, sections)
+- [x] Cascade delete : `PostTag`, `SectionPost`, `Comment`
 
 ### Section
 
-- [ ] Implémenter `ManagerContract<Section, SectionForm, string, { posts: Post[] }>`
-- [ ] Relations : `syncManyToMany(sectionId, …)` via `SectionPost`
-- [ ] Cascade delete : pivots `SectionPost`
+- [x] Implémenter `ManagerContract<Section, SectionForm, string, { posts: Post[] }>`
+- [x] Relations : `syncManyToMany(sectionId, …)` via `SectionPost`
+- [x] Cascade delete : pivots `SectionPost`
 
 ### Author
 
-- [ ] Implémenter `ManagerContract<Author, AuthorForm>`
-- [ ] CRUD + stratégie cascade (posts : interdire, réassigner ou supprimer)
+- [x] Implémenter `ManagerContract<Author, AuthorForm>`
+- [x] CRUD + stratégie cascade (posts : interdire, réassigner ou supprimer)
 
 ### UserName
 
-- [ ] Implémenter `ManagerContract<UserName, UserNameForm>`
-- [ ] CRUD + form local (`updateField/patchForm/clear*`)
-- [ ] `loadEntityById` (profil simple)
+- [x] Implémenter `ManagerContract<UserName, UserNameForm>`
+- [x] CRUD + form local (`updateField/patchForm/clear*`)
+- [x] `loadEntityById` (profil simple)
 
 ### UserProfile
 
-- [ ] Implémenter `ManagerContract<UserProfile, UserProfileForm>`
-- [ ] CRUD + extras éventuels
-- [ ] `loadEntityById` + `refreshExtras`
+- [x] Implémenter `ManagerContract<UserProfile, UserProfileForm>`
+- [x] CRUD (pas d'extras)
+- [x] `loadEntityById` (pas de `refreshExtras`)
 
 ### Comment
 
-- [ ] Implémenter `ManagerContract<Comment, CommentForm>`
-- [ ] CRUD + form local
-- [ ] Relation obligatoire : `userNameId`, optionnelle : `postId`/`todoId`
-- [ ] Cascade delete si supprimé via Post/Todo
+- [x] Implémenter `ManagerContract<Comment, CommentForm>`
+- [x] CRUD + form local
+- [x] Relation obligatoire : `userNameId`, optionnelle : `postId`/`todoId`
+- [ ] Cascade delete si supprimé via Todo (Post ✅)
 
 ### Todo
 
-- [ ] Implémenter `ManagerContract<Todo, TodoForm>`
-- [ ] CRUD + form local
+- [x] Implémenter `ManagerContract<Todo, TodoForm>`
+- [x] CRUD + form local
 - [ ] Cascade delete : `Comment` liés
 
 ---
 
 ## 4. Hooks React
 
-- [ ] Créer `useXxxManager` basé sur `useSyncExternalStore`
-- [ ] Appeler `refresh()` et `refreshExtras()` au montage
+- [x] Créer `useXxxManager` basé sur `useSyncExternalStore`
+- [x] Appeler `refresh()` et `refreshExtras()` au montage
 
 ---
 
 ## 5. Migration UI
 
-- [ ] Remplacer anciens hooks (`useTagForm`, `usePostForm`, …) par `useXxxManager`
+- [x] Remplacer anciens hooks (`useTagForm`, `usePostForm`, …) par `useXxxManager`
 - [x] `useAuthorForm` → `useAuthorManager`
-- [ ] Mappage fonctions :
+- [x] Mappage fonctions :
     - `setForm → patchForm`
     - `handleChange → updateField`
     - `submit → createEntity/updateEntity + refresh`
@@ -95,20 +95,20 @@ De nouvelles étapes nécessaires peuvent être ajoutées au fur et à mesure.
 
 ## 6. Relations N:N
 
-- [ ] Implémenter `syncManyToMany` (services pivots `PostTag`, `SectionPost`)
-- [ ] Cascade delete documentée et appliquée
+- [x] Implémenter `syncManyToMany` (services pivots `PostTag`, `SectionPost`)
+- [x] Cascade delete documentée et appliquée
 
 ---
 
 ## 7. Validation
 
-- [ ] Implémenter `validateField` + `validateForm` (anti-doublons locaux + check serveur)
+- [ ] Implémenter `validateField` + `validateForm` dans tous les managers (Tag ✅)
 
 ---
 
 ## 8. Pagination
 
-- [ ] Support complet (`pageSize`, `nextToken`, `prevTokens`, `loadNextPage`, `loadPrevPage`)
+- [x] Support complet (`pageSize`, `nextToken`, `prevTokens`, `loadNextPage`, `loadPrevPage`)
 
 ---
 
