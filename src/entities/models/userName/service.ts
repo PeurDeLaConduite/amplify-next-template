@@ -5,7 +5,7 @@ import type {
     UserNameTypeUpdateInput,
 } from "@entities/models/userName/types";
 
-// ✅ Lecture en public (API key), écritures avec User Pool
+// ✅ Lecture et écriture privées via User Pool
 export const userNameService = crudService<
     "UserName",
     UserNameTypeCreateInput,
@@ -13,5 +13,5 @@ export const userNameService = crudService<
     { id: string },
     { id: string }
 >("UserName", {
-    auth: { read: "apiKey", write: "userPool" },
+    auth: { read: "userPool", write: "userPool" },
 });
