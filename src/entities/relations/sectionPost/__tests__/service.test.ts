@@ -2,8 +2,10 @@ import { describe, it, expect, vi } from "vitest";
 import { http, HttpResponse } from "msw";
 import { server } from "@test/setup";
 import { sectionPostService } from "@entities/relations/sectionPost/service";
+import type { SectionPostTypeCreateInput } from "@entities/relations/sectionPost/types";
 import type { ListRequest, CreateRequest, DeleteRequest } from "@test/fixtures/relations";
 import type { SectionPostTypeCreateInput } from "@entities/relations/sectionPost/types";
+
 
 vi.mock("@entities/core/services/amplifyClient", () => {
     const mockModel = {
