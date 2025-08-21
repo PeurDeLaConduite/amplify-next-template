@@ -17,7 +17,7 @@ interface Props {
     onDeleteById: (id: IdLike) => void;
 }
 
-export default function AuthorList(props: Props) {
+function AuthorListInner(props: Props) {
     return (
         <GenericList<AuthorType>
             items={props.authors}
@@ -36,3 +36,5 @@ export default function AuthorList(props: Props) {
         />
     );
 }
+
+export default React.memo(AuthorListInner);

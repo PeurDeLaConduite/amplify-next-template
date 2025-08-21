@@ -1,12 +1,12 @@
 // src/components/Blog/manage/sections/SectionForm.tsx
 "use client";
-import React, { forwardRef, type ChangeEvent, type FormEvent } from "react";
+import React, { forwardRef, type ChangeEvent } from "react";
 import EditableField from "@components/forms/EditableField";
 import EditableTextArea from "@components/forms/EditableTextArea";
 import SeoFields from "@components/forms/SeoFields";
 import OrderSelector from "@components/forms/OrderSelector";
 import ItemSelector from "@components/forms/ItemSelector";
-import { SaveButton } from "@components/buttons";
+import EntityFormShell, { type EntityFormManager } from "@components/Blog/manage/EntityFormShell";
 import { useAutoGenFields, slugify } from "@hooks/useAutoGenFields";
 import {
     type SectionFormTypes,
@@ -78,20 +78,46 @@ const SectionForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
         }
     };
 
-    const handleSubmit = async (e?: FormEvent<HTMLFormElement>) => {
-        e?.preventDefault();
+    const submit = async () => {
         if (currentEditingId) {
             await updateEntity(currentEditingId, form);
         } else {
             await createEntity(form);
         }
-        cancelEdit();
-        patchForm(initialSectionForm);
-        onSave();
+    };
+
+    const setForm: React.Dispatch<React.SetStateAction<SectionFormTypes>> = (updater) => {
+        if (typeof updater === "function") {
+            patchForm(updater(form));
+        } else {
+            patchForm(updater);
+        }
+    };
+
+    const setMode: React.Dispatch<React.SetStateAction<"create" | "edit">> = (mode) => {
+        if (mode === "create") {
+            cancelEdit();
+        }
+    };
+
+    const normalizedManager: EntityFormManager<SectionFormTypes> = {
+        form,
+        submit,
+        setForm,
+        setMode,
+        mode: currentEditingId ? "edit" : "create",
+        saving: manager.savingCreate || manager.savingUpdate,
+        message: null,
     };
 
     return (
-        <form ref={ref} onSubmit={handleSubmit} className="mb-6 grid gap-2">
+        <EntityFormShell
+            ref={ref}
+            manager={normalizedManager}
+            initialForm={initialSectionForm}
+            onSave={onSave}
+            className="mb-6"
+        >
             <EditableField
                 name="title"
                 label="Titre"
@@ -136,13 +162,7 @@ const SectionForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
                 label="Articles associés :"
                 getLabel={(post) => post.title}
             />
-            <div className="flex space-x-2">
-                <SaveButton
-                    onClick={() => void handleSubmit()}
-                    label={currentEditingId ? "Mettre à jour" : "Créer"}
-                />
-            </div>
-        </form>
+        </EntityFormShell>
     );
 });
 

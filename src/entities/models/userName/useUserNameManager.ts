@@ -9,6 +9,7 @@ export function useUserNameManager() {
     const serverSnapshot = useMemo(() => mgr.getState(), [mgr]);
     const state = useSyncExternalStore(mgr.subscribe, mgr.getState, () => serverSnapshot);
 
+
     useEffect(() => {
         void mgr.refresh();
         void mgr.refreshExtras();

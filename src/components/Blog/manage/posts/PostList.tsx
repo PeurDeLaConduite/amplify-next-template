@@ -17,7 +17,7 @@ interface Props {
     onDeleteById: (id: IdLike) => void;
 }
 
-export default function PostList(props: Props) {
+function PostListInner(props: Props) {
     return (
         <GenericList<PostType>
             items={props.posts}
@@ -36,3 +36,5 @@ export default function PostList(props: Props) {
         />
     );
 }
+
+export default React.memo(PostListInner);

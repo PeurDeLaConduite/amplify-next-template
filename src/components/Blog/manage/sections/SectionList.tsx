@@ -16,7 +16,7 @@ interface Props {
     onDeleteById: (id: IdLike) => void;
 }
 
-export default function SectionList(props: Props) {
+function SectionListInner(props: Props) {
     return (
         <GenericList<SectionType>
             items={props.sections}
@@ -35,3 +35,5 @@ export default function SectionList(props: Props) {
         />
     );
 }
+
+export default React.memo(SectionListInner);

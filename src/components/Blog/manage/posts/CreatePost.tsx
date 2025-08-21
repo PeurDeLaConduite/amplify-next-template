@@ -38,6 +38,10 @@ export default function PostManagerPage() {
         cancelEdit();
     }, [cancelEdit]);
 
+    const handleRequestSubmit = useCallback(() => {
+        formRef.current?.requestSubmit();
+    }, []);
+
     return (
         <RequireAdmin>
             <BlogEditorLayout title="Gestion des Posts">
@@ -54,9 +58,7 @@ export default function PostManagerPage() {
                     posts={posts}
                     editingId={editingId}
                     onEditById={handleEditById}
-                    onSave={() => {
-                        formRef.current?.requestSubmit();
-                    }}
+                    onSave={handleRequestSubmit}
                     onCancel={handleCancel}
                     onDeleteById={handleDeleteById}
                 />
