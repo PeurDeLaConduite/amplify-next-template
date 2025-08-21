@@ -1,10 +1,10 @@
 import { crudService, setNullBatch } from "@entities/core";
 import { postService } from "@entities/models/post/service";
-import type { AuthorTypeOmit, AuthorTypeUpdateInput } from "@entities/models/author/types";
+import type { AuthorTypeCreateInput, AuthorTypeUpdateInput } from "@entities/models/author/types";
 
 const base = crudService<
     "Author",
-    Omit<AuthorTypeOmit, "posts">,
+    AuthorTypeCreateInput,
     AuthorTypeUpdateInput & { id: string },
     { id: string },
     { id: string }
@@ -18,7 +18,7 @@ export const authorService = {
         await setNullBatch(
             postService.list,
             async (p) => {
-                await postService.update(p as AuthorTypeUpdateInput & { id: string });
+                await postService.update({ id: p.id, authorId: null });
             },
             "authorId",
             id
