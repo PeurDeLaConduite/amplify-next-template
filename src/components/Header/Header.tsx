@@ -1,19 +1,14 @@
 // src/components/layout/Header.tsx
-// src/components/layout/Header.tsx
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
 import React, { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import { PowerButton } from "@src/components/buttons";
 import { useUserNameManager } from "@entities/models/userName";
-import { useUserNameManager } from "@entities/models/userName";
 import UserNameModal from "@src/components/Profile/UserNameModal";
 import { useUserNameRefresh } from "@entities/models/userName/useUserNameRefresh";
-// import { getUserSub } from "@entities/core/auth/getUserSub";
-import { useUserNameRefresh } from "@entities/models/userName/useUserNameRefresh";
-// import { getUserSub } from "@entities/core/auth/getUserSub";
+
 interface HeaderProps {
     className?: string;
 }
@@ -21,50 +16,37 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ className }) => {
     const [showModal, setShowModal] = useState(false);
     const { user, signOut } = useAuthenticator();
+
     const manager = useUserNameManager();
     const { form } = manager;
     const { userName } = form;
 
-    // ✅ wrapper: recharge le FORM (self) quand on rafraîchit
+    // ✅ wrapper pour rafraîchir les infos userName
     const refreshSelf = useCallback(async () => {
         try {
             const sub = user?.userId;
-            await manager.loadEntityById(sub);
+            if (sub) {
+                await manager.loadEntityById(sub);
+            }
         } catch {
-            // pas connecté: ignore
-    const { user, signOut } = useAuthenticator();
-    const manager = useUserNameManager();
-    const { form } = manager;
-    const { userName } = form;
-
-    // ✅ wrapper: recharge le FORM (self) quand on rafraîchit
-    const refreshSelf = useCallback(async () => {
-        try {
-            const sub = user?.userId;
-            await manager.loadEntityById(sub);
-        } catch {
-            // pas connecté: ignore
+            // pas connecté, ignore
         }
-    }, [manager]);
+    }, [manager, user?.userId]);
 
+    // Rafraîchir au changement d'auth
     useUserNameRefresh({
         refresh: refreshSelf,
         enabled: Boolean(user),
         onAuthChange: true,
     });
-    }, [manager]);
 
-    useUserNameRefresh({
-        refresh: refreshSelf,
-        enabled: Boolean(user),
-        onAuthChange: true,
-    });
     // Ouvrir/fermer le modal selon présence du userName
     useEffect(() => {
         if (user && !userName) setShowModal(true);
         if (userName) setShowModal(false);
     }, [user, userName]);
 
+    // ✅ factorisation logique affichage à droite
     const renderRight = () => {
         if (!user) {
             return (
