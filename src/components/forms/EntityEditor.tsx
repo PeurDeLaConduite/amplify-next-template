@@ -148,6 +148,7 @@ export default function EntityEditor<T extends Record<string, unknown>>(
                             void deleteEntity?.();
                         }}
                         label={deleteLabel}
+                        size="medium"
                     />
                 </div>
             )}

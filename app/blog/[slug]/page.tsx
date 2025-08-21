@@ -49,7 +49,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
         <>
             <Blog data={{ sections, posts, authors }} singlePost={post} />{" "}
             <div className="text-right mb-6">
-                <BackButton href="/blog" label="Retour" className="inline-block" />
+                <BackButton href="/blog" label="Retour" className="inline-block" size="medium" />
             </div>
         </>
     );

@@ -57,15 +57,22 @@ export default function EntityForm<T extends Record<string, unknown>>({
                             onClick={handleSubmit}
                             label="Enregistrer"
                             className="min-w-[120px]"
+                            size="medium"
                         />
                         <CancelButton
                             onClick={onCancel}
                             label="Annuler"
                             className="min-w-[120px]"
+                            size="medium"
                         />
                     </>
                 ) : (
-                    <AddButton onClick={handleSubmit} label="Créer" className="min-w-[120px]" />
+                    <AddButton
+                        onClick={handleSubmit}
+                        label="Créer"
+                        className="min-w-[120px]"
+                        size="medium"
+                    />
                 )}
             </div>
         </form>
