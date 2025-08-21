@@ -41,8 +41,8 @@ export interface UseModelFormResult<F, E> {
     loadingExtras: boolean; // ← pour différencier si besoin
 
     error: unknown;
-    message: string | null;
     setError: React.Dispatch<React.SetStateAction<unknown>>;
+    message: string | null;
 
     handleChange: <K extends keyof F>(field: K, value: F[K]) => void;
     patch: (partial: Partial<F>) => void;
@@ -124,10 +124,12 @@ export default function useModelForm<
 
     const patch = useCallback((partial: Partial<F>) => {
         setForm((prev) => ({ ...prev, ...partial }));
+        setMessage("Les données ont été mises à jour.");
     }, []);
 
     const reset = useCallback(() => {
         setForm(initialRef.current);
+        setMessage("Les données ont été réinitialisées.");
         setMode(initialMode);
         setError(null);
     }, [initialMode]);

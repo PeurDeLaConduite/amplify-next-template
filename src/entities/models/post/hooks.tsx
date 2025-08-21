@@ -46,6 +46,7 @@ export function usePostForm(post: PostType | null) {
             });
             if (!data) throw new Error("Erreur lors de la création de l'article");
             setEditingId(data.id);
+            setMessage("Nouvel article créé avec succès.");
             return data.id;
         },
         update: async (form) => {
@@ -62,6 +63,8 @@ export function usePostForm(post: PostType | null) {
             });
             if (!data) throw new Error("Erreur lors de la mise à jour de l'article");
             setEditingId(data.id);
+            setMessage("Article mis à jour avec succès.");
+
             return data.id;
         },
         syncRelations: async (id, form) => {
@@ -72,7 +75,7 @@ export function usePostForm(post: PostType | null) {
         },
     });
 
-    const { setForm, setExtras, setMode, extras, reset } = modelForm;
+    const { setForm, setExtras, setMode, extras, reset, setMessage, setError } = modelForm;
 
     const fetchPosts = useCallback(async () => {
         const { data } = await postService.list();
@@ -153,12 +156,23 @@ export function usePostForm(post: PostType | null) {
 
     const removeById = useCallback(
         async (id: string) => {
-            if (!window.confirm("Supprimer ce post ?")) return;
-            await postService.deleteCascade({ id });
-            await fetchPosts();
-            if (editingId === id) {
-                setEditingId(null);
-                reset();
+            if (!window.confirm("Supprimer cet article ?")) return;
+
+            try {
+                setMessage("Suppression des données relationnelles...");
+                await postService.deleteCascade({ id });
+                await fetchPosts();
+
+                if (editingId === id) {
+                    setEditingId(null);
+                    reset();
+                }
+
+                setMessage("Article supprimé avec succès.");
+            } catch (e: unknown) {
+                setError(e); // si setError est dispo dans ton hook
+                setMessage("Erreur lors de la suppression de l’article.");
+                // pas de throw: l’UI affiche le message d’erreur
             }
         },
         [fetchPosts, editingId, reset]

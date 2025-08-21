@@ -23,7 +23,7 @@ export default function PostManagerPage() {
         fetchPosts,
         selectById,
         removeById,
-        reset,
+        /* refresh, */
     } = manager;
 
     useEffect(() => {
