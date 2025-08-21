@@ -29,6 +29,29 @@ export function createTagManager() {
         return exists ? "Nom déjà utilisé" : null;
     }
 
+    async function validateForm(ctx?: {
+        form?: TagFormType;
+        entities?: TagType[];
+        editingId?: Id;
+    }): Promise<{ valid: boolean; errors: Partial<Record<keyof TagFormType, string>> }> {
+        const form = ctx?.form ?? initialTagForm;
+        const errors: Partial<Record<keyof TagFormType, string>> = {};
+
+        const parsed = tagSchema.safeParse(form);
+        if (!parsed.success) {
+            const fieldErrors = parsed.error.flatten().fieldErrors;
+            for (const [field, msgs] of Object.entries(fieldErrors)) {
+                const msg = (msgs as string[] | undefined)?.[0];
+                if (msg) errors[field as keyof TagFormType] = msg;
+            }
+        }
+
+        const nameErr = await validateName(form.name, ctx);
+        if (nameErr) errors.name = nameErr;
+
+        return { valid: Object.keys(errors).length === 0, errors };
+    }
+
     return createManager<TagType, TagFormType, Id, Extras>({
         getInitialForm: () => ({ ...initialTagForm }),
         listEntities: async ({ limit, nextToken }) => {
@@ -99,20 +122,6 @@ export function createTagManager() {
             }
             return null;
         },
-        validateForm: async (ctx) => {
-            const form = ctx?.form ?? initialTagForm;
-            const errors: Partial<Record<keyof TagFormType, string>> = {};
-            const parsed = tagSchema.safeParse(form);
-            if (!parsed.success) {
-                const fieldErrors = parsed.error.flatten().fieldErrors;
-                for (const [field, msgs] of Object.entries(fieldErrors)) {
-                    const msg = (msgs as string[] | undefined)?.[0];
-                    if (msg) errors[field as keyof TagFormType] = msg;
-                }
-            }
-            const nameErr = await validateName(form.name, ctx);
-            if (nameErr) errors.name = nameErr;
-            return { valid: Object.keys(errors).length === 0, errors };
-        },
+        validateForm,
     });
 }
