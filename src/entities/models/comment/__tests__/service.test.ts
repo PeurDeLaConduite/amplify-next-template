@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { commentService } from "@entities/models/comment";
 import { http, HttpResponse } from "msw";
 import { server } from "@test/setup";
-import type { CommentCreateInput, CommentUpdateInput } from "@src/types/models/comment";
+import type { CommentTypeCreateInput, CommentTypeUpdateInput } from "@src/types/models/comment";
 
 vi.mock("@entities/core/services/amplifyClient", () => {
     const baseFetch = (op: string, { authMode, body }: { authMode?: string; body?: unknown }) =>
@@ -19,9 +19,9 @@ vi.mock("@entities/core/services/amplifyClient", () => {
         Comment: {
             get: (args: { id: string }, opts?: { authMode?: string }) =>
                 baseFetch("get", { ...opts, body: args }),
-            create: (data: CommentCreateInput, opts?: { authMode?: string }) =>
+            create: (data: CommentTypeCreateInput, opts?: { authMode?: string }) =>
                 baseFetch("create", { ...opts, body: data }),
-            update: (data: CommentUpdateInput & { id: string }, opts?: { authMode?: string }) =>
+            update: (data: CommentTypeUpdateInput & { id: string }, opts?: { authMode?: string }) =>
                 baseFetch("update", { ...opts, body: data }),
             delete: (args: { id: string }, opts?: { authMode?: string }) =>
                 baseFetch("delete", { ...opts, body: args }),

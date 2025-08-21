@@ -6,7 +6,7 @@ import { useTodoService, todoService } from "@src/entities/models/todo";
 import { useCommentService, commentService } from "@src/entities/models/comment";
 import { userNameService } from "@src/entities/models/userName";
 import { useCommentPermissions } from "@src/hooks/useCommentPermissions";
-import type { CommentCreateInput } from "@src/types/models/comment";
+import type { CommentTypeCreateInput } from "@src/types/models/comment";
 
 export type CommentWithTodoId = {
     id: string;
@@ -97,7 +97,7 @@ export default function useTodosWithComments() {
             window.alert("Pseudo manquant");
             return;
         }
-        const input: CommentCreateInput = { content, todoId, userNameId };
+        const input: CommentTypeCreateInput = { content, todoId, userNameId };
         await commentService.create(input);
     };
 

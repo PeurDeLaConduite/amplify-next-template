@@ -59,25 +59,25 @@ function toCommentUpdate(form: CommentFormType): CommentUpdateInput {
 }
 
 export function createCommentManager() {
-    return createManager<CommentModel, CommentFormType, Id, Extras>({
+    return createManager<CommentType, CommentFormType, Id, Extras>({
         getInitialForm: () => ({ ...initialCommentForm }),
         listEntities: async ({ limit }) => {
             const { data } = await commentService.list({ limit });
-            return { items: (data ?? []) as CommentModel[] };
+            return { items: (data ?? []) as CommentType[] };
         },
         getEntityById: async (id) => {
             const { data } = await commentService.get({ id });
-            return (data ?? null) as CommentModel | null;
+            return (data ?? null) as CommentType | null;
         },
         createEntity: async (form) => {
             const { data, errors } = await commentService.create(toCommentCreate(form));
             if (errors?.length) throw new Error(errors[0].message);
             return data.id;
         },
-        updateEntity: async (id, data, { form }) => {
+        updateEntity: async (id, patch, { form }) => {
             const { errors } = await commentService.update({
                 id,
-                ...toCommentUpdate({ ...form, ...data }),
+                ...toCommentUpdate({ ...form, ...patch }),
             });
             if (errors?.length) throw new Error(errors[0].message);
         },
@@ -99,7 +99,7 @@ export function createCommentManager() {
         loadEntityForm: async (id) => {
             const { data } = await commentService.get({ id });
             if (!data) throw new Error("Comment not found");
-            return toCommentForm(data as CommentModel);
+            return toCommentForm(data as CommentType);
         },
     });
 }
