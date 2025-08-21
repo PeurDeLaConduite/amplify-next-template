@@ -35,6 +35,7 @@ describe("toUserProfileForm", () => {
 describe("toUserProfileCreate / toUserProfileUpdate", () => {
     it("retourne l'objet tel quel", () => {
         const form: UserProfileFormType = {
+            id: faker.string.uuid(),
             firstName: faker.person.firstName(),
             familyName: faker.person.lastName(),
             address: faker.location.streetAddress(),
@@ -44,7 +45,10 @@ describe("toUserProfileCreate / toUserProfileUpdate", () => {
             phoneNumber: faker.phone.number(),
         };
 
-        expect(toUserProfileCreate(form)).toEqual(form);
-        expect(toUserProfileUpdate(form)).toEqual(form);
+        const expected = { ...form };
+        delete expected.id;
+
+        expect(toUserProfileCreate(form)).toEqual(expected);
+        expect(toUserProfileUpdate(form)).toEqual(expected);
     });
 });

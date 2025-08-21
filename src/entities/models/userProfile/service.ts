@@ -7,7 +7,7 @@ import type {
 
 export const userProfileService = crudService<
     "UserProfile",
-    UserProfileTypeOmit & { id: string },
+    Omit<UserProfileTypeOmit, "id">,
     UserProfileTypeUpdateInput & { id: string },
     { id: string },
     { id: string }
