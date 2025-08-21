@@ -83,7 +83,6 @@ export function createUserNameManager() {
             const postCommentIds = (allComments ?? [])
                 .filter((c) => c.userNameId === id && c.postId)
                 .map((c) => c.id);
-            emitUserNameUpdated();
             return toUserNameForm(data as UserNameType, commentIds, postCommentIds);
         },
 

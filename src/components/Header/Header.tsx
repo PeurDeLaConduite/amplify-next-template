@@ -8,7 +8,7 @@ import { PowerButton } from "@src/components/buttons";
 import { useUserNameManager } from "@entities/models/userName";
 import UserNameModal from "@src/components/Profile/UserNameModal";
 import { useUserNameRefresh } from "@entities/models/userName/useUserNameRefresh";
-import { getUserSub } from "@entities/core/auth/getUserSub";
+// import { getUserSub } from "@entities/core/auth/getUserSub";
 interface HeaderProps {
     className?: string;
 }
@@ -23,7 +23,7 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
     // ✅ wrapper: recharge le FORM (self) quand on rafraîchit
     const refreshSelf = React.useCallback(async () => {
         try {
-            const sub = await getUserSub();
+            const sub = user?.userId;
             await manager.loadEntityById(sub);
         } catch {
             // pas connecté: ignore

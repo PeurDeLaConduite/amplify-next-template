@@ -1,7 +1,7 @@
 // src/components/profile/UserProfileManager.tsx
 "use client";
 import React, { useCallback } from "react";
-import { Authenticator, useAuthenticator } from "@aws-amplify/ui-react";
+import { useAuthenticator } from "@aws-amplify/ui-react";
 import EntityEditor from "@components/forms/EntityEditor";
 import { label as fieldLabel } from "./utilsUserProfile";
 import PhoneIcon from "@mui/icons-material/Phone";
@@ -11,7 +11,7 @@ import { useUserProfileManager } from "@entities/models/userProfile";
 import { type UserProfileFormType, initialUserProfileForm } from "@entities/models/userProfile";
 import { getUserSub } from "@entities/core/auth/getUserSub";
 
-type IdLike = string | number;
+// type IdLike = string | number;
 
 const fields: (keyof UserProfileFormType)[] = [
     "firstName",
@@ -35,9 +35,7 @@ export default function UserProfileManager() {
         },
         [manager]
     );
-    if (!user) {
-        return <Authenticator />;
-    }
+    if (!user) return null;
     const getIcon = (field: keyof UserProfileFormType) => {
         switch (field) {
             case "phoneNumber":

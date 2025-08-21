@@ -1,7 +1,7 @@
 // src/app/profile/UserNameManager.tsx
 "use client";
 import React, { useCallback } from "react";
-import { useAuthenticator } from "@aws-amplify/ui-react";
+import { Authenticator, useAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 import EntityEditor from "@components/forms/EntityEditor";
 import { label as fieldLabel } from "./utilsUserName";
@@ -10,7 +10,6 @@ import { useUserNameManager } from "@entities/models/userName";
 import { useUserNameRefresh } from "@entities/models/userName/useUserNameRefresh";
 import { type UserNameFormType, initialUserNameForm } from "@entities/models/userName";
 import { getUserSub } from "@entities/core/auth/getUserSub"; // ✅ ID fiable (sub)
-
 
 type IdLike = string | number;
 const fields: (keyof UserNameFormType)[] = ["userName"];
@@ -80,7 +79,9 @@ export default function UserNameManager() {
         [manager]
     );
 
-    if (!user) return null;
+    if (!user) {
+        return <Authenticator />;
+    }
 
     return (
         <EntityEditor<UserNameFormType>
