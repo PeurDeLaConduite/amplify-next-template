@@ -1,10 +1,10 @@
 import { crudService, deleteEdges } from "@entities/core";
 import { postTagService } from "@entities/relations/postTag/service";
-import type { TagTypeUpdateInput } from "@entities/models/tag/types";
+import type { TagTypeCreateInput, TagTypeUpdateInput } from "@entities/models/tag/types";
 
 const base = crudService<
     "Tag",
-    Omit<TagTypeUpdateInput, "posts">,
+    TagTypeCreateInput,
     TagTypeUpdateInput & { id: string },
     { id: string },
     { id: string }
