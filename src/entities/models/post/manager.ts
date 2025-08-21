@@ -63,6 +63,15 @@ export function createPostManager(): ManagerContract<PostType, PostFormType, Id,
                 sections: s.data ?? [],
             };
         },
+        loadEntityForm: async (id) => {
+            const [{ data }, tagIds, sectionIds] = await Promise.all([
+                postService.get({ id }),
+                postTagService.listByParent(id),
+                sectionPostService.listByChild(id),
+            ]);
+            if (!data) throw new Error("Post not found");
+            return toPostForm(data as PostType, tagIds, sectionIds);
+        },
         toForm: (entity) => toPostForm(entity, [], []),
         syncManyToMany: async (id, link, options) => {
             const relation = options?.relation ?? "tags";
