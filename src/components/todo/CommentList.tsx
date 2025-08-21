@@ -1,5 +1,6 @@
 import React from "react";
 import { CommentWithTodoId } from "@/src/components/todo/useTodosWithComments";
+import { EditButton, DeleteButton } from "@/src/components/buttons/Buttons";
 
 interface CommentListProps {
     comments: CommentWithTodoId[];
@@ -30,18 +31,16 @@ export default function CommentList({
                         </span>
                         {canModify(comment.userNameId) && (
                             <div className="flex gap-2">
-                                <button
+                                <EditButton
                                     onClick={() => onEditComment(comment.id, comment.userNameId)}
-                                    className="text-xs px-2 py-1 rounded-md bg-yellow-50 hover:bg-yellow-100 text-yellow-700 border border-yellow-200 transition"
-                                >
-                                    ✏️ Modifier
-                                </button>
-                                <button
+                                    label="Modifier"
+                                    className="text-xs"
+                                />
+                                <DeleteButton
                                     onClick={() => onDeleteComment(comment.id, comment.userNameId)}
-                                    className="text-xs px-2 py-1 rounded-md bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 transition"
-                                >
-                                    ❌ Supprimer
-                                </button>
+                                    label="Supprimer"
+                                    className="text-xs"
+                                />
                             </div>
                         )}
                     </div>
