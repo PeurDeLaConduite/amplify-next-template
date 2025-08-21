@@ -27,7 +27,7 @@ const SectionForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
     const {
         form,
         entities: sections,
-        extras: { posts },
+        extras: { posts = [] },
         updateField,
         patchForm,
         editingId: currentEditingId,
