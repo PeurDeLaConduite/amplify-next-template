@@ -11,12 +11,18 @@ import type { UserProfileType, UserProfileFormType } from "@entities/models/user
 type Id = string;
 
 export function createUserProfileManager() {
-    return createManager<UserProfileType, UserProfileFormType, Id>({
+    let manager: ReturnType<typeof createManager<UserProfileType, UserProfileFormType, Id>>;
+
+    const listEntities = async () => {
+        const id = manager.getState().editingId;
+        if (!id) return { items: [] };
+        const { data } = await userProfileService.get({ id });
+        return { items: data ? [data as UserProfileType] : [] };
+    };
+
+    manager = createManager<UserProfileType, UserProfileFormType, Id>({
         getInitialForm: () => ({ ...initialUserProfileForm }),
-        listEntities: async ({ limit }) => {
-            const { data } = await userProfileService.list({ limit });
-            return { items: (data ?? []) as UserProfileType[] };
-        },
+        listEntities,
         getEntityById: async (id) => {
             const { data } = await userProfileService.get({ id });
             return (data ?? null) as UserProfileType | null;
@@ -38,4 +44,13 @@ export function createUserProfileManager() {
         },
         toForm: toUserProfileForm,
     });
+
+    const baseRefresh = manager.refresh.bind(manager);
+    manager.refresh = async () => {
+        const id = manager.getState().editingId;
+        if (!id) return;
+        await baseRefresh();
+    };
+
+    return manager;
 }
