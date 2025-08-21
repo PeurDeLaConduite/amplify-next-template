@@ -16,12 +16,18 @@ type Id = string;
 type Extras = { comments: CommentModel[]; postComments: CommentModel[] };
 
 export function createUserNameManager() {
-    return createManager<UserNameType, UserNameFormType, Id, Extras>({
+    let manager: ReturnType<typeof createManager<UserNameType, UserNameFormType, Id, Extras>>;
+
+    const listEntities = async () => {
+        const editingId = manager.getState().editingId;
+        if (!editingId) return { items: [] };
+        const { data } = await userNameService.get({ id: editingId });
+        return { items: data ? [data as UserNameType] : [] };
+    };
+
+    manager = createManager<UserNameType, UserNameFormType, Id, Extras>({
         getInitialForm: () => ({ ...initialUserNameForm }),
-        listEntities: async ({ limit }) => {
-            const { data } = await userNameService.list({ limit });
-            return { items: (data ?? []) as UserNameType[] };
-        },
+        listEntities,
         getEntityById: async (id) => {
             const { data } = await userNameService.get({ id });
             return (data ?? null) as UserNameType | null;
@@ -85,4 +91,5 @@ export function createUserNameManager() {
             );
         },
     });
+    return manager;
 }
