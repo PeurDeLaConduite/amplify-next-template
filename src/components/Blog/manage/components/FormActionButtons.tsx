@@ -14,6 +14,8 @@ interface FormActionButtonsProps {
     addButtonLabel?: string;
     className?: string;
     variant?: "no-Icon" | "normal";
+    editButtonlabel?: string;
+    deleteButtonlabel?: string;
 }
 
 export default function FormActionButtons({

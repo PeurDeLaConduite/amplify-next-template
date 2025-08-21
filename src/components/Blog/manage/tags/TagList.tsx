@@ -14,6 +14,8 @@ interface Props {
     onSave: () => void;
     onCancel: () => void;
     onDeleteById: (id: IdLike) => void;
+    editButtonlabel?: string;
+    deleteButtonlabel?: string;
 }
 
 function TagListInner({
