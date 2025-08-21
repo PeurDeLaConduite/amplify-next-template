@@ -25,7 +25,7 @@ const fields: (keyof UserProfileFormType)[] = [
 
 export default function UserProfileManager() {
     const { user } = useAuthenticator();
-    const manager = useUserProfileManager();
+    const manager = useUserProfileManager(user?.userId);
     const { form, isEditing, editingId } = manager;
 
     const handleDeleteById = useCallback(
