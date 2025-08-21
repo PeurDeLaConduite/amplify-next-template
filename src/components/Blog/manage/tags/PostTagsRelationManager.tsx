@@ -5,8 +5,10 @@ import ButtonBase from "@components/buttons/ButtonBase";
 import type { TagType } from "@entities/models/tag/types";
 import type { PostType } from "@entities/models/post/types";
 
+type PostSummary = Pick<PostType, "id" | "title">;
+
 interface Props {
-    posts: PostType[];
+    posts: PostSummary[];
     tags: TagType[];
     tagsForPost: (postId: string) => TagType[];
     isTagLinked: (postId: string, tagId: string) => boolean;
@@ -40,7 +42,6 @@ function PostTagsRelationManagerInner({
                         <li key={post.id} className="py-6">
                             <div className="mb-1 flex items-center gap-2">
                                 <span className="font-semibold text-lg">{post.title}</span>
-                                <span className="text-gray-400 text-xs">({post.slug})</span>
                             </div>
 
                             <div className="mb-2 text-sm text-gray-600 flex flex-wrap gap-1 items-center">
