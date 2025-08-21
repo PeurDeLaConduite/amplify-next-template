@@ -3,10 +3,13 @@ import {
     type PostType,
     type PostFormType,
     type PostTypeUpdateInput,
+    type PostTypeOmit,
 } from "@entities/models/post/types";
 import { toSeoForm, initialSeoForm, seoSchema } from "@entities/customTypes/seo";
 import type { SeoType } from "@entities/customTypes/seo";
 import { createModelForm } from "@entities/core";
+
+type PostTypeCreateInput = Omit<PostTypeOmit, "comments" | "author" | "sections" | "tags">;
 
 export const {
     zodSchema: postSchema,
@@ -17,7 +20,7 @@ export const {
 } = createModelForm<
     PostType,
     PostFormType,
-    PostTypeUpdateInput,
+    PostTypeCreateInput,
     PostTypeUpdateInput,
     [string[], string[]]
 >({
@@ -66,11 +69,12 @@ export const {
         tagIds,
         sectionIds,
     }),
-    toCreate: (form: PostFormType): PostTypeUpdateInput => {
-        const { tagIds, sectionIds, ...values } = form;
+    toCreate: (form: PostFormType): PostTypeCreateInput => {
+        const { id, tagIds, sectionIds, ...values } = form;
+        void id;
         void tagIds;
         void sectionIds;
-        return values;
+        return values as PostTypeCreateInput;
     },
     toUpdate: (form: PostFormType): PostTypeUpdateInput => {
         const { tagIds, sectionIds, ...values } = form;

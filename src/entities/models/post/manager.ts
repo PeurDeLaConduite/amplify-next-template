@@ -63,7 +63,7 @@ export function createPostManager(): ManagerContract<PostType, PostFormType, Id,
                 sections: s.data ?? [],
             };
         },
-        toForm: toPostForm,
+        toForm: (entity) => toPostForm(entity, [], []),
         syncManyToMany: async (id, link, options) => {
             const relation = options?.relation ?? "tags";
             if (relation === "tags") {
@@ -96,11 +96,11 @@ export function createPostManager(): ManagerContract<PostType, PostFormType, Id,
                 );
             }
         },
-        validateField: async <K extends keyof PostFormType>(
+        validateField: <K extends keyof PostFormType>(
             _name: K,
             _value: PostFormType[K]
         ): MaybePromise<string | null> => null,
-        validateForm: async (): MaybePromise<{
+        validateForm: (): MaybePromise<{
             valid: boolean;
             errors: Partial<Record<keyof PostFormType, string>>;
         }> => ({ valid: true, errors: {} }),
