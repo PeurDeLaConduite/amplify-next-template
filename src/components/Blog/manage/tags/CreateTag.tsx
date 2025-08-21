@@ -22,7 +22,7 @@ export default function CreateTagPage() {
     const { state, refresh, refreshExtras, loadEntityById, cancelEdit, deleteById } = manager;
     const {
         entities: tags,
-        extras: { posts },
+        extras: { posts = [] },
         editingId,
         loadingList,
         loadingExtras,
