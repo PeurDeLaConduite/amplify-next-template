@@ -22,8 +22,8 @@ const initialCommentForm: CommentFormType = {
     todoId: "",
     postId: "",
     userNameId: "",
-    todo: null,
-    post: null,
+    todo: [],
+    post: [],
     userName: null,
 };
 
