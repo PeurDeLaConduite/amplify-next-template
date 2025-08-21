@@ -25,8 +25,11 @@ import { crudService } from "@entities/core/services";
 
 const posts = crudService("Post");
 await posts.create({ title: "Hello" });
-const { data } = await posts.list();
+// Utilise un `selectionSet` pour limiter les champs retournés
+const { data } = await posts.list({}, ["id", "title"]);
 ```
+
+Par défaut, les lectures tentent successivement les modes `userPool` puis `apiKey` afin de maximiser les chances d'accès.
 
 ## `relationService`
 
