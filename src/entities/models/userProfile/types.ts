@@ -2,6 +2,7 @@ import type { BaseModel, CreateOmit, UpdateInput, ModelForm } from "@entities/co
 
 export type UserProfileType = BaseModel<"UserProfile">;
 export type UserProfileTypeOmit = CreateOmit<"UserProfile">;
+export type UserProfileTypeCreateInput = Omit<UserProfileTypeOmit, "id">;
 export type UserProfileTypeUpdateInput = UpdateInput<"UserProfile">;
 export type UserProfileFormType = ModelForm<"UserProfile">;
 

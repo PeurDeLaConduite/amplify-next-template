@@ -3,8 +3,8 @@ import { createModelForm } from "@entities/core";
 import type {
     UserProfileType,
     UserProfileFormType,
+    UserProfileTypeCreateInput,
     UserProfileTypeUpdateInput,
-    UserProfileTypeOmit,
 } from "./types";
 
 export const {
@@ -16,11 +16,11 @@ export const {
 } = createModelForm<
     UserProfileType,
     UserProfileFormType,
-    UserProfileTypeOmit,
+    UserProfileTypeCreateInput,
     UserProfileTypeUpdateInput
 >({
     zodSchema: z.object({
-        id: z.string(),
+        id: z.string().optional(),
         firstName: z.string(),
         familyName: z.string(),
         address: z.string(),
@@ -49,7 +49,11 @@ export const {
         country: profile.country ?? "",
         phoneNumber: profile.phoneNumber ?? "",
     }),
-    toCreate: (form: UserProfileFormType): UserProfileTypeOmit => ({ ...form }),
+    toCreate: (form: UserProfileFormType): UserProfileTypeCreateInput => {
+        const { id, ...values } = form;
+        void id;
+        return { ...values };
+    },
     toUpdate: (form: UserProfileFormType): UserProfileTypeUpdateInput => {
         const { id, ...values } = form;
         void id;
