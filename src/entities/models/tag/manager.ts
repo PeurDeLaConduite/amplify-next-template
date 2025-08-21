@@ -9,6 +9,7 @@ import type { TagType, TagFormType } from "./types";
 import type { PostType } from "@entities/models/post/types";
 import type { ZodObject, ZodRawShape } from "zod";
 
+
 type Id = string;
 type PostSummary = Pick<PostType, "id" | "title">;
 
@@ -119,7 +120,7 @@ export function createTagManager() {
             }
         ) => {
             if (name === "name") return validateName(value as string, ctx);
-            const schema = (tagSchema as unknown as ZodObject<ZodRawShape>).pick({
+            const schema = tagSchema.pick({
                 [name]: true,
             } as Record<keyof TagFormType, true>);
             const result = schema.safeParse({ [name]: value });
