@@ -11,11 +11,11 @@ import {
     toUserNameUpdate,
 } from "@entities/models/userName/form";
 import type { UserNameType, UserNameFormType } from "@entities/models/userName/types";
-import type { CommentModel } from "@src/types/models/comment";
+import type { CommentType } from "@src/types/models/comment";
 import { emitUserNameUpdated } from "@entities/models/userName/bus";
 
 type Id = string;
-type Extras = { comments: CommentModel[]; postComments: CommentModel[] };
+type Extras = { comments: CommentType[]; postComments: CommentType[] };
 
 // src/entities/models/userName/manager.ts
 export function createUserNameManager() {
