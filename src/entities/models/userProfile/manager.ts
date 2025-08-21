@@ -1,5 +1,6 @@
 import { createManager } from "@entities/core";
 import { userProfileService } from "@entities/models/userProfile/service";
+import { getCurrentUser } from "aws-amplify/auth";
 import {
     initialUserProfileForm,
     toUserProfileForm,
@@ -28,9 +29,11 @@ export function createUserProfileManager() {
             return (data ?? null) as UserProfileType | null;
         },
         createEntity: async (form) => {
-            const { errors } = await userProfileService.create(toUserProfileCreate(form));
+            const { userId } = await getCurrentUser();
+            const formWithId = { ...form, id: userId };
+            const { errors } = await userProfileService.create(toUserProfileCreate(formWithId));
             if (errors?.length) throw new Error(errors[0].message);
-            return form.id;
+            return userId;
         },
         updateEntity: async (id, data, { form }) => {
             const { errors } = await userProfileService.update({
@@ -50,6 +53,12 @@ export function createUserProfileManager() {
         const id = manager.getState().editingId;
         if (!id) return;
         await baseRefresh();
+    };
+
+    const baseEnterEdit = manager.enterEdit.bind(manager);
+    manager.enterEdit = (id) => {
+        baseEnterEdit(id);
+        if (id) manager.patchForm({ id });
     };
 
     return manager;
