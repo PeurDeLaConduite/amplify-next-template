@@ -5,6 +5,8 @@ export type BaseModel<K extends keyof Schema> = Schema[K]["type"];
 
 export type CreateOmit<K extends keyof Schema> = Omit<BaseModel<K>, "createdAt" | "updatedAt">;
 
+export type CreateInput<K extends keyof Schema> = CreateOmit<K>;
+
 export type UpdateInput<K extends keyof Schema> = Partial<CreateOmit<K>>;
 
 export type ModelForm<
