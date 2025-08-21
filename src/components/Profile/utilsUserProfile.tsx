@@ -1,5 +1,6 @@
-import { type UserProfileTypeUpdateInput } from "@entities/models/userProfile/types";
-export const label = (field: keyof UserProfileTypeUpdateInput): string => {
+import { type UserProfileFormType } from "@entities/models/userProfile";
+
+export const label = (field: keyof UserProfileFormType): string => {
     switch (field) {
         case "firstName":
             return "Prénom";

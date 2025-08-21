@@ -76,8 +76,10 @@ export default function UserProfileManager() {
         );
     };
 
-    const handleChange = (field: keyof UserProfileFormType, value: unknown) => {
-        manager.updateField(field, value as any);
+    type UserProfileFieldValue = UserProfileFormType[keyof UserProfileFormType];
+
+    const handleChange = (field: keyof UserProfileFormType, value: UserProfileFieldValue) => {
+        manager.updateField(field, value);
     };
 
     const submit = async () => {
@@ -98,8 +100,8 @@ export default function UserProfileManager() {
         manager.patchForm(next);
     };
 
-    const saveField = async (field: keyof UserProfileFormType, value: string) => {
-        manager.updateField(field, value as any);
+    const saveField = async (field: keyof UserProfileFormType, value: UserProfileFieldValue) => {
+        manager.updateField(field, value);
         await submit();
     };
 
@@ -130,7 +132,7 @@ export default function UserProfileManager() {
                 reset={reset}
                 setForm={setForm}
                 fields={fields}
-                labels={(f) => fieldLabel(f as any)}
+                labels={fieldLabel}
                 saveField={saveField}
                 clearField={clearField}
                 // Wrapper “à la AuthorList.onDeleteById”
