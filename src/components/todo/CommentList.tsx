@@ -4,15 +4,18 @@ import { EditButton, DeleteButton } from "@/src/components/buttons/Buttons";
 
 interface CommentListProps {
     comments: CommentWithTodoId[];
-    onEditComment: (id: string, ownerId?: string) => void;
-    onDeleteComment: (id: string, ownerId?: string) => void;
+    enterEditMode: (id: string, ownerId?: string) => void;
+    deleteForm: (id: string, ownerId?: string) => void;
+    /**
+     * Indique si l'utilisateur peut modifier ou supprimer le commentaire.
+     */
     canModify: (ownerId?: string) => boolean;
 }
 
 export default function CommentList({
     comments,
-    onEditComment,
-    onDeleteComment,
+    enterEditMode,
+    deleteForm,
     canModify,
 }: CommentListProps) {
     return (
@@ -32,13 +35,13 @@ export default function CommentList({
                         {canModify(comment.userNameId) && (
                             <div className="flex gap-2">
                                 <EditButton
-                                    onClick={() => onEditComment(comment.id, comment.userNameId)}
+                                    onClick={() => enterEditMode(comment.id, comment.userNameId)}
                                     label="Modifier"
                                     className="text-xs"
                                     size="small"
                                 />
                                 <DeleteButton
-                                    onClick={() => onDeleteComment(comment.id, comment.userNameId)}
+                                    onClick={() => deleteForm(comment.id, comment.userNameId)}
                                     label="Supprimer"
                                     className="text-xs"
                                     size="small"
