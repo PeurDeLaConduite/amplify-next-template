@@ -2,7 +2,7 @@
 "use client";
 import React, { forwardRef, type ChangeEvent } from "react";
 import { EditableField, EditableTextArea } from "@components/ui/form";
-import EntityFormShell from "@components/Blog/manage/EntityFormShell";
+import BlogFormShell from "@components/Blog/manage/BlogFormShell";
 import { type AuthorFormType, initialAuthorForm, useAuthorForm } from "@entities/models/author";
 
 interface Props {
@@ -22,7 +22,7 @@ const AuthorForm = forwardRef<HTMLFormElement, Props>(function AuthorForm(
     };
 
     return (
-        <EntityFormShell
+        <BlogFormShell
             ref={ref}
             manager={manager}
             initialForm={initialAuthorForm}
@@ -57,7 +57,7 @@ const AuthorForm = forwardRef<HTMLFormElement, Props>(function AuthorForm(
                 onChange={onChange}
                 readOnly={false}
             />
-        </EntityFormShell>
+        </BlogFormShell>
     );
 });
 

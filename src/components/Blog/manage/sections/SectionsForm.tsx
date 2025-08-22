@@ -9,7 +9,7 @@ import {
     ItemSelector,
 } from "@components/ui/form";
 import { useAutoGenFields, slugify } from "@hooks/useAutoGenFields";
-import EntityFormShell from "../EntityFormShell";
+import BlogFormShell from "../BlogFormShell";
 import {
     type SectionFormTypes,
     initialSectionForm,
@@ -76,12 +76,7 @@ const SectionForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
     };
 
     return (
-        <EntityFormShell
-            ref={ref}
-            manager={manager}
-            initialForm={initialSectionForm}
-            onSave={onSave}
-        >
+        <BlogFormShell ref={ref} manager={manager} initialForm={initialSectionForm} onSave={onSave}>
             <EditableField
                 name="title"
                 label="Titre"
@@ -126,7 +121,7 @@ const SectionForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
                 label="Articles associés :"
                 getLabel={(post) => post.title}
             />
-        </EntityFormShell>
+        </BlogFormShell>
     );
 });
 
