@@ -116,7 +116,7 @@ export default function UserProfileManager() {
                 setForm={manager.setForm}
                 fields={fields}
                 labels={(f) => fieldLabel(f as any)}
-                saveField={manager.saveField}
+                updateField={manager.updateField}
                 clearField={manager.clearField}
                 // Wrapper “à la AuthorList.onDeleteById”
                 deleteEntity={async (id?: string) => {

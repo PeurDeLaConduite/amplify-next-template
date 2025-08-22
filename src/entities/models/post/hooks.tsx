@@ -14,7 +14,7 @@ import { type TagType } from "@entities/models/tag/types";
 import { type SectionType } from "@entities/models/section/types";
 import { syncPost2Tags } from "@entities/relations/postTag";
 import { syncPost2Sections } from "@entities/relations/sectionPost";
-import { unknown } from "zod";
+
 interface Extras extends Record<string, unknown> {
     authors: AuthorType[];
     tags: TagType[];

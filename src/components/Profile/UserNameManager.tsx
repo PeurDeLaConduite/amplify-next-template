@@ -7,7 +7,7 @@ import EntityEditor from "@components/forms/EntityEditor";
 import { label as fieldLabel } from "./utilsUserName";
 import PersonIcon from "@mui/icons-material/Person";
 import { useUserNameForm } from "@entities/models/userName/hooks";
-import { onUserNameUpdated, emitUserNameUpdated } from "@entities/models/userName/bus"; // ⬅️ importe emit
+import { onUserNameUpdated } from "@entities/models/userName/bus"; // ⬅️ importe emit
 import {
     type UserNameFormType,
     type UserNameType,
@@ -49,18 +49,6 @@ export default function UserNameManager() {
         [removeById, setMode, setForm] // initialUserNameForm est const, inutile de le mettre
     );
 
-    // ✅ handler sans argument, conforme au type attendu par EntityEditor
-    const onSave = useCallback(() => {
-        emitUserNameUpdated(); // notifie le reste de l'app si besoin
-        setMode("edit"); // exemple : repasser en mode edit après création
-    }, [setMode]);
-
-    // const handleSubmit = useCallback(async () => {
-    //     const ok = await submit();
-    //     if (!ok) return;
-    //     onSave();
-    // }, [submit, onSave]);
-
     if (!user) return <Authenticator />;
 
     return (
@@ -85,7 +73,7 @@ export default function UserNameManager() {
             setForm={manager.setForm}
             fields={fields}
             labels={fieldLabel as (field: keyof UserNameFormType) => string}
-            saveField={manager.saveField}
+            updateField={manager.updateField}
             clearField={manager.clearField}
             deleteEntity={async (id?: string) => {
                 const target = id ?? editingId ?? user?.userId ?? user?.username ?? undefined;

@@ -131,7 +131,7 @@ export function useUserNameForm(userName: UserNameType | null) {
     );
 
     // Helpers “champ par champ”
-    const saveField = useCallback(
+    const updateField = useCallback(
         async (field: keyof UserNameFormType, value: string) => {
             const id = editingId ?? sub;
             if (!id) return;
@@ -145,9 +145,9 @@ export function useUserNameForm(userName: UserNameType | null) {
 
     const clearField = useCallback(
         async (field: keyof UserNameFormType) => {
-            await saveField(field, "");
+            await updateField(field, "");
         },
-        [saveField]
+        [updateField]
     );
 
     return {
@@ -156,7 +156,7 @@ export function useUserNameForm(userName: UserNameType | null) {
         fetchUserNames,
         selectById,
         removeById,
-        saveField,
+        updateField,
         clearField,
     };
 }

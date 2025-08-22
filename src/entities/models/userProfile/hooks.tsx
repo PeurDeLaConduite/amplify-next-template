@@ -95,8 +95,8 @@ export function useUserProfileForm(profile: UserProfileType | null) {
         [editingId, reset]
     );
 
-    // Helpers champ par champ (même esprit que toggle/saveField ailleurs)
-    const saveField = useCallback(
+    // Helpers champ par champ (même esprit que toggle/updateField ailleurs)
+    const updateField = useCallback(
         async (field: keyof UserProfileFormType, value: string) => {
             const id = editingId ?? sub;
             if (!id) return;
@@ -108,9 +108,9 @@ export function useUserProfileForm(profile: UserProfileType | null) {
 
     const clearField = useCallback(
         async (field: keyof UserProfileFormType) => {
-            await saveField(field, "");
+            await updateField(field, "");
         },
-        [saveField]
+        [updateField]
     );
 
     // Petit utilitaire conservé pour compat UI existante
@@ -121,7 +121,7 @@ export function useUserProfileForm(profile: UserProfileType | null) {
         editingId,
         selectById,
         removeById,
-        saveField,
+        updateField,
         clearField,
         labels,
     };
