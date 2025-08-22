@@ -1,5 +1,4 @@
 // src/components/ui/button/UiButton.tsx
-/* eslint-disable internal/no-onclick-wrapper */
 import React, { forwardRef } from "react";
 import NextLink from "next/link";
 import {

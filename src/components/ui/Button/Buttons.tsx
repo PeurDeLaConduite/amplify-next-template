@@ -1,5 +1,7 @@
 // src/components/ui/button/Buttons.tsx
+import React from "react";
 import { UiButton } from "./UiButton";
+import { getEditButtonStyles } from "./buttonStyles";
 import {
     Save as SaveIcon,
     Delete as DeleteIcon,
@@ -13,256 +15,314 @@ import {
 } from "@mui/icons-material";
 import type { ButtonProps as MuiButtonProps, SxProps, Theme } from "@mui/material";
 
-// Props communs exposés par les wrappers
+/** map taille bouton -> taille icône */
+function toIconFontSize(size?: MuiButtonProps["size"]): "inherit" | "small" | "medium" | "large" {
+    switch (size) {
+        case "small":
+            return "small";
+        case "large":
+            return "large";
+        default:
+            return "medium";
+    }
+}
+
+/** clone l’icône pour forcer fontSize (si c’est bien un élément React) */
+function withIconFontSize(
+    icon: React.ReactNode,
+    fontSize: "inherit" | "small" | "medium" | "large"
+) {
+    return React.isValidElement(icon)
+        ? React.cloneElement(icon as React.ReactElement<any>, { fontSize })
+        : icon;
+}
+
+type VariantType = "button" | "icon";
+// helpers
+function mergeSx(...parts: Array<SxProps<Theme> | undefined>): SxProps<Theme> | undefined {
+    const out: Array<NonNullable<SxProps<Theme>>> = [];
+    for (const p of parts) {
+        if (!p) continue;
+        if (Array.isArray(p)) out.push(...(p as any));
+        else out.push(p);
+    }
+    return out.length ? (out as SxProps<Theme>) : undefined;
+}
+
+/** Props communes aux wrappers */
 export type ButtonWrapperProps = {
     label?: string;
     title?: string;
     className?: string;
     sx?: SxProps<Theme>;
     size?: MuiButtonProps["size"];
+    variantType?: VariantType;
+    ariaLabel?: string;
 };
 
-export type EditButtonProps = ButtonWrapperProps & { onEdit: () => void };
-export function EditButton({
-    onEdit,
-    label = "Modifier",
-    title = "Modifier",
-    className,
-    sx,
-    size,
-}: EditButtonProps) {
-    return (
-        <UiButton
-            variantType="button"
-            label={label}
-            title={title}
-            icon={<EditIcon fontSize="small" />}
-            intent="primary"
-            variant="outlined"
-            className={className}
-            sx={sx}
-            size={size}
-            buttonProps={{ onClick: onEdit }}
-        />
-    );
-}
-
-export type DeleteButtonProps = ButtonWrapperProps & { onDelete: () => void };
-export function DeleteButton({
-    onDelete,
-    label = "Supprimer",
-    title = "Supprimer",
-    className,
-    sx,
-    size,
-}: DeleteButtonProps) {
-    return (
-        <UiButton
-            variantType="button"
-            label={label}
-            title={title}
-            icon={<DeleteIcon fontSize="small" />}
-            intent="danger"
-            variant="outlined"
-            className={className}
-            sx={sx}
-            size={size}
-            buttonProps={{ onClick: onDelete }}
-        />
-    );
-}
-
-export type CancelButtonProps = ButtonWrapperProps & { onCancel: () => void };
-export function CancelButton({
-    onCancel,
-    label = "Annuler",
-    title = "Annuler",
-    className,
-    sx,
-    size,
-}: CancelButtonProps) {
-    return (
-        <UiButton
-            variantType="button"
-            label={label}
-            title={title}
-            icon={<CancelIcon />}
-            intent="ghost"
-            variant="outlined"
-            className={className}
-            sx={sx}
-            size={size}
-            buttonProps={{ onClick: onCancel }}
-        />
-    );
-}
-
-export type AddButtonProps = ButtonWrapperProps & { onAdd: () => void };
-export function AddButton({
-    onAdd,
-    label = "Ajouter",
-    title = "Ajouter",
-    className,
-    sx,
-    size,
-}: AddButtonProps) {
-    return (
-        <UiButton
-            variantType="button"
-            label={label}
-            title={title}
-            icon={<AddIcon />}
-            intent="success"
-            className={className}
-            sx={sx}
-            size={size}
-            buttonProps={{ onClick: onAdd }}
-        />
-    );
-}
-
-export type SubmitButtonProps = ButtonWrapperProps & { onSubmit: () => void };
-export function SubmitButton({
-    onSubmit,
-    label = "Créer",
-    title = "Créer",
-    className,
-    sx,
-    size,
-}: SubmitButtonProps) {
-    return (
-        <UiButton
-            variantType="button"
-            label={label}
-            title={title}
-            icon={<SaveIcon />}
-            intent="primary"
-            className={className}
-            sx={sx}
-            size={size}
-            buttonProps={{ onClick: onSubmit }}
-        />
-    );
-}
-
-export type UpdateButtonProps = ButtonWrapperProps & { onUpdate: () => void };
-export function UpdateButton({
-    onUpdate,
-    label = "Enregistrer",
-    title = "Enregistrer",
-    className,
-    sx,
-    size,
-}: UpdateButtonProps) {
-    return (
-        <UiButton
-            variantType="button"
-            label={label}
-            title={title}
-            icon={<SaveIcon />}
-            intent="primary"
-            className={className}
-            sx={sx}
-            size={size}
-            buttonProps={{ onClick: onUpdate }}
-        />
-    );
-}
-
-export type ClearFieldButtonProps = ButtonWrapperProps & { onClear: () => void };
-export function ClearFieldButton({
-    onClear,
-    label = "Vider le champ",
-    title = "Vider le champ",
-    className,
-    sx,
-    size,
-}: ClearFieldButtonProps) {
-    return (
-        <UiButton
-            variantType="button"
-            label={label}
-            title={title}
-            icon={<BackspaceIcon />}
-            intent="warning"
-            variant="outlined"
-            className={className}
-            sx={sx}
-            size={size}
-            buttonProps={{ onClick: onClear }}
-        />
-    );
-}
-
-export type PowerButtonProps = ButtonWrapperProps & { onPowerOff: () => void };
-export function PowerButton({
-    onPowerOff,
-    label = "Déconnexion",
-    title = "Déconnexion",
-    className,
-    sx,
-    size,
-}: PowerButtonProps) {
-    return (
-        <UiButton
-            variantType="button"
-            label={label}
-            title={title}
-            icon={<PowerIcon />}
-            intent="danger"
-            variant="outlined"
-            className={className}
-            sx={sx}
-            size={size}
-            buttonProps={{ onClick: onPowerOff }}
-        />
-    );
-}
-
-export type RefreshButtonProps = ButtonWrapperProps & { onRefresh: () => void };
-export function RefreshButton({
-    onRefresh,
-    label = "Rafraîchir la page",
-    title = "Rafraîchir la page",
-    className,
-    sx,
-    size,
-}: RefreshButtonProps) {
-    return (
-        <UiButton
-            variantType="button"
-            label={label}
-            title={title}
-            icon={<RefreshIcon />}
-            intent="primary"
-            className={className}
-            sx={sx}
-            size={size}
-            buttonProps={{ onClick: onRefresh }}
-        />
-    );
-}
-
-export type BackButtonProps = ButtonWrapperProps &
-    ({ href: string; onBack?: never } | { onBack: () => void; href?: never });
-export function BackButton({
-    label = "Retour",
-    title = "Retour",
-    className,
-    sx,
-    size,
-    ...rest
-}: BackButtonProps) {
-    const common = {
-        variantType: "button" as const,
+/** Petite fabrique pour éviter les répétitions */
+// helpers en haut du fichier Buttons.tsx// helpers
+function renderByMode(opts: {
+    variantType: VariantType;
+    label?: string;
+    ariaLabel?: string;
+    title?: string;
+    icon: React.ReactNode;
+    intent: "primary" | "neutral" | "success" | "danger" | "warning" | "ghost";
+    variant?: MuiButtonProps["variant"];
+    className?: string;
+    /** style additionnel du wrapper */
+    sx?: SxProps<Theme>;
+    /** taille MUI Button/IconButton */
+    size?: MuiButtonProps["size"];
+    onClick?: () => void;
+    href?: string;
+    /** 👇 couleur custom pour construire un style de base (outlined colorisé) */
+    editColor?: string;
+}) {
+    const {
+        variantType,
         label,
+        ariaLabel,
         title,
-        icon: <ArrowBackIcon />,
-        intent: "primary" as const,
+        icon,
+        intent,
+        variant,
         className,
         sx,
         size,
-    };
-    if ("href" in rest) return <UiButton {...common} href={rest.href} />;
-    return <UiButton {...common} buttonProps={{ onClick: rest.onBack }} />;
+        onClick,
+        href,
+        editColor,
+    } = opts;
+
+    // 1) fallback automatique: title = label si non défini
+    const safeTitle = title ?? label;
+
+    // 2) calcule la taille de l'icône (small forcé en mode "icon")
+    const iconFontSize = toIconFontSize(variantType === "icon" ? (size ?? "small") : size);
+    const iconNode = withIconFontSize(icon, iconFontSize);
+
+    // 3) style de base optionnel à partir d'une couleur custom
+    const baseSx = editColor ? getEditButtonStyles(editColor) : undefined;
+
+    // ✅ fusion correcte, sans tableau imbriqué
+    const sxMerged = mergeSx(baseSx, sx);
+
+    if (variantType === "icon") {
+        return (
+            <UiButton
+                variantType="icon"
+                href={href as any}
+                icon={iconNode}
+                ariaLabel={ariaLabel ?? label ?? "Action"}
+                intent={intent}
+                variant={variant}
+                className={className}
+                sx={sxMerged}
+                size={size ?? "small"}
+                iconButtonProps={onClick ? { onClick } : undefined}
+                title={safeTitle}
+            />
+        );
+    }
+
+    return (
+        <UiButton
+            variantType="button"
+            href={href as any}
+            label={label ?? ""}
+            icon={iconNode}
+            intent={intent}
+            variant={variant}
+            className={className}
+            sx={sxMerged}
+            size={size}
+            buttonProps={onClick ? { onClick } : undefined}
+            title={safeTitle}
+        />
+    );
 }
+
+/* ---------------------------------- Edit ---------------------------------- */
+export type EditButtonProps = ButtonWrapperProps & {
+    onEdit: () => void;
+    editColor?: string;
+};
+
+export function EditButton(props: EditButtonProps) {
+    const { onEdit, label = "Modifier", editColor = "blue", ...rest } = props;
+
+    return renderByMode({
+        ...rest,
+        variantType: rest.variantType ?? "button",
+        label,
+        icon: <EditIcon />,
+        intent: "primary",
+        variant: "outlined",
+        editColor,
+        onClick: onEdit,
+    });
+}
+
+/* -------------------------------- Delete ---------------------------------- */
+export type DeleteButtonProps = ButtonWrapperProps & {
+    onDelete: () => void;
+    editColor?: string;
+};
+
+export function DeleteButton(props: DeleteButtonProps) {
+    const { onDelete, label = "Supprimer", editColor = "red", ...rest } = props;
+
+    return renderByMode({
+        ...rest,
+        // défaut local si non fourni :
+        variantType: rest.variantType ?? "button",
+        label,
+        icon: <DeleteIcon />,
+        intent: "danger",
+        editColor,
+        variant: "outlined",
+        onClick: onDelete,
+    });
+}
+/* -------------------------------- Cancel ---------------------------------- */
+export type CancelButtonProps = ButtonWrapperProps & { onCancel: () => void; editColor?: string };
+
+export function CancelButton(props: CancelButtonProps) {
+    const { onCancel, label = "Annuler", editColor = "#9e9e9e", ...rest } = props;
+    return renderByMode({
+        ...rest,
+        variantType: rest.variantType ?? "button",
+        label,
+        icon: <CancelIcon />,
+        intent: "ghost",
+        variant: "outlined",
+        onClick: onCancel,
+        editColor,
+    });
+}
+
+/* ---------------------------------- Add ----------------------------------- */
+export type AddButtonProps = ButtonWrapperProps & { onAdd: () => void; editColor?: string };
+
+export function AddButton(props: AddButtonProps) {
+    const { onAdd, label = "Ajouter", editColor = "#9e9e9e", ...rest } = props;
+    return renderByMode({
+        ...rest,
+        variantType: rest.variantType ?? "button",
+        label,
+        icon: <AddIcon />,
+        intent: "success",
+        onClick: onAdd,
+        editColor,
+    });
+}
+
+/* ------------------------------- Submit/Update ----------------------------- */
+export type SubmitButtonProps = ButtonWrapperProps & { onSubmit: () => void; editColor?: string };
+
+export function SubmitButton(props: SubmitButtonProps) {
+    const { onSubmit, label = "Créer", editColor = "#9e9e9e", ...rest } = props;
+    return renderByMode({
+        ...rest,
+        variantType: rest.variantType ?? "button",
+        label,
+        icon: <SaveIcon />,
+        intent: "primary",
+        onClick: onSubmit,
+        editColor,
+    });
+}
+
+export type UpdateButtonProps = ButtonWrapperProps & { onUpdate: () => void; editColor?: string };
+
+export function UpdateButton(props: UpdateButtonProps) {
+    const { onUpdate, label = "Enregistrer", editColor = "#9e9e9e", ...rest } = props;
+    return renderByMode({
+        ...rest,
+        variantType: rest.variantType ?? "button",
+        label,
+        icon: <SaveIcon />,
+        intent: "primary",
+        onClick: onUpdate,
+        editColor,
+    });
+}
+
+/* ------------------------------- Clear Field ------------------------------- */
+export type ClearFieldButtonProps = ButtonWrapperProps & {
+    onClear: () => void;
+    editColor?: string;
+};
+
+export function ClearFieldButton(props: ClearFieldButtonProps) {
+    const { onClear, label = "Vider le champ", editColor = "#ed6c02", ...rest } = props;
+    return renderByMode({
+        ...rest,
+        variantType: rest.variantType ?? "button",
+        label,
+        icon: <BackspaceIcon />,
+        intent: "warning",
+        variant: "outlined",
+        onClick: onClear,
+        editColor,
+    });
+}
+
+/* --------------------------------- Power ---------------------------------- */
+export type PowerButtonProps = ButtonWrapperProps & { onPowerOff: () => void; editColor?: string };
+
+export function PowerButton(props: PowerButtonProps) {
+    const { onPowerOff, label = "Déconnexion", editColor = "red", ...rest } = props;
+    return renderByMode({
+        ...rest,
+        variantType: rest.variantType ?? "button",
+        label,
+        icon: <PowerIcon />,
+        intent: "danger",
+        variant: "outlined",
+        onClick: onPowerOff,
+        editColor,
+    });
+}
+
+/* -------------------------------- Refresh --------------------------------- */
+export type RefreshButtonProps = ButtonWrapperProps & { onRefresh: () => void; editColor?: string };
+
+export function RefreshButton(props: RefreshButtonProps) {
+    const { onRefresh, label = "Rafraîchir la page", editColor = "#9e9e9e", ...rest } = props;
+    return renderByMode({
+        ...rest,
+        variantType: rest.variantType ?? "button",
+        label,
+        icon: <RefreshIcon />,
+        intent: "primary",
+        onClick: onRefresh,
+        editColor,
+    });
+}
+
+/* ---------------------------------- Back ---------------------------------- */
+export type BackButtonProps = ButtonWrapperProps &
+    ({ href: string; onBack?: never } | { onBack: () => void; href?: never }) & {
+        editColor?: string;
+    };
+
+export function BackButton(props: BackButtonProps) {
+    const { label = "Retour", editColor = "#1976d2", ...rest } = props; // bleu primary par défaut
+    const common = {
+        ...rest,
+        variantType: rest.variantType ?? "button",
+        label,
+        icon: <ArrowBackIcon />,
+        intent: "primary" as const,
+        editColor,
+    };
+
+    if ("href" in rest) {
+        return renderByMode({ ...common, href: rest.href });
+    }
+    return renderByMode({ ...common, onClick: rest.onBack });
+}
+//

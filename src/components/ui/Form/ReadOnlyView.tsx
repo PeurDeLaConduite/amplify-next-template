@@ -55,13 +55,16 @@ export default function ReadOnlyView<T extends Record<string, unknown>>({
                                     <EditButton
                                         onEdit={() => onEditField({ field, value })}
                                         className="!w-8 !h-8"
-                                        size="small"
+                                        // size="medium"
+                                        variantType="icon"
                                     />
                                     {onClearField && value && (
                                         <DeleteButton
                                             onDelete={() => onClearField(field)}
                                             className="!w-8 !h-8"
                                             size="small"
+                                            // size="medium"
+                                            variantType="icon"
                                         />
                                     )}
                                 </div>
