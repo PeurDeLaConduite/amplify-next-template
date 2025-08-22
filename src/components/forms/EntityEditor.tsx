@@ -32,7 +32,7 @@ type EntityEditorProps<T extends Record<string, unknown>> = {
     /** Gestion des changements */
     handleChange: (field: FieldKey<T>, value: unknown) => void;
     /** Soumission du formulaire */
-    submit: () => Promise<void>;
+    submit: () => Promise<boolean>;
     /** Réinitialisation du formulaire */
     reset: () => void;
     /** Permet de remplacer le formulaire */

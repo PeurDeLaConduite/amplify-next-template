@@ -23,7 +23,7 @@ export default function UserNameManager() {
     const [editingId, setEditingId] = useState<string | null>(null);
 
     const manager = useUserNameForm(editingProfile);
-    const { removeById, setForm, setMode, refresh, submit } = manager;
+    const { removeById, setForm, setMode, refresh } = manager;
 
     // 🔄 Charger/rafraîchir au montage et quand l'utilisateur change
     useEffect(() => {
@@ -55,11 +55,11 @@ export default function UserNameManager() {
         setMode("edit"); // exemple : repasser en mode edit après création
     }, [setMode]);
 
-    const handleSubmit = useCallback(async () => {
-        const ok = await submit();
-        if (!ok) return;
-        onSave();
-    }, [submit, onSave]);
+    // const handleSubmit = useCallback(async () => {
+    //     const ok = await submit();
+    //     if (!ok) return;
+    //     onSave();
+    // }, [submit, onSave]);
 
     if (!user) return <Authenticator />;
 
@@ -80,7 +80,7 @@ export default function UserNameManager() {
             handleChange={
                 manager.handleChange as (field: keyof UserNameFormType, value: unknown) => void
             }
-            submit={handleSubmit} // ⬅️ plus d’event ici
+            submit={manager.submit} // ⬅️ plus d’event ici
             reset={manager.reset}
             setForm={manager.setForm}
             fields={fields}
