@@ -7,7 +7,7 @@ import EntityEditor from "@components/forms/EntityEditor";
 import { label as fieldLabel } from "./utilsUserName";
 import PersonIcon from "@mui/icons-material/Person";
 import { useUserNameForm } from "@entities/models/userName/hooks";
-import { onUserNameUpdated } from "@entities/models/userName/bus";
+import { onUserNameUpdated, emitUserNameUpdated } from "@entities/models/userName/bus"; // ⬅️ importe emit
 import {
     type UserNameFormType,
     type UserNameType,
@@ -21,21 +21,22 @@ export default function UserNameManager() {
     const { user } = useAuthenticator();
     const [editingProfile, setEditingProfile] = useState<UserNameType | null>(null);
     const [editingId, setEditingId] = useState<string | null>(null);
+
     const manager = useUserNameForm(editingProfile);
-    const { removeById, setForm, setMode } = manager;
+    const { removeById, setForm, setMode, refresh, submit } = manager;
 
     // 🔄 Charger/rafraîchir au montage et quand l'utilisateur change
     useEffect(() => {
-        if (user) void manager.refresh();
-    }, [user, manager.refresh]);
+        if (user) void refresh();
+    }, [user, refresh]);
 
     // 🔔 se resynchroniser si un autre écran met à jour le pseudo
     useEffect(() => {
         const unsub = onUserNameUpdated(() => {
-            void manager.refresh();
+            void refresh();
         });
         return unsub;
-    }, [manager.refresh]);
+    }, [refresh]);
 
     const handleDeleteById = useCallback(
         async (id: IdLike) => {
@@ -45,8 +46,20 @@ export default function UserNameManager() {
             setMode("create");
             setForm(initialUserNameForm);
         },
-        [removeById, setMode, setForm]
+        [removeById, setMode, setForm] // initialUserNameForm est const, inutile de le mettre
     );
+
+    // ✅ handler sans argument, conforme au type attendu par EntityEditor
+    const onSave = useCallback(() => {
+        emitUserNameUpdated(); // notifie le reste de l'app si besoin
+        setMode("edit"); // exemple : repasser en mode edit après création
+    }, [setMode]);
+
+    const handleSubmit = useCallback(async () => {
+        const ok = await submit();
+        if (!ok) return;
+        onSave();
+    }, [submit, onSave]);
 
     if (!user) return <Authenticator />;
 
@@ -67,7 +80,7 @@ export default function UserNameManager() {
             handleChange={
                 manager.handleChange as (field: keyof UserNameFormType, value: unknown) => void
             }
-            submit={manager.submit}
+            submit={handleSubmit} // ⬅️ plus d’event ici
             reset={manager.reset}
             setForm={manager.setForm}
             fields={fields}
