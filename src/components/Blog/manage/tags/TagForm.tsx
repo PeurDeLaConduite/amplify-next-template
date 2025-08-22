@@ -1,7 +1,7 @@
 "use client";
 
 import React, { forwardRef } from "react";
-import EntityFormShell, { type EntityFormManager } from "@components/Blog/manage/EntityFormShell";
+import BlogFormShell, { type EntityFormManager } from "@components/Blog/manage/BlogFormShell";
 import { useTagForm } from "@entities/models/tag/hooks";
 import { initialTagForm } from "@entities/models/tag/form";
 import type { TagFormType } from "@entities/models/tag/types";
@@ -18,7 +18,7 @@ const TagForm = forwardRef<HTMLFormElement, Props>(function TagForm({ manager, o
     const normalizedManager = manager as EntityFormManager<TagFormType>;
 
     return (
-        <EntityFormShell
+        <BlogFormShell
             ref={ref}
             manager={normalizedManager}
             initialForm={initialTagForm}
@@ -35,7 +35,7 @@ const TagForm = forwardRef<HTMLFormElement, Props>(function TagForm({ manager, o
                 placeholder="Nom du tag"
                 className="border rounded p-2 bg-white"
             />
-        </EntityFormShell>
+        </BlogFormShell>
     );
 });
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { CommentWithTodoId } from "@/src/components/todo/useTodosWithComments";
-import { EditButton, DeleteButton } from "@components/ui/button";
+import { EditButton, DeleteButton } from "@components/ui/Button";
 
 interface CommentListProps {
     comments: CommentWithTodoId[];

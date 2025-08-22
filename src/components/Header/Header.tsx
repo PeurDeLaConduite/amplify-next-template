@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuthenticator } from "@aws-amplify/ui-react";
-import { PowerButton } from "@components/ui/button";
+import { PowerButton } from "@components/ui/Button";
 import { useUserNameForm } from "@entities/models/userName/hooks";
 import UserNameModal from "@src/components/Profile/UserNameModal";
 import { onUserNameUpdated } from "@entities/models/userName/bus";

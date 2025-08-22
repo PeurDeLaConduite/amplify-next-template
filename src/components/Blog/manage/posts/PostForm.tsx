@@ -11,8 +11,8 @@ import {
     SeoFields,
     OrderSelector,
     SelectField,
-} from "@components/ui/form";
-import EntityFormShell from "@components/Blog/manage/EntityFormShell";
+} from "@components/ui/Form";
+import BlogFormShell from "@components/Blog/manage/BlogFormShell";
 import { byAlpha, byOptionalOrder } from "@components/Blog/manage/sorters";
 import { type SeoFormType } from "@entities/customTypes/seo/types";
 import { type PostFormType } from "@entities/models/post/types";
@@ -82,7 +82,7 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
     };
 
     return (
-        <EntityFormShell
+        <BlogFormShell
             ref={ref}
             manager={manager}
             initialForm={initialPostForm}
@@ -195,7 +195,7 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
                         </label>
                     ))}
             </fieldset>
-        </EntityFormShell>
+        </BlogFormShell>
     );
 });
 

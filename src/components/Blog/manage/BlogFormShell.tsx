@@ -1,4 +1,4 @@
-// src/components/blog/manage/EntityFormShell.tsx
+// src/components/blog/manage/BlogFormShell.tsx
 "use client";
 
 import React, { forwardRef, type FormEvent, type Ref } from "react";
@@ -23,7 +23,7 @@ interface Props<F> {
     className?: string;
 }
 
-const EntityFormShellInner = <F,>(
+const BlogFormShellInner = <F,>(
     {
         manager,
         initialForm,
@@ -74,6 +74,6 @@ const EntityFormShellInner = <F,>(
     );
 };
 
-export default forwardRef(EntityFormShellInner) as <F>(
+export default forwardRef(BlogFormShellInner) as <F>(
     props: Props<F> & { ref?: Ref<HTMLFormElement> }
 ) => JSX.Element;
