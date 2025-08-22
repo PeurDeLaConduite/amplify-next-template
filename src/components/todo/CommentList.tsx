@@ -32,12 +32,12 @@ export default function CommentList({
                         {canModify(comment.userNameId) && (
                             <div className="flex gap-2">
                                 <EditButton
-                                    onClick={() => onEditComment(comment.id, comment.userNameId)}
+                                    onEdit={() => onEditComment(comment.id, comment.userNameId)}
                                     label="Modifier"
                                     className="text-xs"
                                 />
                                 <DeleteButton
-                                    onClick={() => onDeleteComment(comment.id, comment.userNameId)}
+                                    onDelete={() => onDeleteComment(comment.id, comment.userNameId)}
                                     label="Supprimer"
                                     className="text-xs"
                                 />

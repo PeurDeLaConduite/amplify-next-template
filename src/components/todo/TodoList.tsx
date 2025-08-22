@@ -39,12 +39,12 @@ export default function TodoList({
                             <strong className="text-lg">{todo.content}</strong>
                             <div className="flex gap-2">
                                 <AddButton
-                                    onClick={() => onAddComment(todo.id)}
+                                    onAdd={() => onAddComment(todo.id)}
                                     label="Ajouter un commentaire"
                                     className="text-sm"
                                 />
                                 <DeleteButton
-                                    onClick={() => onDeleteTodo(todo.id)}
+                                    onDelete={() => onDeleteTodo(todo.id)}
                                     label="Supprimer"
                                     className="text-sm"
                                 />

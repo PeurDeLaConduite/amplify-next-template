@@ -12,7 +12,7 @@ interface Props {
     posts: PostType[];
     editingId: IdLike | null;
     onEditById: (id: IdLike) => void;
-    onSave: () => void;
+    onUpdate: () => void;
     onCancel: () => void;
     onDeleteById: (id: IdLike) => void;
 }
@@ -30,7 +30,7 @@ export default function PostList(props: Props) {
             )}
             sortBy={byOptionalOrder}
             onEditById={props.onEditById}
-            onSave={props.onSave}
+            onUpdate={props.onUpdate}
             onCancel={props.onCancel}
             onDeleteById={props.onDeleteById}
             editButtonLabel="Modifier"

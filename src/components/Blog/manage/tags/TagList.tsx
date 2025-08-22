@@ -11,7 +11,7 @@ interface Props {
     tags: TagType[];
     editingId: IdLike | null;
     onEditById: (id: IdLike) => void;
-    onSave: () => void;
+    onUpdate: () => void;
     onCancel: () => void;
     onDeleteById: (id: IdLike) => void;
     editButtonLabel: string;
@@ -22,7 +22,7 @@ function TagListInner({
     tags,
     editingId,
     onEditById,
-    onSave,
+    onUpdate,
     onCancel,
     onDeleteById,
     editButtonLabel,
@@ -53,7 +53,7 @@ function TagListInner({
             }
             sortBy={byAlpha((t) => t.name)}
             onEditById={onEditById}
-            onSave={onSave}
+            onUpdate={onUpdate}
             onCancel={onCancel}
             onDeleteById={onDeleteById}
             editButtonLabel={editButtonLabel}

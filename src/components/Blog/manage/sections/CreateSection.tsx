@@ -73,7 +73,7 @@ export default function SectionManagerPage() {
                     sections={sections}
                     editingId={editingId}
                     onEditById={handleEditById}
-                    onSave={() => {
+                    onUpdate={() => {
                         formRef.current?.requestSubmit();
                     }}
                     onCancel={handleCancel}

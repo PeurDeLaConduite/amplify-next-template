@@ -74,7 +74,7 @@ export default function PostManagerPage() {
                     posts={posts}
                     editingId={editingId}
                     onEditById={handleEditById}
-                    onSave={() => {
+                    onUpdate={() => {
                         formRef.current?.requestSubmit();
                     }}
                     onCancel={handleCancel}

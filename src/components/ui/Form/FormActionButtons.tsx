@@ -1,11 +1,11 @@
-import { ActionButtons, EditButton, DeleteButton, ButtonBase } from "@components/ui/Button";
+import { ActionButtons, EditButton, DeleteButton, UiButton } from "@components/ui/Button";
 type IdLike = string | number;
 
 interface FormActionButtonsProps {
     editingId: IdLike | null;
     currentId: IdLike;
     onEdit: () => void;
-    onSave: () => void;
+    onUpdate: () => void;
     onCancel: () => void;
     onDelete: () => void;
     isFormNew: boolean;
@@ -20,7 +20,7 @@ export default function FormActionButtons({
     editingId,
     currentId,
     onEdit,
-    onSave,
+    onUpdate,
     onCancel,
     onDelete,
     isFormNew,
@@ -34,7 +34,7 @@ export default function FormActionButtons({
         return (
             <button
                 type="button"
-                onClick={onSave}
+                onClick={onUpdate}
                 className="bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition"
             >
                 {addButtonLabel}
@@ -47,7 +47,7 @@ export default function FormActionButtons({
             <ActionButtons
                 isEditing={true}
                 onEdit={onEdit}
-                onSave={onSave}
+                onUpdate={onUpdate}
                 onCancel={onCancel}
                 className={className}
             />
@@ -66,20 +66,23 @@ export default function FormActionButtons({
     if (variant === "no-Icon") {
         return (
             <div className="flex gap-2">
-                <ButtonBase
+                <UiButton
+                    variantType="button"
                     label="Modifier"
-                    onClick={onEdit}
-                    size="small"
                     variant="outlined"
+                    intent="primary"
+                    size="small"
                     sx={miniButtonSx}
+                    buttonProps={{ onClick: onEdit }}
                 />
-                <ButtonBase
+                <UiButton
+                    variantType="button"
                     label="Supprimer"
-                    onClick={onDelete}
-                    size="small"
-                    color="error"
                     variant="outlined"
+                    intent="danger"
+                    size="small"
                     sx={miniButtonSx}
+                    buttonProps={{ onClick: onDelete }}
                 />
             </div>
         );
@@ -88,14 +91,13 @@ export default function FormActionButtons({
     return (
         <div className="flex gap-2">
             <EditButton
-                onClick={onEdit}
+                onEdit={onEdit}
                 className="!p-2 !h-8"
-                color="#1976d2"
                 label={editButtonLabel}
                 size="small"
             />
             <DeleteButton
-                onClick={onDelete}
+                onDelete={onDelete}
                 className="!p-2 !h-8"
                 label={deleteButtonLabel}
                 size="small"

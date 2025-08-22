@@ -77,7 +77,7 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
                                         Connecté en tant que : <strong>{userName}</strong>
                                     </p>
                                     <PowerButton
-                                        onClick={signOut}
+                                        onPowerOff={signOut}
                                         className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
                                         size="small"
                                     />
@@ -86,7 +86,7 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
                                 <>
                                     <span className="text-sm text-gray-400">Aucun pseudo</span>
                                     <PowerButton
-                                        onClick={signOut}
+                                        onPowerOff={signOut}
                                         className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
                                         size="small"
                                     />
