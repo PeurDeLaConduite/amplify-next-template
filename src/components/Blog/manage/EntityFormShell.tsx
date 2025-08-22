@@ -17,7 +17,7 @@ export interface EntityFormManager<F> {
 interface Props<F> {
     manager: EntityFormManager<F>;
     initialForm: F;
-    onSave: () => void;
+    afterSave: () => void;
     children: React.ReactNode; // <- tes champs contrôlés
     submitLabel?: { create: string; edit: string };
     className?: string;
@@ -27,7 +27,7 @@ const EntityFormShellInner = <F,>(
     {
         manager,
         initialForm,
-        onSave,
+        afterSave,
         children,
         className,
         submitLabel = { create: "Créer", edit: "Mettre à jour" },
@@ -46,7 +46,7 @@ const EntityFormShellInner = <F,>(
             setMode("create");
             setForm(initialForm);
         }
-        onSave();
+        afterSave();
     }
 
     return (

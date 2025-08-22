@@ -28,15 +28,17 @@ export default function SectionManagerPage() {
         fetchList();
     }, [fetchList]);
 
-    const handleEditById = useCallback(
+    const selectSection = useCallback(
         (id: IdLike) => {
             const section = selectById(String(id));
-            if (!section) return;
-            setEditingSection(section);
-            setEditingId(String(id));
+            setEditingSection(section ?? null);
         },
         [selectById]
     );
+
+    const enterEditMode = useCallback((id: IdLike) => {
+        setEditingId(String(id));
+    }, []);
 
     const handleDeleteById = useCallback(
         async (id: IdLike) => {
@@ -66,14 +68,15 @@ export default function SectionManagerPage() {
                     ref={formRef}
                     manager={manager}
                     editingId={editingId}
-                    onSave={handleSave}
+                    afterSave={handleSave}
                 />
                 <SectionHeader>Liste des sections</SectionHeader>
                 <SectionList
                     sections={sections}
                     editingId={editingId}
-                    onEditById={handleEditById}
-                    onSave={() => {
+                    selectById={selectSection}
+                    enterEditMode={enterEditMode}
+                    requestSubmit={() => {
                         formRef.current?.requestSubmit();
                     }}
                     onCancel={handleCancel}

@@ -10,10 +10,10 @@ type UseTagFormReturn = ReturnType<typeof useTagForm>;
 
 interface Props {
     manager: UseTagFormReturn;
-    onSave: () => void;
+    afterSave: () => void;
 }
 
-const TagForm = forwardRef<HTMLFormElement, Props>(function TagForm({ manager, onSave }, ref) {
+const TagForm = forwardRef<HTMLFormElement, Props>(function TagForm({ manager, afterSave }, ref) {
     const { form, setForm } = manager;
     const normalizedManager = manager as EntityFormManager<TagFormType>;
 
@@ -22,7 +22,7 @@ const TagForm = forwardRef<HTMLFormElement, Props>(function TagForm({ manager, o
             ref={ref}
             manager={normalizedManager}
             initialForm={initialTagForm}
-            onSave={onSave}
+            afterSave={afterSave}
             submitLabel={{ create: "Ajouter", edit: "Mettre à jour" }}
             className="!grid-cols-[1fr_auto]"
         >

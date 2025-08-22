@@ -10,8 +10,9 @@ type IdLike = string | number;
 interface Props {
     tags: TagType[];
     editingId: IdLike | null;
-    onEditById: (id: IdLike) => void;
-    onSave: () => void;
+    selectById: (id: IdLike) => void;
+    enterEditMode: (id: IdLike) => void;
+    requestSubmit: () => void;
     onCancel: () => void;
     onDeleteById: (id: IdLike) => void;
     editButtonLabel: string;
@@ -21,8 +22,9 @@ interface Props {
 function TagListInner({
     tags,
     editingId,
-    onEditById,
-    onSave,
+    selectById,
+    enterEditMode,
+    requestSubmit,
     onCancel,
     onDeleteById,
     editButtonLabel,
@@ -52,8 +54,9 @@ function TagListInner({
                 ].join(" ")
             }
             sortBy={byAlpha((t) => t.name)}
-            onEditById={onEditById}
-            onSave={onSave}
+            selectById={selectById}
+            enterEditMode={enterEditMode}
+            requestSubmit={requestSubmit}
             onCancel={onCancel}
             onDeleteById={onDeleteById}
             editButtonLabel={editButtonLabel}

@@ -44,13 +44,9 @@ export default function CreateTagPage() {
         setEditingId(null);
     }, [fetchAll]);
 
-    const handleEditById = useCallback(
-        (id: IdLike) => {
-            void selectById(String(id));
-            setEditingId(String(id));
-        },
-        [selectById]
-    );
+    const enterEditMode = useCallback((id: IdLike) => {
+        setEditingId(String(id));
+    }, []);
 
     const handleDeleteById = useCallback(
         async (id: IdLike) => {
@@ -72,14 +68,15 @@ export default function CreateTagPage() {
                     <RefreshButton onClick={fetchAll} label="Rafraîchir" size="small" />
                 </div>
 
-                <TagForm ref={formRef} manager={manager} onSave={handleSaved} />
+                <TagForm ref={formRef} manager={manager} afterSave={handleSaved} />
 
                 <SectionHeader>Liste des tags</SectionHeader>
                 <TagList
                     tags={tags}
                     editingId={editingId}
-                    onEditById={handleEditById}
-                    onSave={submitForm}
+                    selectById={selectById}
+                    enterEditMode={enterEditMode}
+                    requestSubmit={submitForm}
                     onCancel={handleCancel}
                     onDeleteById={handleDeleteById}
                     editButtonLabel={""}

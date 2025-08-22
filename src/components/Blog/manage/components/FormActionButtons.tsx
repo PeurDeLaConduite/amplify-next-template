@@ -7,7 +7,7 @@ interface FormActionButtonsProps {
     editingId: IdLike | null;
     currentId: IdLike;
     onEdit: () => void;
-    onSave: () => void;
+    requestSubmit: () => void;
     onCancel: () => void;
     onDelete: () => void;
     isFormNew: boolean;
@@ -22,7 +22,7 @@ export default function FormActionButtons({
     editingId,
     currentId,
     onEdit,
-    onSave,
+    requestSubmit,
     onCancel,
     onDelete,
     isFormNew,
@@ -36,7 +36,7 @@ export default function FormActionButtons({
         return (
             <button
                 type="button"
-                onClick={onSave}
+                onClick={requestSubmit}
                 className="bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition"
             >
                 {addButtonLabel}
@@ -49,7 +49,7 @@ export default function FormActionButtons({
             <ActionButtons
                 isEditing={true}
                 onEdit={onEdit}
-                onSave={onSave}
+                requestSubmit={requestSubmit}
                 onCancel={onCancel}
                 className={className}
             />

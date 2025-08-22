@@ -16,12 +16,12 @@ import {
 
 interface Props {
     manager: ReturnType<typeof useSectionForm>;
-    onSave: () => void;
+    afterSave: () => void;
     editingId: string | null;
 }
 
 const SectionForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
-    { manager, onSave, editingId },
+    { manager, afterSave, editingId },
     ref
 ) {
     const {
@@ -78,7 +78,7 @@ const SectionForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
             ref={ref}
             manager={manager}
             initialForm={initialSectionForm}
-            onSave={onSave}
+            afterSave={afterSave}
         >
             <EditableField
                 name="title"

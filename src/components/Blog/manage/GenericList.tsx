@@ -20,8 +20,9 @@ interface GenericListProps<T> {
     sortBy?: (a: T, b: T) => number;
 
     /** Actions */
-    onEditById: (id: IdLike) => void;
-    onSave: () => void;
+    selectById: (id: IdLike) => void;
+    enterEditMode: (id: IdLike) => void;
+    requestSubmit: () => void;
     onCancel: () => void;
     onDeleteById: (id: IdLike) => void;
 
@@ -41,8 +42,9 @@ export default function GenericList<T>({
     getId,
     renderContent,
     sortBy,
-    onEditById,
-    onSave,
+    selectById,
+    enterEditMode,
+    requestSubmit,
     onCancel,
     onDeleteById,
     className,
@@ -77,8 +79,11 @@ export default function GenericList<T>({
                         <FormActionButtons
                             editingId={editingId}
                             currentId={id}
-                            onEdit={() => onEditById(id)}
-                            onSave={onSave}
+                            onEdit={() => {
+                                selectById(id);
+                                enterEditMode(id);
+                            }}
+                            requestSubmit={requestSubmit}
                             onCancel={onCancel}
                             onDelete={() => onDeleteById(id)}
                             isFormNew={false}

@@ -30,15 +30,17 @@ export default function PostManagerPage() {
         void fetchPosts();
     }, [fetchPosts]);
 
-    const handleEditById = useCallback(
+    const selectPost = useCallback(
         (id: IdLike) => {
             const post = selectById(String(id));
-            if (!post) return;
-            setEditingPost(post);
-            setEditingId(String(id));
+            setEditingPost(post ?? null);
         },
         [selectById]
     );
+
+    const enterEditMode = useCallback((id: IdLike) => {
+        setEditingId(String(id));
+    }, []);
 
     const handleDeleteById = useCallback(
         async (id: IdLike) => {
@@ -67,14 +69,15 @@ export default function PostManagerPage() {
                     manager={manager}
                     posts={posts}
                     editingId={editingId}
-                    onSave={handleSave}
+                    afterSave={handleSave}
                 />
                 <SectionHeader>Liste des articles</SectionHeader>
                 <PostList
                     posts={posts}
                     editingId={editingId}
-                    onEditById={handleEditById}
-                    onSave={() => {
+                    selectById={selectPost}
+                    enterEditMode={enterEditMode}
+                    requestSubmit={() => {
                         formRef.current?.requestSubmit();
                     }}
                     onCancel={handleCancel}
