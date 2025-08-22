@@ -32,6 +32,11 @@ Utilisez les scripts définis dans le `package.json` :
     yarn lint
     ```
 
+## Conventions de nommage
+
+- Les composants génériques sont nommés en PascalCase (`Button`, `Input`, etc.).
+- Les formulaires spécifiques au métier portent un préfixe explicite (`UserForm`, `ProductionForm`).
+
 ## Dépendances clés
 
 - **Framework** : Next.js v15.0.3
