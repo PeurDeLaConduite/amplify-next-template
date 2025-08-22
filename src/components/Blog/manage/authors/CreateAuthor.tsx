@@ -55,13 +55,13 @@ export default function AuthorManagerPage() {
         <RequireAdmin>
             <BlogEditorLayout title="Éditeur de blog : Auteurs">
                 <SectionHeader className="mt-8">Nouvel auteur</SectionHeader>
-                <AuthorForm ref={formRef} manager={manager} onSave={handleSave} />
+                <AuthorForm ref={formRef} manager={manager} afterSave={handleSave} />
                 <SectionHeader loading={loading}>Liste d&apos;auteurs</SectionHeader>
                 <AuthorList
                     authors={authors}
                     editingId={editingId}
-                    onEditById={handleEditById}
-                    onSave={() => {
+                    enterEditModeById={handleEditById}
+                    requestSubmit={() => {
                         formRef.current?.requestSubmit();
                     }}
                     onCancel={() => {

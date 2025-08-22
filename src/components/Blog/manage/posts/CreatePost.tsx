@@ -73,7 +73,7 @@ export default function PostManagerPage() {
                 <PostList
                     posts={posts}
                     editingId={editingId}
-                    onEditById={handleEditById}
+                    enterEditModeById={handleEditById}
                     onSave={() => {
                         formRef.current?.requestSubmit();
                     }}

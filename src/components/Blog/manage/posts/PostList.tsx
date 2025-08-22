@@ -11,7 +11,7 @@ type IdLike = string | number;
 interface Props {
     posts: PostType[];
     editingId: IdLike | null;
-    onEditById: (id: IdLike) => void;
+    enterEditModeById: (id: IdLike) => void;
     onSave: () => void;
     onCancel: () => void;
     onDeleteById: (id: IdLike) => void;
@@ -29,7 +29,7 @@ export default function PostList(props: Props) {
                 </p>
             )}
             sortBy={byOptionalOrder}
-            onEditById={props.onEditById}
+            enterEditModeById={props.enterEditModeById}
             onSave={props.onSave}
             onCancel={props.onCancel}
             onDeleteById={props.onDeleteById}

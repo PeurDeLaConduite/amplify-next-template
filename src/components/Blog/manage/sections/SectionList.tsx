@@ -10,7 +10,7 @@ type IdLike = string | number;
 interface Props {
     sections: SectionType[];
     editingId: IdLike | null;
-    onEditById: (id: IdLike) => void;
+    enterEditModeById: (id: IdLike) => void;
     onSave: () => void;
     onCancel: () => void;
     onDeleteById: (id: IdLike) => void;
@@ -28,7 +28,7 @@ export default function SectionList(props: Props) {
                 </p>
             )}
             sortBy={byOptionalOrder}
-            onEditById={props.onEditById}
+            enterEditModeById={props.enterEditModeById}
             onSave={props.onSave}
             onCancel={props.onCancel}
             onDeleteById={props.onDeleteById}

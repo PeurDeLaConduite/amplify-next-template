@@ -72,7 +72,7 @@ export default function SectionManagerPage() {
                 <SectionList
                     sections={sections}
                     editingId={editingId}
-                    onEditById={handleEditById}
+                    enterEditModeById={handleEditById}
                     onSave={() => {
                         formRef.current?.requestSubmit();
                     }}
