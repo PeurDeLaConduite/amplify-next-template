@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo } from "react";
-import ButtonBase from "@components/buttons/ButtonBase";
+import { ButtonBase } from "@components/ui/button";
 import type { TagType } from "@entities/models/tag/types";
 import type { PostType } from "@entities/models/post/types";
 

@@ -1,4 +1,4 @@
-// src/components/SeoFields.tsx
+// src/components/ui/form/SeoFields.tsx
 import React from "react";
 import EditableField from "./EditableField";
 

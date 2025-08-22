@@ -2,7 +2,7 @@ import React from "react";
 import "@aws-amplify/ui-react/styles.css";
 import useTodosWithComments from "@/src/components/todo/useTodosWithComments";
 import TodoList from "@/src/components/todo/TodoList";
-import { AddButton } from "@/src/components/buttons/Buttons";
+import { AddButton } from "@components/ui/button";
 
 export default function TodosWithCommentsPage() {
     const {

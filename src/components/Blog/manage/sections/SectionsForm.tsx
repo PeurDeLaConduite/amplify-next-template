@@ -1,11 +1,13 @@
 // src/components/Blog/manage/sections/SectionForm.tsx
 "use client";
 import React, { forwardRef, type ChangeEvent } from "react";
-import EditableField from "@components/forms/EditableField";
-import EditableTextArea from "@components/forms/EditableTextArea";
-import SeoFields from "@components/forms/SeoFields";
-import OrderSelector from "@components/forms/OrderSelector";
-import ItemSelector from "@components/forms/ItemSelector";
+import {
+    EditableField,
+    EditableTextArea,
+    SeoFields,
+    OrderSelector,
+    ItemSelector,
+} from "@components/ui/form";
 import { useAutoGenFields, slugify } from "@hooks/useAutoGenFields";
 import EntityFormShell from "../EntityFormShell";
 import {
