@@ -49,15 +49,13 @@ type IconMode = Common & {
 /** Dimension "navigation" vs "action" (discriminant) */
 type AsLink = {
     href: string;
-    onClick?: never;
 };
 
-type AsAction = {
+type AsButton = {
     href?: undefined;
-    onClick: NonNullable<MuiButtonProps["onClick"]>;
 };
 
-export type UiButtonProps = (ButtonMode | IconMode) & (AsLink | AsAction);
+export type UiButtonProps = (ButtonMode | IconMode) & (AsLink | AsButton);
 
 function intentStyles(
     intent: UiButtonIntent | undefined
@@ -84,7 +82,6 @@ export const UiButton = forwardRef<HTMLButtonElement, UiButtonProps>(function Ui
         variantType,
         // discriminants nav/action
         href,
-        onClick,
         // communs
         intent = "primary",
         variant,
@@ -100,8 +97,13 @@ export const UiButton = forwardRef<HTMLButtonElement, UiButtonProps>(function Ui
         iconButtonProps,
     } = props as UiButtonProps;
 
+    const { onClick: buttonOnClick, ...restButtonProps } = buttonProps ?? {};
+    const { onClick: iconButtonOnClick, ...restIconButtonProps } = iconButtonProps ?? {};
+
     const iv = intentStyles(intent);
-    const mergedSx = Array.isArray(sx) ? [{}, iv.sx, ...sx] : { ...iv.sx, ...sx };
+    const mergedSx = (
+        Array.isArray(sx) ? [{}, iv.sx, ...sx] : { ...iv.sx, ...sx }
+    ) as SxProps<Theme>;
     const isDisabled = disabled || loading;
 
     // Rendu discriminé
@@ -111,7 +113,7 @@ export const UiButton = forwardRef<HTMLButtonElement, UiButtonProps>(function Ui
                 ref={ref}
                 component={href ? NextLink : undefined}
                 href={href}
-                onClick={onClick}
+                onClick={buttonOnClick}
                 size={size}
                 color={iv.color}
                 variant={variant ?? (intent === "ghost" ? "outlined" : "contained")}
@@ -121,7 +123,7 @@ export const UiButton = forwardRef<HTMLButtonElement, UiButtonProps>(function Ui
                 startIcon={props.icon}
                 type={type}
                 title={title}
-                {...buttonProps}
+                {...restButtonProps}
             >
                 {loading ? <CircularProgress size={18} /> : props.label}
             </MuiButton>
@@ -129,8 +131,8 @@ export const UiButton = forwardRef<HTMLButtonElement, UiButtonProps>(function Ui
             <MuiIconButton
                 ref={ref as any}
                 component={href ? NextLink : undefined}
-                href={href}
-                onClick={onClick}
+                {...((href ? { href } : {}) as any)}
+                onClick={iconButtonOnClick}
                 size={size}
                 color={iv.color as any}
                 className={className}
@@ -138,7 +140,7 @@ export const UiButton = forwardRef<HTMLButtonElement, UiButtonProps>(function Ui
                 disabled={isDisabled}
                 title={title}
                 aria-label={props.ariaLabel}
-                {...iconButtonProps}
+                {...restIconButtonProps}
             >
                 {loading ? <CircularProgress size={18} /> : props.icon}
             </MuiIconButton>
