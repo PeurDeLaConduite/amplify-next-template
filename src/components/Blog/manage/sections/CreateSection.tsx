@@ -45,7 +45,7 @@ export default function SectionManagerPage() {
         [removeById]
     );
 
-    const handleSave = useCallback(async () => {
+    const handleUpdate = useCallback(async () => {
         await fetchList();
         setEditingSection(null);
         setEditingId(null);
@@ -66,7 +66,7 @@ export default function SectionManagerPage() {
                     ref={formRef}
                     manager={manager}
                     editingId={editingId}
-                    onSave={handleSave}
+                    onUpdate={handleUpdate}
                 />
                 <SectionHeader>Liste des sections</SectionHeader>
                 <SectionList

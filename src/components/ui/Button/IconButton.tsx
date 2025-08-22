@@ -6,12 +6,13 @@ import {
 
 export type IconButtonProps = MuiIconButtonProps & {
     href?: string;
+    ariaLabel: string;
 };
 
-export default function IconButton({ href, ...props }: IconButtonProps) {
+export default function IconButton({ href, ariaLabel, ...props }: IconButtonProps) {
     return href ? (
-        <MuiIconButton component={NextLink} href={href} {...props} />
+        <MuiIconButton component={NextLink} href={href} aria-label={ariaLabel} {...props} />
     ) : (
-        <MuiIconButton {...props} />
+        <MuiIconButton aria-label={ariaLabel} {...props} />
     );
 }

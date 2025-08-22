@@ -39,7 +39,7 @@ export default function CreateTagPage() {
     // ⇧ stable: évite de casser la mémo de TagList
     const submitForm = useCallback(() => formRef.current?.requestSubmit(), []);
 
-    const handleSaved = useCallback(async () => {
+    const handleUpdated = useCallback(async () => {
         await fetchAll?.();
         setEditingId(null);
     }, [fetchAll]);
@@ -72,7 +72,7 @@ export default function CreateTagPage() {
                     <RefreshButton onRefresh={fetchAll} label="Rafraîchir" size="small" />
                 </div>
 
-                <TagForm ref={formRef} manager={manager} onSave={handleSaved} />
+                <TagForm ref={formRef} manager={manager} onUpdate={handleUpdated} />
 
                 <SectionHeader>Liste des tags</SectionHeader>
                 <TagList
