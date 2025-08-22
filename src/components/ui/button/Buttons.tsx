@@ -1,4 +1,4 @@
-// components/buttons/Buttons.tsx
+// src/components/ui/button/Buttons.tsx
 import ButtonBase, { ButtonBaseProps } from "./ButtonBase";
 import { deleteButtonStyles, getEditButtonStyles } from "./buttonStyles";
 

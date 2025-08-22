@@ -1,4 +1,4 @@
-// src/components/buttons/ButtonBase.tsx
+// src/components/ui/button/ButtonBase.tsx
 import React from "react";
 import NextLink from "next/link";
 import { Button, IconButton, ButtonProps as MuiButtonProps, SxProps, Theme } from "@mui/material";

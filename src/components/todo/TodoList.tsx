@@ -2,7 +2,7 @@ import React from "react";
 import type { Schema } from "@/amplify/data/resource";
 import { CommentWithTodoId } from "@/src/components/todo/useTodosWithComments";
 import CommentList from "@/src/components/todo/CommentList";
-import { DeleteButton, AddButton } from "@/src/components/buttons/Buttons";
+import { DeleteButton, AddButton } from "@components/ui/button";
 
 interface TodoListProps {
     todos: Schema["Todo"]["type"][];

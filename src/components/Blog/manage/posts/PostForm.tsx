@@ -5,11 +5,13 @@ import React, { forwardRef, type ChangeEvent } from "react";
 import { usePostForm } from "@entities/models/post/hooks";
 import { initialPostForm } from "@entities/models/post/form";
 import { useAutoGenFields, slugify } from "@hooks/useAutoGenFields";
-import EditableField from "@components/forms/EditableField";
-import EditableTextArea from "@components/forms/EditableTextArea";
-import SeoFields from "@components/forms/SeoFields";
-import OrderSelector from "@components/forms/OrderSelector";
-import SelectField from "@components/forms/SelectField";
+import {
+    EditableField,
+    EditableTextArea,
+    SeoFields,
+    OrderSelector,
+    SelectField,
+} from "@components/ui/form";
 import EntityFormShell from "@components/Blog/manage/EntityFormShell";
 import { byAlpha, byOptionalOrder } from "@components/Blog/manage/sorters";
 import { type SeoFormType } from "@entities/customTypes/seo/types";
