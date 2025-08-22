@@ -7,7 +7,7 @@ import {
     SeoFields,
     OrderSelector,
     ItemSelector,
-} from "@components/ui/form";
+} from "@components/ui/Form";
 import { useAutoGenFields, slugify } from "@hooks/useAutoGenFields";
 import EntityFormShell from "../EntityFormShell";
 import {

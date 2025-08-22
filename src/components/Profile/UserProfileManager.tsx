@@ -3,7 +3,7 @@
 import React, { useState, useCallback } from "react";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
-import { EntityEditor } from "@components/ui/form";
+import { EntityEditor } from "@components/ui/Form";
 import { label as fieldLabel } from "./utilsUserProfile";
 import PhoneIcon from "@mui/icons-material/Phone";
 import PersonIcon from "@mui/icons-material/Person";

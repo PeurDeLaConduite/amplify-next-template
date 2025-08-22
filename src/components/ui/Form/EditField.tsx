@@ -1,4 +1,4 @@
-import { SaveButton, BackButton } from "@components/ui/button";
+import { SaveButton, BackButton } from "@components/ui/Button";
 import React from "react";
 import type { FieldKey } from "@entities/core/hooks";
 

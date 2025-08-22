@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useCallback, useState } from "react";
 import RequireAdmin from "@components/RequireAdmin";
 import BlogEditorLayout from "@components/Blog/manage/BlogEditorLayout";
 import SectionHeader from "@components/Blog/manage/SectionHeader";
-import { RefreshButton } from "@components/ui/button";
+import { RefreshButton } from "@components/ui/Button";
 
 import TagForm from "@components/Blog/manage/tags/TagForm";
 import TagList from "@components/Blog/manage/tags/TagList";

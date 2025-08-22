@@ -1,7 +1,7 @@
 // src/components/Blog/manage/authors/AuthorForm.tsx
 "use client";
 import React, { forwardRef, type ChangeEvent } from "react";
-import { EditableField, EditableTextArea } from "@components/ui/form";
+import { EditableField, EditableTextArea } from "@components/ui/Form";
 import EntityFormShell from "@components/Blog/manage/EntityFormShell";
 import { type AuthorFormType, initialAuthorForm, useAuthorForm } from "@entities/models/author";
 

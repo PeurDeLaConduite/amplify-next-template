@@ -1,7 +1,7 @@
 import { fetchBlogData } from "@src/services";
 import type { Metadata, ResolvingMetadata } from "next";
 import PostContent from "@components/Blog/PostContent";
-import { BackButton } from "@components/ui/button";
+import { BackButton } from "@components/ui/Button";
 
 export async function generateStaticParams() {
     const { sections } = await fetchBlogData();
