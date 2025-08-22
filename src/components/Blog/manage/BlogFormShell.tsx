@@ -1,10 +1,10 @@
-// src/components/blog/manage/EntityFormShell.tsx
+// src/components/blog/manage/BlogFormShell.tsx
 "use client";
 
 import React, { forwardRef, type FormEvent, type Ref } from "react";
 import type { JSX } from "react";
 
-export interface EntityFormManager<F> {
+export interface BlogFormManager<F> {
     form: F;
     submit: () => Promise<boolean>;
     setForm: React.Dispatch<React.SetStateAction<F>>;
@@ -15,7 +15,7 @@ export interface EntityFormManager<F> {
 }
 
 interface Props<F> {
-    manager: EntityFormManager<F>;
+    manager: BlogFormManager<F>;
     initialForm: F;
     onSave: () => void;
     children: React.ReactNode; // <- tes champs contrôlés
@@ -23,7 +23,7 @@ interface Props<F> {
     className?: string;
 }
 
-const EntityFormShellInner = <F,>(
+const BlogFormShellInner = <F,>(
     {
         manager,
         initialForm,
@@ -74,6 +74,6 @@ const EntityFormShellInner = <F,>(
     );
 };
 
-export default forwardRef(EntityFormShellInner) as <F>(
+export default forwardRef(BlogFormShellInner) as <F>(
     props: Props<F> & { ref?: Ref<HTMLFormElement> }
 ) => JSX.Element;
