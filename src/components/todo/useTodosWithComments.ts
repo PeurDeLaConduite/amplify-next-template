@@ -100,14 +100,14 @@ export default function useTodosWithComments() {
         await commentService.create(input);
     };
 
-    const editComment = async (id: string, ownerId?: string) => {
+    const enterEditMode = async (id: string, ownerId?: string) => {
         if (!canModifyComment(ownerId)) return;
         const content = window.prompt("Modifier ce commentaire ?");
         if (!content) return;
         await commentService.update({ id, content });
     };
 
-    const deleteComment = (id: string, ownerId?: string) => {
+    const deleteForm = (id: string, ownerId?: string) => {
         if (!canModifyComment(ownerId)) return;
         if (confirm("Supprimer ce commentaire ?")) {
             void commentService.delete({ id });
@@ -133,8 +133,8 @@ export default function useTodosWithComments() {
         comments,
         createTodo,
         addComment,
-        editComment,
-        deleteComment,
+        enterEditMode,
+        deleteForm,
         deleteTodo,
         canModifyComment,
     };

@@ -9,8 +9,11 @@ interface TodoListProps {
     comments: CommentWithTodoId[];
     onDeleteTodo: (id: string) => void;
     onAddComment: (todoId: string) => void;
-    onEditComment: (id: string, ownerId?: string) => void;
-    onDeleteComment: (id: string, ownerId?: string) => void;
+    enterEditMode: (id: string, ownerId?: string) => void;
+    deleteForm: (id: string, ownerId?: string) => void;
+    /**
+     * Vérifie si l'utilisateur courant est autorisé à modifier un contenu.
+     */
     canModify: (ownerId?: string | null) => boolean;
 }
 
@@ -19,8 +22,8 @@ export default function TodoList({
     comments,
     onDeleteTodo,
     onAddComment,
-    onEditComment,
-    onDeleteComment,
+    enterEditMode,
+    deleteForm,
     canModify,
 }: TodoListProps) {
     if (todos.length === 0)
@@ -55,8 +58,8 @@ export default function TodoList({
                         {todoComments.length > 0 && (
                             <CommentList
                                 comments={todoComments}
-                                onEditComment={onEditComment}
-                                onDeleteComment={onDeleteComment}
+                                enterEditMode={enterEditMode}
+                                deleteForm={deleteForm}
                                 canModify={canModify}
                             />
                         )}
