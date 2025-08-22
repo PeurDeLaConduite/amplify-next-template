@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { FormActionButtons } from "@components/ui/form";
+import { FormActionButtons } from "@components/ui/Form";
 
 type IdLike = string | number;
 
