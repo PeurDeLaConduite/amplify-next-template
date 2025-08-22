@@ -4,7 +4,7 @@ import { EditButton, SaveButton, CancelButton } from "@components/buttons";
 type ActionButtonsProps = {
     isEditing: boolean;
     onEdit: () => void;
-    onSave: () => void;
+    requestSubmit: () => void;
     onCancel: () => void;
     className?: string;
 };
@@ -12,7 +12,7 @@ type ActionButtonsProps = {
 const ActionButtons = ({
     isEditing,
     onEdit,
-    onSave,
+    requestSubmit,
     onCancel,
     className = "",
 }: ActionButtonsProps) => {
@@ -21,7 +21,7 @@ const ActionButtons = ({
             {!isEditing && <EditButton onClick={onEdit} label="Modifier" size="small" />}
             {isEditing && (
                 <>
-                    <SaveButton onClick={onSave} label="Enregistrer" size="small" />
+                    <SaveButton onClick={requestSubmit} label="Enregistrer" size="small" />
                     <CancelButton onClick={onCancel} label="Annuler" size="small" />
                 </>
             )}

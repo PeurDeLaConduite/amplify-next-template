@@ -11,10 +11,11 @@ type IdLike = string | number;
 interface Props {
     posts: PostType[];
     editingId: IdLike | null;
-    onEditById: (id: IdLike) => void;
-    onSave: () => void;
+    enterEditModeById: (id: IdLike) => void;
+    requestSubmit: () => void;
     onCancel: () => void;
     onDeleteById: (id: IdLike) => void;
+    onRequestSubmit?: () => void;
 }
 
 export default function PostList(props: Props) {
@@ -29,8 +30,9 @@ export default function PostList(props: Props) {
                 </p>
             )}
             sortBy={byOptionalOrder}
-            onEditById={props.onEditById}
-            onSave={props.onSave}
+            enterEditModeById={props.enterEditModeById}
+            requestSubmit={props.requestSubmit}
+            onRequestSubmit={props.onRequestSubmit}
             onCancel={props.onCancel}
             onDeleteById={props.onDeleteById}
             editButtonLabel="Modifier"

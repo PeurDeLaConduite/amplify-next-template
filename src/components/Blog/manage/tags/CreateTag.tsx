@@ -78,8 +78,8 @@ export default function CreateTagPage() {
                 <TagList
                     tags={tags}
                     editingId={editingId}
-                    onEditById={handleEditById}
-                    onSave={submitForm}
+                    enterEditModeById={handleEditById}
+                    requestSubmit={submitForm}
                     onCancel={handleCancel}
                     onDeleteById={handleDeleteById}
                     editButtonLabel={""}

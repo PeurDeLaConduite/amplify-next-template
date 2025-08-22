@@ -51,6 +51,10 @@ export default function AuthorManagerPage() {
         setEditingId(null);
     }, [fetchAuthors]);
 
+    const requestSubmit = useCallback(() => {
+        formRef.current?.requestSubmit();
+    }, []);
+
     return (
         <RequireAdmin>
             <BlogEditorLayout title="Éditeur de blog : Auteurs">
@@ -60,10 +64,8 @@ export default function AuthorManagerPage() {
                 <AuthorList
                     authors={authors}
                     editingId={editingId}
-                    onEditById={handleEditById}
-                    onSave={() => {
-                        formRef.current?.requestSubmit();
-                    }}
+                    enterEditModeById={handleEditById}
+                    requestSubmit={requestSubmit}
                     onCancel={() => {
                         setEditingAuthor(null);
                         setEditingId(null);

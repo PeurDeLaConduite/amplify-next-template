@@ -11,10 +11,11 @@ type IdLike = string | number;
 interface Props {
     authors: AuthorType[];
     editingId: IdLike | null;
-    onEditById: (id: IdLike) => void;
-    onSave: () => void;
+    enterEditModeById: (id: IdLike) => void;
+    requestSubmit: () => void;
     onCancel: () => void;
     onDeleteById: (id: IdLike) => void;
+    onRequestSubmit?: () => void;
 }
 
 export default function AuthorList(props: Props) {
@@ -29,8 +30,9 @@ export default function AuthorList(props: Props) {
                 </p>
             )}
             sortBy={byAlpha((a) => a.authorName)}
-            onEditById={props.onEditById}
-            onSave={props.onSave}
+            enterEditModeById={props.enterEditModeById}
+            requestSubmit={props.requestSubmit}
+            onRequestSubmit={props.onRequestSubmit}
             onCancel={props.onCancel}
             onDeleteById={props.onDeleteById}
         />

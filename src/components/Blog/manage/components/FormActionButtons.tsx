@@ -7,7 +7,7 @@ interface FormActionButtonsProps {
     editingId: IdLike | null;
     currentId: IdLike;
     onEdit: () => void;
-    onSave: () => void;
+    requestSubmit: () => void;
     onCancel: () => void;
     onDelete: () => void;
     isFormNew: boolean;
@@ -16,13 +16,14 @@ interface FormActionButtonsProps {
     variant?: "no-Icon" | "normal";
     editButtonLabel?: string;
     deleteButtonLabel?: string;
+    onRequestSubmit?: () => void;
 }
 
 export default function FormActionButtons({
     editingId,
     currentId,
     onEdit,
-    onSave,
+    requestSubmit,
     onCancel,
     onDelete,
     isFormNew,
@@ -31,12 +32,16 @@ export default function FormActionButtons({
     variant = "normal",
     editButtonLabel,
     deleteButtonLabel,
+    onRequestSubmit,
 }: FormActionButtonsProps): React.ReactElement {
     if (isFormNew && editingId === null) {
         return (
             <button
                 type="button"
-                onClick={onSave}
+                onClick={() => {
+                    requestSubmit();
+                    onRequestSubmit?.();
+                }}
                 className="bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition"
             >
                 {addButtonLabel}
@@ -49,7 +54,10 @@ export default function FormActionButtons({
             <ActionButtons
                 isEditing={true}
                 onEdit={onEdit}
-                onSave={onSave}
+                requestSubmit={() => {
+                    requestSubmit();
+                    onRequestSubmit?.();
+                }}
                 onCancel={onCancel}
                 className={className}
             />
