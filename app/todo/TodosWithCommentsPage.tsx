@@ -9,8 +9,8 @@ export default function TodosWithCommentsPage() {
         comments,
         createTodo,
         addComment,
-        editComment,
-        deleteComment,
+        enterEditMode,
+        deleteForm,
         deleteTodo,
         canModifyComment,
     } = useTodosWithComments();
@@ -28,8 +28,8 @@ export default function TodosWithCommentsPage() {
                 comments={comments}
                 onDeleteTodo={deleteTodo}
                 onAddComment={addComment}
-                onEditComment={editComment}
-                onDeleteComment={deleteComment}
+                enterEditMode={enterEditMode}
+                deleteForm={deleteForm}
                 canModify={canModifyComment}
             />
         </section>
