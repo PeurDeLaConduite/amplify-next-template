@@ -1,4 +1,4 @@
-import { ActionButtons, EditButton, DeleteButton, ButtonBase } from "@components/ui/button";
+import { ActionButtons, EditButton, DeleteButton, ButtonBase } from "@components/ui/Button";
 type IdLike = string | number;
 
 interface FormActionButtonsProps {

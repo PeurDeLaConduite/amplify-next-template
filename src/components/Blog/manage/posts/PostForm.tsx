@@ -11,7 +11,7 @@ import {
     SeoFields,
     OrderSelector,
     SelectField,
-} from "@components/ui/form";
+} from "@components/ui/Form";
 import BlogFormShell from "@components/Blog/manage/BlogFormShell";
 import { byAlpha, byOptionalOrder } from "@components/Blog/manage/sorters";
 import { type SeoFormType } from "@entities/customTypes/seo/types";

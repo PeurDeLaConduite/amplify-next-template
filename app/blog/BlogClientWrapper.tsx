@@ -2,7 +2,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Blog from "@components/Blog/Blog";
-import { RefreshButton } from "@components/ui/button";
+import { RefreshButton } from "@components/ui/Button";
 import { fetchBlogData } from "@src/services";
 import type { BlogData } from "@src/types/blog";
 
