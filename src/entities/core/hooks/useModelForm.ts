@@ -112,7 +112,29 @@ export default function useModelForm<
     const [loadingExtras, setLoadingExtras] = useState(false);
     const [error, setError] = useState<unknown>(null);
     const [message, setMessage] = useState<string | null>(null);
+    
 
+    /*//*  🔎 1. C’est quoi dirty ?
+
+            dirty est un booléen qui dit si ton formulaire diffère de sa baseline (initialRef.current).
+
+            La baseline est mise à jour quand tu appelles adoptInitial(...)
+            (ex : après un load() réussi, ou après avoir validé une création/édition).
+
+            Calcul : dirty = !isEqual(form, initialRef.current)
+
+            Utilité :
+
+            Activer/Désactiver un bouton "Enregistrer" → disabled={!dirty}.
+
+            Alerter si l’utilisateur quitte la page sans sauvegarder.
+
+            Savoir si un reset est possible (dirty=true).
+
+            👉 En clair :
+            dirty = "le form actuel contient des changements non sauvegardés".
+
+    */
     const dirty = useMemo(() => {
         const equals = isEqual ?? deepEqual;
         return !equals(form, initialRef.current);
