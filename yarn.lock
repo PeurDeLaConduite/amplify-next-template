@@ -11545,6 +11545,7 @@ __metadata:
     eslint: "npm:^8.57.0"
     eslint-config-next: "npm:15.3.1"
     eslint-plugin-import: "npm:^2.32.0"
+    eslint-plugin-internal: "file:eslint-plugin-internal"
     eslint-plugin-unused-imports: "npm:^4.2.0"
     execa: "npm:^9.5.2"
     file-saver: "npm:^2.0.5"
@@ -13939,6 +13940,13 @@ __metadata:
   peerDependencies:
     eslint: ^2 || ^3 || ^4 || ^5 || ^6 || ^7.2.0 || ^8 || ^9
   checksum: 10c0/bfb1b8fc8800398e62ddfefbf3638d185286edfed26dfe00875cc2846d954491b4f5112457831588b757fa789384e1ae585f812614c4797f0499fa234fd4a48b
+  languageName: node
+  linkType: hard
+
+"eslint-plugin-internal@file:eslint-plugin-internal::locator=aws-amplify-gen2%40workspace%3A.":
+  version: 0.0.0
+  resolution: "eslint-plugin-internal@file:eslint-plugin-internal#eslint-plugin-internal::hash=c30ba4&locator=aws-amplify-gen2%40workspace%3A."
+  checksum: 10c0/a3cd90335e6714476641e5cc2ac3dd46bb697883d29dc584d2444e0f8007ac899e4a55c5c57a8b9ef6a55f8bb61a0a5a4a7759435b1c1e2b2438d408b438f1e4
   languageName: node
   linkType: hard
 
