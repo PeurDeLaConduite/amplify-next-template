@@ -6,7 +6,7 @@ import type { JSX } from "react";
 
 export interface EntityFormManager<F> {
     form: F;
-    submit: () => Promise<void>;
+    submit: () => Promise<boolean>;
     setForm: React.Dispatch<React.SetStateAction<F>>;
     setMode: React.Dispatch<React.SetStateAction<"create" | "edit">>;
     mode: "create" | "edit";
@@ -38,9 +38,14 @@ const EntityFormShellInner = <F,>(
 
     async function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        await submit();
-        setMode("create");
-        setForm(initialForm);
+        const ok = await submit();
+        if (!ok) return; // si validation échouée ou erreur, on ne reset pas
+
+        // succès : on peut réinitialiser si mode "create"
+        if (mode === "create") {
+            setMode("create");
+            setForm(initialForm);
+        }
         onSave();
     }
 
@@ -51,7 +56,7 @@ const EntityFormShellInner = <F,>(
                 <div className="flex space-x-2">
                     <button
                         type="submit"
-                        disabled={!!saving}
+                        disabled={saving} // désactivé pendant la sauvegarde
                         className="bg-blue-500 text-white px-4 py-2 rounded"
                     >
                         {mode === "edit" ? submitLabel.edit : submitLabel.create}

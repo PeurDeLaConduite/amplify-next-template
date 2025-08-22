@@ -41,8 +41,8 @@ export interface UseModelFormResult<F, E> {
     loadingExtras: boolean; // ← pour différencier si besoin
 
     error: unknown;
-    message: string | null;
     setError: React.Dispatch<React.SetStateAction<unknown>>;
+    message: string | null;
 
     handleChange: <K extends keyof F>(field: K, value: F[K]) => void;
     patch: (partial: Partial<F>) => void;
@@ -52,7 +52,7 @@ export interface UseModelFormResult<F, E> {
     setEdit: (next?: F) => void;
 
     /** Enchaîne create/update (+ syncRelations) puis refresh/load */
-    submit: () => Promise<void>;
+    submit: () => Promise<boolean>;
     reset: () => void;
 
     setForm: React.Dispatch<React.SetStateAction<F>>;
@@ -124,10 +124,12 @@ export default function useModelForm<
 
     const patch = useCallback((partial: Partial<F>) => {
         setForm((prev) => ({ ...prev, ...partial }));
+        setMessage("Les données ont été mises à jour.");
     }, []);
 
     const reset = useCallback(() => {
         setForm(initialRef.current);
+        setMessage("Les données ont été réinitialisées.");
         setMode(initialMode);
         setError(null);
     }, [initialMode]);
@@ -196,29 +198,28 @@ export default function useModelForm<
         [adoptInitial, form]
     );
 
-    const submit = useCallback(async () => {
+    // useModelForm
+    const submit = useCallback(async (): Promise<boolean> => {
         setSaving(true);
         setError(null);
         try {
             if (validate) {
                 const valid = await validate(form);
                 if (!valid) {
-                    setSaving(false);
-                    return;
+                    return false; // stop ici
                 }
             }
             const id = mode === "create" ? await create(form) : await update(form);
-            if (syncRelations) {
-                await syncRelations(id, form);
-            }
-            if (load) {
-                await refresh(); // vérité serveur
-            } else {
+            if (syncRelations) await syncRelations(id, form);
+            if (load) await refresh();
+            else {
                 setMode("edit");
                 initialRef.current = form;
             }
+            return true;
         } catch (e) {
             setError(e);
+            return false;
         } finally {
             setSaving(false);
         }

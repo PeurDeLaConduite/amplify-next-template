@@ -1,11 +1,11 @@
 // src/entities/core/utils/createM2MSync.ts
 import { syncManyToMany } from "./syncManyToMany";
 
-export interface ManyToManyCrud<P extends string, C extends string> {
-    listByParent(parentId: P): Promise<readonly C[]>;
-    listByChild(childId: C): Promise<readonly P[]>;
-    create(parentId: P, childId: C): Promise<unknown>;
-    delete(parentId: P, childId: C): Promise<unknown>;
+export interface ManyToManyCrud<P extends string = string, C extends string = string> {
+    listByParent(parentId: string): Promise<readonly C[]>;
+    listByChild(childId: string): Promise<readonly P[]>;
+    create(parentId: string, childId: string): Promise<unknown>;
+    delete(parentId: string, childId: string): Promise<unknown>;
 }
 
 const isSameSet = <T extends string>(a: readonly T[], b: readonly T[]) => {
@@ -16,7 +16,9 @@ const isSameSet = <T extends string>(a: readonly T[], b: readonly T[]) => {
 };
 
 /** Fabrique des fonctions de sync pour une relation N↔N donnée */
-export function createM2MSync<P extends string, C extends string>(service: ManyToManyCrud<P, C>) {
+export function createM2MSync<P extends string = string, C extends string = string>(
+    service: ManyToManyCrud<P, C>
+) {
     const syncByParent = async (parentId: P, targetChildIds: readonly C[]) => {
         const current = await service.listByParent(parentId);
         const target = Array.from(new Set(targetChildIds)); // dedupe

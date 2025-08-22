@@ -14,6 +14,7 @@ import { type TagType } from "@entities/models/tag/types";
 import { type SectionType } from "@entities/models/section/types";
 import { syncPost2Tags } from "@entities/relations/postTag";
 import { syncPost2Sections } from "@entities/relations/sectionPost";
+import { unknown } from "zod";
 interface Extras extends Record<string, unknown> {
     authors: AuthorType[];
     tags: TagType[];
@@ -75,7 +76,7 @@ export function usePostForm(post: PostType | null) {
         },
     });
 
-    const { setForm, setExtras, setMode, extras, reset, setMessage, setError } = modelForm;
+    const { setForm, setExtras, setMode, extras, refresh, setMessage, setError } = modelForm;
 
     const fetchPosts = useCallback(async () => {
         const { data } = await postService.list();
@@ -165,17 +166,17 @@ export function usePostForm(post: PostType | null) {
 
                 if (editingId === id) {
                     setEditingId(null);
-                    reset();
                 }
 
                 setMessage("Article supprimé avec succès.");
+                refresh();
             } catch (e: unknown) {
                 setError(e); // si setError est dispo dans ton hook
                 setMessage("Erreur lors de la suppression de l’article.");
                 // pas de throw: l’UI affiche le message d’erreur
             }
         },
-        [fetchPosts, editingId, reset]
+        [fetchPosts, editingId, refresh]
     );
 
     return {

@@ -23,7 +23,7 @@ export default function PostManagerPage() {
         fetchPosts,
         selectById,
         removeById,
-        /* refresh, */
+        // reset,
     } = manager;
 
     useEffect(() => {
@@ -79,8 +79,6 @@ export default function PostManagerPage() {
                     }}
                     onCancel={handleCancel}
                     onDeleteById={handleDeleteById}
-                    editButtonLabel="Modifier"
-                    deleteButtonLabel="Supprimer"
                 />
             </BlogEditorLayout>
         </RequireAdmin>
