@@ -2,6 +2,7 @@ import React from "react";
 import "@aws-amplify/ui-react/styles.css";
 import useTodosWithComments from "@/src/components/todo/useTodosWithComments";
 import TodoList from "@/src/components/todo/TodoList";
+import { AddButton } from "@/src/components/buttons/Buttons";
 
 export default function TodosWithCommentsPage() {
     const {
@@ -17,12 +18,11 @@ export default function TodosWithCommentsPage() {
 
     return (
         <section className="py-4">
-            <button
+            <AddButton
                 onClick={createTodo}
-                className="mb-8 w-full sm:w-auto px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow transition focus:ring-2 focus:ring-blue-300 focus:outline-none"
-            >
-                ➕ Ajouter un Todo
-            </button>
+                label="Ajouter un Todo"
+                className="mb-8 w-full sm:w-auto"
+            />
             <TodoList
                 todos={todos}
                 comments={comments}

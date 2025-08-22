@@ -35,13 +35,11 @@ export default function CommentList({
                                     onClick={() => onEditComment(comment.id, comment.userNameId)}
                                     label="Modifier"
                                     className="text-xs"
-                                    size="small"
                                 />
                                 <DeleteButton
                                     onClick={() => onDeleteComment(comment.id, comment.userNameId)}
                                     label="Supprimer"
                                     className="text-xs"
-                                    size="small"
                                 />
                             </div>
                         )}
