@@ -1,9 +1,10 @@
 require("@rushstack/eslint-patch/modern-module-resolution");
+require("ts-node").register({ transpileOnly: true });
 
 module.exports = {
     root: true,
     extends: ["next/core-web-vitals"],
-    plugins: ["unused-imports", "import"],
+    plugins: ["unused-imports", "import", "internal"],
     parserOptions: {
         project: ["./tsconfig.eslint.json"],
         tsconfigRootDir: __dirname,
@@ -12,6 +13,7 @@ module.exports = {
         "unused-imports/no-unused-imports": "error",
         "unused-imports/no-unused-vars": ["warn", { args: "none" }],
         "import/no-unused-modules": ["warn", { unusedExports: true }],
+        "internal/no-onclick-wrapper": "error",
     },
     overrides: [
         {
