@@ -24,7 +24,7 @@ describe("useModelForm", () => {
         expect(result.current.dirty).toBe(true);
 
         await act(async () => {
-            await result.current.submit();
+            await result.current.saveForm();
         });
 
         expect(create).toHaveBeenCalledWith({ title: "hello", tags: [] });
@@ -55,7 +55,7 @@ describe("useModelForm", () => {
         expect(result.current.dirty).toBe(true);
 
         await act(async () => {
-            await result.current.submit();
+            await result.current.saveForm();
         });
         expect(update).toHaveBeenCalledWith({ title: "modifié", tags: [] });
         expect(result.current.dirty).toBe(false);
@@ -72,7 +72,7 @@ describe("useModelForm", () => {
         const { result } = renderHook(() => useModelForm<Form>({ initialForm, create, update }));
 
         await act(async () => {
-            await result.current.submit();
+            await result.current.saveForm();
         });
         expect(result.current.error).toBeInstanceOf(Error);
 

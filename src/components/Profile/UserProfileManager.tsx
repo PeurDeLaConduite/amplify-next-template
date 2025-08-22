@@ -111,7 +111,7 @@ export default function UserProfileManager() {
                         value: unknown
                     ) => void
                 }
-                submit={manager.submit}
+                saveForm={manager.saveForm}
                 reset={manager.reset}
                 setForm={manager.setForm}
                 fields={fields}

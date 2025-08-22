@@ -21,7 +21,7 @@ describe("useAuthorForm", () => {
         });
 
         await act(async () => {
-            await result.current.submit();
+            await result.current.saveForm();
         });
 
         expect(authorService.create).toHaveBeenCalled();
@@ -50,7 +50,7 @@ describe("useAuthorForm", () => {
 
         act(() => result.current.handleChange("authorName", "Jane"));
         await act(async () => {
-            await result.current.submit();
+            await result.current.saveForm();
         });
 
         expect(authorService.update).toHaveBeenCalledWith({

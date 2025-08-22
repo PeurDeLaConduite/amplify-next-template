@@ -55,7 +55,7 @@ describe("usePostForm", () => {
         });
 
         await act(async () => {
-            await result.current.submit();
+            await result.current.saveForm();
         });
 
         expect(postService.create).toHaveBeenCalled();
@@ -90,7 +90,7 @@ describe("usePostForm", () => {
         });
 
         await act(async () => {
-            await result.current.submit();
+            await result.current.saveForm();
         });
 
         expect(postTagService.create).toHaveBeenCalledWith("post1", "tag2");

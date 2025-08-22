@@ -52,7 +52,7 @@ export interface UseModelFormResult<F, E> {
     setEdit: (next?: F) => void;
 
     /** Enchaîne create/update (+ syncRelations) puis refresh/load */
-    submit: () => Promise<boolean>;
+    saveForm: () => Promise<boolean>;
     reset: () => void;
 
     setForm: React.Dispatch<React.SetStateAction<F>>;
@@ -199,7 +199,7 @@ export default function useModelForm<
     );
 
     // useModelForm
-    const submit = useCallback(async (): Promise<boolean> => {
+    const saveForm = useCallback(async (): Promise<boolean> => {
         setSaving(true);
         setError(null);
         try {
@@ -249,7 +249,7 @@ export default function useModelForm<
         patch,
         setCreate,
         setEdit,
-        submit,
+        saveForm,
         reset,
         setForm,
         setExtras,

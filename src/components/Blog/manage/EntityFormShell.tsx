@@ -6,7 +6,7 @@ import type { JSX } from "react";
 
 export interface EntityFormManager<F> {
     form: F;
-    submit: () => Promise<boolean>;
+    saveForm: () => Promise<boolean>;
     setForm: React.Dispatch<React.SetStateAction<F>>;
     setMode: React.Dispatch<React.SetStateAction<"create" | "edit">>;
     mode: "create" | "edit";
@@ -34,11 +34,11 @@ const EntityFormShellInner = <F,>(
     }: Props<F>,
     ref: React.ForwardedRef<HTMLFormElement>
 ) => {
-    const { submit, setForm, setMode, mode, saving, message } = manager;
+    const { saveForm, setForm, setMode, mode, saving, message } = manager;
 
     async function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        const ok = await submit();
+        const ok = await saveForm();
         if (!ok) return; // si validation échouée ou erreur, on ne reset pas
 
         // succès : on peut réinitialiser si mode "create"

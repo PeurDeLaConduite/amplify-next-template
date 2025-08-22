@@ -1,10 +1,17 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, forwardRef, useImperativeHandle, useCallback } from "react";
 import type { FieldKey, FormMode } from "@entities/core/hooks";
 import ReadOnlyView from "./ReadOnlyView";
 import EditField from "./EditField";
 import EntityForm from "./EntityForm";
 import { DeleteButton } from "@components/buttons";
+
+// Actions possibles sur un champ du formulaire
+export type FieldAction<T> =
+    | { type: "updateField"; field: FieldKey<T>; value: string } // modification locale
+    | { type: "saveField"; field: FieldKey<T>; value: string } // persistance serveur
+    | { type: "clearField"; field: FieldKey<T> } // remise à zéro
+    | { type: "exitEditMode" }; // sortie du mode édition
 
 type EntityEditorProps<T extends Record<string, unknown>> = {
     /** Titre de la section */
@@ -31,8 +38,8 @@ type EntityEditorProps<T extends Record<string, unknown>> = {
     dirty: boolean;
     /** Gestion des changements */
     handleChange: (field: FieldKey<T>, value: unknown) => void;
-    /** Soumission du formulaire */
-    submit: () => Promise<void>;
+    /** Sauvegarde du formulaire complet */
+    saveForm: () => Promise<boolean>;
     /** Réinitialisation du formulaire */
     reset: () => void;
     /** Permet de remplacer le formulaire */
@@ -47,10 +54,17 @@ type EntityEditorProps<T extends Record<string, unknown>> = {
     clearField?: (field: FieldKey<T>) => Promise<void>;
     /** Suppression de l'entité */
     deleteEntity?: () => Promise<void>;
+    /** Callback facultatif pour réagir aux actions */
+    onAction?: (action: FieldAction<T>) => void;
 };
 
-export default function EntityEditor<T extends Record<string, unknown>>(
-    props: EntityEditorProps<T>
+export type EntityEditorHandle = {
+    reset: () => void;
+};
+
+function EntityEditorInner<T extends Record<string, unknown>>(
+    props: EntityEditorProps<T>,
+    ref: React.ForwardedRef<EntityEditorHandle>
 ) {
     const {
         title,
@@ -64,30 +78,39 @@ export default function EntityEditor<T extends Record<string, unknown>>(
         form,
         mode,
         handleChange,
-        submit,
+        saveForm,
         reset,
         fields,
         labels,
         saveField,
         clearField,
         deleteEntity,
+        onAction,
     } = props;
-    const [editModeField, setEditModeField] = useState<{
-        field: FieldKey<T>;
-        value: string;
-    } | null>(null);
 
-    const handleCancel = () => {
+    const [editModeField, setEditModeField] = useState<{ field: FieldKey<T>; value: string } | null>(null);
+
+    const exitEditMode = useCallback(() => {
+        setEditModeField(null);
+        onAction?.({ type: "exitEditMode" });
+    }, [onAction]);
+
+    const handleReset = useCallback(() => {
+        exitEditMode();
         reset();
-    };
+    }, [exitEditMode, reset]);
+
+    useImperativeHandle(ref, () => ({ reset: handleReset }), [handleReset]);
 
     const handleClearField = (field: FieldKey<T>) => {
         if (onClearField) {
             onClearField(field, async (f) => {
                 await clearField?.(f);
+                onAction?.({ type: "clearField", field: f });
             });
         } else {
             void clearField?.(field);
+            onAction?.({ type: "clearField", field });
         }
     };
 
@@ -119,9 +142,14 @@ export default function EntityEditor<T extends Record<string, unknown>>(
                     setEditModeField={setEditModeField}
                     saveSingleField={() =>
                         saveField
-                            ? saveField(editModeField.field, editModeField.value).then(() =>
-                                  setEditModeField(null)
-                              )
+                            ? saveField(editModeField.field, editModeField.value).then(() => {
+                                  setEditModeField(null);
+                                  onAction?.({
+                                      type: "saveField",
+                                      field: editModeField.field,
+                                      value: editModeField.value,
+                                  });
+                              })
                             : Promise.resolve()
                     }
                     labels={labels}
@@ -133,10 +161,17 @@ export default function EntityEditor<T extends Record<string, unknown>>(
                     formData={form}
                     fields={fields}
                     labels={labels}
-                    handleChange={handleChange}
-                    handleSubmit={() => submit().then(() => void 0)}
+                    handleChange={(field, value) => {
+                        handleChange(field, value);
+                        onAction?.({
+                            type: "updateField",
+                            field,
+                            value: String(value ?? ""),
+                        });
+                    }}
+                    handleSubmit={() => saveForm().then(() => void 0)}
                     isEdit={false}
-                    onCancel={handleCancel}
+                    onCancel={handleReset}
                     requiredFields={requiredFields}
                 />
             )}
@@ -155,3 +190,7 @@ export default function EntityEditor<T extends Record<string, unknown>>(
         </section>
     );
 }
+
+export default forwardRef(EntityEditorInner) as <T extends Record<string, unknown>>(
+    props: EntityEditorProps<T> & { ref?: React.Ref<EntityEditorHandle> }
+) => React.ReactElement;
