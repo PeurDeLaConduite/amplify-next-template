@@ -11,7 +11,7 @@ interface Props {
     sections: SectionType[];
     editingId: IdLike | null;
     onEditById: (id: IdLike) => void;
-    onSave: () => void;
+    onUpdate: () => void;
     onCancel: () => void;
     onDeleteById: (id: IdLike) => void;
 }
@@ -29,7 +29,7 @@ export default function SectionList(props: Props) {
             )}
             sortBy={byOptionalOrder}
             onEditById={props.onEditById}
-            onSave={props.onSave}
+            onUpdate={props.onUpdate}
             onCancel={props.onCancel}
             onDeleteById={props.onDeleteById}
         />

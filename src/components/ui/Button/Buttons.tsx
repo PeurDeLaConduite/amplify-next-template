@@ -1,192 +1,268 @@
 // src/components/ui/button/Buttons.tsx
-import ButtonBase, { ButtonBaseProps } from "./ButtonBase";
-import { deleteButtonStyles, getEditButtonStyles } from "./buttonStyles";
-
+import { UiButton } from "./UiButton";
 import {
     Save as SaveIcon,
     Delete as DeleteIcon,
     Edit as EditIcon,
     Cancel as CancelIcon,
     Add as AddIcon,
-    Send as SendIcon,
-    Backspace as BackspaceIcon,
     ArrowBack as ArrowBackIcon,
+    Backspace as BackspaceIcon,
     PowerSettingsNew as PowerIcon,
     Refresh as RefreshIcon,
 } from "@mui/icons-material";
-
 import type { ButtonProps as MuiButtonProps, SxProps, Theme } from "@mui/material";
-export type BackButtonProps = Pick<ButtonBaseProps, "href" | "label" | "className" | "sx" | "size">;
-type ButtonProps = {
-    onClick: () => void;
-    href?: string;
+
+// Props communs exposés par les wrappers
+export type ButtonWrapperProps = {
     label?: string;
+    title?: string;
     className?: string;
     sx?: SxProps<Theme>;
     size?: MuiButtonProps["size"];
-    color?: string;
 };
 
-export function EditButton({ onClick, label, className, color, size, sx = {} }: ButtonProps) {
-    return (
-        <ButtonBase
-            label={label}
-            title="Modifier"
-            onClick={onClick}
-            icon={<EditIcon fontSize="small" />}
-            className={className}
-            variant="outlined"
-            size={size}
-            sx={{ ...getEditButtonStyles(color), ...(sx as object) }}
-        />
-    );
-}
-
-export function DeleteButton({ onClick, label, className, size, sx = {} }: ButtonProps) {
-    return (
-        <ButtonBase
-            label={label}
-            title="Supprimer"
-            onClick={onClick}
-            icon={<DeleteIcon fontSize="small" />}
-            color="error"
-            className={className}
-            variant="outlined"
-            size={size}
-            sx={{ ...deleteButtonStyles, ...(sx as object) }}
-        />
-    );
-}
-
-export function BackButton({
-    href,
-    onClick,
-    label = "Retour",
+export type EditButtonProps = ButtonWrapperProps & { onEdit: () => void };
+export function EditButton({
+    onEdit,
+    label = "Modifier",
+    title = "Modifier",
     className,
-    sx = {},
+    sx,
     size,
-}: ButtonBaseProps) {
+}: EditButtonProps) {
     return (
-        <ButtonBase
-            href={href}
-            onClick={onClick}
+        <UiButton
+            variantType="button"
             label={label}
-            title="Retour"
-            icon={<ArrowBackIcon />}
-            color="primary"
-            variant="contained"
+            title={title}
+            icon={<EditIcon fontSize="small" />}
+            intent="primary"
+            variant="outlined"
             className={className}
             sx={sx}
             size={size}
-        />
-    );
-}
-export function SaveButton({ onClick, label, className, size, sx = {} }: ButtonProps) {
-    return (
-        <ButtonBase
-            label={label}
-            title="Enregistrer"
-            onClick={onClick}
-            icon={<SaveIcon />}
-            color="primary"
-            className={className}
-            variant="contained"
-            size={size}
-            sx={sx}
+            buttonProps={{ onClick: onEdit }}
         />
     );
 }
 
-export function CancelButton({ onClick, label, className, size, sx = {} }: ButtonProps) {
+export type DeleteButtonProps = ButtonWrapperProps & { onDelete: () => void };
+export function DeleteButton({
+    onDelete,
+    label = "Supprimer",
+    title = "Supprimer",
+    className,
+    sx,
+    size,
+}: DeleteButtonProps) {
     return (
-        <ButtonBase
+        <UiButton
+            variantType="button"
             label={label}
-            title="Annuler"
-            onClick={onClick}
+            title={title}
+            icon={<DeleteIcon fontSize="small" />}
+            intent="danger"
+            variant="outlined"
+            className={className}
+            sx={sx}
+            size={size}
+            buttonProps={{ onClick: onDelete }}
+        />
+    );
+}
+
+export type CancelButtonProps = ButtonWrapperProps & { onCancel: () => void };
+export function CancelButton({
+    onCancel,
+    label = "Annuler",
+    title = "Annuler",
+    className,
+    sx,
+    size,
+}: CancelButtonProps) {
+    return (
+        <UiButton
+            variantType="button"
+            label={label}
+            title={title}
             icon={<CancelIcon />}
-            color="inherit"
-            className={className}
+            intent="ghost"
             variant="outlined"
-            size={size}
+            className={className}
             sx={sx}
+            size={size}
+            buttonProps={{ onClick: onCancel }}
         />
     );
 }
 
-export function AddButton({ onClick, label, className, size, sx = {} }: ButtonProps) {
+export type AddButtonProps = ButtonWrapperProps & { onAdd: () => void };
+export function AddButton({
+    onAdd,
+    label = "Ajouter",
+    title = "Ajouter",
+    className,
+    sx,
+    size,
+}: AddButtonProps) {
     return (
-        <ButtonBase
+        <UiButton
+            variantType="button"
             label={label}
-            title="Ajouter"
-            onClick={onClick}
+            title={title}
             icon={<AddIcon />}
-            color="success"
+            intent="success"
             className={className}
-            variant="contained"
-            size={size}
             sx={sx}
+            size={size}
+            buttonProps={{ onClick: onAdd }}
         />
     );
 }
 
-export function SubmitButton({ onClick, label, className, size, sx = {} }: ButtonProps) {
+export type SubmitButtonProps = ButtonWrapperProps & { onSubmit: () => void };
+export function SubmitButton({
+    onSubmit,
+    label = "Créer",
+    title = "Créer",
+    className,
+    sx,
+    size,
+}: SubmitButtonProps) {
     return (
-        <ButtonBase
+        <UiButton
+            variantType="button"
             label={label}
-            title="Envoyer"
-            onClick={onClick}
-            icon={<SendIcon />}
-            color="primary"
+            title={title}
+            icon={<SaveIcon />}
+            intent="primary"
             className={className}
-            variant="contained"
-            size={size}
             sx={sx}
+            size={size}
+            buttonProps={{ onClick: onSubmit }}
         />
     );
 }
 
-export function ClearFieldButton({ onClick, label, className, size, sx = {} }: ButtonProps) {
+export type UpdateButtonProps = ButtonWrapperProps & { onUpdate: () => void };
+export function UpdateButton({
+    onUpdate,
+    label = "Enregistrer",
+    title = "Enregistrer",
+    className,
+    sx,
+    size,
+}: UpdateButtonProps) {
     return (
-        <ButtonBase
+        <UiButton
+            variantType="button"
             label={label}
-            title="Vider le champ"
-            onClick={onClick}
+            title={title}
+            icon={<SaveIcon />}
+            intent="primary"
+            className={className}
+            sx={sx}
+            size={size}
+            buttonProps={{ onClick: onUpdate }}
+        />
+    );
+}
+
+export type ClearFieldButtonProps = ButtonWrapperProps & { onClear: () => void };
+export function ClearFieldButton({
+    onClear,
+    label = "Vider le champ",
+    title = "Vider le champ",
+    className,
+    sx,
+    size,
+}: ClearFieldButtonProps) {
+    return (
+        <UiButton
+            variantType="button"
+            label={label}
+            title={title}
             icon={<BackspaceIcon />}
-            color="warning"
-            className={className}
+            intent="warning"
             variant="outlined"
-            size={size}
+            className={className}
             sx={sx}
+            size={size}
+            buttonProps={{ onClick: onClear }}
         />
     );
 }
-export function PowerButton({ onClick, label, className, size, sx = {} }: ButtonProps) {
+
+export type PowerButtonProps = ButtonWrapperProps & { onPowerOff: () => void };
+export function PowerButton({
+    onPowerOff,
+    label = "Déconnexion",
+    title = "Déconnexion",
+    className,
+    sx,
+    size,
+}: PowerButtonProps) {
     return (
-        <ButtonBase
+        <UiButton
+            variantType="button"
             label={label}
-            title="Déconnexion"
-            onClick={onClick}
+            title={title}
             icon={<PowerIcon />}
-            color="error" // rouge pour indiquer la déconnexion
-            className={className}
+            intent="danger"
             variant="outlined"
+            className={className}
+            sx={sx}
             size={size}
-            sx={{ ...deleteButtonStyles, ...(sx as object) }}
+            buttonProps={{ onClick: onPowerOff }}
         />
     );
 }
-export function RefreshButton({ onClick, label, className, size, sx = {} }: ButtonProps) {
+
+export type RefreshButtonProps = ButtonWrapperProps & { onRefresh: () => void };
+export function RefreshButton({
+    onRefresh,
+    label = "Rafraîchir la page",
+    title = "Rafraîchir la page",
+    className,
+    sx,
+    size,
+}: RefreshButtonProps) {
     return (
-        <ButtonBase
+        <UiButton
+            variantType="button"
             label={label}
-            title="Rafraîchir la page"
-            onClick={onClick}
+            title={title}
             icon={<RefreshIcon />}
-            color="primary"
+            intent="primary"
             className={className}
-            variant="contained"
-            size={size}
             sx={sx}
+            size={size}
+            buttonProps={{ onClick: onRefresh }}
         />
     );
+}
+
+export type BackButtonProps = ButtonWrapperProps &
+    ({ href: string; onBack?: never } | { onBack: () => void; href?: never });
+export function BackButton({
+    label = "Retour",
+    title = "Retour",
+    className,
+    sx,
+    size,
+    ...rest
+}: BackButtonProps) {
+    const common = {
+        variantType: "button" as const,
+        label,
+        title,
+        icon: <ArrowBackIcon />,
+        intent: "primary" as const,
+        className,
+        sx,
+        size,
+    };
+    if ("href" in rest) return <UiButton {...common} href={rest.href} />;
+    return <UiButton {...common} buttonProps={{ onClick: rest.onBack }} />;
 }

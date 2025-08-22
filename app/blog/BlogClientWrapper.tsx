@@ -34,7 +34,7 @@ export default function BlogClientWrapper() {
         <div className="max-w-5xl mx-auto px-4 py-8">
             <Blog data={data!} noWrapper />
             <RefreshButton
-                onClick={load}
+                onRefresh={load}
                 label="Actualiser la liste d'articles"
                 className="mb-6"
                 size="medium"

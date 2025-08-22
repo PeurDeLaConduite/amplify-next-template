@@ -61,7 +61,7 @@ export default function AuthorManagerPage() {
                     authors={authors}
                     editingId={editingId}
                     onEditById={handleEditById}
-                    onSave={() => {
+                    onUpdate={() => {
                         formRef.current?.requestSubmit();
                     }}
                     onCancel={() => {

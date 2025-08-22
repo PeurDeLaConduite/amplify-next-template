@@ -19,7 +19,7 @@ export default function TodosWithCommentsPage() {
     return (
         <section className="py-4">
             <AddButton
-                onClick={createTodo}
+                onAdd={createTodo}
                 label="Ajouter un Todo"
                 className="mb-8 w-full sm:w-auto"
             />

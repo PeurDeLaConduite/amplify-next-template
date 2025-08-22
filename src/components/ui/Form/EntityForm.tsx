@@ -1,7 +1,7 @@
 // src/components/ui/form/EntityForm.tsx
 "use client";
 import React, { type FormEvent } from "react";
-import { SaveButton, AddButton, CancelButton } from "@components/ui/Button";
+import { UpdateButton, AddButton, CancelButton } from "@components/ui/Button";
 import { type FieldKey } from "@entities/core/hooks";
 
 type Props<T extends Record<string, unknown>> = {
@@ -53,14 +53,14 @@ export default function EntityForm<T extends Record<string, unknown>>({
             <div className="flex justify-end gap-2 pt-2">
                 {isEdit ? (
                     <>
-                        <SaveButton
-                            onClick={handleSubmit}
+                        <UpdateButton
+                            onUpdate={handleSubmit}
                             label="Enregistrer"
                             className="min-w-[120px]"
                             size="medium"
                         />
                         <CancelButton
-                            onClick={onCancel}
+                            onCancel={onCancel}
                             label="Annuler"
                             className="min-w-[120px]"
                             size="medium"
@@ -68,7 +68,7 @@ export default function EntityForm<T extends Record<string, unknown>>({
                     </>
                 ) : (
                     <AddButton
-                        onClick={handleSubmit}
+                        onAdd={handleSubmit}
                         label="Créer"
                         className="min-w-[120px]"
                         size="medium"

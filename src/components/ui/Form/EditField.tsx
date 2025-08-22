@@ -1,4 +1,4 @@
-import { SaveButton, BackButton } from "@components/ui/Button";
+import { UpdateButton, BackButton } from "@components/ui/Button";
 import React from "react";
 import type { FieldKey } from "@entities/core/hooks";
 
@@ -40,14 +40,14 @@ export default function EditField<T extends Record<string, unknown>>({
             />
 
             <div className="flex justify-between mt-5 gap-10">
-                <SaveButton
-                    onClick={saveSingleField}
+                <UpdateButton
+                    onUpdate={saveSingleField}
                     label="Sauvegarder"
                     className="flex-1 mr-2"
                     size="medium"
                 />
                 <BackButton
-                    onClick={() => setEditModeField(null)}
+                    onBack={() => setEditModeField(null)}
                     label="Retour"
                     className="flex-1 ml-2"
                     size="medium"

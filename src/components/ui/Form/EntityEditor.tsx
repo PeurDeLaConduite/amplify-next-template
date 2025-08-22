@@ -144,7 +144,7 @@ export default function EntityEditor<T extends Record<string, unknown>>(
             {mode === "edit" && !editModeField && deleteLabel && (
                 <div className="flex items-center justify-center mt-8">
                     <DeleteButton
-                        onClick={() => {
+                        onDelete={() => {
                             void deleteEntity?.();
                         }}
                         label={deleteLabel}

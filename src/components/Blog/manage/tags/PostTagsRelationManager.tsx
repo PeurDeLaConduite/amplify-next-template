@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { ButtonBase } from "@components/ui/Button";
+import { UiButton } from "@components/ui/Button";
 import type { TagType } from "@entities/models/tag/types";
 import type { PostType } from "@entities/models/post/types";
 
@@ -63,11 +63,11 @@ function PostTagsRelationManagerInner({
                                 {tags.map((tag) => {
                                     const linked = isTagLinked(post.id, tag.id);
                                     return (
-                                        <ButtonBase
+                                        <UiButton
                                             key={tag.id}
+                                            variantType="button"
                                             label={tag.name}
-                                            onClick={() => toggle(post.id, tag.id)}
-                                            color={linked ? "primary" : "inherit"}
+                                            intent={linked ? "primary" : "ghost"}
                                             variant={linked ? "contained" : "outlined"}
                                             sx={{
                                                 fontWeight: linked ? 700 : 400,
@@ -78,6 +78,7 @@ function PostTagsRelationManagerInner({
                                                 fontSize: 14,
                                                 transition: "all .15s",
                                             }}
+                                            buttonProps={{ onClick: () => toggle(post.id, tag.id) }}
                                         />
                                     );
                                 })}

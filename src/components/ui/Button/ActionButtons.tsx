@@ -1,10 +1,10 @@
 import React from "react";
-import { EditButton, SaveButton, CancelButton } from "@components/ui/Button";
+import { EditButton, UpdateButton, CancelButton } from "@components/ui/Button";
 
 type ActionButtonsProps = {
     isEditing: boolean;
     onEdit: () => void;
-    onSave: () => void;
+    onUpdate: () => void;
     onCancel: () => void;
     className?: string;
 };
@@ -12,17 +12,17 @@ type ActionButtonsProps = {
 const ActionButtons = ({
     isEditing,
     onEdit,
-    onSave,
+    onUpdate,
     onCancel,
     className = "",
 }: ActionButtonsProps) => {
     return (
         <div className={className} style={{ display: "flex", gap: "0.5rem" }}>
-            {!isEditing && <EditButton onClick={onEdit} label="Modifier" size="small" />}
+            {!isEditing && <EditButton onEdit={onEdit} label="Modifier" size="small" />}
             {isEditing && (
                 <>
-                    <SaveButton onClick={onSave} label="Enregistrer" size="small" />
-                    <CancelButton onClick={onCancel} label="Annuler" size="small" />
+                    <UpdateButton onUpdate={onUpdate} label="Enregistrer" size="small" />
+                    <CancelButton onCancel={onCancel} label="Annuler" size="small" />
                 </>
             )}
         </div>
