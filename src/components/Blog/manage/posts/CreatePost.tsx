@@ -47,7 +47,7 @@ export default function PostManagerPage() {
         [removeById]
     );
 
-    const handleSave = useCallback(async () => {
+    const handleUpdate = useCallback(async () => {
         await fetchPosts();
         setEditingPost(null);
         setEditingId(null);
@@ -67,7 +67,7 @@ export default function PostManagerPage() {
                     manager={manager}
                     posts={posts}
                     editingId={editingId}
-                    onSave={handleSave}
+                    onUpdate={handleUpdate}
                 />
                 <SectionHeader>Liste des articles</SectionHeader>
                 <PostList

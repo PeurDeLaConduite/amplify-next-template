@@ -45,7 +45,7 @@ export default function AuthorManagerPage() {
         [removeById]
     );
 
-    const handleSave = useCallback(async () => {
+    const handleUpdate = useCallback(async () => {
         await fetchAuthors();
         setEditingAuthor(null);
         setEditingId(null);
@@ -55,7 +55,7 @@ export default function AuthorManagerPage() {
         <RequireAdmin>
             <BlogEditorLayout title="Éditeur de blog : Auteurs">
                 <SectionHeader className="mt-8">Nouvel auteur</SectionHeader>
-                <AuthorForm ref={formRef} manager={manager} onSave={handleSave} />
+                <AuthorForm ref={formRef} manager={manager} onUpdate={handleUpdate} />
                 <SectionHeader loading={loading}>Liste d&apos;auteurs</SectionHeader>
                 <AuthorList
                     authors={authors}
