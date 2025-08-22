@@ -82,6 +82,8 @@ export default function CreateTagPage() {
                     onSave={submitForm}
                     onCancel={handleCancel}
                     onDeleteById={handleDeleteById}
+                    editButtonLabel={""}
+                    deleteButtonLabel={""}
                 />
 
                 <SectionHeader loading={loading}>Associer les tags aux articles</SectionHeader>
