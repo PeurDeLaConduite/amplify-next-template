@@ -52,6 +52,7 @@ export function useAuthorForm(author: AuthorType | null) {
             setExtras((prev) => ({ ...prev, loading: false }));
         }
     }, [setExtras]);
+    const listAuthors = fetchAuthors;
 
     const selectById = useCallback(
         (id: string) => {
@@ -95,5 +96,5 @@ export function useAuthorForm(author: AuthorType | null) {
         }
     }, [author, setForm, setMode]);
 
-    return { ...modelForm, editingId, fetchAuthors, selectById, removeById };
+    return { ...modelForm, editingId, listAuthors, fetchAuthors, selectById, removeById };
 }

@@ -17,7 +17,7 @@ export default function SectionManagerPage() {
     const manager = useSectionForm(editingSection);
     const {
         extras: { sections },
-        fetchList,
+        listSections,
         selectById,
         removeById,
         setForm,
@@ -25,8 +25,8 @@ export default function SectionManagerPage() {
     } = manager;
 
     useEffect(() => {
-        fetchList();
-    }, [fetchList]);
+        listSections();
+    }, [listSections]);
 
     const handleEditById = useCallback(
         (id: IdLike) => {
@@ -46,10 +46,10 @@ export default function SectionManagerPage() {
     );
 
     const handleUpdate = useCallback(async () => {
-        await fetchList();
+        await listSections();
         setEditingSection(null);
         setEditingId(null);
-    }, [fetchList]);
+    }, [listSections]);
 
     const handleCancel = useCallback(() => {
         setEditingSection(null);

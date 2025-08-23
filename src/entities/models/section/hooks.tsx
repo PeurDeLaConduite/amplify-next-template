@@ -50,6 +50,7 @@ export function useSectionForm(section: SectionType | null) {
         const { data } = await sectionService.list();
         setExtras((e) => ({ ...e, sections: data ?? [] }));
     }, [setExtras]);
+    const listSections = fetchList;
 
     useEffect(() => {
         void (async () => {
@@ -105,5 +106,5 @@ export function useSectionForm(section: SectionType | null) {
         [selectById, fetchList, editingId, reset]
     );
 
-    return { ...modelForm, editingId, fetchList, selectById, removeById };
+    return { ...modelForm, editingId, listSections, fetchList, selectById, removeById };
 }

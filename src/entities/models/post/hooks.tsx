@@ -82,6 +82,7 @@ export function usePostForm(post: PostType | null) {
         const { data } = await postService.list();
         setExtras((e) => ({ ...e, posts: data ?? [] }));
     }, [setExtras]);
+    const listPosts = fetchPosts;
 
     useEffect(() => {
         void (async () => {
@@ -182,6 +183,7 @@ export function usePostForm(post: PostType | null) {
     return {
         ...modelForm,
         editingId,
+        listPosts,
         fetchPosts,
         selectById,
         removeById,

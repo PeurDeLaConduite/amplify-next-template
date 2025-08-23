@@ -17,7 +17,7 @@ export default function AuthorManagerPage() {
     const manager = useAuthorForm(editingAuthor);
     const {
         extras: { authors, loading },
-        fetchAuthors,
+        listAuthors,
         selectById,
         removeById,
         setForm,
@@ -25,8 +25,8 @@ export default function AuthorManagerPage() {
     } = manager;
 
     useEffect(() => {
-        fetchAuthors();
-    }, [fetchAuthors]);
+        listAuthors();
+    }, [listAuthors]);
 
     const handleEditById = useCallback(
         (id: IdLike) => {
@@ -46,10 +46,10 @@ export default function AuthorManagerPage() {
     );
 
     const handleUpdate = useCallback(async () => {
-        await fetchAuthors();
+        await listAuthors();
         setEditingAuthor(null);
         setEditingId(null);
-    }, [fetchAuthors]);
+    }, [listAuthors]);
 
     return (
         <RequireAdmin>

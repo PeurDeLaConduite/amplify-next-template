@@ -20,15 +20,15 @@ export default function PostManagerPage() {
     const manager = usePostForm(editingPost);
     const {
         extras: { posts },
-        fetchPosts,
+        listPosts,
         selectById,
         removeById,
         // reset,
     } = manager;
 
     useEffect(() => {
-        void fetchPosts();
-    }, [fetchPosts]);
+        void listPosts();
+    }, [listPosts]);
 
     const handleEditById = useCallback(
         (id: IdLike) => {
@@ -48,10 +48,10 @@ export default function PostManagerPage() {
     );
 
     const handleUpdate = useCallback(async () => {
-        await fetchPosts();
+        await listPosts();
         setEditingPost(null);
         setEditingId(null);
-    }, [fetchPosts]);
+    }, [listPosts]);
 
     const handleCancel = useCallback(() => {
         setEditingPost(null);
