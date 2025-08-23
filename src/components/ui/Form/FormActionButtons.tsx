@@ -1,4 +1,4 @@
-import { ActionButtons, EditButton, DeleteButton, UiButton } from "@components/ui/Button";
+import { ActionButtons, EditButton, DeleteButton, UpdateButton } from "@components/ui/Button";
 type IdLike = string | number;
 
 interface FormActionButtonsProps {
@@ -11,7 +11,7 @@ interface FormActionButtonsProps {
     isFormNew: boolean;
     addButtonLabel?: string;
     className?: string;
-    variant?: "no-Icon" | "normal";
+    variantIcon?: "icon" | "normal";
     editButtonLabel?: string;
     deleteButtonLabel?: string;
 }
@@ -26,19 +26,17 @@ export default function FormActionButtons({
     isFormNew,
     addButtonLabel = "Ajouter",
     className = "",
-    variant = "normal",
+    variantIcon,
     editButtonLabel,
     deleteButtonLabel,
 }: FormActionButtonsProps): React.ReactElement {
     if (isFormNew && editingId === null) {
         return (
-            <button
-                type="button"
-                onClick={onUpdate}
+            <UpdateButton
+                onUpdate={onUpdate}
                 className="bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition"
-            >
-                {addButtonLabel}
-            </button>
+                label={addButtonLabel}
+            />
         );
     }
 
@@ -53,36 +51,22 @@ export default function FormActionButtons({
             />
         );
     }
-
-    const miniButtonSx = {
-        borderColor: "#bbb",
-        minHeight: 32,
-        borderRadius: 2,
-        fontSize: 14,
-        fontWeight: 400,
-        transition: "all .15s",
-    };
-
-    if (variant === "no-Icon") {
+    if (variantIcon === "icon") {
         return (
             <div className="flex gap-2">
-                <UiButton
-                    variantType="button"
-                    label="Modifier"
-                    variant="outlined"
-                    intent="primary"
+                <EditButton
+                    onEdit={onEdit}
+                    className="!p-2 !h-8"
+                    label={editButtonLabel}
                     size="small"
-                    sx={miniButtonSx}
-                    buttonProps={{ onClick: onEdit }}
+                    variantType="icon"
                 />
-                <UiButton
-                    variantType="button"
-                    label="Supprimer"
-                    variant="outlined"
-                    intent="danger"
+                <DeleteButton
+                    onDelete={onDelete}
+                    className="!p-2 !h-8"
+                    label={deleteButtonLabel}
                     size="small"
-                    sx={miniButtonSx}
-                    buttonProps={{ onClick: onDelete }}
+                    variantType="icon"
                 />
             </div>
         );

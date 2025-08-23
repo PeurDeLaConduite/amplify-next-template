@@ -33,6 +33,7 @@ interface GenericListProps<T> {
     rounded?: boolean;
     editButtonLabel?: string;
     deleteButtonLabel?: string;
+    variantIcon?: string;
 }
 
 export default function GenericList<T>({
@@ -47,6 +48,7 @@ export default function GenericList<T>({
     onDeleteById,
     className,
     itemWrapperClassName,
+    variantIcon,
     itemClassName,
     rounded = true,
     editButtonLabel,
@@ -81,7 +83,8 @@ export default function GenericList<T>({
                             onUpdate={onUpdate}
                             onCancel={onCancel}
                             onDelete={() => onDeleteById(id)}
-                            isFormNew={true}
+                            isFormNew={false}
+                            variantIcon={variantIcon}
                             editButtonLabel={editButtonLabel}
                             deleteButtonLabel={deleteButtonLabel}
                         />

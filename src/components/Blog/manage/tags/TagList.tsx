@@ -57,6 +57,7 @@ function TagListInner({
             onCancel={onCancel}
             onDeleteById={onDeleteById}
             editButtonLabel={editButtonLabel}
+            variantIcon={"icon"}
             deleteButtonLabel={deleteButtonLabel}
         />
     );
