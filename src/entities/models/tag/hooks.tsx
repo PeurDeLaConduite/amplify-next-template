@@ -71,6 +71,7 @@ export function useTagForm() {
             setLoading(false);
         }
     }, [setExtras]);
+    const listTags = fetchAll;
 
     useEffect(() => {
         void fetchAll();
@@ -151,6 +152,7 @@ export function useTagForm() {
         reset,
         cancel: reset,
         loading,
+        listTags,
         fetchAll,
         selectById,
         removeById,

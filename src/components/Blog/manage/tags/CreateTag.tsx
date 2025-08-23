@@ -23,7 +23,7 @@ export default function CreateTagPage() {
     const {
         extras: { tags, posts },
         loading,
-        fetchAll,
+        listTags,
         selectById,
         cancel,
         removeById,
@@ -33,16 +33,16 @@ export default function CreateTagPage() {
     } = manager;
 
     useEffect(() => {
-        void fetchAll?.();
-    }, [fetchAll]);
+        void listTags();
+    }, [listTags]);
 
     // ⇧ stable: évite de casser la mémo de TagList
     const submitForm = useCallback(() => formRef.current?.requestSubmit(), []);
 
     const handleUpdated = useCallback(async () => {
-        await fetchAll?.();
+        await listTags();
         setEditingId(null);
-    }, [fetchAll]);
+    }, [listTags]);
 
     const handleEditById = useCallback(
         (id: IdLike) => {
@@ -69,7 +69,7 @@ export default function CreateTagPage() {
             <BlogEditorLayout title="Gestion des Tags">
                 <div className="flex items-center gap-2">
                     <SectionHeader className="!mb-0 flex-1">Nouveau tag</SectionHeader>
-                    <RefreshButton onRefresh={fetchAll} label="Rafraîchir" size="small" />
+                    <RefreshButton onRefresh={listTags} label="Rafraîchir" size="small" />
                 </div>
 
                 <TagForm ref={formRef} manager={manager} onUpdate={handleUpdated} />

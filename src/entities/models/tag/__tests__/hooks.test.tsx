@@ -50,10 +50,10 @@ beforeEach(() => {
 });
 
 describe("useTagForm", () => {
-    it("fetchAll charge tags, posts et liaisons", async () => {
+    it("listTags charge tags, posts et liaisons", async () => {
         const { result } = renderHook(() => useTagForm());
         await act(async () => {
-            await result.current.fetchAll();
+            await result.current.listTags();
         });
         expect(result.current.extras.tags).toEqual(tags);
         expect(result.current.extras.posts).toEqual(posts);
@@ -67,7 +67,7 @@ describe("useTagForm", () => {
         deleteMock.mockResolvedValue({});
         const { result } = renderHook(() => useTagForm());
         await act(async () => {
-            await result.current.fetchAll();
+            await result.current.listTags();
         });
         await act(async () => {
             await result.current.toggle("p1", "t2");
@@ -84,7 +84,7 @@ describe("useTagForm", () => {
     it("selectById préremplit le formulaire et fixe editingId", async () => {
         const { result } = renderHook(() => useTagForm());
         await act(async () => {
-            await result.current.fetchAll();
+            await result.current.listTags();
         });
         await act(async () => {
             await result.current.selectById("t1");
@@ -96,7 +96,7 @@ describe("useTagForm", () => {
     it("reset réinitialise le formulaire et l'id", async () => {
         const { result } = renderHook(() => useTagForm());
         await act(async () => {
-            await result.current.fetchAll();
+            await result.current.listTags();
         });
         await act(async () => {
             await result.current.selectById("t1");
@@ -114,7 +114,7 @@ describe("useTagForm", () => {
         vi.spyOn(window, "confirm").mockReturnValue(true);
         const { result } = renderHook(() => useTagForm());
         await act(async () => {
-            await result.current.fetchAll();
+            await result.current.listTags();
         });
         await act(async () => {
             await result.current.selectById("t1");
