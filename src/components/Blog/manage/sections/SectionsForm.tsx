@@ -17,13 +17,13 @@ import {
 } from "@entities/models/section";
 
 interface Props {
-    manager: ReturnType<typeof useSectionForm>;
+    sectionFormManager: ReturnType<typeof useSectionForm>;
     onSaveSuccess: () => void;
     editingId: string | null;
 }
 
 const SectionForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
-    { manager, onSaveSuccess, editingId },
+    { sectionFormManager, onSaveSuccess, editingId },
     ref
 ) {
     const {
@@ -31,7 +31,7 @@ const SectionForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
         extras: { posts, sections },
         setFieldValue,
         setForm,
-    } = manager;
+    } = sectionFormManager;
 
     const { handleSourceFocus, handleManualEdit } = useAutoGenFields({
         configs: [
@@ -78,7 +78,7 @@ const SectionForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
     return (
         <BlogFormShell
             ref={ref}
-            manager={manager}
+            blogFormManager={sectionFormManager}
             initialForm={initialSectionForm}
             onSaveSuccess={onSaveSuccess}
         >

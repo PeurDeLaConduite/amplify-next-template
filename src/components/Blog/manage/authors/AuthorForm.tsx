@@ -6,15 +6,15 @@ import { EditableField, EditableTextArea } from "@components/ui/Form";
 import { type AuthorFormType, initialAuthorForm, useAuthorForm } from "@entities/models/author";
 
 interface Props {
-    manager: ReturnType<typeof useAuthorForm>;
+    authorFormManager: ReturnType<typeof useAuthorForm>;
     onSaveSuccess: () => void;
 }
 
 const AuthorForm = forwardRef<HTMLFormElement, Props>(function AuthorForm(
-    { manager, onSaveSuccess },
+    { authorFormManager, onSaveSuccess },
     ref
 ) {
-    const { form, setFieldValue } = manager;
+    const { form, setFieldValue } = authorFormManager;
 
     const onChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -24,7 +24,7 @@ const AuthorForm = forwardRef<HTMLFormElement, Props>(function AuthorForm(
     return (
         <BlogFormShell
             ref={ref}
-            manager={manager}
+            blogFormManager={authorFormManager}
             initialForm={initialAuthorForm}
             onSaveSuccess={onSaveSuccess}
             submitLabel={{ create: "Ajouter un auteur", edit: "Mettre à jour" }}

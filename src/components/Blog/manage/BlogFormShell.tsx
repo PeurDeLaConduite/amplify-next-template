@@ -15,7 +15,7 @@ export interface BlogFormManager<F> {
 }
 
 interface Props<F> {
-    manager: BlogFormManager<F>;
+    blogFormManager: BlogFormManager<F>;
     initialForm: F;
     onSaveSuccess: () => void;
     children: React.ReactNode; // <- tes champs contrôlés
@@ -25,7 +25,7 @@ interface Props<F> {
 
 const BlogFormShellInner = <F,>(
     {
-        manager,
+        blogFormManager,
         initialForm,
         onSaveSuccess,
         children,
@@ -34,7 +34,7 @@ const BlogFormShellInner = <F,>(
     }: Props<F>,
     ref: React.ForwardedRef<HTMLFormElement>
 ) => {
-    const { submit, setForm, setMode, mode, saving, message } = manager;
+    const { submit, setForm, setMode, mode, saving, message } = blogFormManager;
 
     async function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
