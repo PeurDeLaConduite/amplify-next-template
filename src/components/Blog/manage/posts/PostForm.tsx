@@ -20,13 +20,13 @@ import { type PostType } from "@entities/models/post";
 
 interface Props {
     manager: ReturnType<typeof usePostForm>;
-    onUpdate: () => void;
+    dispatchEvent: () => void;
     posts: PostType[];
     editingId: string | null;
 }
 
 const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
-    { manager, onUpdate, posts, editingId },
+    { manager, dispatchEvent, posts, editingId },
     ref
 ) {
     const {
@@ -86,7 +86,7 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
             ref={ref}
             manager={manager}
             initialForm={initialPostForm}
-            onUpdate={onUpdate}
+            dispatchEvent={dispatchEvent}
             submitLabel={{ create: "Créer l'article", edit: "Mettre à jour" }}
         >
             <EditableField

@@ -7,11 +7,11 @@ import { type AuthorFormType, initialAuthorForm, useAuthorForm } from "@entities
 
 interface Props {
     manager: ReturnType<typeof useAuthorForm>;
-    onUpdate: () => void;
+    dispatchEvent: () => void;
 }
 
 const AuthorForm = forwardRef<HTMLFormElement, Props>(function AuthorForm(
-    { manager, onUpdate },
+    { manager, dispatchEvent },
     ref
 ) {
     const { form, handleChange } = manager;
@@ -26,7 +26,7 @@ const AuthorForm = forwardRef<HTMLFormElement, Props>(function AuthorForm(
             ref={ref}
             manager={manager}
             initialForm={initialAuthorForm}
-            onUpdate={onUpdate}
+            dispatchEvent={dispatchEvent}
             submitLabel={{ create: "Ajouter un auteur", edit: "Mettre à jour" }}
         >
             <EditableField
