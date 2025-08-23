@@ -18,12 +18,12 @@ import {
 
 interface Props {
     manager: ReturnType<typeof useSectionForm>;
-    onUpdate: () => void;
+    dispatchEvent: () => void;
     editingId: string | null;
 }
 
 const SectionForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
-    { manager, onUpdate, editingId },
+    { manager, dispatchEvent, editingId },
     ref
 ) {
     const {
@@ -80,7 +80,7 @@ const SectionForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
             ref={ref}
             manager={manager}
             initialForm={initialSectionForm}
-            onUpdate={onUpdate}
+            dispatchEvent={dispatchEvent}
         >
             <EditableField
                 name="title"

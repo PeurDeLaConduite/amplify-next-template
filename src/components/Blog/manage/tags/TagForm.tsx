@@ -10,10 +10,13 @@ type UseTagFormReturn = ReturnType<typeof useTagForm>;
 
 interface Props {
     manager: UseTagFormReturn;
-    onUpdate: () => void;
+    dispatchEvent: () => void;
 }
 
-const TagForm = forwardRef<HTMLFormElement, Props>(function TagForm({ manager, onUpdate }, ref) {
+const TagForm = forwardRef<HTMLFormElement, Props>(function TagForm(
+    { manager, dispatchEvent },
+    ref
+) {
     const { form, setForm } = manager;
     const normalizedManager = manager as BlogFormManager<TagFormType>;
 
@@ -22,7 +25,7 @@ const TagForm = forwardRef<HTMLFormElement, Props>(function TagForm({ manager, o
             ref={ref}
             manager={normalizedManager}
             initialForm={initialTagForm}
-            onUpdate={onUpdate}
+            dispatchEvent={dispatchEvent}
             submitLabel={{ create: "Ajouter", edit: "Mettre à jour" }}
             className="!grid-cols-[1fr_auto]"
         >

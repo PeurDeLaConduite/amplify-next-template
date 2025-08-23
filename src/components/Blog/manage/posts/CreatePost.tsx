@@ -67,7 +67,7 @@ export default function PostManagerPage() {
                     manager={manager}
                     posts={posts}
                     editingId={editingId}
-                    onUpdate={handleUpdate}
+                    dispatchEvent={handleUpdate}
                 />
                 <SectionHeader>Liste des articles</SectionHeader>
                 <PostList

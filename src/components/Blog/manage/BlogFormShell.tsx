@@ -17,7 +17,7 @@ export interface BlogFormManager<F> {
 interface Props<F> {
     manager: BlogFormManager<F>;
     initialForm: F;
-    onUpdate: () => void;
+    dispatchEvent: () => void;
     children: React.ReactNode; // <- tes champs contrôlés
     submitLabel?: { create: string; edit: string };
     className?: string;
@@ -27,7 +27,7 @@ const BlogFormShellInner = <F,>(
     {
         manager,
         initialForm,
-        onUpdate,
+        dispatchEvent,
         children,
         className,
         submitLabel = { create: "Créer", edit: "Mettre à jour" },
@@ -46,7 +46,7 @@ const BlogFormShellInner = <F,>(
             setMode("create");
             setForm(initialForm);
         }
-        onUpdate();
+        dispatchEvent();
     }
 
     return (

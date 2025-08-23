@@ -55,7 +55,7 @@ export default function AuthorManagerPage() {
         <RequireAdmin>
             <BlogEditorLayout title="Éditeur de blog : Auteurs">
                 <SectionHeader className="mt-8">Nouvel auteur</SectionHeader>
-                <AuthorForm ref={formRef} manager={manager} onUpdate={handleUpdate} />
+                <AuthorForm ref={formRef} manager={manager} dispatchEvent={handleUpdate} />
                 <SectionHeader loading={loading}>Liste d&apos;auteurs</SectionHeader>
                 <AuthorList
                     authors={authors}
