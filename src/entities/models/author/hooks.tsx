@@ -10,7 +10,7 @@ interface Extras extends Record<string, unknown> {
 }
 
 export function useAuthorForm(author: AuthorType | null) {
-    const [editingId, setEditingId] = useState<string | null>(author?.id ?? null);
+    const [authorId, setAuthorId] = useState<string | null>(author?.id ?? null);
 
     const modelForm = useModelForm<AuthorFormType, Extras>({
         initialForm: initialAuthorForm,
@@ -20,19 +20,19 @@ export function useAuthorForm(author: AuthorType | null) {
             void postIds;
             const { data } = await authorService.create(authorInput);
             if (!data) throw new Error("Erreur lors de la création de l'auteur");
-            setEditingId(data.id);
+            setAuthorId(data.id);
             return data.id;
         },
         update: async (form) => {
-            if (!editingId) throw new Error("ID de l'auteur manquant pour la mise à jour");
+            if (!authorId) throw new Error("ID de l'auteur manquant pour la mise à jour");
             const { postIds, ...authorInput } = form;
             void postIds;
             const { data } = await authorService.update({
-                id: editingId,
+                id: authorId,
                 ...authorInput,
             });
             if (!data) throw new Error("Erreur lors de la mise à jour de l'auteur");
-            setEditingId(data.id);
+            setAuthorId(data.id);
             return data.id;
         },
     });
@@ -59,7 +59,7 @@ export function useAuthorForm(author: AuthorType | null) {
             if (authorItem) {
                 setForm(toAuthorForm(authorItem, []));
                 setMode("edit");
-                setEditingId(id);
+                setAuthorId(id);
             }
             return authorItem;
         },
@@ -71,12 +71,12 @@ export function useAuthorForm(author: AuthorType | null) {
             if (!window.confirm("Supprimer cet auteur ?")) return;
             await authorService.deleteCascade({ id });
             await listAuthors();
-            if (editingId === id) {
-                setEditingId(null);
+            if (authorId === id) {
+                setAuthorId(null);
                 reset();
             }
         },
-        [listAuthors, editingId, reset]
+        [listAuthors, authorId, reset]
     );
 
     useEffect(() => {
@@ -87,13 +87,13 @@ export function useAuthorForm(author: AuthorType | null) {
         if (author) {
             setForm(toAuthorForm(author, []));
             setMode("edit");
-            setEditingId(author.id);
+            setAuthorId(author.id);
         } else {
             setForm(initialAuthorForm);
             setMode("create");
-            setEditingId(null);
+            setAuthorId(null);
         }
     }, [author, setForm, setMode]);
 
-    return { ...modelForm, editingId, listAuthors, selectById, removeById };
+    return { ...modelForm, authorId, listAuthors, selectById, removeById };
 }

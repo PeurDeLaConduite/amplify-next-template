@@ -19,10 +19,10 @@ const fields: (keyof UserNameFormType)[] = ["userName"];
 
 export default function UserNameManager() {
     const { user } = useAuthenticator();
-    const [editingProfile, setEditingProfile] = useState<UserNameType | null>(null);
-    const [editingId, setEditingId] = useState<string | null>(null);
+    const [userNameToEdit, setUserNameToEdit] = useState<UserNameType | null>(null);
+    const [userNameId, setUserNameId] = useState<string | null>(null);
 
-    const manager = useUserNameForm(editingProfile);
+    const manager = useUserNameForm(userNameToEdit);
     const { removeById, setForm, setMode, refresh } = manager;
 
     // 🔄 Charger/rafraîchir au montage et quand l'utilisateur change
@@ -41,8 +41,8 @@ export default function UserNameManager() {
     const handleDeleteById = useCallback(
         async (id: IdLike) => {
             await removeById(String(id));
-            setEditingProfile(null);
-            setEditingId(null);
+            setUserNameToEdit(null);
+            setUserNameId(null);
             setMode("create");
             setForm(initialUserNameForm);
         },
@@ -76,7 +76,7 @@ export default function UserNameManager() {
             updateEntity={manager.updateEntity}
             clearField={manager.clearField}
             deleteEntity={async (id?: string) => {
-                const target = id ?? editingId ?? user?.userId ?? user?.username ?? undefined;
+                const target = id ?? userNameId ?? user?.userId ?? user?.username ?? undefined;
                 if (!target) return;
                 await handleDeleteById(target);
             }}

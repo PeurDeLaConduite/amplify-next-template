@@ -11,7 +11,7 @@ import { syncSection2Posts } from "@entities/relations/sectionPost";
 type Extras = { posts: PostType[]; sections: SectionType[] };
 
 export function useSectionForm(section: SectionType | null) {
-    const [editingId, setEditingId] = useState<string | null>(section?.id ?? null);
+    const [sectionId, setSectionId] = useState<string | null>(section?.id ?? null);
 
     const modelForm = useModelForm<SectionFormTypes, Extras>({
         initialForm: initialSectionForm,
@@ -21,21 +21,21 @@ export function useSectionForm(section: SectionType | null) {
             void postIds;
             const { data } = await sectionService.create(sectionInput);
             if (!data) throw new Error("Erreur lors de la création de la section");
-            setEditingId(data.id);
+            setSectionId(data.id);
             return data.id;
         },
         update: async (form) => {
-            if (!editingId) {
+            if (!sectionId) {
                 throw new Error("ID de la section manquant pour la mise à jour");
             }
             const { postIds, ...sectionInput } = form;
             void postIds;
             const { data } = await sectionService.update({
-                id: editingId,
+                id: sectionId,
                 ...sectionInput,
             });
             if (!data) throw new Error("Erreur lors de la mise à jour de la section");
-            setEditingId(data.id);
+            setSectionId(data.id);
             return data.id;
         },
         syncRelations: async (id, form) => {
@@ -65,11 +65,11 @@ export function useSectionForm(section: SectionType | null) {
                 const postIds = await sectionPostService.listByParent(section.id);
                 setForm(toSectionForm(section, postIds));
                 setMode("edit");
-                setEditingId(section.id);
+                setSectionId(section.id);
             } else {
                 setForm(initialSectionForm);
                 setMode("create");
-                setEditingId(null);
+                setSectionId(null);
             }
         })();
     }, [section, setForm, setMode]);
@@ -78,7 +78,7 @@ export function useSectionForm(section: SectionType | null) {
         (id: string) => {
             const sectionItem = extras.sections.find((s) => s.id === id) ?? null;
             if (sectionItem) {
-                setEditingId(id);
+                setSectionId(id);
                 void (async () => {
                     const postIds = await sectionPostService.listByParent(id);
                     setForm(toSectionForm(sectionItem, postIds));
@@ -97,13 +97,13 @@ export function useSectionForm(section: SectionType | null) {
             if (!window.confirm("Supprimer cette section ?")) return;
             await sectionService.deleteCascade({ id: sectionItem.id });
             await listSections();
-            if (editingId === id) {
-                setEditingId(null);
+            if (sectionId === id) {
+                setSectionId(null);
                 reset();
             }
         },
-        [selectById, listSections, editingId, reset]
+        [selectById, listSections, sectionId, reset]
     );
 
-    return { ...modelForm, editingId, listSections, selectById, removeById };
+    return { ...modelForm, sectionId, listSections, selectById, removeById };
 }

@@ -23,7 +23,7 @@ interface Extras extends Record<string, unknown> {
 }
 
 export function usePostForm(post: PostType | null) {
-    const [editingId, setEditingId] = useState<string | null>(post?.id ?? null);
+    const [postId, setPostId] = useState<string | null>(post?.id ?? null);
 
     const modelForm = useModelForm<PostFormType, Extras>({
         initialForm: initialPostForm,
@@ -46,24 +46,24 @@ export function usePostForm(post: PostType | null) {
                 seo: form.seo,
             });
             if (!data) throw new Error("Erreur lors de la création de l'article");
-            setEditingId(data.id);
+            setPostId(data.id);
             setMessage("Nouvel article créé avec succès.");
             return data.id;
         },
         update: async (form) => {
-            if (!editingId) {
+            if (!postId) {
                 throw new Error("ID du post manquant pour la mise à jour");
             }
             const { tagIds, sectionIds, ...postInput } = form;
             void tagIds;
             void sectionIds;
             const { data } = await postService.update({
-                id: editingId,
+                id: postId,
                 ...postInput,
                 seo: form.seo,
             });
             if (!data) throw new Error("Erreur lors de la mise à jour de l'article");
-            setEditingId(data.id);
+            setPostId(data.id);
             setMessage("Article mis à jour avec succès.");
 
             return data.id;
@@ -109,11 +109,11 @@ export function usePostForm(post: PostType | null) {
                 ]);
                 setForm(toPostForm(post, tagIds, sectionIds));
                 setMode("edit");
-                setEditingId(post.id);
+                setPostId(post.id);
             } else {
                 setForm(initialPostForm);
                 setMode("create");
-                setEditingId(null);
+                setPostId(null);
             }
         })();
     }, [post, setForm, setMode]);
@@ -140,7 +140,7 @@ export function usePostForm(post: PostType | null) {
         (id: string) => {
             const postItem = extras.posts.find((p) => p.id === id) ?? null;
             if (postItem) {
-                setEditingId(id);
+                setPostId(id);
                 void (async () => {
                     const [tagIds, sectionIds] = await Promise.all([
                         postTagService.listByParent(id),
@@ -164,8 +164,8 @@ export function usePostForm(post: PostType | null) {
                 await postService.deleteCascade({ id });
                 await listPosts();
 
-                if (editingId === id) {
-                    setEditingId(null);
+                if (postId === id) {
+                    setPostId(null);
                 }
 
                 setMessage("Article supprimé avec succès.");
@@ -176,12 +176,12 @@ export function usePostForm(post: PostType | null) {
                 // pas de throw: l’UI affiche le message d’erreur
             }
         },
-        [listPosts, editingId, refresh]
+        [listPosts, postId, refresh]
     );
 
     return {
         ...modelForm,
-        editingId,
+        postId,
         listPosts,
         selectById,
         removeById,

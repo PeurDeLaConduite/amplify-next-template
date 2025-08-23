@@ -81,7 +81,7 @@ describe("useTagForm", () => {
         expect(result.current.extras.postTags).not.toContainEqual({ postId: "p1", tagId: "t2" });
     });
 
-    it("selectById préremplit le formulaire et fixe editingId", async () => {
+    it("selectById préremplit le formulaire et fixe tagId", async () => {
         const { result } = renderHook(() => useTagForm());
         await act(async () => {
             await result.current.listTags();
@@ -90,7 +90,7 @@ describe("useTagForm", () => {
             await result.current.selectById("t1");
         });
         expect(result.current.form).toEqual({ name: "Tag1", postIds: ["p1"] });
-        expect(result.current.editingId).toBe("t1");
+        expect(result.current.tagId).toBe("t1");
     });
 
     it("reset réinitialise le formulaire et l'id", async () => {
@@ -105,10 +105,10 @@ describe("useTagForm", () => {
             result.current.reset();
         });
         expect(result.current.form).toEqual({ name: "", postIds: [] });
-        expect(result.current.editingId).toBeNull();
+        expect(result.current.tagId).toBeNull();
     });
 
-    it("removeById supprime le tag et réinitialise editingId", async () => {
+    it("removeById supprime le tag et réinitialise tagId", async () => {
         const deleteTagMock = tagService.deleteCascade as ReturnType<typeof vi.fn>;
         deleteTagMock.mockResolvedValue({});
         vi.spyOn(window, "confirm").mockReturnValue(true);
@@ -123,6 +123,6 @@ describe("useTagForm", () => {
             await result.current.removeById("t1");
         });
         expect(deleteTagMock).toHaveBeenCalledWith({ id: "t1" });
-        expect(result.current.editingId).toBeNull();
+        expect(result.current.tagId).toBeNull();
     });
 });

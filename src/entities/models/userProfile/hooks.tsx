@@ -13,7 +13,7 @@ export function useUserProfileForm(profile: UserProfileType | null) {
     const { user } = useAuthenticator();
     const sub = user?.userId ?? user?.username ?? null;
 
-    const [editingId, setEditingId] = useState<string | null>(profile?.id ?? sub ?? null);
+    const [profileId, setProfileId] = useState<string | null>(profile?.id ?? sub ?? null);
 
     const modelForm = useModelForm<UserProfileFormType, Extras>({
         initialForm: initialUserProfileForm,
@@ -23,15 +23,15 @@ export function useUserProfileForm(profile: UserProfileType | null) {
             if (!id) throw new Error("ID utilisateur introuvable");
             const { data } = await userProfileService.create({ id, ...form });
             if (!data) throw new Error("Erreur lors de la création du profil");
-            setEditingId(data.id);
+            setProfileId(data.id);
             return data.id;
         },
         update: async (form) => {
-            const id = editingId ?? sub;
+            const id = profileId ?? sub;
             if (!id) throw new Error("ID utilisateur introuvable");
             const { data } = await userProfileService.update({ id, ...form });
             if (!data) throw new Error("Erreur lors de la mise à jour du profil");
-            setEditingId(data.id);
+            setProfileId(data.id);
             return data.id;
         },
         autoLoad: false,
@@ -46,25 +46,25 @@ export function useUserProfileForm(profile: UserProfileType | null) {
             if (profile) {
                 setForm(toUserProfileForm(profile));
                 setMode("edit");
-                setEditingId(profile.id);
+                setProfileId(profile.id);
                 return;
             }
             const id = sub ?? null;
             if (!id) {
                 setForm(initialUserProfileForm);
                 setMode("create");
-                setEditingId(null);
+                setProfileId(null);
                 return;
             }
             const { data } = await userProfileService.get({ id });
             if (data) {
                 setForm(toUserProfileForm(data));
                 setMode("edit");
-                setEditingId(data.id);
+                setProfileId(data.id);
             } else {
                 setForm(initialUserProfileForm);
                 setMode("create");
-                setEditingId(id);
+                setProfileId(id);
             }
         })();
     }, [profile, sub, setForm, setMode]);
@@ -87,23 +87,23 @@ export function useUserProfileForm(profile: UserProfileType | null) {
         async (id: string) => {
             if (!window.confirm("Supprimer ce profil ?")) return;
             await userProfileService.delete({ id });
-            if (editingId === id) {
-                setEditingId(null);
+            if (profileId === id) {
+                setProfileId(null);
                 reset();
             }
         },
-        [editingId, reset]
+        [profileId, reset]
     );
 
     // Helpers champ par champ (même esprit que toggle/updateEntity ailleurs)
     const updateEntity = useCallback(
         async (field: keyof UserProfileFormType, value: string) => {
-            const id = editingId ?? sub;
+            const id = profileId ?? sub;
             if (!id) return;
             await userProfileService.update({ id, [field]: value } as any);
             patchForm({ [field]: value } as Partial<UserProfileFormType>);
         },
-        [editingId, sub, patchForm]
+        [profileId, sub, patchForm]
     );
 
     const clearField = useCallback(
@@ -118,7 +118,7 @@ export function useUserProfileForm(profile: UserProfileType | null) {
 
     return {
         ...modelForm,
-        editingId,
+        profileId,
         selectById,
         removeById,
         updateEntity,

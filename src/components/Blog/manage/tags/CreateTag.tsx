@@ -18,7 +18,7 @@ type IdLike = string | number;
 export default function CreateTagPage() {
     const formRef = useRef<HTMLFormElement>(null);
     const manager: UseTagFormReturn = useTagForm();
-    const [editingId, setEditingId] = useState<string | null>(null);
+    const [tagId, setTagId] = useState<string | null>(null);
 
     const {
         extras: { tags, posts },
@@ -41,13 +41,13 @@ export default function CreateTagPage() {
 
     const handleUpdated = useCallback(async () => {
         await listTags();
-        setEditingId(null);
+        setTagId(null);
     }, [listTags]);
 
     const handleEditById = useCallback(
         (id: IdLike) => {
             void selectById(String(id));
-            setEditingId(String(id));
+            setTagId(String(id));
         },
         [selectById]
     );
@@ -61,7 +61,7 @@ export default function CreateTagPage() {
 
     const handleCancel = useCallback(() => {
         cancel();
-        setEditingId(null);
+        setTagId(null);
     }, [cancel]);
 
     return (
@@ -77,7 +77,7 @@ export default function CreateTagPage() {
                 <SectionHeader>Liste des tags</SectionHeader>
                 <TagList
                     tags={tags}
-                    editingId={editingId}
+                    tagId={tagId}
                     onEditById={handleEditById}
                     onUpdate={submitForm}
                     onCancel={handleCancel}

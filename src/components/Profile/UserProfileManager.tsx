@@ -29,18 +29,18 @@ const fields: (keyof UserProfileFormType)[] = [
 
 export default function UserProfileManager() {
     const { user } = useAuthenticator();
-    const [editingProfile, setEditingProfile] = useState<UserProfileType | null>(null);
-    const [editingId, setEditingId] = useState<string | null>(null);
+    const [profileToEdit, setProfileToEdit] = useState<UserProfileType | null>(null);
+    const [profileId, setProfileId] = useState<string | null>(null);
 
     // ✅ même signature que les autres managers (ex: useAuthorForm)
-    const manager = useUserProfileForm(editingProfile);
+    const manager = useUserProfileForm(profileToEdit);
     const { removeById, setForm, setMode, form } = manager;
 
     const handleDeleteById = useCallback(
         async (id: IdLike) => {
             await removeById(String(id));
-            setEditingProfile(null);
-            setEditingId(null);
+            setProfileToEdit(null);
+            setProfileId(null);
             setMode("create");
             setForm(initialUserProfileForm);
         },
@@ -120,7 +120,7 @@ export default function UserProfileManager() {
                 clearField={manager.clearField}
                 // Wrapper “à la AuthorList.onDeleteById”
                 deleteEntity={async (id?: string) => {
-                    const target = id ?? editingId ?? user?.userId ?? user?.username ?? undefined;
+                    const target = id ?? profileId ?? user?.userId ?? user?.username ?? undefined;
                     if (!target) return;
                     await handleDeleteById(target);
                 }}

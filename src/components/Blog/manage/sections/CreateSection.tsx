@@ -11,10 +11,10 @@ import { type SectionType, initialSectionForm, useSectionForm } from "@entities/
 type IdLike = string | number;
 
 export default function SectionManagerPage() {
-    const [editingSection, setEditingSection] = useState<SectionType | null>(null);
-    const [editingId, setEditingId] = useState<string | null>(null);
+    const [sectionToEdit, setSectionToEdit] = useState<SectionType | null>(null);
+    const [sectionId, setSectionId] = useState<string | null>(null);
     const formRef = useRef<HTMLFormElement>(null);
-    const manager = useSectionForm(editingSection);
+    const manager = useSectionForm(sectionToEdit);
     const {
         extras: { sections },
         listSections,
@@ -32,8 +32,8 @@ export default function SectionManagerPage() {
         (id: IdLike) => {
             const section = selectById(String(id));
             if (!section) return;
-            setEditingSection(section);
-            setEditingId(String(id));
+            setSectionToEdit(section);
+            setSectionId(String(id));
         },
         [selectById]
     );
@@ -47,13 +47,13 @@ export default function SectionManagerPage() {
 
     const handleUpdate = useCallback(async () => {
         await listSections();
-        setEditingSection(null);
-        setEditingId(null);
+        setSectionToEdit(null);
+        setSectionId(null);
     }, [listSections]);
 
     const handleCancel = useCallback(() => {
-        setEditingSection(null);
-        setEditingId(null);
+        setSectionToEdit(null);
+        setSectionId(null);
         setMode("create");
         setForm(initialSectionForm);
     }, [setMode, setForm]);
@@ -65,13 +65,13 @@ export default function SectionManagerPage() {
                 <SectionForm
                     ref={formRef}
                     sectionFormManager={manager}
-                    editingId={editingId}
+                    sectionId={sectionId}
                     onSaveSuccess={handleUpdate}
                 />
                 <SectionHeader>Liste des sections</SectionHeader>
                 <SectionList
                     sections={sections}
-                    editingId={editingId}
+                    sectionId={sectionId}
                     onEditById={handleEditById}
                     onUpdate={() => {
                         formRef.current?.requestSubmit();
