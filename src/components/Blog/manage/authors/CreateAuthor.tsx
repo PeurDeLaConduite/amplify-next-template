@@ -11,10 +11,10 @@ import { type AuthorType, initialAuthorForm, useAuthorForm } from "@entities/mod
 type IdLike = string | number;
 
 export default function AuthorManagerPage() {
-    const [editingAuthor, setEditingAuthor] = useState<AuthorType | null>(null);
-    const [editingId, setEditingId] = useState<string | null>(null);
+    const [authorToEdit, setAuthorToEdit] = useState<AuthorType | null>(null);
+    const [authorId, setAuthorId] = useState<string | null>(null);
     const formRef = useRef<HTMLFormElement>(null);
-    const manager = useAuthorForm(editingAuthor);
+    const manager = useAuthorForm(authorToEdit);
     const {
         extras: { authors, loading },
         listAuthors,
@@ -32,8 +32,8 @@ export default function AuthorManagerPage() {
         (id: IdLike) => {
             const author = selectById(String(id));
             if (!author) return;
-            setEditingAuthor(author);
-            setEditingId(String(id));
+            setAuthorToEdit(author);
+            setAuthorId(String(id));
         },
         [selectById]
     );
@@ -47,8 +47,8 @@ export default function AuthorManagerPage() {
 
     const handleUpdate = useCallback(async () => {
         await listAuthors();
-        setEditingAuthor(null);
-        setEditingId(null);
+        setAuthorToEdit(null);
+        setAuthorId(null);
     }, [listAuthors]);
 
     return (
@@ -63,14 +63,14 @@ export default function AuthorManagerPage() {
                 <SectionHeader loading={loading}>Liste d&apos;auteurs</SectionHeader>
                 <AuthorList
                     authors={authors}
-                    editingId={editingId}
+                    authorId={authorId}
                     onEditById={handleEditById}
                     onUpdate={() => {
                         formRef.current?.requestSubmit();
                     }}
                     onCancel={() => {
-                        setEditingAuthor(null);
-                        setEditingId(null);
+                        setAuthorToEdit(null);
+                        setAuthorId(null);
                         setMode("create");
                         setForm(initialAuthorForm);
                     }}

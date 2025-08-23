@@ -10,7 +10,7 @@ type IdLike = string | number;
 
 interface Props {
     posts: PostType[];
-    editingId: IdLike | null;
+    postId: IdLike | null;
     onEditById: (id: IdLike) => void;
     onUpdate: () => void;
     onCancel: () => void;
@@ -21,7 +21,7 @@ export default function PostList(props: Props) {
     return (
         <GenericList<PostType>
             items={props.posts}
-            editingId={props.editingId}
+            editingId={props.postId}
             getId={(p) => p.id}
             renderContent={(p) => (
                 <p className="self-center">

@@ -25,7 +25,7 @@ const initialExtras: TagFormExtras = {
 };
 
 export function useTagForm() {
-    const [editingId, setEditingId] = useState<string | null>(null);
+    const [tagId, setTagId] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
     const modelForm = useModelForm<TagFormType, TagFormExtras>({
@@ -34,14 +34,14 @@ export function useTagForm() {
         create: async (form) => {
             const { data } = await tagService.create({ name: form.name });
             if (!data) throw new Error("Erreur lors de la création du tag");
-            setEditingId(data.id);
+            setTagId(data.id);
             return data.id;
         },
         update: async (form) => {
-            if (!editingId) throw new Error("ID du tag manquant pour la mise à jour");
-            const { data } = await tagService.update({ id: editingId, name: form.name });
+            if (!tagId) throw new Error("ID du tag manquant pour la mise à jour");
+            const { data } = await tagService.update({ id: tagId, name: form.name });
             if (!data) throw new Error("Erreur lors de la mise à jour du tag");
-            setEditingId(data.id);
+            setTagId(data.id);
             return data.id;
         },
         syncRelations: async (tagId, form) => {
@@ -83,13 +83,13 @@ export function useTagForm() {
             const postIds = await postTagService.listByChild(tag.id);
             setForm(toTagForm(tag, postIds));
             setMode("edit");
-            setEditingId(tag.id);
+            setTagId(tag.id);
         },
         [extras.tags, setForm, setMode]
     );
 
     const reset = useCallback(() => {
-        setEditingId(null);
+        setTagId(null);
         formReset();
     }, [formReset]);
 
@@ -100,11 +100,11 @@ export function useTagForm() {
             if (!window.confirm("Supprimer ce tag ?")) return;
             await tagService.deleteCascade({ id: tag.id });
             await listTags();
-            if (editingId === id) {
+            if (tagId === id) {
                 reset();
             }
         },
-        [extras.tags, listTags, editingId, reset]
+        [extras.tags, listTags, tagId, reset]
     );
 
     const toggle = useCallback(
@@ -157,7 +157,7 @@ export function useTagForm() {
         toggle,
         tagsForPost,
         isTagLinked,
-        editingId,
+        tagId,
     };
 }
 

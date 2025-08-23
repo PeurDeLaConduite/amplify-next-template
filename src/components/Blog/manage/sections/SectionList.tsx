@@ -9,7 +9,7 @@ type IdLike = string | number;
 
 interface Props {
     sections: SectionType[];
-    editingId: IdLike | null;
+    sectionId: IdLike | null;
     onEditById: (id: IdLike) => void;
     onUpdate: () => void;
     onCancel: () => void;
@@ -20,7 +20,7 @@ export default function SectionList(props: Props) {
     return (
         <GenericList<SectionType>
             items={props.sections}
-            editingId={props.editingId}
+            editingId={props.sectionId}
             getId={(s) => s.id}
             renderContent={(s) => (
                 <p className="self-center">

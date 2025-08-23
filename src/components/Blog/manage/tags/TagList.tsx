@@ -9,7 +9,7 @@ type IdLike = string | number;
 
 interface Props {
     tags: TagType[];
-    editingId: IdLike | null;
+    tagId: IdLike | null;
     onEditById: (id: IdLike) => void;
     onUpdate: () => void;
     onCancel: () => void;
@@ -20,7 +20,7 @@ interface Props {
 
 function TagListInner({
     tags,
-    editingId,
+    tagId,
     onEditById,
     onUpdate,
     onCancel,
@@ -31,7 +31,7 @@ function TagListInner({
     return (
         <GenericList<TagType>
             items={tags}
-            editingId={editingId}
+            editingId={tagId}
             getId={(t) => t.id}
             renderContent={(t) => (
                 <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-blue-100 text-blue-800 text-sm font-semibold">

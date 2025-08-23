@@ -10,7 +10,7 @@ type IdLike = string | number;
 
 interface Props {
     authors: AuthorType[];
-    editingId: IdLike | null;
+    authorId: IdLike | null;
     onEditById: (id: IdLike) => void;
     onUpdate: () => void;
     onCancel: () => void;
@@ -21,7 +21,7 @@ export default function AuthorList(props: Props) {
     return (
         <GenericList<AuthorType>
             items={props.authors}
-            editingId={props.editingId}
+            editingId={props.authorId}
             getId={(a) => a.id}
             renderContent={(a) => (
                 <p className="self-center">

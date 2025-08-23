@@ -13,11 +13,11 @@ import { usePostForm } from "@entities/models/post/hooks";
 type IdLike = string | number;
 
 export default function PostManagerPage() {
-    const [editingPost, setEditingPost] = useState<PostType | null>(null);
-    const [editingId, setEditingId] = useState<string | null>(null);
+    const [postToEdit, setPostToEdit] = useState<PostType | null>(null);
+    const [postId, setPostId] = useState<string | null>(null);
     const formRef = useRef<HTMLFormElement>(null);
 
-    const manager = usePostForm(editingPost);
+    const manager = usePostForm(postToEdit);
     const {
         extras: { posts },
         listPosts,
@@ -34,8 +34,8 @@ export default function PostManagerPage() {
         (id: IdLike) => {
             const post = selectById(String(id));
             if (!post) return;
-            setEditingPost(post);
-            setEditingId(String(id));
+            setPostToEdit(post);
+            setPostId(String(id));
         },
         [selectById]
     );
@@ -49,13 +49,13 @@ export default function PostManagerPage() {
 
     const handleUpdate = useCallback(async () => {
         await listPosts();
-        setEditingPost(null);
-        setEditingId(null);
+        setPostToEdit(null);
+        setPostId(null);
     }, [listPosts]);
 
     const handleCancel = useCallback(() => {
-        setEditingPost(null);
-        setEditingId(null);
+        setPostToEdit(null);
+        setPostId(null);
     }, []);
 
     return (
@@ -66,13 +66,13 @@ export default function PostManagerPage() {
                     ref={formRef}
                     postFormManager={manager}
                     posts={posts}
-                    editingId={editingId}
+                    editingId={postId}
                     onSaveSuccess={handleUpdate}
                 />
                 <SectionHeader>Liste des articles</SectionHeader>
                 <PostList
                     posts={posts}
-                    editingId={editingId}
+                    postId={postId}
                     onEditById={handleEditById}
                     onUpdate={() => {
                         formRef.current?.requestSubmit();
