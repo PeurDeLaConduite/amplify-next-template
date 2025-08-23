@@ -335,7 +335,7 @@ Le composant générique utilisé par tous les autres boutons.
 **Usage :** Vide un champ, fait un reset puis update avec champ vide.
 
 ```tsx
-<ClearFieldButton onClear={() => updateField("name", "")} />
+<ClearFieldButton onClear={() => updateEntity("name", "")} />
 ```
 
 **Props spécifiques :**

@@ -45,7 +45,7 @@ export interface UseModelFormResult<F, E> {
     message: string | null;
 
     setFieldValue: <K extends keyof F>(field: K, value: F[K]) => void;
-    patchLocalForm: (partial: Partial<F>) => void;
+    patchForm: (partial: Partial<F>) => void;
 
     /** Helpers de mode */
     setCreate: (next?: F) => void;
@@ -144,7 +144,7 @@ export default function useModelForm<
         setMessage("Le champ a été mis à jour.");
     }, []);
 
-    const patchLocalForm = useCallback((partial: Partial<F>) => {
+    const patchForm = useCallback((partial: Partial<F>) => {
         setForm((prev) => ({ ...prev, ...partial }));
         setMessage("Les données ont été mises à jour.");
     }, []);
@@ -268,7 +268,7 @@ export default function useModelForm<
         setError,
         message,
         setFieldValue,
-        patchLocalForm,
+        patchForm,
         setCreate,
         setEdit,
         submit,

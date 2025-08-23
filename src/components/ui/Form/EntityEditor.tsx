@@ -42,7 +42,7 @@ type EntityEditorProps<T extends Record<string, unknown>> = {
     /** Libellés des champs */
     labels: (field: FieldKey<T>) => string;
     /** Sauvegarde d'un champ individuel */
-    updateField?: (field: FieldKey<T>, value: string) => Promise<void>;
+    updateEntity?: (field: FieldKey<T>, value: string) => Promise<void>;
     /** Effacement d'un champ individuel */
     clearField?: (field: FieldKey<T>) => Promise<void>;
     /** Suppression de l'entité */
@@ -68,7 +68,7 @@ export default function EntityEditor<T extends Record<string, unknown>>(
         reset,
         fields,
         labels,
-        updateField,
+        updateEntity,
         clearField,
         deleteEntity,
     } = props;
@@ -118,8 +118,8 @@ export default function EntityEditor<T extends Record<string, unknown>>(
                     editModeField={editModeField}
                     setEditModeField={setEditModeField}
                     saveField={() =>
-                        updateField
-                            ? updateField(editModeField.field, editModeField.value).then(() =>
+                        updateEntity
+                            ? updateEntity(editModeField.field, editModeField.value).then(() =>
                                   setEditModeField(null)
                               )
                             : Promise.resolve()

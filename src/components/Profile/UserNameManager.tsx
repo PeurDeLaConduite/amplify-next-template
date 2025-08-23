@@ -73,7 +73,7 @@ export default function UserNameManager() {
             setForm={manager.setForm}
             fields={fields}
             labels={fieldLabel as (field: keyof UserNameFormType) => string}
-            updateField={manager.updateField}
+            updateEntity={manager.updateEntity}
             clearField={manager.clearField}
             deleteEntity={async (id?: string) => {
                 const target = id ?? editingId ?? user?.userId ?? user?.username ?? undefined;

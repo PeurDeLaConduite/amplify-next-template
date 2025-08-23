@@ -38,7 +38,7 @@ export function useUserProfileForm(profile: UserProfileType | null) {
         autoLoadExtras: false,
     });
 
-    const { setForm, setMode, patchLocalForm, reset } = modelForm;
+    const { setForm, setMode, patchForm, reset } = modelForm;
 
     // Hydrate depuis la prop ou l’utilisateur courant (sub)
     useEffect(() => {
@@ -95,22 +95,22 @@ export function useUserProfileForm(profile: UserProfileType | null) {
         [editingId, reset]
     );
 
-    // Helpers champ par champ (même esprit que toggle/updateField ailleurs)
-    const updateField = useCallback(
+    // Helpers champ par champ (même esprit que toggle/updateEntity ailleurs)
+    const updateEntity = useCallback(
         async (field: keyof UserProfileFormType, value: string) => {
             const id = editingId ?? sub;
             if (!id) return;
             await userProfileService.update({ id, [field]: value } as any);
-            patchLocalForm({ [field]: value } as Partial<UserProfileFormType>);
+            patchForm({ [field]: value } as Partial<UserProfileFormType>);
         },
-        [editingId, sub, patchLocalForm]
+        [editingId, sub, patchForm]
     );
 
     const clearField = useCallback(
         async (field: keyof UserProfileFormType) => {
-            await updateField(field, "");
+            await updateEntity(field, "");
         },
-        [updateField]
+        [updateEntity]
     );
 
     // Petit utilitaire conservé pour compat UI existante
@@ -121,7 +121,7 @@ export function useUserProfileForm(profile: UserProfileType | null) {
         editingId,
         selectById,
         removeById,
-        updateField,
+        updateEntity,
         clearField,
         labels,
     };

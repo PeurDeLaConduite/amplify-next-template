@@ -70,7 +70,7 @@ export function useUserNameForm(userName: UserNameType | null) {
         isEqual, // ✅ dirty stable
     });
 
-    const { setForm, setMode, setExtras, reset, patchLocalForm, extras, refresh, adoptInitial } =
+    const { setForm, setMode, setExtras, reset, patchForm, extras, refresh, adoptInitial } =
         modelForm;
 
     // Liste (cohérence avec author/tag/section)
@@ -132,23 +132,23 @@ export function useUserNameForm(userName: UserNameType | null) {
     );
 
     // Helpers “champ par champ”
-    const updateField = useCallback(
+    const updateEntity = useCallback(
         async (field: keyof UserNameFormType, value: string) => {
             const id = editingId ?? sub;
             if (!id) return;
             await userNameService.update({ id, [field]: value } as any);
-            patchLocalForm({ [field]: value } as Partial<UserNameFormType>); // optimiste
+            patchForm({ [field]: value } as Partial<UserNameFormType>); // optimiste
             await refresh(); // vérité serveur
             emitUserNameUpdated();
         },
-        [editingId, sub, patchLocalForm, refresh]
+        [editingId, sub, patchForm, refresh]
     );
 
     const clearField = useCallback(
         async (field: keyof UserNameFormType) => {
-            await updateField(field, "");
+            await updateEntity(field, "");
         },
-        [updateField]
+        [updateEntity]
     );
 
     return {
@@ -157,7 +157,7 @@ export function useUserNameForm(userName: UserNameType | null) {
         fetchUserNames,
         selectById,
         removeById,
-        updateField,
+        updateEntity,
         clearField,
     };
 }
