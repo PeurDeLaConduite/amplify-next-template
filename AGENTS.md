@@ -41,6 +41,7 @@ Utilisez les scripts définis dans le `package.json` :
 
 - **Framework** : Next.js v15.0.3
 - **AWS & Amplify** : aws-amplify 6.9.0 et @aws-amplify/ui-react
+- **Amplify V2** 
 
 ## Tests
 
