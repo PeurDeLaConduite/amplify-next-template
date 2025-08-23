@@ -72,7 +72,7 @@ export default function CreateTagPage() {
                     <RefreshButton onRefresh={listTags} label="Rafraîchir" size="small" />
                 </div>
 
-                <TagForm ref={formRef} manager={manager} onSaveSuccess={handleUpdated} />
+                <TagForm ref={formRef} tagFormManager={manager} onSaveSuccess={handleUpdated} />
 
                 <SectionHeader>Liste des tags</SectionHeader>
                 <TagList

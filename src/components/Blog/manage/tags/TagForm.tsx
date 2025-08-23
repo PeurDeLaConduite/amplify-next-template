@@ -9,16 +9,16 @@ import type { TagFormType } from "@entities/models/tag/types";
 type UseTagFormReturn = ReturnType<typeof useTagForm>;
 
 interface Props {
-    manager: UseTagFormReturn;
+    tagFormManager: UseTagFormReturn;
     onSaveSuccess: () => void;
 }
 
 const TagForm = forwardRef<HTMLFormElement, Props>(function TagForm(
-    { manager, onSaveSuccess },
+    { tagFormManager, onSaveSuccess },
     ref
 ) {
-    const { form, setForm } = manager;
-    const normalizedManager = manager as BlogFormManager<TagFormType>;
+    const { form, setForm } = tagFormManager;
+    const normalizedManager = tagFormManager as BlogFormManager<TagFormType>;
 
     return (
         <BlogFormShell
