@@ -51,7 +51,7 @@ export function useTagForm() {
 
     const { extras, setExtras, setForm, setMode, reset: formReset } = modelForm;
 
-    const fetchAll = useCallback(async () => {
+    const listTags = useCallback(async () => {
         setLoading(true);
         try {
             const [t, p, pt] = await Promise.all([
@@ -71,11 +71,10 @@ export function useTagForm() {
             setLoading(false);
         }
     }, [setExtras]);
-    const listTags = fetchAll;
 
     useEffect(() => {
-        void fetchAll();
-    }, [fetchAll]);
+        void listTags();
+    }, [listTags]);
 
     const selectById = useCallback(
         async (id: string) => {
@@ -100,12 +99,12 @@ export function useTagForm() {
             if (!tag) return;
             if (!window.confirm("Supprimer ce tag ?")) return;
             await tagService.deleteCascade({ id: tag.id });
-            await fetchAll();
+            await listTags();
             if (editingId === id) {
                 reset();
             }
         },
-        [extras.tags, fetchAll, editingId, reset]
+        [extras.tags, listTags, editingId, reset]
     );
 
     const toggle = useCallback(
@@ -153,7 +152,6 @@ export function useTagForm() {
         cancel: reset,
         loading,
         listTags,
-        fetchAll,
         selectById,
         removeById,
         toggle,

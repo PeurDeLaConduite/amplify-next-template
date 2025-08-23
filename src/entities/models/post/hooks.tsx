@@ -78,11 +78,10 @@ export function usePostForm(post: PostType | null) {
 
     const { setForm, setExtras, setMode, extras, refresh, setMessage, setError } = modelForm;
 
-    const fetchPosts = useCallback(async () => {
+    const listPosts = useCallback(async () => {
         const { data } = await postService.list();
         setExtras((e) => ({ ...e, posts: data ?? [] }));
     }, [setExtras]);
-    const listPosts = fetchPosts;
 
     useEffect(() => {
         void (async () => {
@@ -98,8 +97,8 @@ export function usePostForm(post: PostType | null) {
                 sections: s.data ?? [],
             }));
         })();
-        void fetchPosts();
-    }, [setExtras, fetchPosts]);
+        void listPosts();
+    }, [setExtras, listPosts]);
 
     useEffect(() => {
         void (async () => {
@@ -163,7 +162,7 @@ export function usePostForm(post: PostType | null) {
             try {
                 setMessage("Suppression des données relationnelles...");
                 await postService.deleteCascade({ id });
-                await fetchPosts();
+                await listPosts();
 
                 if (editingId === id) {
                     setEditingId(null);
@@ -177,14 +176,13 @@ export function usePostForm(post: PostType | null) {
                 // pas de throw: l’UI affiche le message d’erreur
             }
         },
-        [fetchPosts, editingId, refresh]
+        [listPosts, editingId, refresh]
     );
 
     return {
         ...modelForm,
         editingId,
         listPosts,
-        fetchPosts,
         selectById,
         removeById,
         toggleTag,

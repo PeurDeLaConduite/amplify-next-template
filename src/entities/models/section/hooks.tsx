@@ -46,19 +46,18 @@ export function useSectionForm(section: SectionType | null) {
 
     const { extras, setForm, setExtras, setMode, reset } = modelForm;
 
-    const fetchList = useCallback(async () => {
+    const listSections = useCallback(async () => {
         const { data } = await sectionService.list();
         setExtras((e) => ({ ...e, sections: data ?? [] }));
     }, [setExtras]);
-    const listSections = fetchList;
 
     useEffect(() => {
         void (async () => {
             const { data } = await postService.list();
             setExtras((e) => ({ ...e, posts: data ?? [] }));
         })();
-        void fetchList();
-    }, [setExtras, fetchList]);
+        void listSections();
+    }, [setExtras, listSections]);
 
     useEffect(() => {
         void (async () => {
@@ -97,14 +96,14 @@ export function useSectionForm(section: SectionType | null) {
             if (!sectionItem) return;
             if (!window.confirm("Supprimer cette section ?")) return;
             await sectionService.deleteCascade({ id: sectionItem.id });
-            await fetchList();
+            await listSections();
             if (editingId === id) {
                 setEditingId(null);
                 reset();
             }
         },
-        [selectById, fetchList, editingId, reset]
+        [selectById, listSections, editingId, reset]
     );
 
-    return { ...modelForm, editingId, listSections, fetchList, selectById, removeById };
+    return { ...modelForm, editingId, listSections, selectById, removeById };
 }

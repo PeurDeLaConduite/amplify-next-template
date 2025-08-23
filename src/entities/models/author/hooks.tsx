@@ -39,7 +39,7 @@ export function useAuthorForm(author: AuthorType | null) {
 
     const { setExtras, setForm, setMode, extras, reset } = modelForm;
 
-    const fetchAuthors = useCallback(async () => {
+    const listAuthors = useCallback(async () => {
         setExtras((prev) => ({ ...prev, loading: true }));
         try {
             const { data } = await authorService.list();
@@ -52,7 +52,6 @@ export function useAuthorForm(author: AuthorType | null) {
             setExtras((prev) => ({ ...prev, loading: false }));
         }
     }, [setExtras]);
-    const listAuthors = fetchAuthors;
 
     const selectById = useCallback(
         (id: string) => {
@@ -71,18 +70,18 @@ export function useAuthorForm(author: AuthorType | null) {
         async (id: string) => {
             if (!window.confirm("Supprimer cet auteur ?")) return;
             await authorService.deleteCascade({ id });
-            await fetchAuthors();
+            await listAuthors();
             if (editingId === id) {
                 setEditingId(null);
                 reset();
             }
         },
-        [fetchAuthors, editingId, reset]
+        [listAuthors, editingId, reset]
     );
 
     useEffect(() => {
-        void fetchAuthors();
-    }, [fetchAuthors]);
+        void listAuthors();
+    }, [listAuthors]);
 
     useEffect(() => {
         if (author) {
@@ -96,5 +95,5 @@ export function useAuthorForm(author: AuthorType | null) {
         }
     }, [author, setForm, setMode]);
 
-    return { ...modelForm, editingId, listAuthors, fetchAuthors, selectById, removeById };
+    return { ...modelForm, editingId, listAuthors, selectById, removeById };
 }
