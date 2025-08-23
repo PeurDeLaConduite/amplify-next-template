@@ -1,27 +1,26 @@
 # CancelButton
 
-Bouton d'annulation d'une action en cours.
+Bouton pour **sortir du mode édition** sans sauvegarder ou **restaurer** l’état initial (selon votre logique).
 
-## Usage
-
-```tsx
-import { CancelButton } from "@src/components/ui/Button";
-
-<CancelButton onCancel={handleCancel} label="Annuler" />;
+## Import
+```ts
+import { CancelButton } from "@components/ui/Button";
 ```
 
 ## Props
+```ts
+type CancelButtonProps = ButtonWrapperProps & {
+  onCancel: () => void;
+  editColor?: string;
+};
+```
 
-| Nom         | Type                     | Obligatoire | Description                                                 |
-| ----------- | ------------------------ | ----------- | ----------------------------------------------------------- |
-| `onCancel`  | `() => void`             | oui         | Callback exécuté au clic.                                   |
-| `label`     | `string`                 | non         | Libellé visible (défaut `"Annuler"`).                       |
-| `title`     | `string`                 | non         | Attribut `title` pour l'accessibilité (défaut `"Annuler"`). |
-| `className` | `string`                 | non         | Classe CSS personnalisée.                                   |
-| `sx`        | `SxProps<Theme>`         | non         | Styles MUI complémentaires.                                 |
-| `size`      | `MuiButtonProps["size"]` | non         | Taille du bouton.                                           |
+## Usage
+```tsx
+<CancelButton onCancel={() => setEdit(false)} />
+```
 
-## Accessibilité
-
-- `variantType="button"` : le libellé est suffisant pour les lecteurs d'écran.
-- L'icône (`<CancelIcon />`) est décorative.
+## Exemple (reset d’un formulaire local)
+```tsx
+<CancelButton onCancel={() => setForm(initial)} />
+```

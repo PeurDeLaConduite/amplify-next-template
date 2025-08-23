@@ -1,27 +1,39 @@
 # DeleteButton
 
-Bouton de suppression d'un élément.
+Bouton pour **supprimer définitivement** un objet.
 
-## Usage
-
-```tsx
-import { DeleteButton } from "@src/components/ui/Button";
-
-<DeleteButton onDelete={handleDelete} label="Supprimer" />;
+## Import
+```ts
+import { DeleteButton } from "@components/ui/Button";
 ```
 
 ## Props
+```ts
+type DeleteButtonProps = ButtonWrapperProps & {
+  onDelete: () => void;
+  editColor?: string; // pour forcer la couleur (sinon intent danger)
+};
+```
 
-| Nom         | Type                     | Obligatoire | Description                                                   |
-| ----------- | ------------------------ | ----------- | ------------------------------------------------------------- |
-| `onDelete`  | `() => void`             | oui         | Callback exécuté au clic.                                     |
-| `label`     | `string`                 | non         | Libellé visible (défaut `"Supprimer"`).                       |
-| `title`     | `string`                 | non         | Attribut `title` pour l'accessibilité (défaut `"Supprimer"`). |
-| `className` | `string`                 | non         | Classe CSS personnalisée.                                     |
-| `sx`        | `SxProps<Theme>`         | non         | Styles MUI complémentaires.                                   |
-| `size`      | `MuiButtonProps["size"]` | non         | Taille du bouton.                                             |
+## Usage
+```tsx
+<DeleteButton onDelete={handleDelete} label="Supprimer" />
+<DeleteButton onDelete={handleDelete} variantType="icon" ariaLabel="Supprimer" />
+```
 
-## Accessibilité
+## Exemple avec Manager
+```tsx
+import { DeleteButton } from "@components/ui/Button";
+import { useEntityManager } from "@entities/core/manager";
 
-- `variantType="button"` : le libellé rend le bouton accessible, aucun `ariaLabel` requis.
-- Icône de suppression fournie par MUI (`<DeleteIcon />`).
+function Row({ id }: { id: string }) {
+  const { remove } = useEntityManager<{ id: string }>();
+
+  async function handleDelete() {
+    if (!confirm("Supprimer définitivement ?")) return;
+    await remove(id);
+  }
+
+  return <DeleteButton onDelete={handleDelete} />;
+}
+```

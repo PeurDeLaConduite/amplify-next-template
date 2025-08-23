@@ -1,27 +1,32 @@
 # RefreshButton
 
-Bouton de rafraîchissement de la page ou des données.
+Bouton pour **rafraîchir les données** et/ou **réinitialiser un formulaire**.
 
-## Usage
-
-```tsx
-import { RefreshButton } from "@src/components/ui/Button";
-
-<RefreshButton onRefresh={handleRefresh} label="Rafraîchir la page" />;
+## Import
+```ts
+import { RefreshButton } from "@components/ui/Button";
 ```
 
 ## Props
+```ts
+type RefreshButtonProps = ButtonWrapperProps & {
+  onRefresh: () => void;
+  editColor?: string;
+};
+```
 
-| Nom         | Type                     | Obligatoire | Description                                                            |
-| ----------- | ------------------------ | ----------- | ---------------------------------------------------------------------- |
-| `onRefresh` | `() => void`             | oui         | Callback exécuté au clic.                                              |
-| `label`     | `string`                 | non         | Libellé visible (défaut `"Rafraîchir la page"`).                       |
-| `title`     | `string`                 | non         | Attribut `title` pour l'accessibilité (défaut `"Rafraîchir la page"`). |
-| `className` | `string`                 | non         | Classe CSS personnalisée.                                              |
-| `sx`        | `SxProps<Theme>`         | non         | Styles MUI complémentaires.                                            |
-| `size`      | `MuiButtonProps["size"]` | non         | Taille du bouton.                                                      |
+## Usage
+```tsx
+<RefreshButton onRefresh={reload} />
+```
 
-## Accessibilité
+## Exemple (refresh via manager)
+```tsx
+import { RefreshButton } from "@components/ui/Button";
+import { useEntityManager } from "@entities/core/manager";
 
-- `variantType="button"` : le libellé est exposé aux technologies d'assistance.
-- Icône de rafraîchissement (`<RefreshIcon />`).
+function Reload() {
+  const { refresh } = useEntityManager<any>();
+  return <RefreshButton onRefresh={refresh} variantType="icon" ariaLabel="Rafraîchir" />;
+}
+```

@@ -1,41 +1,34 @@
 # UiButton
 
-Composant de base pour tous les boutons. Il se décline en deux variantes via la prop `variantType`.
+Composant de base utilisé par tous les wrappers (Edit/Delete/etc.).  
+Il normalise l’API MUI en ajoutant `variantType` et des conventions d’accessibilité.
 
-## Variante `button`
-
-Bouton classique avec un libellé visible.
-
-```tsx
-import { UiButton } from "@src/components/ui/Button";
-import { Edit } from "@mui/icons-material";
-
-<UiButton
-    variantType="button"
-    label="Modifier"
-    icon={<Edit />}
-    buttonProps={{ onClick: handleEdit }}
-/>;
+## Import
+```ts
+import { UiButton } from "@components/ui/Button";
 ```
 
-- Le texte `label` assure l'accessibilité.
-- `ariaLabel` est inutile dans cette variante.
+## Props
+```ts
+type VariantType = "button" | "icon";
 
-## Variante `icon`
-
-Bouton icône sans texte visible. L'accessibilité repose sur `ariaLabel`.
-
-```tsx
-import { UiButton } from "@src/components/ui/Button";
-import { Delete } from "@mui/icons-material";
-
-<UiButton
-    variantType="icon"
-    icon={<Delete />}
-    ariaLabel="Supprimer"
-    iconButtonProps={{ onClick: handleDelete }}
-/>;
+export type UiButtonProps = {
+  variantType: VariantType;
+  label?: string;                 // requis si variantType="button"
+  ariaLabel?: string;             // requis si variantType="icon" (fallback = label)
+  icon?: React.ReactNode;
+  href?: string;                  // si fourni, rend un <a> / Link
+  intent?: "primary" | "neutral" | "success" | "danger" | "warning" | "ghost";
+  variant?: ButtonProps["variant"];
+  size?: ButtonProps["size"];
+  className?: string;
+  sx?: SxProps<Theme>;
+  buttonProps?: ButtonProps;      // transmis à MUI Button
+  iconButtonProps?: IconButtonProps; // transmis à MUI IconButton
+  title?: string;
+};
 ```
 
-- `ariaLabel` est **obligatoire**.
-- Aucun `label` ne doit être fourni.
+## Bonnes pratiques
+- En mode **icon**, fournissez **`ariaLabel`** (ou un `label` qui servira de fallback).
+- Passez un **`title`** si vous voulez un tooltip natif.

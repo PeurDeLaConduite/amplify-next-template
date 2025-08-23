@@ -1,36 +1,27 @@
 # BackButton
 
-Bouton de retour en arrière ou de navigation.
+Bouton pour **revenir en arrière** : soit fermeture d’un mode édition inline, soit navigation (page précédente).
 
-## Usage
-
-### Navigation
-
-```tsx
-import { BackButton } from "@src/components/ui/Button";
-
-<BackButton href="/" label="Retour" />;
-```
-
-### Action
-
-```tsx
-<BackButton onBack={handleBack} label="Retour" />
+## Import
+```ts
+import { BackButton } from "@components/ui/Button";
 ```
 
 ## Props
+```ts
+type BackButtonProps = ButtonWrapperProps &
+  ({ href: string; onBack?: never } | { onBack: () => void; href?: never }) & {
+    editColor?: string;
+  };
+```
 
-| Nom         | Type                     | Obligatoire | Description                                                          |
-| ----------- | ------------------------ | ----------- | -------------------------------------------------------------------- |
-| `href`      | `string`                 | non\*       | Navigue vers l'URL indiquée (\*mutuellement exclusif avec `onBack`). |
-| `onBack`    | `() => void`             | non\*       | Callback exécuté au clic (\*mutuellement exclusif avec `href`).      |
-| `label`     | `string`                 | non         | Libellé visible (défaut `"Retour"`).                                 |
-| `title`     | `string`                 | non         | Attribut `title` pour l'accessibilité (défaut `"Retour"`).           |
-| `className` | `string`                 | non         | Classe CSS personnalisée.                                            |
-| `sx`        | `SxProps<Theme>`         | non         | Styles MUI complémentaires.                                          |
-| `size`      | `MuiButtonProps["size"]` | non         | Taille du bouton.                                                    |
+## Usage
+```tsx
+<BackButton onBack={() => setEditModeField(null)} label="Retour" />
+<BackButton href="/dashboard" label="Retour" />
+```
 
-## Accessibilité
-
-- `variantType="button"` : le `label` suffit pour l'a11y.
-- Icône de retour (`<ArrowBackIcon />`).
+## Exemple (inline edit)
+```tsx
+<BackButton onBack={() => setEdit(false)} variantType="icon" ariaLabel="Retour" />
+```

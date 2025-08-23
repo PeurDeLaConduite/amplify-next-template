@@ -1,4 +1,63 @@
-// src/components/ui/button/Buttons.tsx
+/* ============================================================================
+ * src/components/ui/button/Buttons.tsx
+ * ============================================================================
+ * 🎛️ Boutons applicatifs (wrappers autour de UiButton)
+ *
+ * Chaque bouton implémente une intention fonctionnelle claire (CRUD / navigation /
+ * interaction de formulaire). Ils encapsulent l’icône, le style par défaut et
+ * parfois une couleur d’intention (`editColor`).
+ *
+ * ============================================================================
+ * 📌 COMPONENTS
+ * ============================================================================
+ *
+ * 🖊️ EditButton
+ *   - Permet de sélectionner un objet à modifier (update ou reset).
+ *   - Peut ouvrir un mode édition (ex: `editMode`).
+ *
+ * 🗑️ DeleteButton
+ *   - Supprime complètement un objet (appel du manager `delete` côté UI).
+ *
+ * 💾 UpdateButton
+ *   - Met à jour un objet existant (ex: `updateEntity` via manager).
+ *
+ * ❌ CancelButton
+ *   - Sort du mode édition sans sauvegarder.
+ *   - Peut aussi rappeler les données pour rétablir l’état initial du formulaire.
+ *
+ * ➕ AddButton
+ *   - Peut ouvrir un mode édition ou créer un nouvel objet.
+ *   - Dans l’app actuelle : réservé pour les cas futurs (non utilisé).
+ *
+ * ↩️ BackButton
+ *   - Dans un `EditField`, appelle `setEditModeField(null)` → sort du mode édition.
+ *   - Dans une page, redirige vers une autre URL (App Router).
+ *
+ * ✅ SubmitButton
+ *   - Crée un nouvel objet (appel du manager `create`).
+ *
+ * 🧹 ClearFieldButton
+ *   - Vide un champ de formulaire, puis fait un update avec une valeur vide.
+ *
+ * 🔄 RefreshButton
+ *   - Rafraîchit les données (via `refresh`) et réinitialise le formulaire.
+ *
+ * 🔌 PowerButton
+ *   - Déconnecte l’utilisateur (ex: `signOut` d’AWS Amplify Authenticator).
+ *
+ * ============================================================================
+ * 🔗 Schéma d’interaction typique (UI <-> Manager <-> Backend)
+ * ============================================================================
+ *
+ *   [Bouton UI]  --(onClick)-->  [Manager]  --(CRUD op)-->  [Backend]
+ *      ^                             |
+ *      |----(props: label, intent)---|
+ *
+ * Exemple : <DeleteButton onDelete={() => userManager.removeById(id)} />
+ *
+ * ============================================================================
+ */
+
 import React from "react";
 import { UiButton } from "./UiButton";
 import { getEditButtonStyles } from "./buttonStyles";
@@ -190,7 +249,7 @@ export function DeleteButton(props: DeleteButtonProps) {
 export type CancelButtonProps = ButtonWrapperProps & { onCancel: () => void; editColor?: string };
 
 export function CancelButton(props: CancelButtonProps) {
-    const { onCancel, label = "Annuler", editColor = "#9e9e9e", ...rest } = props;
+    const { onCancel, label = "Annuler", editColor = "black", ...rest } = props;
     return renderByMode({
         ...rest,
         variantType: rest.variantType ?? "button",
@@ -199,7 +258,6 @@ export function CancelButton(props: CancelButtonProps) {
         intent: "ghost",
         variant: "outlined",
         onClick: onCancel,
-        editColor,
     });
 }
 
@@ -238,7 +296,7 @@ export function SubmitButton(props: SubmitButtonProps) {
 export type UpdateButtonProps = ButtonWrapperProps & { onUpdate: () => void; editColor?: string };
 
 export function UpdateButton(props: UpdateButtonProps) {
-    const { onUpdate, label = "Enregistrer", editColor = "#9e9e9e", ...rest } = props;
+    const { onUpdate, label = "Enregistrer", ...rest } = props;
     return renderByMode({
         ...rest,
         variantType: rest.variantType ?? "button",
@@ -246,7 +304,7 @@ export function UpdateButton(props: UpdateButtonProps) {
         icon: <SaveIcon />,
         intent: "primary",
         onClick: onUpdate,
-        editColor,
+        // editColor,
     });
 }
 
@@ -317,7 +375,7 @@ export function BackButton(props: BackButtonProps) {
         label,
         icon: <ArrowBackIcon />,
         intent: "primary" as const,
-        editColor,
+        // editColor,
     };
 
     if ("href" in rest) {

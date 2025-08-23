@@ -1,27 +1,33 @@
 # ClearFieldButton
 
-Bouton permettant de vider la valeur d'un champ de formulaire.
+Bouton pour **vider un champ** (reset) et éventuellement **appliquer la maj** via un update côté manager.
 
-## Usage
-
-```tsx
-import { ClearFieldButton } from "@src/components/ui/Button";
-
-<ClearFieldButton onClear={handleClear} label="Vider le champ" />;
+## Import
+```ts
+import { ClearFieldButton } from "@components/ui/Button";
 ```
 
 ## Props
+```ts
+type ClearFieldButtonProps = ButtonWrapperProps & {
+  onClear: () => void;
+  editColor?: string;
+};
+```
 
-| Nom         | Type                     | Obligatoire | Description                                                        |
-| ----------- | ------------------------ | ----------- | ------------------------------------------------------------------ |
-| `onClear`   | `() => void`             | oui         | Callback exécuté au clic.                                          |
-| `label`     | `string`                 | non         | Libellé visible (défaut `"Vider le champ"`).                       |
-| `title`     | `string`                 | non         | Attribut `title` pour l'accessibilité (défaut `"Vider le champ"`). |
-| `className` | `string`                 | non         | Classe CSS personnalisée.                                          |
-| `sx`        | `SxProps<Theme>`         | non         | Styles MUI complémentaires.                                        |
-| `size`      | `MuiButtonProps["size"]` | non         | Taille du bouton.                                                  |
+## Usage
+```tsx
+<ClearFieldButton onClear={() => setValue("")} />
+```
 
-## Accessibilité
+## Exemple (reset + update)
+```tsx
+import { ClearFieldButton } from "@components/ui/Button";
+import { useEntityManager } from "@entities/core/manager";
 
-- `variantType="button"` : le texte visible rend le bouton accessible.
-- Icône de suppression de texte (`<BackspaceIcon />`).
+function ClearName({ id }: { id: string }) {
+  const { update } = useEntityManager<{ name: string }>();
+  async function onClear() { await update(id, { name: "" }); }
+  return <ClearFieldButton onClear={onClear} variantType="icon" ariaLabel="Vider" />;
+}
+```

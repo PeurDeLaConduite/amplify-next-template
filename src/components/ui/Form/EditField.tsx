@@ -1,4 +1,4 @@
-import { UpdateButton, CancelButton } from "@components/ui/Button";
+import { UpdateButton, CancelButton, BackButton } from "@components/ui/Button";
 import React from "react";
 import type { FieldKey } from "@entities/core/hooks";
 
@@ -46,8 +46,11 @@ export default function EditField<T extends Record<string, unknown>>({
                     className="flex-1 mr-2"
                     size="medium"
                 />
-                <CancelButton
-                    onCancel={() => setEditModeField(null)}
+                {/* //? BackButton => appelle setEditModeField(null) 
+                    //* Sort du mode **édition** sans sans sauvegarder  
+                */}
+                <BackButton
+                    onBack={() => setEditModeField(null)}
                     label="Retour"
                     className="flex-1 ml-2"
                     size="medium"

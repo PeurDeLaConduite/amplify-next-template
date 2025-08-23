@@ -1,27 +1,34 @@
 # AddButton
 
-Bouton d'ajout d'un nouvel élément.
+Bouton pour **démarrer une création** ou **ouvrir un mode édition vide**.
 
-## Usage
-
-```tsx
-import { AddButton } from "@src/components/ui/Button";
-
-<AddButton onAdd={handleAdd} label="Ajouter" />;
+## Import
+```ts
+import { AddButton } from "@components/ui/Button";
 ```
 
 ## Props
+```ts
+type AddButtonProps = ButtonWrapperProps & {
+  onAdd: () => void;
+  editColor?: string;
+};
+```
 
-| Nom         | Type                     | Obligatoire | Description                                                 |
-| ----------- | ------------------------ | ----------- | ----------------------------------------------------------- |
-| `onAdd`     | `() => void`             | oui         | Callback exécuté au clic.                                   |
-| `label`     | `string`                 | non         | Libellé visible (défaut `"Ajouter"`).                       |
-| `title`     | `string`                 | non         | Attribut `title` pour l'accessibilité (défaut `"Ajouter"`). |
-| `className` | `string`                 | non         | Classe CSS personnalisée.                                   |
-| `sx`        | `SxProps<Theme>`         | non         | Styles MUI complémentaires.                                 |
-| `size`      | `MuiButtonProps["size"]` | non         | Taille du bouton.                                           |
+## Usage
+```tsx
+<AddButton onAdd={() => setOpen(true)} label="Ajouter" />
+```
 
-## Accessibilité
+## Exemple avec Manager (création rapide)
+```tsx
+import { AddButton } from "@components/ui/Button";
+import { useEntityManager } from "@entities/core/manager";
 
-- `variantType="button"` : le `label` rend le bouton accessible.
-- L'icône d'ajout (`<AddIcon />`) est purement visuelle.
+function QuickCreate() {
+  const { create } = useEntityManager<{ name: string }>();
+  return (
+    <AddButton onAdd={() => create({ name: "Nouveau" })} variantType="icon" ariaLabel="Ajouter" />
+  );
+}
+```

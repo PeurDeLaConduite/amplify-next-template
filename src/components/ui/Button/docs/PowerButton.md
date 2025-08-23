@@ -1,27 +1,26 @@
 # PowerButton
 
-Bouton de déconnexion de l'utilisateur.
+Bouton de **déconnexion** (sign out).
 
-## Usage
-
-```tsx
-import { PowerButton } from "@src/components/ui/Button";
-
-<PowerButton onPowerOff={handleLogout} label="Déconnexion" />;
+## Import
+```ts
+import { PowerButton } from "@components/ui/Button";
 ```
 
 ## Props
+```ts
+type PowerButtonProps = ButtonWrapperProps & {
+  onPowerOff: () => void;
+  editColor?: string; // peut forcer le rouge si votre thème diffère
+};
+```
 
-| Nom          | Type                     | Obligatoire | Description                                                     |
-| ------------ | ------------------------ | ----------- | --------------------------------------------------------------- |
-| `onPowerOff` | `() => void`             | oui         | Callback exécuté au clic.                                       |
-| `label`      | `string`                 | non         | Libellé visible (défaut `"Déconnexion"`).                       |
-| `title`      | `string`                 | non         | Attribut `title` pour l'accessibilité (défaut `"Déconnexion"`). |
-| `className`  | `string`                 | non         | Classe CSS personnalisée.                                       |
-| `sx`         | `SxProps<Theme>`         | non         | Styles MUI complémentaires.                                     |
-| `size`       | `MuiButtonProps["size"]` | non         | Taille du bouton.                                               |
+## Usage
+```tsx
+<PowerButton onPowerOff={signOut} label="Déconnexion" />
+```
 
-## Accessibilité
-
-- `variantType="button"` : le libellé est lu par les lecteurs d'écran.
-- Icône d'arrêt (`<PowerIcon />`).
+## Exemple (Header)
+```tsx
+<PowerButton onPowerOff={signOut} variantType="button" />
+```

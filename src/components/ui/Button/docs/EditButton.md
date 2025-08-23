@@ -1,27 +1,31 @@
 # EditButton
 
-Bouton d'édition d'un élément.
+Bouton pour **passer en mode édition** d’un objet/champ.
 
-## Usage
-
-```tsx
-import { EditButton } from "@src/components/ui/Button";
-
-<EditButton onEdit={handleEdit} label="Modifier" />;
+## Import
+```ts
+import { EditButton } from "@components/ui/Button";
 ```
 
 ## Props
+```ts
+type EditButtonProps = ButtonWrapperProps & {
+  onEdit: () => void;
+  editColor?: string; // surcharge couleur (outlined)
+};
+```
 
-| Nom         | Type                     | Obligatoire | Description                                                  |
-| ----------- | ------------------------ | ----------- | ------------------------------------------------------------ |
-| `onEdit`    | `() => void`             | oui         | Callback exécuté au clic.                                    |
-| `label`     | `string`                 | non         | Libellé visible (défaut `"Modifier"`).                       |
-| `title`     | `string`                 | non         | Attribut `title` pour l'accessibilité (défaut `"Modifier"`). |
-| `className` | `string`                 | non         | Classe CSS personnalisée.                                    |
-| `sx`        | `SxProps<Theme>`         | non         | Styles MUI complémentaires.                                  |
-| `size`      | `MuiButtonProps["size"]` | non         | Taille du bouton.                                            |
+## Usage
+```tsx
+<EditButton onEdit={() => setEdit(true)} />
+<EditButton onEdit={openEditModal} variantType="icon" ariaLabel="Modifier" />
+```
 
-## Accessibilité
+## Exemple avec Manager
+```tsx
+import { EditButton } from "@components/ui/Button";
 
-- `variantType="button"` : le libellé rend le bouton accessible, `ariaLabel` n'est pas nécessaire.
-- L'icône est décorative et fournie par MUI (`<EditIcon />`).
+function Row({ id }: { id: string }) {
+  return <EditButton onEdit={() => router.push(`/items/${id}/edit`)} />;
+}
+```
