@@ -23,7 +23,7 @@ const TagForm = forwardRef<HTMLFormElement, Props>(function TagForm(
     return (
         <BlogFormShell
             ref={ref}
-            manager={normalizedManager}
+            blogFormManager={normalizedManager}
             initialForm={initialTagForm}
             onSaveSuccess={onSaveSuccess}
             submitLabel={{ create: "Ajouter", edit: "Mettre à jour" }}

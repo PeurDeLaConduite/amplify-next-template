@@ -64,7 +64,7 @@ export default function SectionManagerPage() {
                 <SectionHeader className="mt-8">Nouvelle section</SectionHeader>
                 <SectionForm
                     ref={formRef}
-                    manager={manager}
+                    sectionFormManager={manager}
                     editingId={editingId}
                     onSaveSuccess={handleUpdate}
                 />

@@ -64,7 +64,7 @@ export default function PostManagerPage() {
                 <SectionHeader className="mt-8">Nouvel article</SectionHeader>
                 <PostForm
                     ref={formRef}
-                    manager={manager}
+                    postFormManager={manager}
                     posts={posts}
                     editingId={editingId}
                     onSaveSuccess={handleUpdate}

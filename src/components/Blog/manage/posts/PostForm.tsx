@@ -19,14 +19,14 @@ import { type PostFormType } from "@entities/models/post/types";
 import { type PostType } from "@entities/models/post";
 
 interface Props {
-    manager: ReturnType<typeof usePostForm>;
+    postFormManager: ReturnType<typeof usePostForm>;
     onSaveSuccess: () => void;
     posts: PostType[];
     editingId: string | null;
 }
 
 const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
-    { manager, onSaveSuccess, posts, editingId },
+    { postFormManager, onSaveSuccess, posts, editingId },
     ref
 ) {
     const {
@@ -35,7 +35,7 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
         setFieldValue,
         toggleTag,
         toggleSection,
-    } = manager;
+    } = postFormManager;
 
     const { handleSourceFocus, handleManualEdit } = useAutoGenFields({
         configs: [
@@ -84,7 +84,7 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
     return (
         <BlogFormShell
             ref={ref}
-            manager={manager}
+            blogFormManager={postFormManager}
             initialForm={initialPostForm}
             onSaveSuccess={onSaveSuccess}
             submitLabel={{ create: "Créer l'article", edit: "Mettre à jour" }}
