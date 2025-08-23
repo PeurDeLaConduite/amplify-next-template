@@ -33,7 +33,7 @@ interface GenericListProps<T> {
     rounded?: boolean;
     editButtonLabel?: string;
     deleteButtonLabel?: string;
-    variantIcon?: string;
+    variantIcon?: "icon" | "normal";
 }
 
 export default function GenericList<T>({
