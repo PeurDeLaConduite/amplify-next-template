@@ -81,7 +81,7 @@ export default function GenericList<T>({
                             onUpdate={onUpdate}
                             onCancel={onCancel}
                             onDelete={() => onDeleteById(id)}
-                            isFormNew={false}
+                            isFormNew={true}
                             editButtonLabel={editButtonLabel}
                             deleteButtonLabel={deleteButtonLabel}
                         />
