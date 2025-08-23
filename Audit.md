@@ -1,5 +1,34 @@
 # Audit UI ↔ Services CRUD  
 *Next.js 15 (App Router, RSC/Server Actions) + AWS Amplify v6/v2*
+## Résumé
+- Harmonisation des callbacks `on<Xxx>Saved` et du shell générique `onItemSaved`.
+- Adoption de `<entity>Id` pour l’état d’édition et `itemId`/`activeId` côté UI.
+- Normalisation des fonctions N↔N : `replaceXxxZzzs` & `toggleRelationXxx`.
+
+## Renommages par module
+- Blog / Posts : `onSaveSuccess` → `onPostSaved`, `editingId` → `postId`, `toggleTag` → `toggleRelationTag`, `syncPost2Tags` → `replacePostTags`, etc.
+- Blog / Tags : `onSaveSuccess` → `onTagSaved`, `toggle` → `toggleRelationPost`, …
+- Utilitaires : `createM2MSync` → `createM2MReplace`, `syncManyToMany` → `replaceManyToMany`.
+
+## Matrice d’impact
+| Module | Fichiers modifiés | Tests impactés |
+|-------|------------------|----------------|
+| Posts | PostForm.tsx, usePostForm.tsx, CreatePost.tsx… | usePostForm.test.ts |
+| Tags  | TagForm.tsx, useTagForm.tsx, CreateTag.tsx… | — |
+| Sections/Authors | SectionsForm.tsx, AuthorForm.tsx… | — |
+| Core utils | createM2MSync.ts, syncManyToMany.ts | relations services tests |
+
+## Cas `needs-review`
+Voir tableau ci‑dessus (état dérivé vs stocké, callback toggle ambigu, nom de prop des listes).
+
+## Glossaire appliqué
+- Violations avant : `onSaveSuccess`, `editingId`, `syncPost2Tags`, `toggleTag`, …  
+- Violations après : aucune restante, hors cas `needs-review`.
+
+## Prochaines étapes
+- Remplacer l’état objet (`editingPost`, etc.) par un dérivé conforme.  
+- Supprimer les alias dépréciés après migration.  
+- Ajouter tests unitaires sur les relations N↔N.
 
 ## 1. Tableau par composant
 
