@@ -1,39 +1,37 @@
+// src/components/Blog/manage/posts/CreatePost.tsx (refactored)
 "use client";
 
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import RequireAdmin from "@components/RequireAdmin";
-import SectionForm from "./SectionsForm";
 import SectionList from "./SectionList";
+import SectionForm from "./SectionsForm";
+import RequireAdmin from "@components/RequireAdmin";
 import BlogEditorLayout from "@components/Blog/manage/BlogEditorLayout";
 import SectionHeader from "@components/Blog/manage/SectionHeader";
-import { type SectionType, initialSectionForm, useSectionForm } from "@entities/models/section";
+import { type SectionType, useSectionForm } from "@entities/models/section";
 
 type IdLike = string | number;
 
 export default function SectionManagerPage() {
     const [sectionToEdit, setSectionToEdit] = useState<SectionType | null>(null);
-    const [sectionId, setSectionId] = useState<string | null>(null);
+    const sectionId = sectionToEdit?.id ?? null;
     const formRef = useRef<HTMLFormElement>(null);
+
     const manager = useSectionForm(sectionToEdit);
     const {
         extras: { sections },
         listSections,
         selectById,
         removeById,
-        setForm,
-        setMode,
     } = manager;
 
     useEffect(() => {
-        listSections();
+        void listSections();
     }, [listSections]);
 
     const handleEditById = useCallback(
         (id: IdLike) => {
-            const section = selectById(String(id));
-            if (!section) return;
-            setSectionToEdit(section);
-            setSectionId(String(id));
+            const section = selectById(String(id)); // gère déjà l'ID + mode "edit" côté hook
+            if (section) setSectionToEdit(section);
         },
         [selectById]
     );
@@ -45,18 +43,14 @@ export default function SectionManagerPage() {
         [removeById]
     );
 
-    const handleUpdate = useCallback(async () => {
+    const handleSaved = useCallback(async () => {
         await listSections();
-        setSectionToEdit(null);
-        setSectionId(null);
+        setSectionToEdit(null); // rien d'autre à nettoyer
     }, [listSections]);
 
     const handleCancel = useCallback(() => {
         setSectionToEdit(null);
-        setSectionId(null);
-        setMode("create");
-        setForm(initialSectionForm);
-    }, [setMode, setForm]);
+    }, []);
 
     return (
         <RequireAdmin>
@@ -65,17 +59,17 @@ export default function SectionManagerPage() {
                 <SectionForm
                     ref={formRef}
                     sectionFormManager={manager}
-                    sectionId={sectionId}
-                    onSaveSuccess={handleUpdate}
+                    sections={sections}
+                    editingId={sectionId}
+                    onSaveSuccess={handleSaved}
                 />
+
                 <SectionHeader>Liste des sections</SectionHeader>
                 <SectionList
                     sections={sections}
-                    sectionId={sectionId}
+                    sectionId={sectionId} // idem
                     onEditById={handleEditById}
-                    onUpdate={() => {
-                        formRef.current?.requestSubmit();
-                    }}
+                    onUpdate={() => formRef.current?.requestSubmit()}
                     onCancel={handleCancel}
                     onDeleteById={handleDeleteById}
                 />

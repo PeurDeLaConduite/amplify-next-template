@@ -5,6 +5,6 @@ export type SectionType = BaseModel<"Section">;
 export type SectionTypeOmit = CreateOmit<"Section">;
 export type SectionTypeUpdateInput = UpdateInput<"Section">;
 
-type PostCustomTypes = { seo: SeoTypeOmit };
+type PostCustomType = { seo: SeoTypeOmit };
 
-export type SectionFormTypes = ModelForm<"Section", "posts", "post", PostCustomTypes, "seo">;
+export type SectionFormType = ModelForm<"Section", "posts", "post", PostCustomType, "seo">;

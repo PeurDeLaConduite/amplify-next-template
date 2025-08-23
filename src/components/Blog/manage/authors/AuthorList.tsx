@@ -25,7 +25,10 @@ export default function AuthorList(props: Props) {
             getId={(a) => a.id}
             renderContent={(a) => (
                 <p className="self-center">
-                    <strong>{a.authorName}</strong> — {a.email}
+                    <strong>{a.authorName}</strong> —{" "}
+                    <i>
+                        {a.email} — ordre : {a.order}
+                    </i>
                 </p>
             )}
             sortBy={byAlpha((a) => a.authorName)}

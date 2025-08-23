@@ -21,6 +21,7 @@ export const {
         bio: z.string(),
         email: z.string(),
         postIds: z.array(z.string()),
+        order: z.number(),
     }) as ZodType<AuthorFormType>,
     initialForm: {
         authorName: "",
@@ -28,11 +29,13 @@ export const {
         bio: "",
         email: "",
         postIds: [],
+        order: 1,
     },
     toForm: (author, postIds: string[] = []) => ({
         authorName: author.authorName ?? "",
         avatar: author.avatar ?? "",
         bio: author.bio ?? "",
+        order: author.order ?? 1,
         email: author.email ?? "",
         postIds,
     }),

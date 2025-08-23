@@ -25,7 +25,7 @@ export default function PostList(props: Props) {
             getId={(p) => p.id}
             renderContent={(p) => (
                 <p className="self-center">
-                    <strong>{p.title}</strong> (ordre : {p.order})
+                    <strong>{p.title}</strong> — (ordre : {p.order})
                 </p>
             )}
             sortBy={byOptionalOrder}

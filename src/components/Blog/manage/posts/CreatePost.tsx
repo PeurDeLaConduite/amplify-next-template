@@ -4,17 +4,16 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import PostList from "./PostList";
 import PostForm from "./PostForm";
-import { type PostType } from "@entities/models/post/types";
 import RequireAdmin from "@components/RequireAdmin";
 import BlogEditorLayout from "@components/Blog/manage/BlogEditorLayout";
 import SectionHeader from "@components/Blog/manage/SectionHeader";
-import { usePostForm } from "@entities/models/post/hooks";
+import { type PostType, usePostForm } from "@entities/models/post/";
 
 type IdLike = string | number;
 
 export default function PostManagerPage() {
     const [postToEdit, setPostToEdit] = useState<PostType | null>(null);
-    const [postId, setPostId] = useState<string | null>(null);
+    const postId = postToEdit?.id ?? null;
     const formRef = useRef<HTMLFormElement>(null);
 
     const manager = usePostForm(postToEdit);
@@ -23,7 +22,6 @@ export default function PostManagerPage() {
         listPosts,
         selectById,
         removeById,
-        // reset,
     } = manager;
 
     useEffect(() => {
@@ -32,10 +30,8 @@ export default function PostManagerPage() {
 
     const handleEditById = useCallback(
         (id: IdLike) => {
-            const post = selectById(String(id));
-            if (!post) return;
-            setPostToEdit(post);
-            setPostId(String(id));
+            const post = selectById(String(id)); // set déjà l'ID dans le hook + mode "edit"
+            if (post) setPostToEdit(post);
         },
         [selectById]
     );
@@ -47,15 +43,13 @@ export default function PostManagerPage() {
         [removeById]
     );
 
-    const handleUpdate = useCallback(async () => {
+    const handleSaved = useCallback(async () => {
         await listPosts();
         setPostToEdit(null);
-        setPostId(null);
     }, [listPosts]);
 
     const handleCancel = useCallback(() => {
         setPostToEdit(null);
-        setPostId(null);
     }, []);
 
     return (
@@ -67,16 +61,15 @@ export default function PostManagerPage() {
                     postFormManager={manager}
                     posts={posts}
                     editingId={postId}
-                    onSaveSuccess={handleUpdate}
+                    onSaveSuccess={handleSaved}
                 />
+
                 <SectionHeader>Liste des articles</SectionHeader>
                 <PostList
                     posts={posts}
                     postId={postId}
                     onEditById={handleEditById}
-                    onUpdate={() => {
-                        formRef.current?.requestSubmit();
-                    }}
+                    onUpdate={() => formRef.current?.requestSubmit()}
                     onCancel={handleCancel}
                     onDeleteById={handleDeleteById}
                 />

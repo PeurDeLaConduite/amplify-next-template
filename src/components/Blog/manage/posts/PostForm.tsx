@@ -2,8 +2,13 @@
 "use client";
 
 import React, { forwardRef, type ChangeEvent } from "react";
-import { usePostForm } from "@entities/models/post/hooks";
-import { initialPostForm } from "@entities/models/post/form";
+import { type SeoFormType } from "@entities/customTypes/seo/types";
+import {
+    type PostFormType,
+    type PostType,
+    initialPostForm,
+    usePostForm,
+} from "@entities/models/post";
 import { useAutoGenFields, slugify } from "@hooks/useAutoGenFields";
 import {
     EditableField,
@@ -14,9 +19,6 @@ import {
 } from "@components/ui/Form";
 import BlogFormShell from "@components/Blog/manage/BlogFormShell";
 import { byAlpha, byOptionalOrder } from "@components/Blog/manage/sorters";
-import { type SeoFormType } from "@entities/customTypes/seo/types";
-import { type PostFormType } from "@entities/models/post/types";
-import { type PostType } from "@entities/models/post";
 
 interface Props {
     postFormManager: ReturnType<typeof usePostForm>;

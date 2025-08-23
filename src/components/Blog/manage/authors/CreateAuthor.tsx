@@ -12,8 +12,9 @@ type IdLike = string | number;
 
 export default function AuthorManagerPage() {
     const [authorToEdit, setAuthorToEdit] = useState<AuthorType | null>(null);
-    const [authorId, setAuthorId] = useState<string | null>(null);
+    const authorId = authorToEdit?.id ?? null;
     const formRef = useRef<HTMLFormElement>(null);
+
     const manager = useAuthorForm(authorToEdit);
     const {
         extras: { authors, loading },
@@ -31,9 +32,7 @@ export default function AuthorManagerPage() {
     const handleEditById = useCallback(
         (id: IdLike) => {
             const author = selectById(String(id));
-            if (!author) return;
-            setAuthorToEdit(author);
-            setAuthorId(String(id));
+            if (author) setAuthorToEdit(author);
         },
         [selectById]
     );
@@ -45,11 +44,14 @@ export default function AuthorManagerPage() {
         [removeById]
     );
 
-    const handleUpdate = useCallback(async () => {
+    const handleSaved = useCallback(async () => {
         await listAuthors();
-        setAuthorToEdit(null);
-        setAuthorId(null);
+        setAuthorToEdit(null); // pas d'authorId à nettoyer
     }, [listAuthors]);
+
+    const handleCancel = useCallback(() => {
+        setAuthorToEdit(null);
+    }, [setMode, setForm]);
 
     return (
         <RequireAdmin>
@@ -58,19 +60,21 @@ export default function AuthorManagerPage() {
                 <AuthorForm
                     ref={formRef}
                     authorFormManager={manager}
-                    onSaveSuccess={handleUpdate}
+                    authors={authors}
+                    editingId={authorId}
+                    onSaveSuccess={handleSaved}
                 />
+
                 <SectionHeader loading={loading}>Liste d&apos;auteurs</SectionHeader>
                 <AuthorList
                     authors={authors}
-                    authorId={authorId}
+                    authorId={authorId} // derive de l’objet courant
                     onEditById={handleEditById}
                     onUpdate={() => {
                         formRef.current?.requestSubmit();
                     }}
                     onCancel={() => {
                         setAuthorToEdit(null);
-                        setAuthorId(null);
                         setMode("create");
                         setForm(initialAuthorForm);
                     }}
