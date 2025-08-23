@@ -71,7 +71,7 @@ export default function UserProfileManager() {
         return number.replace(/(\d{2})(?=\d)/g, "$1 ").trim();
     }
 
-    const renderValue = (field: keyof UserProfileFormType, value: string) => {
+    const renderProfileField = (field: keyof UserProfileFormType, value: string) => {
         if (field === "phoneNumber") {
             return value ? (
                 <a href={`tel:${value}`} className="text-base text-gray-900 hover:underline">
@@ -94,9 +94,9 @@ export default function UserProfileManager() {
             <EntityEditor<UserProfileFormType>
                 title="Mon profil"
                 requiredFields={["firstName", "familyName"]}
-                renderIcon={getIcon}
-                renderValue={renderValue}
-                deleteLabel="Supprimer le profil"
+                labelIcon={getIcon}
+                renderValue={renderProfileField}
+                deleteButtonLabel="Supprimer le profil"
                 onClearField={(field, clear) => {
                     if (confirm(`Supprimer le contenu du champ "${fieldLabel(field)}" ?`)) {
                         void clear(field);
@@ -105,8 +105,8 @@ export default function UserProfileManager() {
                 form={form}
                 mode={manager.mode}
                 dirty={manager.dirty}
-                handleChange={
-                    manager.handleChange as (
+                setFieldValue={
+                    manager.setFieldValue as (
                         field: keyof UserProfileFormType,
                         value: unknown
                     ) => void

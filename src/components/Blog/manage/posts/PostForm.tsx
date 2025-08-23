@@ -20,19 +20,19 @@ import { type PostType } from "@entities/models/post";
 
 interface Props {
     manager: ReturnType<typeof usePostForm>;
-    dispatchEvent: () => void;
+    onSaveSuccess: () => void;
     posts: PostType[];
     editingId: string | null;
 }
 
 const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
-    { manager, dispatchEvent, posts, editingId },
+    { manager, onSaveSuccess, posts, editingId },
     ref
 ) {
     const {
         form,
         extras: { authors, tags, sections },
-        handleChange,
+        setFieldValue,
         toggleTag,
         toggleSection,
     } = manager;
@@ -44,7 +44,7 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
                 source: form.title ?? "",
                 current: form.slug ?? "",
                 target: "slug",
-                setter: (v) => handleChange("slug", slugify(v ?? "")),
+                setter: (v) => setFieldValue("slug", slugify(v ?? "")),
                 transform: slugify,
             },
             {
@@ -52,14 +52,14 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
                 source: form.title ?? "",
                 current: form.seo.title ?? "",
                 target: "seo.title",
-                setter: (v) => handleChange("seo", { ...form.seo, title: v ?? "" }),
+                setter: (v) => setFieldValue("seo", { ...form.seo, title: v ?? "" }),
             },
             {
                 editingKey: "excerpt",
                 source: form.excerpt ?? "",
                 current: form.seo.description ?? "",
                 target: "seo.description",
-                setter: (v) => handleChange("seo", { ...form.seo, description: v ?? "" }),
+                setter: (v) => setFieldValue("seo", { ...form.seo, description: v ?? "" }),
             },
         ],
     });
@@ -71,13 +71,13 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
         if (name === "title" || name === "excerpt") handleSourceFocus(name);
         if (name.startsWith("seo.")) {
             const key = name.split(".")[1] as keyof SeoFormType;
-            handleChange("seo", { ...form.seo, [key]: value });
+            setFieldValue("seo", { ...form.seo, [key]: value });
             handleManualEdit(`seo.${key}`);
         } else if (name === "slug") {
-            handleChange("slug", slugify(value));
+            setFieldValue("slug", slugify(value));
             handleManualEdit("slug");
         } else {
-            handleChange(name as keyof PostFormType, value as never);
+            setFieldValue(name as keyof PostFormType, value as never);
         }
     };
 
@@ -86,7 +86,7 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
             ref={ref}
             manager={manager}
             initialForm={initialPostForm}
-            dispatchEvent={dispatchEvent}
+            onSaveSuccess={onSaveSuccess}
             submitLabel={{ create: "Créer l'article", edit: "Mettre à jour" }}
         >
             <EditableField
@@ -160,7 +160,7 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
                 items={posts}
                 editingId={editingId}
                 value={form.order ?? 1}
-                onReorder={(_, newOrder) => handleChange("order", newOrder)}
+                onReorder={(_, newOrder) => setFieldValue("order", newOrder)}
             />
             <fieldset className="border p-2 space-y-2">
                 <legend className="font-semibold">Tags</legend>

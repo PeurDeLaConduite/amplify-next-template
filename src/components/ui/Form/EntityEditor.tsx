@@ -12,13 +12,13 @@ type EntityEditorProps<T extends Record<string, unknown>> = {
     /** Champs requis pour le formulaire */
     requiredFields?: FieldKey<T>[];
     /** Rendu personnalisé des icônes */
-    renderIcon?: (field: FieldKey<T>) => React.ReactNode;
+    labelIcon?: (field: FieldKey<T>) => React.ReactNode;
     /** Rendu personnalisé des valeurs */
     renderValue?: (field: FieldKey<T>, value: string) => React.ReactNode;
     /** Boutons supplémentaires pour chaque champ */
     extraButtons?: (field: FieldKey<T>, value: string) => React.ReactNode;
     /** Libellé du bouton de suppression de l'entité */
-    deleteLabel?: string;
+    deleteButtonLabel?: string;
     /** Classe optionnelle pour la section */
     className?: string;
     /** Personnalisation de l'effacement d'un champ */
@@ -30,7 +30,7 @@ type EntityEditorProps<T extends Record<string, unknown>> = {
     /** Indicateur de modification */
     dirty: boolean;
     /** Gestion des changements */
-    handleChange: (field: FieldKey<T>, value: unknown) => void;
+    setFieldValue: (field: FieldKey<T>, value: unknown) => void;
     /** Soumission du formulaire */
     submit: () => Promise<boolean>;
     /** Réinitialisation du formulaire */
@@ -55,15 +55,15 @@ export default function EntityEditor<T extends Record<string, unknown>>(
     const {
         title,
         requiredFields = [],
-        renderIcon,
+        labelIcon,
         renderValue,
         extraButtons,
-        deleteLabel,
+        deleteButtonLabel,
         className,
         onClearField,
         form,
         mode,
-        handleChange,
+        setFieldValue,
         submit,
         reset,
         fields,
@@ -105,7 +105,7 @@ export default function EntityEditor<T extends Record<string, unknown>>(
                     fields={fields}
                     data={form}
                     labels={labels}
-                    renderIcon={renderIcon}
+                    labelIcon={labelIcon}
                     renderValue={renderValue}
                     extraButtons={extraButtons}
                     onEditField={setEditModeField}
@@ -117,7 +117,7 @@ export default function EntityEditor<T extends Record<string, unknown>>(
                 <EditField<T>
                     editModeField={editModeField}
                     setEditModeField={setEditModeField}
-                    saveSingleField={() =>
+                    saveField={() =>
                         updateField
                             ? updateField(editModeField.field, editModeField.value).then(() =>
                                   setEditModeField(null)
@@ -133,7 +133,7 @@ export default function EntityEditor<T extends Record<string, unknown>>(
                     formData={form}
                     fields={fields}
                     labels={labels}
-                    handleChange={handleChange}
+                    setFieldValue={setFieldValue}
                     handleSubmit={() => submit().then(() => void 0)}
                     isEdit={false}
                     onCancel={handleCancel}
@@ -141,14 +141,15 @@ export default function EntityEditor<T extends Record<string, unknown>>(
                 />
             )}
 
-            {mode === "edit" && !editModeField && deleteLabel && (
+            {mode === "edit" && !editModeField && deleteButtonLabel && (
                 <div className="flex items-center justify-center mt-8">
                     <DeleteButton
                         onDelete={() => {
                             void deleteEntity?.();
                         }}
-                        label={deleteLabel}
-                        size="medium"
+                        label={deleteButtonLabel}
+                        className="!p-2 !h-8"
+                        // size="medium"
                     />
                 </div>
             )}

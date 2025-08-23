@@ -7,18 +7,18 @@ import { type AuthorFormType, initialAuthorForm, useAuthorForm } from "@entities
 
 interface Props {
     manager: ReturnType<typeof useAuthorForm>;
-    dispatchEvent: () => void;
+    onSaveSuccess: () => void;
 }
 
 const AuthorForm = forwardRef<HTMLFormElement, Props>(function AuthorForm(
-    { manager, dispatchEvent },
+    { manager, onSaveSuccess },
     ref
 ) {
-    const { form, handleChange } = manager;
+    const { form, setFieldValue } = manager;
 
     const onChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        handleChange(name as keyof AuthorFormType, value as never);
+        setFieldValue(name as keyof AuthorFormType, value as never);
     };
 
     return (
@@ -26,7 +26,7 @@ const AuthorForm = forwardRef<HTMLFormElement, Props>(function AuthorForm(
             ref={ref}
             manager={manager}
             initialForm={initialAuthorForm}
-            dispatchEvent={dispatchEvent}
+            onSaveSuccess={onSaveSuccess}
             submitLabel={{ create: "Ajouter un auteur", edit: "Mettre à jour" }}
         >
             <EditableField

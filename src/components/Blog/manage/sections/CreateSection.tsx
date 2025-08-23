@@ -66,7 +66,7 @@ export default function SectionManagerPage() {
                     ref={formRef}
                     manager={manager}
                     editingId={editingId}
-                    dispatchEvent={handleUpdate}
+                    onSaveSuccess={handleUpdate}
                 />
                 <SectionHeader>Liste des sections</SectionHeader>
                 <SectionList

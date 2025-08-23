@@ -265,7 +265,7 @@ export function CancelButton(props: CancelButtonProps) {
 export type AddButtonProps = ButtonWrapperProps & { onAdd: () => void; editColor?: string };
 
 export function AddButton(props: AddButtonProps) {
-    const { onAdd, label = "Ajouter", editColor = "#9e9e9e", ...rest } = props;
+    const { onAdd, label = "Ajouter", ...rest } = props;
     return renderByMode({
         ...rest,
         variantType: rest.variantType ?? "button",
@@ -273,7 +273,7 @@ export function AddButton(props: AddButtonProps) {
         icon: <AddIcon />,
         intent: "success",
         onClick: onAdd,
-        editColor,
+        // editColor,
     });
 }
 
@@ -289,7 +289,7 @@ export function SubmitButton(props: SubmitButtonProps) {
         icon: <SaveIcon />,
         intent: "primary",
         onClick: onSubmit,
-        editColor,
+        // editColor,
     });
 }
 

@@ -16,7 +16,7 @@ type ReadOnlyViewProps<T extends Record<string, unknown>> = {
     /** Titre de la section */
     title?: string;
     /** Permet d'injecter des icônes spécifiques */
-    renderIcon?: (field: FieldKey<T>) => React.ReactNode;
+    labelIcon?: (field: FieldKey<T>) => React.ReactNode;
     /** Permet d'injecter des boutons supplémentaires */
     extraButtons?: (field: FieldKey<T>, value: string) => React.ReactNode;
     /** Rendu personnalisé de la valeur */
@@ -30,7 +30,7 @@ export default function ReadOnlyView<T extends Record<string, unknown>>({
     onEditField,
     onClearField,
     title = "Gestion",
-    renderIcon,
+    labelIcon,
     extraButtons,
     renderValue,
 }: ReadOnlyViewProps<T>) {
@@ -48,7 +48,7 @@ export default function ReadOnlyView<T extends Record<string, unknown>>({
                         >
                             <div className="flex items-center justify-between mb-2">
                                 <label className="text-gray-800 font-semibold flex items-center gap-2 select-none">
-                                    {renderIcon?.(field)} <span>{labels(field)}</span>
+                                    {labelIcon?.(field)} <span>{labels(field)}</span>
                                 </label>
                                 <div className="flex gap-2">
                                     {extraButtons?.(field, value)}

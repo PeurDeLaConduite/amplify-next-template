@@ -55,8 +55,8 @@ export default function UserNameManager() {
         <EntityEditor<UserNameFormType>
             title="Mon pseudo public"
             requiredFields={["userName"]}
-            deleteLabel="Supprimer le pseudo"
-            renderIcon={() => <PersonIcon fontSize="small" className="text-gray-800" />}
+            deleteButtonLabel="Supprimer le pseudo"
+            labelIcon={() => <PersonIcon fontSize="small" className="text-gray-800" />}
             onClearField={(field, clear) => {
                 if (confirm(`Supprimer le contenu du champ "Pseudo public" ?`)) {
                     void clear(field);
@@ -65,8 +65,8 @@ export default function UserNameManager() {
             form={manager.form}
             mode={manager.mode}
             dirty={manager.dirty}
-            handleChange={
-                manager.handleChange as (field: keyof UserNameFormType, value: unknown) => void
+            setFieldValue={
+                manager.setFieldValue as (field: keyof UserNameFormType, value: unknown) => void
             }
             submit={manager.submit} // ⬅️ plus d’event ici
             reset={manager.reset}

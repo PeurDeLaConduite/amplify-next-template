@@ -10,11 +10,11 @@ type UseTagFormReturn = ReturnType<typeof useTagForm>;
 
 interface Props {
     manager: UseTagFormReturn;
-    dispatchEvent: () => void;
+    onSaveSuccess: () => void;
 }
 
 const TagForm = forwardRef<HTMLFormElement, Props>(function TagForm(
-    { manager, dispatchEvent },
+    { manager, onSaveSuccess },
     ref
 ) {
     const { form, setForm } = manager;
@@ -25,7 +25,7 @@ const TagForm = forwardRef<HTMLFormElement, Props>(function TagForm(
             ref={ref}
             manager={normalizedManager}
             initialForm={initialTagForm}
-            dispatchEvent={dispatchEvent}
+            onSaveSuccess={onSaveSuccess}
             submitLabel={{ create: "Ajouter", edit: "Mettre à jour" }}
             className="!grid-cols-[1fr_auto]"
         >

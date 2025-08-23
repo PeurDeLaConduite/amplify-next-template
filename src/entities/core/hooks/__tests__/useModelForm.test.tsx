@@ -19,7 +19,7 @@ describe("useModelForm", () => {
         );
 
         act(() => {
-            result.current.handleChange("title", "hello");
+            result.current.setFieldValue("title", "hello");
         });
         expect(result.current.dirty).toBe(true);
 
@@ -51,7 +51,7 @@ describe("useModelForm", () => {
             expect(result.current.form.title).toBe("loaded");
         });
 
-        act(() => result.current.handleChange("title", "modifié"));
+        act(() => result.current.setFieldValue("title", "modifié"));
         expect(result.current.dirty).toBe(true);
 
         await act(async () => {
@@ -60,7 +60,7 @@ describe("useModelForm", () => {
         expect(update).toHaveBeenCalledWith({ title: "modifié", tags: [] });
         expect(result.current.dirty).toBe(false);
 
-        act(() => result.current.handleChange("title", "again"));
+        act(() => result.current.setFieldValue("title", "again"));
         act(() => result.current.reset());
         expect(result.current.form.title).toBe("modifié");
         expect(result.current.dirty).toBe(false);

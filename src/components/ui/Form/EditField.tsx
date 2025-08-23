@@ -7,14 +7,14 @@ type EditFieldProps<T extends Record<string, unknown>> = {
     setEditModeField: React.Dispatch<
         React.SetStateAction<{ field: FieldKey<T>; value: string } | null>
     >;
-    saveSingleField: () => void;
+    saveField: () => void;
     labels: (field: FieldKey<T>) => string;
 };
 
 export default function EditField<T extends Record<string, unknown>>({
     editModeField,
     setEditModeField,
-    saveSingleField,
+    saveField,
     labels,
 }: EditFieldProps<T>) {
     const { field, value } = editModeField;
@@ -41,7 +41,7 @@ export default function EditField<T extends Record<string, unknown>>({
 
             <div className="flex justify-between mt-5 gap-10">
                 <UpdateButton
-                    onUpdate={saveSingleField}
+                    onUpdate={saveField}
                     label="Sauvegarder"
                     className="flex-1 mr-2"
                     size="medium"

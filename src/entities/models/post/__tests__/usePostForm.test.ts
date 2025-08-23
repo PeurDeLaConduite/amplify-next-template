@@ -49,7 +49,7 @@ describe("usePostForm", () => {
         const { result } = renderHook(() => usePostForm(null));
 
         act(() => {
-            result.current.handleChange("title", "Titre");
+            result.current.setFieldValue("title", "Titre");
             result.current.syncM2MTag("tag1");
             result.current.toggleSection("section1");
         });
@@ -64,7 +64,7 @@ describe("usePostForm", () => {
         expect(result.current.mode).toBe("edit");
 
         act(() => {
-            result.current.handleChange("title", "Nouveau");
+            result.current.setFieldValue("title", "Nouveau");
             result.current.reset();
         });
         expect(result.current.form.title).toBe("Titre");

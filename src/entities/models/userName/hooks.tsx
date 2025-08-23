@@ -70,7 +70,8 @@ export function useUserNameForm(userName: UserNameType | null) {
         isEqual, // ✅ dirty stable
     });
 
-    const { setForm, setMode, setExtras, reset, patch, extras, refresh, adoptInitial } = modelForm;
+    const { setForm, setMode, setExtras, reset, patchLocalForm, extras, refresh, adoptInitial } =
+        modelForm;
 
     // Liste (cohérence avec author/tag/section)
     const fetchUserNames = useCallback(async () => {
@@ -136,11 +137,11 @@ export function useUserNameForm(userName: UserNameType | null) {
             const id = editingId ?? sub;
             if (!id) return;
             await userNameService.update({ id, [field]: value } as any);
-            patch({ [field]: value } as Partial<UserNameFormType>); // optimiste
+            patchLocalForm({ [field]: value } as Partial<UserNameFormType>); // optimiste
             await refresh(); // vérité serveur
             emitUserNameUpdated();
         },
-        [editingId, sub, patch, refresh]
+        [editingId, sub, patchLocalForm, refresh]
     );
 
     const clearField = useCallback(

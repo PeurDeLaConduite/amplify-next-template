@@ -8,7 +8,7 @@ type Props<T extends Record<string, unknown>> = {
     formData: Partial<T>;
     fields: FieldKey<T>[];
     labels: (field: FieldKey<T>) => string;
-    handleChange: (field: FieldKey<T>, value: unknown) => void;
+    setFieldValue: (field: FieldKey<T>, value: unknown) => void;
     handleSubmit: () => void;
     isEdit: boolean;
     onCancel: () => void;
@@ -19,7 +19,7 @@ export default function EntityForm<T extends Record<string, unknown>>({
     formData,
     fields,
     labels,
-    handleChange,
+    setFieldValue,
     handleSubmit,
     isEdit,
     onCancel,
@@ -43,7 +43,7 @@ export default function EntityForm<T extends Record<string, unknown>>({
                         name={String(field)}
                         placeholder={labels(field)}
                         value={String(formData[field] ?? "")}
-                        onChange={(e) => handleChange(field, e.target.value)}
+                        onChange={(e) => setFieldValue(field, e.target.value)}
                         className="w-full p-2 border rounded"
                         required={requiredFields.includes(field)}
                     />

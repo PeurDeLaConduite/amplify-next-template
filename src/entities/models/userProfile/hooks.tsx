@@ -38,7 +38,7 @@ export function useUserProfileForm(profile: UserProfileType | null) {
         autoLoadExtras: false,
     });
 
-    const { setForm, setMode, patch, reset } = modelForm;
+    const { setForm, setMode, patchLocalForm, reset } = modelForm;
 
     // Hydrate depuis la prop ou l’utilisateur courant (sub)
     useEffect(() => {
@@ -101,9 +101,9 @@ export function useUserProfileForm(profile: UserProfileType | null) {
             const id = editingId ?? sub;
             if (!id) return;
             await userProfileService.update({ id, [field]: value } as any);
-            patch({ [field]: value } as Partial<UserProfileFormType>);
+            patchLocalForm({ [field]: value } as Partial<UserProfileFormType>);
         },
-        [editingId, sub, patch]
+        [editingId, sub, patchLocalForm]
     );
 
     const clearField = useCallback(

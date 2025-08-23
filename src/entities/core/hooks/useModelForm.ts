@@ -44,8 +44,8 @@ export interface UseModelFormResult<F, E> {
     setError: React.Dispatch<React.SetStateAction<unknown>>;
     message: string | null;
 
-    handleChange: <K extends keyof F>(field: K, value: F[K]) => void;
-    patch: (partial: Partial<F>) => void;
+    setFieldValue: <K extends keyof F>(field: K, value: F[K]) => void;
+    patchLocalForm: (partial: Partial<F>) => void;
 
     /** Helpers de mode */
     setCreate: (next?: F) => void;
@@ -112,7 +112,6 @@ export default function useModelForm<
     const [loadingExtras, setLoadingExtras] = useState(false);
     const [error, setError] = useState<unknown>(null);
     const [message, setMessage] = useState<string | null>(null);
-    
 
     /*//*  🔎 1. C’est quoi dirty ?
 
@@ -140,11 +139,12 @@ export default function useModelForm<
         return !equals(form, initialRef.current);
     }, [form, isEqual]);
 
-    const handleChange = useCallback(<K extends keyof F>(field: K, value: F[K]) => {
+    const setFieldValue = useCallback(<K extends keyof F>(field: K, value: F[K]) => {
         setForm((f) => ({ ...f, [field]: value }));
+        setMessage("Le champ a été mis à jour.");
     }, []);
 
-    const patch = useCallback((partial: Partial<F>) => {
+    const patchLocalForm = useCallback((partial: Partial<F>) => {
         setForm((prev) => ({ ...prev, ...partial }));
         setMessage("Les données ont été mises à jour.");
     }, []);
@@ -251,9 +251,9 @@ export default function useModelForm<
         <K extends keyof F>(field: K) => ({
             value: String(form[field] ?? ""),
             onChange: (e: { target: { value: string } }) =>
-                handleChange(field, e.target.value as F[K]),
+                setFieldValue(field, e.target.value as F[K]),
         }),
-        [form, handleChange]
+        [form, setFieldValue]
     );
 
     return {
@@ -267,8 +267,8 @@ export default function useModelForm<
         error,
         setError,
         message,
-        handleChange,
-        patch,
+        setFieldValue,
+        patchLocalForm,
         setCreate,
         setEdit,
         submit,

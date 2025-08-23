@@ -18,18 +18,18 @@ import {
 
 interface Props {
     manager: ReturnType<typeof useSectionForm>;
-    dispatchEvent: () => void;
+    onSaveSuccess: () => void;
     editingId: string | null;
 }
 
 const SectionForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
-    { manager, dispatchEvent, editingId },
+    { manager, onSaveSuccess, editingId },
     ref
 ) {
     const {
         form,
         extras: { posts, sections },
-        handleChange,
+        setFieldValue,
         setForm,
     } = manager;
 
@@ -40,7 +40,7 @@ const SectionForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
                 source: form.title ?? "",
                 current: form.slug ?? "",
                 target: "slug",
-                setter: (v) => handleChange("slug", slugify(v ?? "")),
+                setter: (v) => setFieldValue("slug", slugify(v ?? "")),
                 transform: slugify,
             },
             {
@@ -48,14 +48,14 @@ const SectionForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
                 source: form.title ?? "",
                 current: form.seo.title ?? "",
                 target: "seo.title",
-                setter: (v) => handleChange("seo", { ...form.seo, title: v ?? "" }),
+                setter: (v) => setFieldValue("seo", { ...form.seo, title: v ?? "" }),
             },
             {
                 editingKey: "description",
                 source: form.description ?? "",
                 current: form.seo.description ?? "",
                 target: "seo.description",
-                setter: (v) => handleChange("seo", { ...form.seo, description: v ?? "" }),
+                setter: (v) => setFieldValue("seo", { ...form.seo, description: v ?? "" }),
             },
         ],
     });
@@ -65,13 +65,13 @@ const SectionForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
         if (name === "title" || name === "description") handleSourceFocus(name);
         if (name.startsWith("seo.")) {
             const key = name.split(".")[1] as keyof SectionFormTypes["seo"];
-            handleChange("seo", { ...form.seo, [key]: value });
+            setFieldValue("seo", { ...form.seo, [key]: value });
             handleManualEdit(`seo.${key}`);
         } else if (name === "slug") {
-            handleChange("slug", slugify(value));
+            setFieldValue("slug", slugify(value));
             handleManualEdit("slug");
         } else {
-            handleChange(name as keyof SectionFormTypes, value as never);
+            setFieldValue(name as keyof SectionFormTypes, value as never);
         }
     };
 
@@ -80,7 +80,7 @@ const SectionForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
             ref={ref}
             manager={manager}
             initialForm={initialSectionForm}
-            dispatchEvent={dispatchEvent}
+            onSaveSuccess={onSaveSuccess}
         >
             <EditableField
                 name="title"
@@ -107,7 +107,7 @@ const SectionForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
                 items={sections}
                 editingId={editingId}
                 value={form.order ?? 1}
-                onReorder={(_, newOrder) => handleChange("order", newOrder)}
+                onReorder={(_, newOrder) => setFieldValue("order", newOrder)}
             />
             <SeoFields
                 seo={{

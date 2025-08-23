@@ -21,7 +21,7 @@ export default function OrderSelector({ items, editingId, value, onReorder }: Pr
     // Sécurise la valeur affichée dans la fourchette [1, max]
     const safeValue = Math.min(Math.max(value ?? 1, 1), max);
 
-    const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const setFieldValue = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const newPosition = parseInt(e.target.value, 10); // base 1
         onReorder(editingId, newPosition);
     };
@@ -31,7 +31,7 @@ export default function OrderSelector({ items, editingId, value, onReorder }: Pr
             label="Ordre"
             name="order"
             value={String(safeValue)}
-            onChange={handleChange}
+            onChange={setFieldValue}
             options={options}
         />
     );

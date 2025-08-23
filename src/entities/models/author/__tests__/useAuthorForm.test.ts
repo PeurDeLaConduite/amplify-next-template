@@ -17,7 +17,7 @@ describe("useAuthorForm", () => {
         const { result } = renderHook(() => useAuthorForm(null));
 
         act(() => {
-            result.current.handleChange("authorName", "John");
+            result.current.setFieldValue("authorName", "John");
         });
 
         await act(async () => {
@@ -27,7 +27,7 @@ describe("useAuthorForm", () => {
         expect(authorService.create).toHaveBeenCalled();
         expect(result.current.mode).toBe("edit");
 
-        act(() => result.current.handleChange("authorName", "Jane"));
+        act(() => result.current.setFieldValue("authorName", "Jane"));
         act(() => result.current.reset());
         expect(result.current.form.authorName).toBe("John");
     });
@@ -48,7 +48,7 @@ describe("useAuthorForm", () => {
             expect(result.current.form.authorName).toBe("John");
         });
 
-        act(() => result.current.handleChange("authorName", "Jane"));
+        act(() => result.current.setFieldValue("authorName", "Jane"));
         await act(async () => {
             await result.current.submit();
         });
