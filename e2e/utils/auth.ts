@@ -12,9 +12,16 @@ export const requireCredentials = () => {
 
 export const signInUser = async () => {
     requireCredentials();
-    await signIn({ username: email!, password: password! });
+    const { isSignedIn, nextStep } = await signIn({
+        username: email!,
+        password: password!,
+    });
+
+    if (!isSignedIn) {
+        throw new Error(`Échec de la connexion : ${nextStep.signInStep}`);
+    }
 };
 
 export const signOutUser = async () => {
-    await signOut();
+    await signOut({ global: true });
 };
