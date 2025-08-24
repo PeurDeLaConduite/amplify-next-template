@@ -1,11 +1,11 @@
-// src/components/Blog/manage/tags/TagForm.tsx
+// Blog / manage / tags / TagForm.tsx;
 "use client";
 
 import React, { forwardRef, type ChangeEvent } from "react";
 import BlogFormShell from "@components/Blog/manage/BlogFormShell";
 import { useTagForm } from "@entities/models/tag/hooks";
 import { initialTagForm } from "@entities/models/tag/form";
-import type { TagFormType } from "@entities/models/tag/types";
+import type { TagFormType, TagType } from "@entities/models/tag/types";
 import { EditableField } from "@components/ui/Form";
 
 type UseTagFormReturn = ReturnType<typeof useTagForm>;
@@ -14,10 +14,12 @@ interface Props {
     tagFormManager: UseTagFormReturn;
     onSaveSuccess: () => void;
     onCancel: () => void;
+    tags: TagType[];
+    editingId: string | null;
 }
 
 const TagForm = forwardRef<HTMLFormElement, Props>(function TagForm(
-    { tagFormManager, onSaveSuccess, onCancel },
+    { tagFormManager, onSaveSuccess, onCancel, tags, editingId },
     ref
 ) {
     const { form, setFieldValue } = tagFormManager;
