@@ -13945,8 +13945,8 @@ __metadata:
 
 "eslint-plugin-internal@file:eslint-plugin-internal::locator=aws-amplify-gen2%40workspace%3A.":
   version: 0.0.0
-  resolution: "eslint-plugin-internal@file:eslint-plugin-internal#eslint-plugin-internal::hash=c30ba4&locator=aws-amplify-gen2%40workspace%3A."
-  checksum: 10c0/a3cd90335e6714476641e5cc2ac3dd46bb697883d29dc584d2444e0f8007ac899e4a55c5c57a8b9ef6a55f8bb61a0a5a4a7759435b1c1e2b2438d408b438f1e4
+  resolution: "eslint-plugin-internal@file:eslint-plugin-internal#eslint-plugin-internal::hash=023dbf&locator=aws-amplify-gen2%40workspace%3A."
+  checksum: 10c0/b6a550ab20ae8c30ad2b71433e1a9bbfbbd0173f89d294ba5b68fd1c26e1a24c7b15eb0b7f850aa1da5446258e7a343c608acf5b0a161ce38ea135914397cefd
   languageName: node
   linkType: hard
 
