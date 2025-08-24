@@ -1,0 +1,10 @@
+type Article @model @auth(rules: [{ allow: owner }, { allow: groups, groups: ["admin"] }]) {
+    id: ID!
+    title: String!
+    summary: String
+    content: AWSJSON!
+    status: String!
+    owner: String
+    createdAt: AWSDateTime
+    updatedAt: AWSDateTime
+}
