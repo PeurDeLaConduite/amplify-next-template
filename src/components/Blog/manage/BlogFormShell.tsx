@@ -2,6 +2,7 @@
 "use client";
 
 import React, { forwardRef, type FormEvent, type Ref } from "react";
+import { EditButton, UpdateButton, CancelButton } from "@components/ui/Button";
 import type { JSX } from "react";
 
 export interface BlogFormManager<F> {
@@ -21,12 +22,14 @@ interface Props<F> {
     children: React.ReactNode; // <- tes champs contrôlés
     submitLabel?: { create: string; edit: string };
     className?: string;
+    onCancel: () => void;
 }
 
 const BlogFormShellInner = <F,>(
     {
         blogFormManager,
         initialForm,
+        onCancel,
         onSaveSuccess,
         children,
         className,
@@ -61,6 +64,8 @@ const BlogFormShellInner = <F,>(
                     >
                         {mode === "edit" ? submitLabel.edit : submitLabel.create}
                     </button>
+
+                    <CancelButton onCancel={onCancel} label="Annuler" size="small" />
                 </div>
             </form>
             {message && (

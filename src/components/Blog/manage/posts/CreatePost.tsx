@@ -62,6 +62,7 @@ export default function PostManagerPage() {
                     posts={posts}
                     editingId={postId}
                     onSaveSuccess={handleSaved}
+                    onCancel={handleCancel}
                 />
 
                 <SectionHeader>Liste des articles</SectionHeader>

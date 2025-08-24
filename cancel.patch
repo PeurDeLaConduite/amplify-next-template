@@ -1,0 +1,239 @@
+diff --git a/src/entities/core/hooks.ts b/src/entities/core/hooks.ts
+--- a/src/entities/core/hooks.ts
++++ b/src/entities/core/hooks.ts
+@@
+ export interface UseModelFormResult<F, E> {
+     form: F;
+     extras: E;
+     mode: FormMode;
+ 
+     dirty: boolean;
+     saving: boolean;
+     loading: boolean; // ← global (load + loadExtras)
+     loadingExtras: boolean; // ← pour différencier si besoin
+ 
+     error: unknown;
+     setError: React.Dispatch<React.SetStateAction<unknown>>;
+     message: string | null;
+ 
+     setFieldValue: <K extends keyof F>(field: K, value: F[K]) => void;
+     patchForm: (partial: Partial<F>) => void;
+ 
+     /** Helpers de mode */
+     setCreate: (next?: F) => void;
+     setEdit: (next?: F) => void;
+ 
+     /** Enchaîne create/update (+ syncRelations) puis refresh/load */
+     submit: () => Promise<boolean>;
+     reset: () => void;
++    /** Annule les changements et reste dans le mode courant */
++    cancelChanges: () => void;
++    /** Quitte l’édition et repasse en create avec un form neuf (ou fourni) */
++    exitEditMode: (next?: F) => void;
+ 
+     setForm: React.Dispatch<React.SetStateAction<F>>;
+     setExtras: React.Dispatch<React.SetStateAction<E>>;
+     setMode: React.Dispatch<React.SetStateAction<FormMode>>;
+     setMessage: React.Dispatch<React.SetStateAction<string | null>>;
+     adoptInitial: (next: F, mode?: FormMode) => void;
+@@
+     const reset = useCallback(() => {
+         setForm(initialRef.current);
+         setMessage("Les données ont été réinitialisées.");
+         setMode(initialMode);
+         setError(null);
+     }, [initialMode]);
+ 
++    /** Annule les changements et reste dans le mode courant */
++    const cancelChanges = useCallback(() => {
++        setForm(initialRef.current);
++        setMessage("Modifications annulées.");
++        setError(null);
++    }, []);
++
++    /** Quitte le mode édition → repasse en create avec un form neuf (ou fourni) */
++    const exitEditMode = useCallback((next?: F) => {
++        adoptInitial(next ?? initialForm, "create");
++        setMessage("Retour au mode création.");
++    }, [adoptInitial, initialForm]);
++
+@@
+     return {
+         form,
+         extras,
+         mode,
+         dirty,
+         saving,
+         loading,
+         loadingExtras,
+         error,
+         setError,
+         message,
+         setFieldValue,
+         patchForm,
+         setCreate,
+         setEdit,
+         submit,
+         reset,
++        cancelChanges,
++        exitEditMode,
+         setForm,
+         setExtras,
+         setMode,
+         setMessage,
+         adoptInitial,
+         refresh,
+         refreshExtras,
+         bindText,
+     };
+ }
+diff --git a/src/entities/models/post/hooks.tsx b/src/entities/models/post/hooks.tsx
+--- a/src/entities/models/post/hooks.tsx
++++ b/src/entities/models/post/hooks.tsx
+@@
+ export function usePostForm(post: PostType | null) {
+     const [postId, setPostId] = useState<string | null>(post?.id ?? null);
+ 
+     const modelForm = useModelForm<PostFormType, Extras>({
+         initialForm: initialPostForm,
+         initialExtras: { authors: [], tags: [], sections: [], posts: [] },
+@@
+     });
+ 
+-    const { setForm, setExtras, setMode, extras, refresh, setMessage, setError } = modelForm;
++    const { setForm, setExtras, setMode, extras, refresh, setMessage, setError, exitEditMode: baseExitEditMode } = modelForm;
+@@
+     }, [post, setForm, setMode]);
+@@
+     const deleteEntity = useCallback(
+         async (id: string) => {
+             if (!window.confirm("Supprimer cet article ?")) return;
+ 
+             try {
+                 setMessage("Suppression des données relationnelles...");
+                 await postService.deleteCascade({ id });
+                 await listPosts();
+ 
+                 if (postId === id) {
+                     setPostId(null);
+                 }
+ 
+                 setMessage("Article supprimé avec succès.");
+                 refresh();
+             } catch (e: unknown) {
+                 setError(e); // si setError est dispo dans ton hook
+                 setMessage("Erreur lors de la suppression de l’article.");
+                 // pas de throw: l’UI affiche le message d’erreur
+             }
+         },
+         [listPosts, postId, refresh]
+     );
+ 
++    /** Sortie d’édition spécifique au Post : nettoie postId et repasse en create */
++    const exitEditMode = useCallback(() => {
++        setPostId(null);
++        baseExitEditMode(initialPostForm);
++    }, [baseExitEditMode]);
++
+     return {
+         ...modelForm,
+         postId,
+         listPosts,
+         selectById,
+         deleteEntity,
+         toggleTag,
+         toggleSection,
++        exitEditMode,
+     };
+ }
+diff --git a/src/components/Blog/manage/posts/CreatePost.tsx b/src/components/Blog/manage/posts/CreatePost.tsx
+--- a/src/components/Blog/manage/posts/CreatePost.tsx
++++ b/src/components/Blog/manage/posts/CreatePost.tsx
+@@
+-import { type PostType, usePostForm } from "@entities/models/post/";
++import { type PostType, usePostForm } from "@entities/models/post";
+@@
+-    const {
+-        extras: { posts },
+-        listPosts,
+-        selectById,
+-        deleteEntity,
+-    } = manager;
++    const {
++        extras: { posts },
++        listPosts,
++        selectById,
++        deleteEntity,
++        exitEditMode,
++    } = manager;
+@@
+-    const handleCancel = useCallback(() => {
+-        setPostToEdit(null);
+-    }, []);
++    const handleCancel = useCallback(() => {
++        exitEditMode();      // repasse en create + reset form via useModelForm
++        setPostToEdit(null); // vide la sélection côté page
++    }, [exitEditMode]);
+@@
+                 <PostForm
+                     ref={formRef}
+                     postFormManager={manager}
+                     posts={posts}
+                     editingId={postId}
+                     onSaveSuccess={handleSaved}
+                     onCancel={handleCancel}
+                 />
+diff --git a/src/components/Blog/manage/posts/PostForm.tsx b/src/components/Blog/manage/posts/PostForm.tsx
+--- a/src/components/Blog/manage/posts/PostForm.tsx
++++ b/src/components/Blog/manage/posts/PostForm.tsx
+@@
+ interface Props {
+     postFormManager: ReturnType<typeof usePostForm>;
+     onSaveSuccess: () => void;
+     posts: PostType[];
+     editingId: string | null;
++    onCancel: () => void;
+ }
+ 
+ const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
+     { postFormManager, onSaveSuccess, posts, editingId, onCancel },
+     ref
+ ) {
+@@
+         <BlogFormShell
+             ref={ref}
+             blogFormManager={postFormManager}
+             initialForm={initialPostForm}
++            onCancel={onCancel}
+             onSaveSuccess={onSaveSuccess}
+             submitLabel={{ create: "Créer l'article", edit: "Mettre à jour" }}
+         >
+diff --git a/src/components/Blog/manage/BlogFormShell.tsx b/src/components/Blog/manage/BlogFormShell.tsx
+--- a/src/components/Blog/manage/BlogFormShell.tsx
++++ b/src/components/Blog/manage/BlogFormShell.tsx
+@@
+-import { EditButton, UpdateButton, CancelButton } from "@components/ui/Button";
++import { CancelButton } from "@components/ui/Button";
+@@
+ interface Props<F> {
+     blogFormManager: BlogFormManager<F>;
+     initialForm: F;
+     onSaveSuccess: () => void;
++    onCancel: () => void;
+     children: React.ReactNode; // <- tes champs contrôlés
+     submitLabel?: { create: string; edit: string };
+     className?: string;
+ }
+@@
+-        blogFormManager,
+-        initialForm,
+-        onCancel,
+-        onSaveSuccess,
++        blogFormManager,
++        initialForm,
++        onCancel,
++        onSaveSuccess,
+         children,
+         className,
+         submitLabel = { create: "Créer", edit: "Mettre à jour" },
+     }: Props<F>,

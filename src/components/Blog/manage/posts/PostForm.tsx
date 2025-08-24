@@ -25,10 +25,11 @@ interface Props {
     onSaveSuccess: () => void;
     posts: PostType[];
     editingId: string | null;
+    onCancel: () => void;
 }
 
 const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
-    { postFormManager, onSaveSuccess, posts, editingId },
+    { postFormManager, onSaveSuccess, posts, editingId, onCancel },
     ref
 ) {
     const {
@@ -88,6 +89,7 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
             ref={ref}
             blogFormManager={postFormManager}
             initialForm={initialPostForm}
+            onCancel={onCancel}
             onSaveSuccess={onSaveSuccess}
             submitLabel={{ create: "Créer l'article", edit: "Mettre à jour" }}
         >

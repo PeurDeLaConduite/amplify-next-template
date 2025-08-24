@@ -40,8 +40,6 @@ export function usePostForm(post: PostType | null) {
 
         create: async (form) => {
             const { tagIds, sectionIds, ...postInput } = form;
-            void tagIds;
-            void sectionIds;
             const { data } = await postService.create({
                 ...postInput,
                 seo: form.seo,
@@ -56,8 +54,6 @@ export function usePostForm(post: PostType | null) {
                 throw new Error("ID du post manquant pour la mise à jour");
             }
             const { tagIds, sectionIds, ...postInput } = form;
-            void tagIds;
-            void sectionIds;
             const { data } = await postService.update({
                 id: postId,
                 ...postInput,
