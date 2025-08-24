@@ -27,9 +27,6 @@ export default function CreateTagPage() {
         listTags,
         selectById,
         deleteEntity,
-        tagsForPost,
-        isTagLinked,
-        toggle,
     } = manager;
 
     useEffect(() => {
@@ -86,16 +83,6 @@ export default function CreateTagPage() {
                     onDeleteById={handleDeleteById}
                     editButtonLabel=""
                     deleteButtonLabel=""
-                />
-
-                <SectionHeader loading={loading}>Associer les tags aux articles</SectionHeader>
-                <PostTagsRelationManager
-                    posts={posts}
-                    tags={tags}
-                    tagsForPost={tagsForPost}
-                    isTagLinked={isTagLinked}
-                    toggle={toggle}
-                    loading={!!loading}
                 />
             </BlogEditorLayout>
         </RequireAdmin>

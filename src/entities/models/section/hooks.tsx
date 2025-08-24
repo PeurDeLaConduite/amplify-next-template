@@ -77,12 +77,15 @@ export function useSectionForm(section: SectionType | null) {
         })();
     }, [section, setForm, setMode]);
 
-    function togglePost(postId: string) {
-        setForm((prev) => ({
-            ...prev,
-            postIds: toggleId(prev.postIds ?? [], postId),
-        }));
-    }
+    const togglePost = useCallback(
+        (postId: string) => {
+            setForm((prev) => ({
+                ...prev,
+                postIds: toggleId(prev.postIds ?? [], postId),
+            }));
+        },
+        [setForm]
+    );
 
     // Sélection par ID (aligne le comportement avec usePostForm)
     const selectById = useCallback(

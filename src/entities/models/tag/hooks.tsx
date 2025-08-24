@@ -201,53 +201,6 @@ export function useTagForm(tag: TagType | null) {
         [setForm]
     );
 
-    // ✅ toggle “global” pivot (utile pour une matrice Posts×Tags)
-    const toggle = useCallback(
-        async (postId: string, tId: string) => {
-            const exists = extras.postTags.some((pt) => pt.postId === postId && pt.tagId === tId);
-            try {
-                if (exists) {
-                    await postTagService.delete(postId, tId);
-                    setExtras((prev) => ({
-                        ...prev,
-                        postTags: prev.postTags.filter(
-                            (pt) => !(pt.postId === postId && pt.tagId === tId)
-                        ),
-                    }));
-                    setMessage("Tag retiré de l'article.");
-                } else {
-                    await postTagService.create(postId, tId);
-                    setExtras((prev) => ({
-                        ...prev,
-                        postTags: [...prev.postTags, { postId, tagId: tId }],
-                    }));
-                    setMessage("Tag associé à l'article.");
-                }
-            } catch (e) {
-                setError(e);
-                setMessage("Erreur lors de la mise à jour de l’association tag↔post.");
-            }
-        },
-        [extras.postTags, setExtras, setMessage, setError]
-    );
-
-    // Sélecteurs utilitaires
-    const tagsForPost = useCallback(
-        (postId: string) => {
-            const tagIds = extras.postTags
-                .filter((pt) => pt.postId === postId)
-                .map((pt) => pt.tagId);
-            return extras.tags.filter((t) => tagIds.includes(t.id));
-        },
-        [extras.postTags, extras.tags]
-    );
-
-    const isTagLinked = useCallback(
-        (postId: string, tId: string) =>
-            extras.postTags.some((pt) => pt.postId === postId && pt.tagId === tId),
-        [extras.postTags]
-    );
-
     return {
         ...modelForm,
         loading,
@@ -255,9 +208,6 @@ export function useTagForm(tag: TagType | null) {
         listTags,
         selectById,
         deleteEntity,
-        togglePost, // pour l'édition d'un tag (form.postIds)
-        toggle, // pour la matrice pivot globale
-        tagsForPost,
-        isTagLinked,
+        togglePost, 
     };
 }
