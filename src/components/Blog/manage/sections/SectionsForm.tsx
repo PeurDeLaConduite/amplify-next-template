@@ -82,7 +82,7 @@ const SectionForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
     };
 
     return (
-        <BlogFormShell
+        <BlogFormShell<SectionFormType>
             ref={ref}
             blogFormManager={sectionFormManager}
             initialForm={initialSectionForm}
