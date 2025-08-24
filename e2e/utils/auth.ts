@@ -34,5 +34,5 @@ export const signInUser = async () => {
 };
 
 export const signOutUser = async () => {
-    await signOut();
+    await signOut({ global: true });
 };
