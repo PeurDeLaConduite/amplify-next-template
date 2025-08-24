@@ -81,4 +81,18 @@ describe("useModelForm", () => {
         act(() => result.current.setCreate());
         expect(result.current.message).toBeNull();
     });
+
+    it("met à jour partiellement et annule les modifications", () => {
+        const create = vi.fn();
+        const update = vi.fn();
+        const { result } = renderHook(() => useModelForm<Form>({ initialForm, create, update }));
+
+        act(() => result.current.patchForm({ title: "nouveau titre", tags: ["x"] }));
+        expect(result.current.form).toEqual({ title: "nouveau titre", tags: ["x"] });
+        expect(result.current.dirty).toBe(true);
+
+        act(() => result.current.cancelChanges());
+        expect(result.current.form).toEqual(initialForm);
+        expect(result.current.dirty).toBe(false);
+    });
 });
