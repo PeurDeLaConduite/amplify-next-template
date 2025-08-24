@@ -1,4 +1,4 @@
-import { renderHook, act } from "@testing-library/react";
+import { renderHook, act, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { TagType } from "@entities/models/tag/types";
 import type { PostType } from "@entities/models/post/types";
@@ -21,7 +21,7 @@ vi.mock("@entities/models/post/service", () => ({
 vi.mock("@entities/relations/postTag/service", () => ({
     postTagService: {
         list: vi.fn(),
-        listByChild: vi.fn(),
+        listByParent: vi.fn(),
         create: vi.fn(),
         delete: vi.fn(),
     },
@@ -44,7 +44,7 @@ beforeEach(() => {
     (tagService.list as ReturnType<typeof vi.fn>).mockResolvedValue({ data: tags });
     (postService.list as ReturnType<typeof vi.fn>).mockResolvedValue({ data: posts });
     (postTagService.list as ReturnType<typeof vi.fn>).mockResolvedValue({ data: postTags });
-    (postTagService.listByChild as ReturnType<typeof vi.fn>).mockImplementation(
+    (postTagService.listByParent as ReturnType<typeof vi.fn>).mockImplementation(
         async (tagId: string) => (tagId === "t1" ? ["p1"] : [])
     );
 });
@@ -60,25 +60,19 @@ describe("useTagForm", () => {
         expect(result.current.extras.postTags).toEqual(postTags);
     });
 
-    it("toggle ajoute puis retire une liaison", async () => {
-        const createMock = postTagService.create as ReturnType<typeof vi.fn>;
-        const deleteMock = postTagService.delete as ReturnType<typeof vi.fn>;
-        createMock.mockResolvedValue({});
-        deleteMock.mockResolvedValue({});
+    it("togglePost ajoute puis retire un post", async () => {
         const { result } = renderHook(() => useTagForm());
         await act(async () => {
             await result.current.listTags();
         });
-        await act(async () => {
-            await result.current.toggle("p1", "t2");
+        act(() => {
+            result.current.togglePost("p1");
         });
-        expect(createMock).toHaveBeenCalledWith("p1", "t2");
-        expect(result.current.extras.postTags).toContainEqual({ postId: "p1", tagId: "t2" });
-        await act(async () => {
-            await result.current.toggle("p1", "t2");
+        expect(result.current.form.postIds).toContain("p1");
+        act(() => {
+            result.current.togglePost("p1");
         });
-        expect(deleteMock).toHaveBeenCalledWith("p1", "t2");
-        expect(result.current.extras.postTags).not.toContainEqual({ postId: "p1", tagId: "t2" });
+        expect(result.current.form.postIds).not.toContain("p1");
     });
 
     it("selectById préremplit le formulaire et fixe tagId", async () => {
@@ -89,11 +83,13 @@ describe("useTagForm", () => {
         await act(async () => {
             await result.current.selectById("t1");
         });
-        expect(result.current.form).toEqual({ name: "Tag1", postIds: ["p1"] });
+        await waitFor(() => {
+            expect(result.current.form).toEqual({ name: "Tag1", postIds: ["p1"] });
+        });
         expect(result.current.tagId).toBe("t1");
     });
 
-    it("reset réinitialise le formulaire et l'id", async () => {
+    it("reset réinitialise le formulaire", async () => {
         const { result } = renderHook(() => useTagForm());
         await act(async () => {
             await result.current.listTags();
@@ -105,7 +101,6 @@ describe("useTagForm", () => {
             result.current.reset();
         });
         expect(result.current.form).toEqual({ name: "", postIds: [] });
-        expect(result.current.tagId).toBeNull();
     });
 
     it("deleteEntity supprime le tag et réinitialise tagId", async () => {
