@@ -1,4 +1,3 @@
-// src/components/Blog/manage/posts/PostForm.tsx (refactored)
 "use client";
 
 import React, { forwardRef, type ChangeEvent } from "react";
@@ -23,13 +22,13 @@ import { byAlpha, byOptionalOrder } from "@components/Blog/manage/sorters";
 interface Props {
     postFormManager: ReturnType<typeof usePostForm>;
     onSaveSuccess: () => void;
+    onCancel: () => void;
     posts: PostType[];
     editingId: string | null;
-    onCancel: () => void;
 }
 
 const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
-    { postFormManager, onSaveSuccess, posts, editingId, onCancel },
+    { postFormManager, onSaveSuccess, onCancel, posts, editingId },
     ref
 ) {
     const {

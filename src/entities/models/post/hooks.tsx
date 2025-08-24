@@ -1,4 +1,3 @@
-// src/entities/models/post/hooks.tsx
 import { useEffect, useCallback, useState } from "react";
 import { useModelForm } from "@entities/core/hooks";
 import { postService } from "@entities/models/post/service";
@@ -49,6 +48,7 @@ export function usePostForm(post: PostType | null) {
             setMessage("Nouvel article créé avec succès.");
             return data.id;
         },
+
         update: async (form) => {
             if (!postId) {
                 throw new Error("ID du post manquant pour la mise à jour");
@@ -62,9 +62,9 @@ export function usePostForm(post: PostType | null) {
             if (!data) throw new Error("Erreur lors de la mise à jour de l'article");
             setPostId(data.id);
             setMessage("Article mis à jour avec succès.");
-
             return data.id;
         },
+
         syncRelations: async (id, form) => {
             await Promise.all([
                 syncPostToTags(id, form.tagIds),
@@ -73,7 +73,16 @@ export function usePostForm(post: PostType | null) {
         },
     });
 
-    const { setForm, setExtras, setMode, extras, refresh, setMessage, setError } = modelForm;
+    const {
+        setForm,
+        setExtras,
+        setMode,
+        extras,
+        refresh,
+        setMessage,
+        setError,
+        exitEditMode: baseExitEditMode,
+    } = modelForm;
 
     const listPosts = useCallback(async () => {
         const { data } = await postService.list();
@@ -164,13 +173,18 @@ export function usePostForm(post: PostType | null) {
                 setMessage("Article supprimé avec succès.");
                 refresh();
             } catch (e: unknown) {
-                setError(e); // si setError est dispo dans ton hook
+                setError(e);
                 setMessage("Erreur lors de la suppression de l’article.");
-                // pas de throw: l’UI affiche le message d’erreur
             }
         },
-        [listPosts, postId, refresh]
+        [listPosts, postId, refresh, setError, setMessage]
     );
+
+    /** Sortie d’édition spécifique au Post : nettoie postId et repasse en create */
+    const exitEditMode = useCallback(() => {
+        setPostId(null);
+        baseExitEditMode(initialPostForm);
+    }, [baseExitEditMode]);
 
     return {
         ...modelForm,
@@ -180,5 +194,6 @@ export function usePostForm(post: PostType | null) {
         deleteEntity,
         toggleTag,
         toggleSection,
+        exitEditMode,
     };
 }

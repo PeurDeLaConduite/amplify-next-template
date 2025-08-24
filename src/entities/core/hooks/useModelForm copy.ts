@@ -2,8 +2,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 export type FormMode = "create" | "edit";
+// export type FieldKey<T> = keyof T & string;
 export type FieldKey<T> = Extract<keyof T, string>;
-
 export interface UseModelFormOptions<F extends object, E = Record<string, unknown>> {
     initialForm: F;
     initialExtras?: E;
@@ -37,8 +37,8 @@ export interface UseModelFormResult<F, E> {
 
     dirty: boolean;
     saving: boolean;
-    loading: boolean; // global (load + loadExtras)
-    loadingExtras: boolean; // pour différencier si besoin
+    loading: boolean; // ← global (load + loadExtras)
+    loadingExtras: boolean; // ← pour différencier si besoin
 
     error: unknown;
     setError: React.Dispatch<React.SetStateAction<unknown>>;
@@ -54,10 +54,6 @@ export interface UseModelFormResult<F, E> {
     /** Enchaîne create/update (+ syncRelations) puis refresh/load */
     submit: () => Promise<boolean>;
     reset: () => void;
-    /** Annule les changements et reste dans le mode courant */
-    cancelChanges: () => void;
-    /** Quitte l’édition et repasse en create avec un form neuf (ou fourni) */
-    exitEditMode: (next?: F) => void;
 
     setForm: React.Dispatch<React.SetStateAction<F>>;
     setExtras: React.Dispatch<React.SetStateAction<E>>;
@@ -104,7 +100,7 @@ export default function useModelForm<
         autoLoad = true,
         autoLoadExtras = true,
         resetOnNull = false,
-        isEqual,
+        isEqual, // ← 🔸 nouveau
     } = options;
 
     const initialRef = useRef(initialForm);
@@ -117,7 +113,27 @@ export default function useModelForm<
     const [error, setError] = useState<unknown>(null);
     const [message, setMessage] = useState<string | null>(null);
 
-    // dirty = différences par rapport à la baseline (initialRef.current)
+    /*//*  🔎 1. C’est quoi dirty ?
+
+            dirty est un booléen qui dit si ton formulaire diffère de sa baseline (initialRef.current).
+
+            La baseline est mise à jour quand tu appelles adoptInitial(...)
+            (ex : après un load() réussi, ou après avoir validé une création/édition).
+
+            Calcul : dirty = !isEqual(form, initialRef.current)
+
+            Utilité :
+
+            Activer/Désactiver un bouton "Enregistrer" → disabled={!dirty}.
+
+            Alerter si l’utilisateur quitte la page sans sauvegarder.
+
+            Savoir si un reset est possible (dirty=true).
+
+            👉 En clair :
+            dirty = "le form actuel contient des changements non sauvegardés".
+
+    */
     const dirty = useMemo(() => {
         const equals = isEqual ?? deepEqual;
         return !equals(form, initialRef.current);
@@ -139,24 +155,6 @@ export default function useModelForm<
         setMode(initialMode);
         setError(null);
     }, [initialMode]);
-
-    /** Annule les changements et reste dans le mode courant */
-    const cancelChanges = useCallback(() => {
-        setForm(initialRef.current);
-        setMessage("Modifications annulées.");
-        setError(null);
-    }, []);
-
-    /** Quitte le mode édition → repasse en create avec un form neuf (ou fourni) */
-    const exitEditMode = useCallback(
-        (next?: F) => {
-            adoptInitial(next ?? initialForm, "create");
-            setMessage("Retour au mode création.");
-        },
-        [
-            /* eslint-disable-line react-hooks/exhaustive-deps */
-        ]
-    );
 
     const adoptInitial = useCallback((next: F, nextMode: FormMode = "edit") => {
         initialRef.current = next;
@@ -222,19 +220,21 @@ export default function useModelForm<
         [adoptInitial, form]
     );
 
+    // useModelForm
     const submit = useCallback(async (): Promise<boolean> => {
         setSaving(true);
         setError(null);
         try {
             if (validate) {
                 const valid = await validate(form);
-                if (!valid) return false;
+                if (!valid) {
+                    return false; // stop ici
+                }
             }
             const id = mode === "create" ? await create(form) : await update(form);
             if (syncRelations) await syncRelations(id, form);
-            if (load) {
-                await refresh();
-            } else {
+            if (load) await refresh();
+            else {
                 setMode("edit");
                 initialRef.current = form;
             }
@@ -273,8 +273,6 @@ export default function useModelForm<
         setEdit,
         submit,
         reset,
-        cancelChanges,
-        exitEditMode,
         setForm,
         setExtras,
         setMode,

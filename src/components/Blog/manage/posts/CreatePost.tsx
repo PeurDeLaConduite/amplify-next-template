@@ -1,4 +1,3 @@
-// src/components/Blog/manage/posts/CreatePost.tsx (refactored)
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
@@ -7,7 +6,7 @@ import PostForm from "./PostForm";
 import RequireAdmin from "@components/RequireAdmin";
 import BlogEditorLayout from "@components/Blog/manage/BlogEditorLayout";
 import SectionHeader from "@components/Blog/manage/SectionHeader";
-import { type PostType, usePostForm } from "@entities/models/post/";
+import { type PostType, usePostForm } from "@entities/models/post";
 
 type IdLike = string | number;
 
@@ -22,6 +21,7 @@ export default function PostManagerPage() {
         listPosts,
         selectById,
         deleteEntity,
+        exitEditMode,
     } = manager;
 
     useEffect(() => {
@@ -49,8 +49,9 @@ export default function PostManagerPage() {
     }, [listPosts]);
 
     const handleCancel = useCallback(() => {
-        setPostToEdit(null);
-    }, []);
+        exitEditMode(); // repasse en create + reset form via useModelForm
+        setPostToEdit(null); // vide la sélection côté page
+    }, [exitEditMode]);
 
     return (
         <RequireAdmin>

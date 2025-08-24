@@ -1,8 +1,7 @@
-// src/components/blog/manage/BlogFormShell.tsx
 "use client";
 
 import React, { forwardRef, type FormEvent, type Ref } from "react";
-import { EditButton, UpdateButton, CancelButton } from "@components/ui/Button";
+import { CancelButton } from "@components/ui/Button";
 import type { JSX } from "react";
 
 export interface BlogFormManager<F> {
@@ -19,10 +18,10 @@ interface Props<F> {
     blogFormManager: BlogFormManager<F>;
     initialForm: F;
     onSaveSuccess: () => void;
-    children: React.ReactNode; // <- tes champs contrôlés
+    onCancel: () => void;
+    children: React.ReactNode; // <- champs contrôlés
     submitLabel?: { create: string; edit: string };
     className?: string;
-    onCancel: () => void;
 }
 
 const BlogFormShellInner = <F,>(
@@ -42,7 +41,7 @@ const BlogFormShellInner = <F,>(
     async function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
         const ok = await submit();
-        if (!ok) return; // si validation échouée ou erreur, on ne reset pas
+        if (!ok) return;
 
         // succès : on peut réinitialiser si mode "create"
         if (mode === "create") {
@@ -59,7 +58,7 @@ const BlogFormShellInner = <F,>(
                 <div className="flex space-x-2">
                     <button
                         type="submit"
-                        disabled={saving} // désactivé pendant la sauvegarde
+                        disabled={saving}
                         className="bg-blue-500 text-white px-4 py-2 rounded"
                     >
                         {mode === "edit" ? submitLabel.edit : submitLabel.create}
@@ -70,7 +69,9 @@ const BlogFormShellInner = <F,>(
             </form>
             {message && (
                 <p
-                    className={`mt-2 text-sm ${message.startsWith("Erreur") ? "text-red-600" : "text-green-600"}`}
+                    className={`mt-2 text-sm ${
+                        message.startsWith("Erreur") ? "text-red-600" : "text-green-600"
+                    }`}
                 >
                     {message}
                 </p>
