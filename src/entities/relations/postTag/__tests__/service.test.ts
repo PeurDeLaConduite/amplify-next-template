@@ -9,26 +9,7 @@ interface PostTagIds {
     tagId: string;
 }
 
-vi.mock("@entities/core/services/amplifyClient", () => {
-    const mockModel = {
-        list: (args?: unknown, opts?: unknown) =>
-            fetch("https://api.test/postTag/list", {
-                method: "POST",
-                body: JSON.stringify({ args, opts }),
-            }).then((res) => (res.ok ? res.json() : Promise.reject(new Error("list error")))),
-        create: (data: unknown, opts?: unknown) =>
-            fetch("https://api.test/postTag/create", {
-                method: "POST",
-                body: JSON.stringify({ data, opts }),
-            }).then((res) => (res.ok ? res.json() : Promise.reject(new Error("create error")))),
-        delete: (where: unknown, opts?: unknown) =>
-            fetch("https://api.test/postTag/delete", {
-                method: "POST",
-                body: JSON.stringify({ where, opts }),
-            }).then((res) => (res.ok ? res.json() : Promise.reject(new Error("delete error")))),
-    };
-    return { client: { models: { PostTag: mockModel } } };
-});
+vi.mock("@entities/core/services/amplifyClient", () => require("@test/mocks/amplifyClient"));
 
 describe("postTagService", () => {
     it("listByParent retourne les IDs tag", async () => {

@@ -1,3 +1,4 @@
+import "tsconfig-paths/register";
 import { beforeAll, afterEach, afterAll } from "vitest";
 import { setupServer } from "msw/node";
 import "@testing-library/jest-dom/vitest";

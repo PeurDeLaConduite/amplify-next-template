@@ -3,32 +3,7 @@ import { todoService } from "@entities/models/todo";
 import { http, HttpResponse } from "msw";
 import { server } from "@test/setup";
 
-vi.mock("@entities/core/services/amplifyClient", () => {
-    const baseFetch = (op: string, { authMode, body }: { authMode?: string; body?: unknown }) =>
-        fetch(`http://test.local/${op}`, {
-            method: "POST",
-            headers: { "x-auth-mode": authMode ?? "" },
-            body: body ? JSON.stringify(body) : undefined,
-        }).then(async (res) => {
-            if (!res.ok) throw new Error(res.statusText);
-            return res.json();
-        });
-
-    const models = {
-        Todo: {
-            get: (args: unknown, opts?: unknown) =>
-                baseFetch("get", { ...(opts as any), body: args }),
-            create: (data: unknown, opts?: unknown) =>
-                baseFetch("create", { ...(opts as any), body: data }),
-            update: (data: unknown, opts?: unknown) =>
-                baseFetch("update", { ...(opts as any), body: data }),
-            delete: (args: unknown, opts?: unknown) =>
-                baseFetch("delete", { ...(opts as any), body: args }),
-        },
-    };
-
-    return { client: { models }, Schema: { Todo: { type: {} as any } } };
-});
+vi.mock("@entities/core/services/amplifyClient", () => require("@test/mocks/amplifyClient"));
 
 vi.mock("@entities/core/auth", () => ({ canAccess: () => true }));
 
