@@ -6,7 +6,7 @@ import AuthorForm from "@components/Blog/manage/authors/AuthorForm";
 import AuthorList from "@components/Blog/manage/authors/AuthorList";
 import BlogEditorLayout from "@components/Blog/manage/BlogEditorLayout";
 import SectionHeader from "@components/Blog/manage/SectionHeader";
-import { type AuthorType, initialAuthorForm, useAuthorForm } from "@entities/models/author";
+import { type AuthorType, useAuthorForm } from "@entities/models/author";
 
 type IdLike = string | number;
 

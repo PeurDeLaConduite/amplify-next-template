@@ -25,7 +25,7 @@ const AuthorForm = forwardRef<HTMLFormElement, Props>(function AuthorForm(
     };
 
     return (
-        <BlogFormShell
+        <BlogFormShell<AuthorFormType>
             ref={ref}
             blogFormManager={authorFormManager}
             initialForm={initialAuthorForm}

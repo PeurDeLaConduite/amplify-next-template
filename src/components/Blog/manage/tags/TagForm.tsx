@@ -2,7 +2,7 @@
 "use client";
 
 import React, { forwardRef, type ChangeEvent } from "react";
-import BlogFormShell, { type BlogFormManager } from "@components/Blog/manage/BlogFormShell";
+import BlogFormShell from "@components/Blog/manage/BlogFormShell";
 import { useTagForm } from "@entities/models/tag/hooks";
 import { initialTagForm } from "@entities/models/tag/form";
 import type { TagFormType, TagType } from "@entities/models/tag/types";
@@ -30,7 +30,7 @@ const TagForm = forwardRef<HTMLFormElement, Props>(function TagForm(
     };
 
     return (
-        <BlogFormShell
+        <BlogFormShell<TagFormType>
             ref={ref}
             blogFormManager={tagFormManager}
             initialForm={initialTagForm}
