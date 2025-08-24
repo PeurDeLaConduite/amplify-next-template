@@ -9,7 +9,7 @@ interface SectionPostIds {
     postId: string;
 }
 
-vi.mock("@entities/core/services/amplifyClient", () => require("@test/mocks/amplifyClient"));
+vi.mock("@entities/core/services/amplifyClient", () => import("@test/mocks/amplifyClient"));
 
 describe("sectionPostService", () => {
     it("listByParent retourne les IDs post", async () => {
