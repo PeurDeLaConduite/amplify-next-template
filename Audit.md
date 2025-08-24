@@ -10,7 +10,7 @@ _Next.js 15 (App Router, RSC/Server Actions) + AWS Amplify v6/v2_
 
 ## Renommages par module
 
-- Blog / Posts : `onSaveSuccess` → `onPostSaved`, `editingId` → `postId`, `toggleTag` → `toggleRelationTag`, `syncPostTags` → `replacePostTags`, etc.
+- Blog / Posts : `onSaveSuccess` → `onPostSaved`, `editingId` → `postId`, `toggleTag` → `toggleRelationTag`, `syncPostToTags` → `replacePostTags`, etc.
 - Blog / Tags : `onSaveSuccess` → `onTagSaved`, `toggle` → `toggleRelationPost`, …
 - Utilitaires : `createM2MSync` → `createM2MReplace`, `syncManyToMany` → `replaceManyToMany`.
 
@@ -29,7 +29,7 @@ Voir tableau ci‑dessus (état dérivé vs stocké, callback toggle ambigu, nom
 
 ## Glossaire appliqué
 
-- Violations avant : `onSaveSuccess`, `editingId`, `syncPostTags`, `toggleTag`, …
+- Violations avant : `onSaveSuccess`, `editingId`, `syncPostToTags`, `toggleTag`, …
 - Violations après : aucune restante, hors cas `needs-review`.
 
 ## Prochaines étapes
@@ -56,20 +56,20 @@ Voir tableau ci‑dessus (état dérivé vs stocké, callback toggle ambigu, nom
 
 ### SectionForm
 
-| Prop            | Type                                | Source                  | Action                                                        | Amplify cat. | Endpoint/op                    | Boundary | Effets              | Preuve | Score | Renommage            | Notes          |
-| --------------- | ----------------------------------- | ----------------------- | ------------------------------------------------------------- | ------------ | ------------------------------ | -------- | ------------------- | ------ | ----- | -------------------- | -------------- |
-| `manager`       | `ReturnType<typeof useSectionForm>` | SectionsForm.tsx L19‑22 | `submit` → `sectionService.create/update`, `syncSectionPosts` | Data/GraphQL | `sectionService.create/update` | Client   | sync relations Post | —      | 2     | `sectionFormManager` | —              |
-| `onSaveSuccess` | `() => void`                        | L19‑22                  | rafraîchit via parent                                         | —            | —                              | Client   | rechargement        | —      | 3     | `onSectionSaved`     | —              |
-| `editingId`     | `string \| null`                    | L19‑23                  | ordre dans `OrderSelector`                                    | —            | —                              | Client   | gestion UI          | —      | 3     | `activeSectionId`    | clarifie usage |
+| Prop            | Type                                | Source                  | Action                                                          | Amplify cat. | Endpoint/op                    | Boundary | Effets              | Preuve | Score | Renommage            | Notes          |
+| --------------- | ----------------------------------- | ----------------------- | --------------------------------------------------------------- | ------------ | ------------------------------ | -------- | ------------------- | ------ | ----- | -------------------- | -------------- |
+| `manager`       | `ReturnType<typeof useSectionForm>` | SectionsForm.tsx L19‑22 | `submit` → `sectionService.create/update`, `syncSectionToPosts` | Data/GraphQL | `sectionService.create/update` | Client   | sync relations Post | —      | 2     | `sectionFormManager` | —              |
+| `onSaveSuccess` | `() => void`                        | L19‑22                  | rafraîchit via parent                                           | —            | —                              | Client   | rechargement        | —      | 3     | `onSectionSaved`     | —              |
+| `editingId`     | `string \| null`                    | L19‑23                  | ordre dans `OrderSelector`                                      | —            | —                              | Client   | gestion UI          | —      | 3     | `activeSectionId`    | clarifie usage |
 
 ### PostForm
 
-| Prop            | Type                             | Source              | Action                                                          | Amplify cat. | Endpoint/op                 | Boundary | Effets             | Preuve | Score | Renommage         | Notes          |
-| --------------- | -------------------------------- | ------------------- | --------------------------------------------------------------- | ------------ | --------------------------- | -------- | ------------------ | ------ | ----- | ----------------- | -------------- |
-| `manager`       | `ReturnType<typeof usePostForm>` | PostForm.tsx L21‑25 | `submit` → `postService.create/update`, `syncPostTags/Sections` | Data/GraphQL | `postService.create/update` | Client   | multiple relations | —      | 2     | `postFormManager` | —              |
-| `onSaveSuccess` | `() => void`                     | L21‑24              | rafraîchit liste                                                | —            | —                           | Client   | reset              | —      | 3     | `onPostSaved`     | —              |
-| `posts`         | `PostType[]`                     | L21‑25              | données pour `OrderSelector`                                    | —            | `postService.list`          | Client   | lecture            | —      | 3     | `existingPosts`   | plus explicite |
-| `editingId`     | `string \| null`                 | L21‑26              | ordre/édition                                                   | —            | —                           | Client   | état UI            | —      | 3     | `activePostId`    | —              |
+| Prop            | Type                             | Source              | Action                                                            | Amplify cat. | Endpoint/op                 | Boundary | Effets             | Preuve | Score | Renommage         | Notes          |
+| --------------- | -------------------------------- | ------------------- | ----------------------------------------------------------------- | ------------ | --------------------------- | -------- | ------------------ | ------ | ----- | ----------------- | -------------- |
+| `manager`       | `ReturnType<typeof usePostForm>` | PostForm.tsx L21‑25 | `submit` → `postService.create/update`, `syncPostToTags/Sections` | Data/GraphQL | `postService.create/update` | Client   | multiple relations | —      | 2     | `postFormManager` | —              |
+| `onSaveSuccess` | `() => void`                     | L21‑24              | rafraîchit liste                                                  | —            | —                           | Client   | reset              | —      | 3     | `onPostSaved`     | —              |
+| `posts`         | `PostType[]`                     | L21‑25              | données pour `OrderSelector`                                      | —            | `postService.list`          | Client   | lecture            | —      | 3     | `existingPosts`   | plus explicite |
+| `editingId`     | `string \| null`                 | L21‑26              | ordre/édition                                                     | —            | —                           | Client   | état UI            | —      | 3     | `activePostId`    | —              |
 
 ### BlogFormShell
 
@@ -230,16 +230,16 @@ _(Créer des stubs similaires pour chaque ligne du tableau ci-dessus.)_
 
 ## 5. Plan d’adaptation service unifié
 
-| Domaine                 | Fonction adapter                          | Impl. cible                                    | Amplify cat. | API                           | Notes                   |
-| ----------------------- | ----------------------------------------- | ---------------------------------------------- | ------------ | ----------------------------- | ----------------------- |
-| Post                    | `postService`                             | `entities/models/post/service.ts` L1‑31        | Data/GraphQL | `client.models.Post.*`        | déjà CRUD + cascade     |
-| Tag                     | `tagService`                              | `entities/models/tag/service.ts` L1‑27         | Data/GraphQL | `client.models.Tag.*`         | cascade PostTag         |
-| Section                 | `sectionService`                          | `entities/models/section/service.ts` L1‑27     | Data/GraphQL | `client.models.Section.*`     | cascade SectionPost     |
-| Author                  | `authorService`                           | `entities/models/author/service.ts` L1‑24      | Data/GraphQL | `client.models.Author.*`      | setNull posts           |
-| UserName                | `userNameService`                         | `entities/models/userName/service.ts` L1‑13    | Data/GraphQL | lecture publique              | —                       |
-| UserProfile             | `userProfileService`                      | `entities/models/userProfile/service.ts` L1‑14 | Data/GraphQL | `client.models.UserProfile.*` | auth userPool           |
-| Relations Post↔Tag     | `postTagService` & `syncTagPosts`         | `entities/relations/postTag/*`                 | Data/GraphQL | `client.models.PostTag.*`     | utilise `createM2MSync` |
-| Relations Section↔Post | `sectionPostService` & `syncSectionPosts` | `entities/relations/sectionPost/*`             | Data/GraphQL | `client.models.SectionPost.*` | idem                    |
+| Domaine                 | Fonction adapter                            | Impl. cible                                    | Amplify cat. | API                           | Notes                   |
+| ----------------------- | ------------------------------------------- | ---------------------------------------------- | ------------ | ----------------------------- | ----------------------- |
+| Post                    | `postService`                               | `entities/models/post/service.ts` L1‑31        | Data/GraphQL | `client.models.Post.*`        | déjà CRUD + cascade     |
+| Tag                     | `tagService`                                | `entities/models/tag/service.ts` L1‑27         | Data/GraphQL | `client.models.Tag.*`         | cascade PostTag         |
+| Section                 | `sectionService`                            | `entities/models/section/service.ts` L1‑27     | Data/GraphQL | `client.models.Section.*`     | cascade SectionPost     |
+| Author                  | `authorService`                             | `entities/models/author/service.ts` L1‑24      | Data/GraphQL | `client.models.Author.*`      | setNull posts           |
+| UserName                | `userNameService`                           | `entities/models/userName/service.ts` L1‑13    | Data/GraphQL | lecture publique              | —                       |
+| UserProfile             | `userProfileService`                        | `entities/models/userProfile/service.ts` L1‑14 | Data/GraphQL | `client.models.UserProfile.*` | auth userPool           |
+| Relations Post↔Tag     | `postTagService` & `syncTagToPosts`         | `entities/relations/postTag/*`                 | Data/GraphQL | `client.models.PostTag.*`     | utilise `createM2MSync` |
+| Relations Section↔Post | `sectionPostService` & `syncSectionToPosts` | `entities/relations/sectionPost/*`             | Data/GraphQL | `client.models.SectionPost.*` | idem                    |
 
 ---
 

@@ -7,7 +7,7 @@ import { sectionPostService } from "@entities/relations/sectionPost/service";
 import { initialSectionForm, toSectionForm } from "@entities/models/section/form";
 import { type SectionFormType, type SectionType } from "@entities/models/section/types";
 import { type PostType } from "@entities/models/post/types";
-import { syncSectionPosts } from "@entities/relations/sectionPost";
+import { syncSectionToPosts } from "@entities/relations/sectionPost";
 import { toggleId } from "@entities/core/utils";
 
 type Extras = { posts: PostType[]; sections: SectionType[] };
@@ -41,7 +41,7 @@ export function useSectionForm(section: SectionType | null) {
         },
 
         syncRelations: async (id, form) => {
-            await syncSectionPosts(id, form.postIds);
+            await syncSectionToPosts(id, form.postIds);
         },
     });
 

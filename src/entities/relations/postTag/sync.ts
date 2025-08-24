@@ -7,7 +7,7 @@ import { postTagService } from "./service";
 
 export const {
     /** Pour un TAG donné, synchroniser ses POSTS */
-    syncByChild: syncTagPosts,
+    syncByChild: syncTagToPosts,
     /** Pour un POST donné, synchroniser ses TAGS */
-    syncByParent: syncPostTags,
+    syncByParent: syncPostToTags,
 } = createM2MSync(postTagService);

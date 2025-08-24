@@ -6,7 +6,7 @@ import { sectionPostService } from "./service";
 
 export const {
     /** Pour une SECTION donnée, synchroniser ses POSTS */
-    syncByParent: syncSectionPosts,
+    syncByParent: syncSectionToPosts,
     /** Pour un POST donné, synchroniser ses SECTIONS */
-    syncByChild: syncPostSections,
+    syncByChild: syncPostToSections,
 } = createM2MSync(sectionPostService);
