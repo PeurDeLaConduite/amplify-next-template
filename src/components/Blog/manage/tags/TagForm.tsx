@@ -13,10 +13,11 @@ type UseTagFormReturn = ReturnType<typeof useTagForm>;
 interface Props {
     tagFormManager: UseTagFormReturn;
     onSaveSuccess: () => void;
+    onCancel: () => void;
 }
 
 const TagForm = forwardRef<HTMLFormElement, Props>(function TagForm(
-    { tagFormManager, onSaveSuccess },
+    { tagFormManager, onSaveSuccess, onCancel },
     ref
 ) {
     const { form, setFieldValue } = tagFormManager;
@@ -33,6 +34,7 @@ const TagForm = forwardRef<HTMLFormElement, Props>(function TagForm(
             blogFormManager={tagFormManager}
             initialForm={initialTagForm}
             onSaveSuccess={onSaveSuccess}
+            onCancel={onCancel}
             submitLabel={{ create: "Ajouter", edit: "Mettre à jour" }}
         >
             <EditableField
