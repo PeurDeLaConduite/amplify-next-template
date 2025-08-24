@@ -15,7 +15,7 @@ export async function syncManyToMany(
 
     const run = async <T>(items: T[], fn: (x: T) => Promise<unknown>) => {
         for (let i = 0; i < items.length; i += concurrency) {
-            await Promise.all(items.slice(i, i + concurrency).map(fn));
+            await Promise.all(items.slice(i, i + concurrency).map((id) => fn(id)));
         }
     };
 
