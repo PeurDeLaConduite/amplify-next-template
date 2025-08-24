@@ -9,7 +9,7 @@ interface PostTagIds {
     tagId: string;
 }
 
-vi.mock("@entities/core/services/amplifyClient", () => require("@test/mocks/amplifyClient"));
+vi.mock("@entities/core/services/amplifyClient", () => import("@test/mocks/amplifyClient"));
 
 describe("postTagService", () => {
     it("listByParent retourne les IDs tag", async () => {

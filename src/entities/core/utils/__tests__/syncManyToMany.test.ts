@@ -4,7 +4,7 @@ import { relationService } from "@entities/core/services";
 import { http, HttpResponse } from "msw";
 import { server } from "@test/setup";
 
-vi.mock("@entities/core/services/amplifyClient", () => require("@test/mocks/amplifyClient"));
+vi.mock("@entities/core/services/amplifyClient", () => import("@test/mocks/amplifyClient"));
 
 describe("syncManyToMany", () => {
     it("appelle createFn et deleteFn avec les ID corrects", async () => {

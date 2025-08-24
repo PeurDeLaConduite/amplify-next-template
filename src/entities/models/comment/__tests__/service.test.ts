@@ -3,7 +3,7 @@ import { commentService } from "@entities/models/comment";
 import { http, HttpResponse } from "msw";
 import { server } from "@test/setup";
 
-vi.mock("@entities/core/services/amplifyClient", () => require("@test/mocks/amplifyClient"));
+vi.mock("@entities/core/services/amplifyClient", () => import("@test/mocks/amplifyClient"));
 
 vi.mock("@entities/core/auth", () => ({ canAccess: () => true }));
 
