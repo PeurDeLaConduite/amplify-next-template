@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
-
+// src/entities/models/tag/hooks.tsx
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useModelForm } from "@entities/core/hooks";
 import { postService } from "@entities/models/post/service";
 import { tagService } from "@entities/models/tag/service";
@@ -8,6 +8,7 @@ import { type TagFormType, type TagType } from "@entities/models/tag/types";
 import { type PostType } from "@entities/models/post/types";
 import { initialTagForm, toTagForm } from "@entities/models/tag/form";
 import { syncTag2Posts } from "@entities/relations/postTag/sync";
+import { toggleId, normalizeTagName } from "@entities/core/utils";
 
 // Pivot léger côté UI
 type PostTagLink = { postId: string; tagId: string };
@@ -15,52 +16,112 @@ type PostTagLink = { postId: string; tagId: string };
 export interface TagFormExtras extends Record<string, unknown> {
     tags: TagType[];
     posts: PostType[];
-    postTags: PostTagLink[]; // ⚠️ paires d'IDs uniquement côté UI
+    postTags: PostTagLink[]; 
 }
 
-const initialExtras: TagFormExtras = {
-    tags: [],
-    posts: [],
-    postTags: [],
-};
+const initialExtras: TagFormExtras = { tags: [], posts: [], postTags: [] };
 
-export function useTagForm() {
-    const [tagId, setTagId] = useState<string | null>(null);
+export function useTagForm(tag: TagType | null) {
+    const [tagId, setTagId] = useState<string | null>(tag?.id ?? null);
     const [loading, setLoading] = useState(true);
+
+    // ⚠️ utilisé par validate() pour toujours lire la dernière liste de tags
+    const extrasRef = useRef<TagFormExtras>(initialExtras);
 
     const modelForm = useModelForm<TagFormType, TagFormExtras>({
         initialForm: initialTagForm,
         initialExtras,
+
+        // ✅ Validation bloquante (retourne false en cas d'erreur)
+        validate: (form) => {
+            const name = (form.name ?? "").trim();
+            if (!name) {
+                alert("Le nom du tag est requis.");
+                return false;
+            }
+
+            const norm = normalizeTagName(name);
+            const currentId = tagId; // string | null
+
+            // On considère doublon si un autre tag (id différent) a le même nom normalisé
+            const exists = (extrasRef.current.tags ?? []).some(
+                (t) => normalizeTagName(t.name) === norm && (currentId ? t.id !== currentId : true)
+            );
+
+            if (exists) {
+                alert("Ce tag existe déjà.");
+                return false;
+            }
+            return true;
+        },
+
+        // ✅ Créer avec re-check de sécurité (au cas où quelqu'un contourne validate)
         create: async (form) => {
-            const { data } = await tagService.create({ name: form.name });
+            const name = (form.name ?? "").trim();
+            const norm = normalizeTagName(name);
+            const dup = (extrasRef.current.tags ?? []).some(
+                (t) => normalizeTagName(t.name) === norm
+            );
+            if (dup) {
+                throw new Error("Ce tag existe déjà.");
+            }
+
+            const { data } = await tagService.create({ name });
             if (!data) throw new Error("Erreur lors de la création du tag");
             setTagId(data.id);
+            setMessage("Nouveau tag créé avec succès.");
+
+            // rafraîchir la liste en local pour que le prochain validate voie ce nouveau tag
+            await listTags();
+
             return data.id;
         },
+
+        // ✅ Mettre à jour avec re-check
         update: async (form) => {
             if (!tagId) throw new Error("ID du tag manquant pour la mise à jour");
-            const { data } = await tagService.update({ id: tagId, name: form.name });
+
+            const name = (form.name ?? "").trim();
+            const norm = normalizeTagName(name);
+            const dup = (extrasRef.current.tags ?? []).some(
+                (t) => t.id !== tagId && normalizeTagName(t.name) === norm
+            );
+            if (dup) {
+                throw new Error("Ce tag existe déjà.");
+            }
+
+            const { data } = await tagService.update({ id: tagId, name });
             if (!data) throw new Error("Erreur lors de la mise à jour du tag");
             setTagId(data.id);
+            setMessage("Tag mis à jour avec succès.");
+
+            await listTags();
+
             return data.id;
         },
-        syncRelations: async (tagId, form) => {
-            await syncTag2Posts(tagId, form.postIds);
+
+        // ✅ Sync relationnelle (tags ↔ posts)
+        syncRelations: async (id, form) => {
+            await syncTag2Posts(id, form.postIds);
         },
     });
 
-    const { extras, setExtras, setForm, setMode, reset: formReset } = modelForm;
+    const { extras, setExtras, setForm, setMode, refresh, setMessage, setError } = modelForm;
 
+    // 🔄 Garder extrasRef en phase avec extras (clé pour la validation anti-doublon)
+    useEffect(() => {
+        extrasRef.current = extras;
+    }, [extras]);
+
+    // Liste tags + posts + pivots normalisés
     const listTags = useCallback(async () => {
         setLoading(true);
         try {
             const [t, p, pt] = await Promise.all([
                 tagService.list(),
                 postService.list(),
-                postTagService.list(), // renvoie PostTagType[]
+                postTagService.list(),
             ]);
-
-            // ✅ Normalise les pivots en paires d’IDs pour l’UI
             setExtras((prev) => ({
                 ...prev,
                 tags: t.data ?? [],
@@ -76,57 +137,98 @@ export function useTagForm() {
         void listTags();
     }, [listTags]);
 
+    // Hydrate le form selon tag courant (édition vs création)
+    useEffect(() => {
+        void (async () => {
+            if (tag) {
+                const postIds = await postTagService.listByParent(tag.id);
+                setForm(toTagForm(tag, postIds));
+                setMode("edit");
+                setTagId(tag.id);
+            } else {
+                setForm(initialTagForm);
+                setMode("create");
+                setTagId(null);
+            }
+        })();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [tag, setForm, setMode]);
+
+    // Sélection par ID (comme les autres hooks)
     const selectById = useCallback(
-        async (id: string) => {
-            const tag = extras.tags.find((t) => t.id === id);
-            if (!tag) return;
-            const postIds = await postTagService.listByChild(tag.id);
-            setForm(toTagForm(tag, postIds));
-            setMode("edit");
-            setTagId(tag.id);
+        (id: string) => {
+            const tagItem = extras.tags.find((t) => t.id === id) ?? null;
+            if (tagItem) {
+                setTagId(id);
+                void (async () => {
+                    const postIds = await postTagService.listByParent(id);
+                    setForm(toTagForm(tagItem, postIds));
+                    setMode("edit");
+                })();
+            }
+            return tagItem;
         },
         [extras.tags, setForm, setMode]
     );
 
-    const reset = useCallback(() => {
-        setTagId(null);
-        formReset();
-    }, [formReset]);
-
+    // Suppression en cascade + messages + refresh
     const removeById = useCallback(
         async (id: string) => {
-            const tag = extras.tags.find((t) => t.id === id);
-            if (!tag) return;
             if (!window.confirm("Supprimer ce tag ?")) return;
-            await tagService.deleteCascade({ id: tag.id });
-            await listTags();
-            if (tagId === id) {
-                reset();
+            try {
+                setMessage("Suppression des données relationnelles...");
+                await tagService.deleteCascade({ id });
+                await listTags();
+                if (tagId === id) setTagId(null);
+                setMessage("Tag supprimé avec succès.");
+                refresh();
+            } catch (e: unknown) {
+                setError(e);
+                setMessage("Erreur lors de la suppression du tag.");
             }
         },
-        [extras.tags, listTags, tagId, reset]
+        [listTags, tagId, refresh, setError, setMessage]
     );
 
+    // ✅ toggle pour l’édition du tag courant (modifie form.postIds)
+    const togglePost = useCallback(
+        (postId: string) => {
+            setForm((prev) => ({
+                ...prev,
+                postIds: toggleId(prev.postIds ?? [], postId),
+            }));
+        },
+        [setForm]
+    );
+
+    // ✅ toggle “global” pivot (utile pour une matrice Posts×Tags)
     const toggle = useCallback(
-        async (postId: string, tagId: string) => {
-            const exists = extras.postTags.some((pt) => pt.postId === postId && pt.tagId === tagId);
-            if (exists) {
-                await postTagService.delete(postId, tagId);
-                setExtras((prev) => ({
-                    ...prev,
-                    postTags: prev.postTags.filter(
-                        (pt) => !(pt.postId === postId && pt.tagId === tagId)
-                    ),
-                }));
-            } else {
-                await postTagService.create(postId, tagId);
-                setExtras((prev) => ({
-                    ...prev,
-                    postTags: [...prev.postTags, { postId, tagId }],
-                }));
+        async (postId: string, tId: string) => {
+            const exists = extras.postTags.some((pt) => pt.postId === postId && pt.tagId === tId);
+            try {
+                if (exists) {
+                    await postTagService.delete(postId, tId);
+                    setExtras((prev) => ({
+                        ...prev,
+                        postTags: prev.postTags.filter(
+                            (pt) => !(pt.postId === postId && pt.tagId === tId)
+                        ),
+                    }));
+                    setMessage("Tag retiré de l'article.");
+                } else {
+                    await postTagService.create(postId, tId);
+                    setExtras((prev) => ({
+                        ...prev,
+                        postTags: [...prev.postTags, { postId, tagId: tId }],
+                    }));
+                    setMessage("Tag associé à l'article.");
+                }
+            } catch (e) {
+                setError(e);
+                setMessage("Erreur lors de la mise à jour de l’association tag↔post.");
             }
         },
-        [extras.postTags, setExtras]
+        [extras.postTags, setExtras, setMessage, setError]
     );
 
     // Sélecteurs utilitaires
@@ -141,24 +243,21 @@ export function useTagForm() {
     );
 
     const isTagLinked = useCallback(
-        (postId: string, tagId: string) =>
-            extras.postTags.some((pt) => pt.postId === postId && pt.tagId === tagId),
+        (postId: string, tId: string) =>
+            extras.postTags.some((pt) => pt.postId === postId && pt.tagId === tId),
         [extras.postTags]
     );
 
     return {
         ...modelForm,
-        reset,
-        cancel: reset,
         loading,
+        tagId,
         listTags,
         selectById,
         removeById,
-        toggle,
+        togglePost, // pour l'édition d'un tag (form.postIds)
+        toggle, // pour la matrice pivot globale
         tagsForPost,
         isTagLinked,
-        tagId,
     };
 }
-
-export type UseTagFormReturn = ReturnType<typeof useTagForm>;

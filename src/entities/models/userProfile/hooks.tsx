@@ -76,7 +76,7 @@ export function useUserProfileForm(profile: UserProfileType | null) {
             if (data) {
                 setForm(toUserProfileForm(data));
                 setMode("edit");
-                setEditingId(data.id);
+                setProfileId(data.id);
             }
             return data ?? null;
         },

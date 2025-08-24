@@ -1,51 +1,53 @@
-import { useCallback, useEffect, useState } from "react";
+// src/entities/models/section/hooks.tsx
+import { useEffect, useCallback, useState } from "react";
 import { useModelForm } from "@entities/core/hooks";
 import { postService } from "@entities/models/post/service";
 import { sectionService } from "@entities/models/section/service";
 import { sectionPostService } from "@entities/relations/sectionPost/service";
 import { initialSectionForm, toSectionForm } from "@entities/models/section/form";
-import { type SectionFormTypes, type SectionType } from "@entities/models/section/types";
+import { type SectionFormType, type SectionType } from "@entities/models/section/types";
 import { type PostType } from "@entities/models/post/types";
 import { syncSection2Posts } from "@entities/relations/sectionPost";
+import { toggleId } from "@entities/core/utils";
 
 type Extras = { posts: PostType[]; sections: SectionType[] };
 
 export function useSectionForm(section: SectionType | null) {
     const [sectionId, setSectionId] = useState<string | null>(section?.id ?? null);
 
-    const modelForm = useModelForm<SectionFormTypes, Extras>({
+    const modelForm = useModelForm<SectionFormType, Extras>({
         initialForm: initialSectionForm,
         initialExtras: { posts: [], sections: [] },
+
         create: async (form) => {
             const { postIds, ...sectionInput } = form;
             void postIds;
             const { data } = await sectionService.create(sectionInput);
             if (!data) throw new Error("Erreur lors de la création de la section");
             setSectionId(data.id);
+            setMessage("Nouvelle section créée avec succès.");
             return data.id;
         },
+
         update: async (form) => {
-            if (!sectionId) {
-                throw new Error("ID de la section manquant pour la mise à jour");
-            }
+            if (!sectionId) throw new Error("ID de la section manquant pour la mise à jour");
             const { postIds, ...sectionInput } = form;
             void postIds;
-            const { data } = await sectionService.update({
-                id: sectionId,
-                ...sectionInput,
-            });
+            const { data } = await sectionService.update({ id: sectionId, ...sectionInput });
             if (!data) throw new Error("Erreur lors de la mise à jour de la section");
             setSectionId(data.id);
+            setMessage("Section mise à jour avec succès.");
             return data.id;
         },
+
         syncRelations: async (id, form) => {
-            // 🔗 Section ↔ Post (via createM2MSync)
             await syncSection2Posts(id, form.postIds);
         },
     });
 
-    const { extras, setForm, setExtras, setMode, reset } = modelForm;
+    const { setForm, setExtras, setMode, refresh, setMessage, setError, extras } = modelForm;
 
+    // Charge les extras (posts + sections)
     const listSections = useCallback(async () => {
         const { data } = await sectionService.list();
         setExtras((e) => ({ ...e, sections: data ?? [] }));
@@ -59,6 +61,7 @@ export function useSectionForm(section: SectionType | null) {
         void listSections();
     }, [setExtras, listSections]);
 
+    // Hydrate le form en fonction de la section courante (édition vs création)
     useEffect(() => {
         void (async () => {
             if (section) {
@@ -74,6 +77,14 @@ export function useSectionForm(section: SectionType | null) {
         })();
     }, [section, setForm, setMode]);
 
+    function togglePost(postId: string) {
+        setForm((prev) => ({
+            ...prev,
+            postIds: toggleId(prev.postIds ?? [], postId),
+        }));
+    }
+
+    // Sélection par ID (aligne le comportement avec usePostForm)
     const selectById = useCallback(
         (id: string) => {
             const sectionItem = extras.sections.find((s) => s.id === id) ?? null;
@@ -90,20 +101,36 @@ export function useSectionForm(section: SectionType | null) {
         [extras.sections, setForm, setMode]
     );
 
+    // Suppression en cascade + messages + refresh (comme usePostForm)
     const removeById = useCallback(
         async (id: string) => {
-            const sectionItem = selectById(id);
-            if (!sectionItem) return;
             if (!window.confirm("Supprimer cette section ?")) return;
-            await sectionService.deleteCascade({ id: sectionItem.id });
-            await listSections();
-            if (sectionId === id) {
-                setSectionId(null);
-                reset();
+
+            try {
+                setMessage("Suppression des données relationnelles...");
+                await sectionService.deleteCascade({ id });
+                await listSections();
+
+                if (sectionId === id) {
+                    setSectionId(null);
+                }
+
+                setMessage("Section supprimée avec succès.");
+                refresh();
+            } catch (e: unknown) {
+                setError(e);
+                setMessage("Erreur lors de la suppression de la section.");
             }
         },
-        [selectById, listSections, sectionId, reset]
+        [listSections, sectionId, refresh]
     );
 
-    return { ...modelForm, sectionId, listSections, selectById, removeById };
+    return {
+        ...modelForm,
+        sectionId,
+        listSections,
+        selectById,
+        removeById,
+        togglePost,
+    };
 }

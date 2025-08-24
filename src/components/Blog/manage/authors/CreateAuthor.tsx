@@ -73,11 +73,7 @@ export default function AuthorManagerPage() {
                     onUpdate={() => {
                         formRef.current?.requestSubmit();
                     }}
-                    onCancel={() => {
-                        setAuthorToEdit(null);
-                        setMode("create");
-                        setForm(initialAuthorForm);
-                    }}
+                    onCancel={handleCancel}
                     onDeleteById={handleDeleteById}
                 />
             </BlogEditorLayout>

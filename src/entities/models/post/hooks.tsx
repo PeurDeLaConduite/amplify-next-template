@@ -14,6 +14,7 @@ import { type TagType } from "@entities/models/tag/types";
 import { type SectionType } from "@entities/models/section/types";
 import { syncPost2Tags } from "@entities/relations/postTag";
 import { syncPost2Sections } from "@entities/relations/sectionPost";
+import { toggleId } from "@entities/core/utils";
 
 interface Extras extends Record<string, unknown> {
     authors: AuthorType[];
@@ -121,18 +122,14 @@ export function usePostForm(post: PostType | null) {
     function toggleTag(tagId: string) {
         setForm((prev) => ({
             ...prev,
-            tagIds: prev.tagIds.includes(tagId)
-                ? prev.tagIds.filter((id) => id !== tagId)
-                : [...prev.tagIds, tagId],
+            tagIds: toggleId(prev.tagIds ?? [], tagId),
         }));
     }
 
     function toggleSection(sectionId: string) {
         setForm((prev) => ({
             ...prev,
-            sectionIds: prev.sectionIds.includes(sectionId)
-                ? prev.sectionIds.filter((id) => id !== sectionId)
-                : [...prev.sectionIds, sectionId],
+            sectionIds: toggleId(prev.sectionIds ?? [], sectionId),
         }));
     }
 

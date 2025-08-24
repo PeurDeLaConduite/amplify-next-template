@@ -11,21 +11,21 @@ import TagForm from "@components/Blog/manage/tags/TagForm";
 import TagList from "@components/Blog/manage/tags/TagList";
 import PostTagsRelationManager from "@components/Blog/manage/tags/PostTagsRelationManager";
 
-import { useTagForm, type UseTagFormReturn } from "@entities/models/tag/hooks";
+import { type TagType, useTagForm } from "@entities/models/tag/";
 
 type IdLike = string | number;
 
 export default function CreateTagPage() {
+    const [tagToEdit, setTagToEdit] = useState<TagType | null>(null);
+    const tagId = tagToEdit?.id ?? null;
     const formRef = useRef<HTMLFormElement>(null);
-    const manager: UseTagFormReturn = useTagForm();
-    const [tagId, setTagId] = useState<string | null>(null);
 
+    const manager = useTagForm(tagToEdit);
     const {
         extras: { tags, posts },
         loading,
         listTags,
         selectById,
-        cancel,
         removeById,
         tagsForPost,
         isTagLinked,
@@ -36,18 +36,10 @@ export default function CreateTagPage() {
         void listTags();
     }, [listTags]);
 
-    // ⇧ stable: évite de casser la mémo de TagList
-    const submitForm = useCallback(() => formRef.current?.requestSubmit(), []);
-
-    const handleUpdated = useCallback(async () => {
-        await listTags();
-        setTagId(null);
-    }, [listTags]);
-
     const handleEditById = useCallback(
         (id: IdLike) => {
-            void selectById(String(id));
-            setTagId(String(id));
+            const tag = selectById(String(id)); // set déjà l’ID dans le hook + mode "edit"
+            if (tag) setTagToEdit(tag);
         },
         [selectById]
     );
@@ -59,10 +51,14 @@ export default function CreateTagPage() {
         [removeById]
     );
 
+    const handleSaved = useCallback(async () => {
+        await listTags();
+        setTagToEdit(null);
+    }, [listTags]);
+
     const handleCancel = useCallback(() => {
-        cancel();
-        setTagId(null);
-    }, [cancel]);
+        setTagToEdit(null);
+    }, []);
 
     return (
         <RequireAdmin>
@@ -72,18 +68,24 @@ export default function CreateTagPage() {
                     <RefreshButton onRefresh={listTags} label="Rafraîchir" size="small" />
                 </div>
 
-                <TagForm ref={formRef} tagFormManager={manager} onSaveSuccess={handleUpdated} />
+                <TagForm
+                    ref={formRef}
+                    tagFormManager={manager}
+                    tags={tags}
+                    editingId={tagId}
+                    onSaveSuccess={handleSaved}
+                />
 
                 <SectionHeader>Liste des tags</SectionHeader>
                 <TagList
                     tags={tags}
                     tagId={tagId}
                     onEditById={handleEditById}
-                    onUpdate={submitForm}
+                    onUpdate={() => formRef.current?.requestSubmit()}
                     onCancel={handleCancel}
                     onDeleteById={handleDeleteById}
-                    editButtonLabel={""}
-                    deleteButtonLabel={""}
+                    editButtonLabel=""
+                    deleteButtonLabel=""
                 />
 
                 <SectionHeader loading={loading}>Associer les tags aux articles</SectionHeader>

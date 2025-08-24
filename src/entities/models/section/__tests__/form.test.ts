@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
 import { faker } from "@faker-js/faker";
 import { toSectionForm, toSectionCreate, toSectionUpdate } from "@entities/models/section/form";
-import type { SectionType, SectionFormTypes } from "@entities/models/section/types";
+import type { SectionType, SectionFormType } from "@entities/models/section/types";
 
 describe("toSectionForm", () => {
-    it("convertit SectionType en SectionFormTypes", () => {
+    it("convertit SectionType en SectionFormType", () => {
         const section = {
             slug: faker.lorem.slug(),
             title: faker.lorem.words(3),
@@ -32,7 +32,7 @@ describe("toSectionForm", () => {
 
 describe("toSectionCreate / toSectionUpdate", () => {
     it("supprime postIds", () => {
-        const form: SectionFormTypes = {
+        const form: SectionFormType = {
             slug: faker.lorem.slug(),
             title: faker.lorem.words(3),
             description: faker.lorem.sentence(),
