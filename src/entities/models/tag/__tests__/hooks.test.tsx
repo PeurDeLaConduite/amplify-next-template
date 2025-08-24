@@ -108,7 +108,7 @@ describe("useTagForm", () => {
         expect(result.current.tagId).toBeNull();
     });
 
-    it("removeById supprime le tag et réinitialise tagId", async () => {
+    it("deleteEntity supprime le tag et réinitialise tagId", async () => {
         const deleteTagMock = tagService.deleteCascade as ReturnType<typeof vi.fn>;
         deleteTagMock.mockResolvedValue({});
         vi.spyOn(window, "confirm").mockReturnValue(true);
@@ -120,7 +120,7 @@ describe("useTagForm", () => {
             await result.current.selectById("t1");
         });
         await act(async () => {
-            await result.current.removeById("t1");
+            await result.current.deleteEntity("t1");
         });
         expect(deleteTagMock).toHaveBeenCalledWith({ id: "t1" });
         expect(result.current.tagId).toBeNull();

@@ -21,7 +21,7 @@ export default function PostManagerPage() {
         extras: { posts },
         listPosts,
         selectById,
-        removeById,
+        deleteEntity,
     } = manager;
 
     useEffect(() => {
@@ -38,9 +38,9 @@ export default function PostManagerPage() {
 
     const handleDeleteById = useCallback(
         async (id: IdLike) => {
-            await removeById(String(id));
+            await deleteEntity(String(id));
         },
-        [removeById]
+        [deleteEntity]
     );
 
     const handleSaved = useCallback(async () => {

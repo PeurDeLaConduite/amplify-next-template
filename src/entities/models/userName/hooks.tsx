@@ -115,7 +115,7 @@ export function useUserNameForm(userName: UserNameType | null) {
         [extras.userNames, adoptInitial]
     );
 
-    const removeById = useCallback(
+    const deleteEntity = useCallback(
         async (id: string) => {
             if (!window.confirm("Supprimer ce pseudo ?")) return;
             await userNameService.delete({ id });
@@ -138,7 +138,7 @@ export function useUserNameForm(userName: UserNameType | null) {
             if (!id) return;
             await userNameService.update({ id, [field]: value } as any);
             patchForm({ [field]: value } as Partial<UserNameFormType>); // optimiste
-            await refresh(); // vérité serveur
+            await refresh();
             emitUserNameUpdated();
         },
         [userNameId, sub, patchForm, refresh]
@@ -156,7 +156,7 @@ export function useUserNameForm(userName: UserNameType | null) {
         userNameId,
         fetchUserNames,
         selectById,
-        removeById,
+        deleteEntity,
         updateEntity,
         clearField,
     };

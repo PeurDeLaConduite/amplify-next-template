@@ -23,7 +23,7 @@ export default function UserNameManager() {
     const [userNameId, setUserNameId] = useState<string | null>(null);
 
     const manager = useUserNameForm(userNameToEdit);
-    const { removeById, setForm, setMode, refresh } = manager;
+    const { deleteEntity, setForm, setMode, refresh } = manager;
 
     // 🔄 Charger/rafraîchir au montage et quand l'utilisateur change
     useEffect(() => {
@@ -40,13 +40,13 @@ export default function UserNameManager() {
 
     const handleDeleteById = useCallback(
         async (id: IdLike) => {
-            await removeById(String(id));
+            await deleteEntity(String(id));
             setUserNameToEdit(null);
             setUserNameId(null);
             setMode("create");
             setForm(initialUserNameForm);
         },
-        [removeById, setMode, setForm] // initialUserNameForm est const, inutile de le mettre
+        [deleteEntity, setMode, setForm] // initialUserNameForm est const, inutile de le mettre
     );
 
     if (!user) return <Authenticator />;

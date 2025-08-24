@@ -172,7 +172,7 @@ export function useTagForm(tag: TagType | null) {
     );
 
     // Suppression en cascade + messages + refresh
-    const removeById = useCallback(
+    const deleteEntity = useCallback(
         async (id: string) => {
             if (!window.confirm("Supprimer ce tag ?")) return;
             try {
@@ -254,7 +254,7 @@ export function useTagForm(tag: TagType | null) {
         tagId,
         listTags,
         selectById,
-        removeById,
+        deleteEntity,
         togglePost, // pour l'édition d'un tag (form.postIds)
         toggle, // pour la matrice pivot globale
         tagsForPost,

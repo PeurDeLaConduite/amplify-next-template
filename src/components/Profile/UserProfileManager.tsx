@@ -34,17 +34,17 @@ export default function UserProfileManager() {
 
     // ✅ même signature que les autres managers (ex: useAuthorForm)
     const manager = useUserProfileForm(profileToEdit);
-    const { removeById, setForm, setMode, form } = manager;
+    const { deleteEntity, setForm, setMode, form } = manager;
 
     const handleDeleteById = useCallback(
         async (id: IdLike) => {
-            await removeById(String(id));
+            await deleteEntity(String(id));
             setProfileToEdit(null);
             setProfileId(null);
             setMode("create");
             setForm(initialUserProfileForm);
         },
-        [removeById, setMode, setForm]
+        [deleteEntity, setMode, setForm]
     );
 
     if (!user) return null;

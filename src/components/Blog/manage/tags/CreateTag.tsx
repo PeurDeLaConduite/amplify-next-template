@@ -26,7 +26,7 @@ export default function CreateTagPage() {
         loading,
         listTags,
         selectById,
-        removeById,
+        deleteEntity,
         tagsForPost,
         isTagLinked,
         toggle,
@@ -46,9 +46,9 @@ export default function CreateTagPage() {
 
     const handleDeleteById = useCallback(
         async (id: IdLike) => {
-            await removeById(String(id));
+            await deleteEntity(String(id));
         },
-        [removeById]
+        [deleteEntity]
     );
 
     const handleSaved = useCallback(async () => {

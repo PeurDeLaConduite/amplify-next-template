@@ -102,7 +102,7 @@ export function useSectionForm(section: SectionType | null) {
     );
 
     // Suppression en cascade + messages + refresh (comme usePostForm)
-    const removeById = useCallback(
+    const deleteEntity = useCallback(
         async (id: string) => {
             if (!window.confirm("Supprimer cette section ?")) return;
 
@@ -130,7 +130,7 @@ export function useSectionForm(section: SectionType | null) {
         sectionId,
         listSections,
         selectById,
-        removeById,
+        deleteEntity,
         togglePost,
     };
 }

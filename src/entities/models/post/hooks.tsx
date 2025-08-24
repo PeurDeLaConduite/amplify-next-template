@@ -152,7 +152,7 @@ export function usePostForm(post: PostType | null) {
         [extras.posts, setForm, setMode]
     );
 
-    const removeById = useCallback(
+    const deleteEntity = useCallback(
         async (id: string) => {
             if (!window.confirm("Supprimer cet article ?")) return;
 
@@ -181,7 +181,7 @@ export function usePostForm(post: PostType | null) {
         postId,
         listPosts,
         selectById,
-        removeById,
+        deleteEntity,
         toggleTag,
         toggleSection,
     };

@@ -238,7 +238,7 @@ Le composant générique utilisé par tous les autres boutons.
 **Usage :** Supprime complètement un objet.
 
 ```tsx
-<DeleteButton onDelete={() => removeById(id)} />
+<DeleteButton onDelete={() => deleteEntity(id)} />
 ```
 
 **Props spécifiques :**

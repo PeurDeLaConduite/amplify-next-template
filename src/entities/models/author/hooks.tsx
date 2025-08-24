@@ -66,7 +66,7 @@ export function useAuthorForm(author: AuthorType | null) {
         [extras.authors, setForm, setMode]
     );
 
-    const removeById = useCallback(
+    const deleteEntity = useCallback(
         async (id: string) => {
             if (!window.confirm("Supprimer cet auteur ?")) return;
             await authorService.deleteCascade({ id });
@@ -95,5 +95,5 @@ export function useAuthorForm(author: AuthorType | null) {
         }
     }, [author, setForm, setMode]);
 
-    return { ...modelForm, authorId, listAuthors, selectById, removeById };
+    return { ...modelForm, authorId, listAuthors, selectById, deleteEntity };
 }

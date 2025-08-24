@@ -20,7 +20,7 @@ export default function AuthorManagerPage() {
         extras: { authors, loading },
         listAuthors,
         selectById,
-        removeById,
+        deleteEntity,
         setForm,
         setMode,
     } = manager;
@@ -39,9 +39,9 @@ export default function AuthorManagerPage() {
 
     const handleDeleteById = useCallback(
         async (id: IdLike) => {
-            await removeById(String(id));
+            await deleteEntity(String(id));
         },
-        [removeById]
+        [deleteEntity]
     );
 
     const handleSaved = useCallback(async () => {

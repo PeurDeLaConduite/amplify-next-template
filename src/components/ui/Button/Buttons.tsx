@@ -53,7 +53,7 @@
  *      ^                             |
  *      |----(props: label, intent)---|
  *
- * Exemple : <DeleteButton onDelete={() => userManager.removeById(id)} />
+ * Exemple : <DeleteButton onDelete={() => userManager.deleteEntity(id)} />
  *
  * ============================================================================
  */

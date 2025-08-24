@@ -21,7 +21,7 @@ export default function SectionManagerPage() {
         extras: { sections },
         listSections,
         selectById,
-        removeById,
+        deleteEntity,
     } = manager;
 
     useEffect(() => {
@@ -38,9 +38,9 @@ export default function SectionManagerPage() {
 
     const handleDeleteById = useCallback(
         async (id: IdLike) => {
-            await removeById(String(id));
+            await deleteEntity(String(id));
         },
-        [removeById]
+        [deleteEntity]
     );
 
     const handleSaved = useCallback(async () => {

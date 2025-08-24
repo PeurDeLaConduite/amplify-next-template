@@ -83,7 +83,7 @@ export function useUserProfileForm(profile: UserProfileType | null) {
         [setForm, setMode]
     );
 
-    const removeById = useCallback(
+    const deleteEntity = useCallback(
         async (id: string) => {
             if (!window.confirm("Supprimer ce profil ?")) return;
             await userProfileService.delete({ id });
@@ -120,7 +120,7 @@ export function useUserProfileForm(profile: UserProfileType | null) {
         ...modelForm,
         profileId,
         selectById,
-        removeById,
+        deleteEntity,
         updateEntity,
         clearField,
         labels,
