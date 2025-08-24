@@ -2,34 +2,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { commentService } from "@entities/models/comment";
 import { http, HttpResponse } from "msw";
 import { server } from "@test/setup";
-import type { CommentCreateInput, CommentUpdateInput } from "@src/types/models/comment";
 
-vi.mock("@entities/core/services/amplifyClient", () => {
-    const baseFetch = (op: string, { authMode, body }: { authMode?: string; body?: unknown }) =>
-        fetch(`http://test.local/${op}`, {
-            method: "POST",
-            headers: { "x-auth-mode": authMode ?? "" },
-            body: body ? JSON.stringify(body) : undefined,
-        }).then(async (res) => {
-            if (!res.ok) throw new Error(res.statusText);
-            return res.json();
-        });
-
-    const models = {
-        Comment: {
-            get: (args: { id: string }, opts?: { authMode?: string }) =>
-                baseFetch("get", { ...opts, body: args }),
-            create: (data: CommentCreateInput, opts?: { authMode?: string }) =>
-                baseFetch("create", { ...opts, body: data }),
-            update: (data: CommentUpdateInput & { id: string }, opts?: { authMode?: string }) =>
-                baseFetch("update", { ...opts, body: data }),
-            delete: (args: { id: string }, opts?: { authMode?: string }) =>
-                baseFetch("delete", { ...opts, body: args }),
-        },
-    };
-
-    return { client: { models }, Schema: { Comment: { type: {} as Record<string, never> } } };
-});
+vi.mock("@entities/core/services/amplifyClient", () => require("@test/mocks/amplifyClient"));
 
 vi.mock("@entities/core/auth", () => ({ canAccess: () => true }));
 

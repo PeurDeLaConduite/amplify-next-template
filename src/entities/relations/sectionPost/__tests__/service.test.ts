@@ -9,26 +9,7 @@ interface SectionPostIds {
     postId: string;
 }
 
-vi.mock("@entities/core/services/amplifyClient", () => {
-    const mockModel = {
-        list: (args?: unknown, opts?: unknown) =>
-            fetch("https://api.test/sectionPost/list", {
-                method: "POST",
-                body: JSON.stringify({ args, opts }),
-            }).then((res) => (res.ok ? res.json() : Promise.reject(new Error("list error")))),
-        create: (data: unknown, opts?: unknown) =>
-            fetch("https://api.test/sectionPost/create", {
-                method: "POST",
-                body: JSON.stringify({ data, opts }),
-            }).then((res) => (res.ok ? res.json() : Promise.reject(new Error("create error")))),
-        delete: (where: unknown, opts?: unknown) =>
-            fetch("https://api.test/sectionPost/delete", {
-                method: "POST",
-                body: JSON.stringify({ where, opts }),
-            }).then((res) => (res.ok ? res.json() : Promise.reject(new Error("delete error")))),
-    };
-    return { client: { models: { SectionPost: mockModel } } };
-});
+vi.mock("@entities/core/services/amplifyClient", () => require("@test/mocks/amplifyClient"));
 
 describe("sectionPostService", () => {
     it("listByParent retourne les IDs post", async () => {

@@ -4,16 +4,7 @@ import { relationService } from "@entities/core/services";
 import { http, HttpResponse } from "msw";
 import { server } from "@test/setup";
 
-vi.mock("@entities/core/services/amplifyClient", () => {
-    const mockModel = {
-        list: (args?: unknown) =>
-            fetch("https://api.test/relation", {
-                method: "POST",
-                body: JSON.stringify(args),
-            }).then((res) => res.json()),
-    };
-    return { client: { models: { TestRelation: mockModel } } };
-});
+vi.mock("@entities/core/services/amplifyClient", () => require("@test/mocks/amplifyClient"));
 
 describe("syncManyToMany", () => {
     it("appelle createFn et deleteFn avec les ID corrects", async () => {
