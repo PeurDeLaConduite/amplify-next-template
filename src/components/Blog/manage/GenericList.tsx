@@ -84,7 +84,10 @@ export default function GenericList<T>({
                             onCancel={onCancel}
                             onDelete={() => onDeleteById(id)}
                             isFormNew={false}
+<<<<<<< Updated upstream
                             variantIcon={variantIcon}
+=======
+>>>>>>> Stashed changes
                             editButtonLabel={editButtonLabel}
                             deleteButtonLabel={deleteButtonLabel}
                         />
