@@ -62,6 +62,7 @@ export default function SectionManagerPage() {
                     sections={sections}
                     editingId={sectionId}
                     onSaveSuccess={handleSaved}
+                    onCancel={handleCancel}
                 />
 
                 <SectionHeader>Liste des sections</SectionHeader>

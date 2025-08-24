@@ -23,12 +23,13 @@ import BlogFormShell from "@components/Blog/manage/BlogFormShell";
 interface Props {
     sectionFormManager: ReturnType<typeof useSectionForm>;
     onSaveSuccess: () => void;
+    onCancel: () => void;
     sections: SectionType[]; // 👈 comme PostForm (posts)
     editingId: string | null; // 👈 comme PostForm (editingId)
 }
 
 const SectionForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
-    { sectionFormManager, onSaveSuccess, sections, editingId },
+    { sectionFormManager, onSaveSuccess, onCancel, sections, editingId },
     ref
 ) {
     const {
@@ -87,6 +88,7 @@ const SectionForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
             blogFormManager={sectionFormManager}
             initialForm={initialSectionForm}
             onSaveSuccess={onSaveSuccess}
+            onCancel={onCancel}
             submitLabel={{ create: "Créer la section", edit: "Mettre à jour" }}
         >
             <EditableField

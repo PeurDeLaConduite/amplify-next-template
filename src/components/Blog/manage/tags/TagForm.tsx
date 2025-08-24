@@ -5,7 +5,7 @@ import React, { forwardRef, type ChangeEvent } from "react";
 import BlogFormShell from "@components/Blog/manage/BlogFormShell";
 import { useTagForm } from "@entities/models/tag/hooks";
 import { initialTagForm } from "@entities/models/tag/form";
-import type { TagFormType, TagType } from "@entities/models/tag/types";
+import type { TagFormType } from "@entities/models/tag/types";
 import { EditableField } from "@components/ui/Form";
 
 type UseTagFormReturn = ReturnType<typeof useTagForm>;
@@ -13,12 +13,11 @@ type UseTagFormReturn = ReturnType<typeof useTagForm>;
 interface Props {
     tagFormManager: UseTagFormReturn;
     onSaveSuccess: () => void;
-    tags: TagType[];
-    editingId: string | null;
+    onCancel: () => void;
 }
 
 const TagForm = forwardRef<HTMLFormElement, Props>(function TagForm(
-    { tagFormManager, onSaveSuccess, tags, editingId },
+    { tagFormManager, onSaveSuccess, onCancel },
     ref
 ) {
     const { form, setFieldValue } = tagFormManager;
@@ -35,6 +34,7 @@ const TagForm = forwardRef<HTMLFormElement, Props>(function TagForm(
             blogFormManager={tagFormManager}
             initialForm={initialTagForm}
             onSaveSuccess={onSaveSuccess}
+            onCancel={onCancel}
             submitLabel={{ create: "Ajouter", edit: "Mettre à jour" }}
         >
             <EditableField
