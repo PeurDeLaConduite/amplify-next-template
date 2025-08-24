@@ -9,12 +9,13 @@ import type { AuthorType } from "@entities/models/author/types";
 interface Props {
     authorFormManager: ReturnType<typeof useAuthorForm>;
     onSaveSuccess: () => void;
+    onCancel: () => void;
     authors: AuthorType[]; // 👈 comme PostForm (posts)
     editingId: string | null; // 👈 comme PostForm (editingId)
 }
 
 const AuthorForm = forwardRef<HTMLFormElement, Props>(function AuthorForm(
-    { authorFormManager, onSaveSuccess, authors, editingId },
+    { authorFormManager, onSaveSuccess, onCancel, authors, editingId },
     ref
 ) {
     const { form, setFieldValue } = authorFormManager;
@@ -30,6 +31,7 @@ const AuthorForm = forwardRef<HTMLFormElement, Props>(function AuthorForm(
             blogFormManager={authorFormManager}
             initialForm={initialAuthorForm}
             onSaveSuccess={onSaveSuccess}
+            onCancel={onCancel}
             submitLabel={{ create: "Ajouter un auteur", edit: "Mettre à jour" }}
         >
             <EditableField

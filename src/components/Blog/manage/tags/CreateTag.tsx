@@ -70,6 +70,7 @@ export default function CreateTagPage() {
                     tags={tags}
                     editingId={tagId}
                     onSaveSuccess={handleSaved}
+                    onCancel={handleCancel}
                 />
 
                 <SectionHeader>Liste des tags</SectionHeader>
