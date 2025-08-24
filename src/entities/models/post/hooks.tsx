@@ -12,8 +12,8 @@ import { type PostFormType, type PostType } from "@entities/models/post/types";
 import { type AuthorType } from "@entities/models/author/types";
 import { type TagType } from "@entities/models/tag/types";
 import { type SectionType } from "@entities/models/section/types";
-import { syncPost2Tags } from "@entities/relations/postTag";
-import { syncPost2Sections } from "@entities/relations/sectionPost";
+import { syncPostTags } from "@entities/relations/postTag";
+import { syncPostSections } from "@entities/relations/sectionPost";
 import { toggleId } from "@entities/core/utils";
 
 interface Extras extends Record<string, unknown> {
@@ -71,8 +71,8 @@ export function usePostForm(post: PostType | null) {
         },
         syncRelations: async (id, form) => {
             await Promise.all([
-                syncPost2Tags(id, form.tagIds),
-                syncPost2Sections(id, form.sectionIds),
+                syncPostTags(id, form.tagIds),
+                syncPostSections(id, form.sectionIds),
             ]);
         },
     });
