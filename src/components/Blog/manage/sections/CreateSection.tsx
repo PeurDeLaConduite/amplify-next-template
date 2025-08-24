@@ -22,6 +22,7 @@ export default function SectionManagerPage() {
         listSections,
         selectById,
         deleteEntity,
+        exitEditMode,
     } = manager;
 
     useEffect(() => {
@@ -49,8 +50,9 @@ export default function SectionManagerPage() {
     }, [listSections]);
 
     const handleCancel = useCallback(() => {
+        exitEditMode();
         setSectionToEdit(null);
-    }, []);
+    }, [exitEditMode]);
 
     return (
         <RequireAdmin>
