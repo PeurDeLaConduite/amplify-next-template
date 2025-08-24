@@ -9,7 +9,6 @@ import { RefreshButton } from "@components/ui/Button";
 
 import TagForm from "@components/Blog/manage/tags/TagForm";
 import TagList from "@components/Blog/manage/tags/TagList";
-import PostTagsRelationManager from "@components/Blog/manage/tags/PostTagsRelationManager";
 
 import { type TagType, useTagForm } from "@entities/models/tag/";
 
