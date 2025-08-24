@@ -1,31 +1,26 @@
-import { renderHook, act, waitFor } from "@testing-library/react";
+import { renderHook, act } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { usePostForm } from "@entities/models/post/hooks";
 import { postService } from "@entities/models/post/service";
-import { postTagService } from "@entities/relations/postTag/service";
-import { sectionPostService } from "@entities/relations/sectionPost/service";
+import { syncPostToTags } from "@entities/relations/postTag";
+import { syncPostToSections } from "@entities/relations/sectionPost";
 
 vi.mock("@entities/models/post/service", () => ({
     postService: {
         create: vi.fn().mockResolvedValue({ data: { id: "post1" } }),
         update: vi.fn().mockResolvedValue({ data: { id: "post1" } }),
+        list: vi.fn().mockResolvedValue({ data: [] }),
     },
 }));
 
-vi.mock("@entities/relations/postTag/service", () => ({
-    postTagService: {
-        listByParent: vi.fn().mockResolvedValue([]),
-        create: vi.fn().mockResolvedValue(undefined),
-        delete: vi.fn().mockResolvedValue(undefined),
-    },
+vi.mock("@entities/relations/postTag", () => ({
+    syncPostToTags: vi.fn(),
+    postTagService: { listByParent: vi.fn().mockResolvedValue([]) },
 }));
 
-vi.mock("@entities/relations/sectionPost/service", () => ({
-    sectionPostService: {
-        listByChild: vi.fn().mockResolvedValue([]),
-        create: vi.fn().mockResolvedValue(undefined),
-        delete: vi.fn().mockResolvedValue(undefined),
-    },
+vi.mock("@entities/relations/sectionPost", () => ({
+    syncPostToSections: vi.fn(),
+    sectionPostService: { listByChild: vi.fn().mockResolvedValue([]) },
 }));
 
 vi.mock("@entities/models/author/service", () => ({
@@ -50,7 +45,8 @@ describe("usePostForm", () => {
 
         act(() => {
             result.current.setFieldValue("title", "Titre");
-            result.current.syncM2MTag("tag1");
+            result.current.setFieldValue("authorId", "a1");
+            result.current.toggleTag("tag1");
             result.current.toggleSection("section1");
         });
 
@@ -72,19 +68,21 @@ describe("usePostForm", () => {
     });
 
     it("synchronise les tags et sections", async () => {
-        (postTagService.listByParent as any).mockResolvedValue(["tag1"]);
-        (sectionPostService.listByChild as any).mockResolvedValue(["section1"]);
-        const post = { id: "post1", seo: {} } as any;
+        const post = { id: "post1", authorId: "a1", seo: {} } as any;
         const { result } = renderHook(() => usePostForm(post));
 
-        await waitFor(() => {
-            expect(result.current.form.tagIds).toEqual(["tag1"]);
-            expect(result.current.form.sectionIds).toEqual(["section1"]);
+        act(() => {
+            result.current.setForm({
+                ...result.current.form,
+                authorId: "a1",
+                tagIds: ["tag1"],
+                sectionIds: ["section1"],
+            });
         });
 
         act(() => {
-            result.current.syncM2MTag("tag1");
-            result.current.syncM2MTag("tag2");
+            result.current.toggleTag("tag1");
+            result.current.toggleTag("tag2");
             result.current.toggleSection("section1");
             result.current.toggleSection("section2");
         });
@@ -93,9 +91,7 @@ describe("usePostForm", () => {
             await result.current.submit();
         });
 
-        expect(postTagService.create).toHaveBeenCalledWith("post1", "tag2");
-        expect(postTagService.delete).toHaveBeenCalledWith("post1", "tag1");
-        expect(sectionPostService.create).toHaveBeenCalledWith("section2", "post1");
-        expect(sectionPostService.delete).toHaveBeenCalledWith("section1", "post1");
+        expect(syncPostToTags).toHaveBeenCalledWith("post1", ["tag2"]);
+        expect(syncPostToSections).toHaveBeenCalledWith("post1", ["section2"]);
     });
 });
