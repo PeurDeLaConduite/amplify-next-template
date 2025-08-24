@@ -9,6 +9,7 @@ import { RefreshButton } from "@components/ui/Button";
 
 import TagForm from "@components/Blog/manage/tags/TagForm";
 import TagList from "@components/Blog/manage/tags/TagList";
+import PostTagsRelationManager from "@components/Blog/manage/tags/PostTagsRelationManager";
 
 import { type TagType, useTagForm } from "@entities/models/tag/";
 
@@ -25,7 +26,10 @@ export default function CreateTagPage() {
         loading,
         listTags,
         selectById,
-        deleteEntity,
+        removeById,
+        tagsForPost,
+        isTagLinked,
+        toggle,
     } = manager;
 
     useEffect(() => {
@@ -42,9 +46,9 @@ export default function CreateTagPage() {
 
     const handleDeleteById = useCallback(
         async (id: IdLike) => {
-            await deleteEntity(String(id));
+            await removeById(String(id));
         },
-        [deleteEntity]
+        [removeById]
     );
 
     const handleSaved = useCallback(async () => {
@@ -67,6 +71,8 @@ export default function CreateTagPage() {
                 <TagForm
                     ref={formRef}
                     tagFormManager={manager}
+                    tags={tags}
+                    editingId={tagId}
                     onSaveSuccess={handleSaved}
                     onCancel={handleCancel}
                 />
@@ -81,6 +87,16 @@ export default function CreateTagPage() {
                     onDeleteById={handleDeleteById}
                     editButtonLabel=""
                     deleteButtonLabel=""
+                />
+
+                <SectionHeader loading={loading}>Associer les tags aux articles</SectionHeader>
+                <PostTagsRelationManager
+                    posts={posts}
+                    tags={tags}
+                    tagsForPost={tagsForPost}
+                    isTagLinked={isTagLinked}
+                    toggle={toggle}
+                    loading={!!loading}
                 />
             </BlogEditorLayout>
         </RequireAdmin>
