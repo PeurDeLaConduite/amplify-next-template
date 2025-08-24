@@ -21,8 +21,7 @@ export default function AuthorManagerPage() {
         listAuthors,
         selectById,
         deleteEntity,
-        setForm,
-        setMode,
+        exitEditMode,
     } = manager;
 
     useEffect(() => {
@@ -50,8 +49,9 @@ export default function AuthorManagerPage() {
     }, [listAuthors]);
 
     const handleCancel = useCallback(() => {
+        exitEditMode();
         setAuthorToEdit(null);
-    }, [setMode, setForm]);
+    }, [exitEditMode]);
 
     return (
         <RequireAdmin>

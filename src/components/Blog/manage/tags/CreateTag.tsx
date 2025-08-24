@@ -27,6 +27,7 @@ export default function CreateTagPage() {
         listTags,
         selectById,
         deleteEntity,
+        exitEditMode,
         tagsForPost,
         isTagLinked,
         toggle,
@@ -57,8 +58,9 @@ export default function CreateTagPage() {
     }, [listTags]);
 
     const handleCancel = useCallback(() => {
+        exitEditMode();
         setTagToEdit(null);
-    }, []);
+    }, [exitEditMode]);
 
     return (
         <RequireAdmin>
