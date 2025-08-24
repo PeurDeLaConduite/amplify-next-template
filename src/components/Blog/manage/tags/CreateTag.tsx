@@ -67,9 +67,8 @@ export default function CreateTagPage() {
                 <TagForm
                     ref={formRef}
                     tagFormManager={manager}
-                    tags={tags}
-                    editingId={tagId}
                     onSaveSuccess={handleSaved}
+                    onCancel={handleCancel}
                 />
 
                 <SectionHeader>Liste des tags</SectionHeader>

@@ -63,6 +63,7 @@ export default function AuthorManagerPage() {
                     authors={authors}
                     editingId={authorId}
                     onSaveSuccess={handleSaved}
+                    onCancel={handleCancel}
                 />
 
                 <SectionHeader loading={loading}>Liste d&apos;auteurs</SectionHeader>
