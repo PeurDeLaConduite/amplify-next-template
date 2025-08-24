@@ -14,19 +14,13 @@ export interface UseModelFormOptions<F extends object, E = Record<string, unknow
     update: (form: F) => Promise<string>;
     syncRelations?: (id: string, form: F) => Promise<void>;
 
-    /** 🔄 Charge l'entité depuis la "source de vérité" (ex: GET by id/sub) */
     load?: () => Promise<F | null>;
-    /** 📦 Charge et renvoie les "extras" (ex: listes pour selects) */
     loadExtras?: () => Promise<Partial<E> | void> | Partial<E> | void;
 
-    /** Auto-exécuter load() au mount */
     autoLoad?: boolean;
-    /** Auto-exécuter loadExtras() au mount */
     autoLoadExtras?: boolean;
-    /** Réinitialiser le formulaire si load() renvoie null */
     resetOnNull?: boolean;
 
-    /** ⚙️ Comparateur optionnel pour calculer `dirty` (sinon deepEqual JSON) */
     isEqual?: (a: F, b: F) => boolean;
 }
 
@@ -37,8 +31,8 @@ export interface UseModelFormResult<F, E> {
 
     dirty: boolean;
     saving: boolean;
-    loading: boolean; // global (load + loadExtras)
-    loadingExtras: boolean; // pour différencier si besoin
+    loading: boolean;
+    loadingExtras: boolean;
 
     error: unknown;
     setError: React.Dispatch<React.SetStateAction<unknown>>;
@@ -47,16 +41,12 @@ export interface UseModelFormResult<F, E> {
     setFieldValue: <K extends keyof F>(field: K, value: F[K]) => void;
     patchForm: (partial: Partial<F>) => void;
 
-    /** Helpers de mode */
     setCreate: (next?: F) => void;
     setEdit: (next?: F) => void;
 
-    /** Enchaîne create/update (+ syncRelations) puis refresh/load */
     submit: () => Promise<boolean>;
     reset: () => void;
-    /** Annule les changements et reste dans le mode courant */
     cancelChanges: () => void;
-    /** Quitte l’édition et repasse en create avec un form neuf (ou fourni) */
     exitEditMode: (next?: F) => void;
 
     setForm: React.Dispatch<React.SetStateAction<F>>;
@@ -65,18 +55,12 @@ export interface UseModelFormResult<F, E> {
     setMessage: React.Dispatch<React.SetStateAction<string | null>>;
     adoptInitial: (next: F, mode?: FormMode) => void;
 
-    /** 🔄 Recharge depuis load() et met à jour baseline */
     refresh: () => Promise<void>;
-    /** 📦 Recharge les extras */
     refreshExtras: () => Promise<void>;
 
-    /** Petit utilitaire pour inputs texte */
     bindText: <K extends keyof F>(
         field: K
-    ) => {
-        value: string;
-        onChange: (e: { target: { value: string } }) => void;
-    };
+    ) => { value: string; onChange: (e: { target: { value: string } }) => void };
 }
 
 function deepEqual(a: unknown, b: unknown) {
@@ -107,7 +91,9 @@ export default function useModelForm<
         isEqual,
     } = options;
 
-    const initialRef = useRef(initialForm);
+    /** baselineRef conserve l’état “source de vérité” courant */
+    const baselineRef = useRef(initialForm);
+
     const [form, setForm] = useState<F>(initialForm);
     const [extras, setExtras] = useState<E>((initialExtras as E) ?? ({} as E));
     const [mode, setMode] = useState<FormMode>(initialMode);
@@ -117,10 +103,9 @@ export default function useModelForm<
     const [error, setError] = useState<unknown>(null);
     const [message, setMessage] = useState<string | null>(null);
 
-    // dirty = différences par rapport à la baseline (initialRef.current)
     const dirty = useMemo(() => {
         const equals = isEqual ?? deepEqual;
-        return !equals(form, initialRef.current);
+        return !equals(form, baselineRef.current);
     }, [form, isEqual]);
 
     const setFieldValue = useCallback(<K extends keyof F>(field: K, value: F[K]) => {
@@ -134,20 +119,18 @@ export default function useModelForm<
     }, []);
 
     const reset = useCallback(() => {
-        setForm(initialRef.current);
+        setForm(baselineRef.current);
         setMessage("Les données ont été réinitialisées.");
         setMode(initialMode);
         setError(null);
     }, [initialMode]);
 
-    /** Annule les changements et reste dans le mode courant */
     const cancelChanges = useCallback(() => {
-        setForm(initialRef.current);
+        setForm(baselineRef.current);
         setMessage("Modifications annulées.");
         setError(null);
     }, []);
 
-    /** Quitte le mode édition → repasse en create avec un form neuf (ou fourni) */
     const exitEditMode = useCallback(
         (next?: F) => {
             adoptInitial(next ?? initialForm, "create");
@@ -159,7 +142,7 @@ export default function useModelForm<
     );
 
     const adoptInitial = useCallback((next: F, nextMode: FormMode = "edit") => {
-        initialRef.current = next;
+        baselineRef.current = next;
         setForm(next);
         setMode(nextMode);
         setError(null);
@@ -198,12 +181,10 @@ export default function useModelForm<
         }
     }, [loadExtras]);
 
-    // auto-load au mount
     useEffect(() => {
         if (autoLoad && load) void refresh();
     }, [autoLoad, load, refresh]);
 
-    // auto-loadExtras au mount
     useEffect(() => {
         if (autoLoadExtras && loadExtras) void refreshExtras();
     }, [autoLoadExtras, loadExtras, refreshExtras]);
@@ -236,7 +217,7 @@ export default function useModelForm<
                 await refresh();
             } else {
                 setMode("edit");
-                initialRef.current = form;
+                baselineRef.current = form;
             }
             return true;
         } catch (e) {
