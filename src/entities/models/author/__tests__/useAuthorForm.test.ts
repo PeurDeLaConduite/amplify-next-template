@@ -40,6 +40,7 @@ describe("useAuthorForm", () => {
             avatar: "",
             bio: "",
             email: "",
+            order: 1,
         } as any;
         const { result } = renderHook(() => useAuthorForm(author));
 
@@ -59,6 +60,7 @@ describe("useAuthorForm", () => {
             avatar: "",
             bio: "",
             email: "",
+            order: 1,
         });
     });
 });

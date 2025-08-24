@@ -10,6 +10,7 @@ describe("toAuthorForm", () => {
             avatar: faker.image.avatar(),
             bio: faker.lorem.sentence(),
             email: faker.internet.email(),
+            order: faker.number.int(),
         } as unknown as AuthorType;
 
         const postIds = [faker.string.uuid(), faker.string.uuid()];
@@ -18,6 +19,7 @@ describe("toAuthorForm", () => {
             authorName: author.authorName,
             avatar: author.avatar,
             bio: author.bio,
+            order: author.order,
             email: author.email,
             postIds,
         });
@@ -31,6 +33,7 @@ describe("toAuthorCreate / toAuthorUpdate", () => {
             avatar: faker.image.avatar(),
             bio: faker.lorem.sentence(),
             email: faker.internet.email(),
+            order: faker.number.int(),
             postIds: [faker.string.uuid()],
         };
 
@@ -38,6 +41,7 @@ describe("toAuthorCreate / toAuthorUpdate", () => {
             authorName: form.authorName,
             avatar: form.avatar,
             bio: form.bio,
+            order: form.order,
             email: form.email,
         };
 
