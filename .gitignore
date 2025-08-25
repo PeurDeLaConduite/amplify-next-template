@@ -49,5 +49,5 @@ next-env.d.ts
 # amplify
 .amplify
 # amplify_outputs*
-amplifyconfiguration*
-amplify_outputs.json
+# amplifyconfiguration*
+# amplify_outputs.json
