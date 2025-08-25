@@ -41,6 +41,7 @@
         "src/**/*.tsx",
         "public/**/*.json",
         ".next/types/**/*.ts",
+        "amplify/**/*.ts",
         "src/hooks/useEditableForm.js",
         "src/components/Blog/Create/components/ArticleEditForm.jsx",
         "src/components/Blog/manage/authors/CreateAuthor.tsx",
@@ -48,5 +49,5 @@
         "src/components/Blog/Create/PostsForm.jsx",
         "src/components/Blog/manage/sections/SectionsForm.tsx"
     ],
-    "exclude": ["node_modules", "amplify", ".Help/examples"]
+    "exclude": ["node_modules", ".next", "dist", "build", ".amplify"]
 }
