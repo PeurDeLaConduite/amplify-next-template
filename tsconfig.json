@@ -47,7 +47,8 @@
         "src/components/Blog/manage/authors/CreateAuthor.tsx",
         "src/components/Blog/Create/components/TagPostManager.tsx",
         "src/components/Blog/Create/PostsForm.jsx",
-        "src/components/Blog/manage/sections/SectionsForm.tsx"
+        "src/components/Blog/manage/sections/SectionsForm.tsx",
+        "src/app/amplifyConfig.ts"
     ],
     "exclude": ["node_modules", ".next", "dist", "build", ".amplify"]
 }

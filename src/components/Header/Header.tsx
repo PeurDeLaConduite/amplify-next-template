@@ -62,6 +62,9 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
                         </Link>
                         <Link href="/profile" className="text-gray-700 hover:text-blue-600">
                             My profile
+                        </Link>{" "}
+                        <Link href="/amp" className="text-gray-700 hover:text-blue-600">
+                            Amp
                         </Link>
                     </div>
 
