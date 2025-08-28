@@ -1,7 +1,7 @@
 "use client";
 import { useEffect } from "react";
 import { useAuthenticator } from "@aws-amplify/ui-react";
-import "@aws-amplify/ui-react/styles.css";
+// import "@aws-amplify/ui-react/styles.css";
 import EntityEditor from "@components/forms/EntityEditor";
 import { label as fieldLabel } from "./utilsUserProfile";
 import PhoneIcon from "@mui/icons-material/Phone";

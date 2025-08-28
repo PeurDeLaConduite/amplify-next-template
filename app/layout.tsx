@@ -1,6 +1,6 @@
 import React from "react";
 import "./globals.css";
-import "@aws-amplify/ui-react/styles.css";
+// import "@aws-amplify/ui-react/styles.css";
 import Header from "@components/Header/Header";
 import Providers from "./providers";
 import AuthProvider from "@components/Authentication/auth-provider";

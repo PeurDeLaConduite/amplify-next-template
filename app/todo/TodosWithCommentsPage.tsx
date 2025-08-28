@@ -1,5 +1,5 @@
 import React from "react";
-import "@aws-amplify/ui-react/styles.css";
+// import "@aws-amplify/ui-react/styles.css";
 import useTodosWithComments from "@src/features/todo/useTodosWithComments";
 import TodoList from "@src/features/todo/TodoList";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import "@aws-amplify/ui-react/styles.css";
+// import "@aws-amplify/ui-react/styles.css";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import TodosWithCommentsPage from "./TodosWithCommentsPage";
 

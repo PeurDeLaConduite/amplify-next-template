@@ -2,7 +2,7 @@
 "use client";
 import { useEffect } from "react";
 import { Authenticator, useAuthenticator } from "@aws-amplify/ui-react";
-import "@aws-amplify/ui-react/styles.css";
+// import "@aws-amplify/ui-react/styles.css";
 import EntityEditor from "@components/forms/EntityEditor";
 import { label as fieldLabel } from "./utilsUserName";
 import PersonIcon from "@mui/icons-material/Person";
