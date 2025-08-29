@@ -13,10 +13,12 @@
 
 Utilisez les scripts définis dans le `package.json` :
 
-- **`yarn dev`** : lance l’application en mode développement (`next dev`).
+- **`yarn install`** : installe l’application en mode développement (`next dev`).
+- **`yarn lint`** : exécute le lint via Next.js (`next lint`).
+- **`yarn tsc -noEmit`**
+- **`yarn test`**
 - **`yarn build`** : construit la production (`next build`).
 - **`yarn start`** : démarre le serveur en production (`next start`).
-- **`yarn lint`** : exécute le lint via Next.js (`next lint`).
 
 ## Style de code
 
@@ -41,7 +43,7 @@ Utilisez les scripts définis dans le `package.json` :
 
 - **Framework** : Next.js v15.0.3
 - **AWS & Amplify** : aws-amplify 6.9.0 et @aws-amplify/ui-react
-- **Amplify V2** 
+- **Amplify V2**
 
 ## Tests
 
@@ -50,12 +52,16 @@ Utilisez les scripts définis dans le `package.json` :
 
 ## Pull Request
 
-- **Titre de la PR** : `[Fix|Feat] courte description`
-- **Description** : expliquer l’objectif du changement.
-- **Tests effectués** : listez les commandes exécutées (ex. `yarn dev`, `yarn lint`, `yarn build`).
+- Tous les tests (unitaires, API, intégration, E2E) doivent être placés dans le dossier racine `./tests`.
+- Structure recommandée :
+    - `tests/unit` : tests unitaires
+    - `tests/api` : tests des API
+    - `tests/integration` : tests d’intégration
+    - `tests/e2e` : tests end-to-end
+    - `tests/_legacy` : tests historiques à migrer ou supprimer
+- Des scripts de test sont disponibles : `yarn test`, `yarn test:unit`, `yarn test:api`, `yarn test:integration`, `yarn test:e2e`.
 
 ---
-
 
 Quand tu génères du code, n’argumente pas sur la forme des imports ni sur l’utilisation des alias relatifs :
 

@@ -21,10 +21,12 @@ describe("cascade helpers", () => {
     });
 
     it("deleteEdges liste et supprime les éléments", async () => {
-        const listFn = vi.fn().mockResolvedValue({ data: [1, 2, 3] });
+        const listFn = vi
+            .fn<(args: { filter: Record<string, unknown> }) => Promise<{ data: number[] }>>()
+            .mockResolvedValue({ data: [1, 2, 3] });
         const calls: number[] = [];
         await deleteEdges(
-            listFn as any,
+            listFn,
             async (e: number) => {
                 calls.push(e);
             },

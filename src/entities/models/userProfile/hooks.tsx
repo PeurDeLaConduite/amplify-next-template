@@ -100,7 +100,10 @@ export function useUserProfileForm(profile: UserProfileType | null) {
         async (field: keyof UserProfileFormType, value: string) => {
             const id = profileId ?? sub;
             if (!id) return;
-            await userProfileService.update({ id, [field]: value } as any);
+            await userProfileService.update({ id, [field]: value } as Record<
+                keyof UserProfileFormType,
+                string
+            > & { id: string });
             patchForm({ [field]: value } as Partial<UserProfileFormType>);
         },
         [profileId, sub, patchForm]
@@ -114,7 +117,7 @@ export function useUserProfileForm(profile: UserProfileType | null) {
     );
 
     // Petit utilitaire conservé pour compat UI existante
-    const labels = useCallback((field: keyof UserProfileFormType) => fieldLabel(field as any), []);
+    const labels = useCallback((field: keyof UserProfileFormType) => fieldLabel(field), []);
 
     return {
         ...modelForm,

@@ -35,37 +35,41 @@ beforeEach(() => {
 describe("todoService", () => {
     it("get utilise le fallback d'authentification", async () => {
         const fetchSpy = vi.spyOn(global, "fetch");
-        const res = await todoService.get({ id: "1" } as any);
+        const res = await todoService.get({ id: "1" });
+        const calls = fetchSpy.mock.calls as [RequestInfo, RequestInit][];
         expect(fetchSpy).toHaveBeenCalledTimes(2);
-        expect((fetchSpy.mock.calls[0][1] as any).headers["x-auth-mode"]).toBe("apiKey");
-        expect((fetchSpy.mock.calls[1][1] as any).headers["x-auth-mode"]).toBe("userPool");
+        expect(new Headers(calls[0][1].headers).get("x-auth-mode")).toBe("apiKey");
+        expect(new Headers(calls[1][1].headers).get("x-auth-mode")).toBe("userPool");
         expect(res.data).toEqual({ id: 1 });
         fetchSpy.mockRestore();
     });
 
     it("create utilise userPool", async () => {
         const fetchSpy = vi.spyOn(global, "fetch");
-        const res = await todoService.create({} as any);
+        const res = await todoService.create({ content: "" });
+        const calls = fetchSpy.mock.calls as [RequestInfo, RequestInit][];
         expect(fetchSpy).toHaveBeenCalledTimes(1);
-        expect((fetchSpy.mock.calls[0][1] as any).headers["x-auth-mode"]).toBe("userPool");
+        expect(new Headers(calls[0][1].headers).get("x-auth-mode")).toBe("userPool");
         expect(res.data).toEqual({ id: 1 });
         fetchSpy.mockRestore();
     });
 
     it("update utilise userPool", async () => {
         const fetchSpy = vi.spyOn(global, "fetch");
-        const res = await todoService.update({ id: "1" } as any);
+        const res = await todoService.update({ id: "1", content: "" });
+        const calls = fetchSpy.mock.calls as [RequestInfo, RequestInit][];
         expect(fetchSpy).toHaveBeenCalledTimes(1);
-        expect((fetchSpy.mock.calls[0][1] as any).headers["x-auth-mode"]).toBe("userPool");
+        expect(new Headers(calls[0][1].headers).get("x-auth-mode")).toBe("userPool");
         expect(res.data).toEqual({ id: 1 });
         fetchSpy.mockRestore();
     });
 
     it("delete utilise userPool", async () => {
         const fetchSpy = vi.spyOn(global, "fetch");
-        const res = await todoService.delete({ id: "1" } as any);
+        const res = await todoService.delete({ id: "1" });
+        const calls = fetchSpy.mock.calls as [RequestInfo, RequestInit][];
         expect(fetchSpy).toHaveBeenCalledTimes(1);
-        expect((fetchSpy.mock.calls[0][1] as any).headers["x-auth-mode"]).toBe("userPool");
+        expect(new Headers(calls[0][1].headers).get("x-auth-mode")).toBe("userPool");
         expect(res.data).toEqual({ id: 1 });
         fetchSpy.mockRestore();
     });

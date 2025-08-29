@@ -9,7 +9,11 @@ import {
     toUserNameCreate,
     toUserNameUpdate,
 } from "@entities/models/userName/form";
-import type { UserNameFormType, UserNameType } from "@entities/models/userName/types";
+import type {
+    UserNameFormType,
+    UserNameType,
+    UserNameTypeUpdateInput,
+} from "@entities/models/userName/types";
 import { emitUserNameUpdated } from "./bus";
 
 type Extras = { userNames: UserNameType[] };
@@ -136,7 +140,10 @@ export function useUserNameForm(userName: UserNameType | null) {
         async (field: keyof UserNameFormType, value: string) => {
             const id = userNameId ?? sub;
             if (!id) return;
-            await userNameService.update({ id, [field]: value } as any);
+            await userNameService.update({
+                id,
+                [field]: value,
+            } as UserNameTypeUpdateInput & { id: string });
             patchForm({ [field]: value } as Partial<UserNameFormType>); // optimiste
             await refresh();
             emitUserNameUpdated();

@@ -2,6 +2,7 @@ import { renderHook, act, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { useAuthorForm } from "@entities/models/author/hooks";
 import { authorService } from "@entities/models/author/service";
+import { type AuthorType } from "@entities/models/author/types";
 
 vi.mock("@entities/models/author/service", () => ({
     authorService: {
@@ -13,7 +14,7 @@ vi.mock("@entities/models/author/service", () => ({
 
 describe("useAuthorForm", () => {
     it("gère la création puis le reset", async () => {
-        (authorService.create as any).mockResolvedValue({ data: { id: "a1" } });
+        (authorService.create as unknown as vi.Mock).mockResolvedValue({ data: { id: "a1" } });
         const { result } = renderHook(() => useAuthorForm(null));
 
         act(() => {
@@ -33,15 +34,15 @@ describe("useAuthorForm", () => {
     });
 
     it("gère la mise à jour", async () => {
-        (authorService.update as any).mockResolvedValue({ data: { id: "a1" } });
-        const author = {
+        (authorService.update as unknown as vi.Mock).mockResolvedValue({ data: { id: "a1" } });
+        const author: AuthorType = {
             id: "a1",
             authorName: "John",
             avatar: "",
             bio: "",
             email: "",
             order: 1,
-        } as any;
+        };
         const { result } = renderHook(() => useAuthorForm(author));
 
         await waitFor(() => {

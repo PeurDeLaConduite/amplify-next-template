@@ -1,6 +1,7 @@
 import { renderHook, act } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { usePostForm } from "@entities/models/post/hooks";
+import { type PostType } from "@entities/models/post/types";
 import { postService } from "@entities/models/post/service";
 import { syncPostToTags } from "@entities/relations/postTag";
 import { syncPostToSections } from "@entities/relations/sectionPost";
@@ -68,7 +69,7 @@ describe("usePostForm", () => {
     });
 
     it("synchronise les tags et sections", async () => {
-        const post = { id: "post1", authorId: "a1", seo: {} } as any;
+        const post: PostType = { id: "post1", authorId: "a1", seo: {} };
         const { result } = renderHook(() => usePostForm(post));
 
         act(() => {

@@ -6,7 +6,7 @@ import { server } from "@test/setup";
 vi.mock("@entities/core/services/amplifyClient", () => import("@test/mocks/amplifyClient"));
 
 vi.mock("@entities/core/auth", () => ({
-    canAccess: (_user: unknown, entity: any) => Boolean(entity.allow),
+    canAccess: (_user: unknown, entity: { allow: boolean }) => Boolean(entity.allow),
 }));
 
 beforeEach(() => {
@@ -53,15 +53,23 @@ describe("crudService", () => {
         const fetchSpy = vi.spyOn(global, "fetch");
         const res = await svc.list();
         expect(fetchSpy).toHaveBeenCalledTimes(2);
-        expect((fetchSpy.mock.calls[0][1] as any).headers["x-auth-mode"]).toBe("apiKey");
-        expect((fetchSpy.mock.calls[1][1] as any).headers["x-auth-mode"]).toBe("userPool");
+        expect(
+            ((fetchSpy.mock.calls[0][1] as RequestInit).headers as Record<string, string>)[
+                "x-auth-mode"
+            ]
+        ).toBe("apiKey");
+        expect(
+            ((fetchSpy.mock.calls[1][1] as RequestInit).headers as Record<string, string>)[
+                "x-auth-mode"
+            ]
+        ).toBe("userPool");
         expect(res.data).toEqual([{ id: 1, allow: true }]);
         fetchSpy.mockRestore();
     });
 
     it("get utilise le fallback et renvoie undefined si non accessible", async () => {
         const fetchSpy = vi.spyOn(global, "fetch");
-        const res = await svc.get({ id: 1 } as any);
+        const res = await svc.get({ id: "1" });
         expect(fetchSpy).toHaveBeenCalledTimes(2);
         expect(res.data).toBeUndefined();
         fetchSpy.mockRestore();
@@ -69,7 +77,7 @@ describe("crudService", () => {
 
     it("create utilise le fallback", async () => {
         const fetchSpy = vi.spyOn(global, "fetch");
-        const res = await svc.create({} as any);
+        const res = await svc.create({ content: "" });
         expect(fetchSpy).toHaveBeenCalledTimes(2);
         expect(res.data).toEqual({ id: 1 });
         fetchSpy.mockRestore();
@@ -77,7 +85,7 @@ describe("crudService", () => {
 
     it("update utilise le fallback", async () => {
         const fetchSpy = vi.spyOn(global, "fetch");
-        const res = await svc.update({} as any);
+        const res = await svc.update({ id: "1", content: "" });
         expect(fetchSpy).toHaveBeenCalledTimes(2);
         expect(res.data).toEqual({ id: 1 });
         fetchSpy.mockRestore();
@@ -85,7 +93,7 @@ describe("crudService", () => {
 
     it("delete utilise le fallback", async () => {
         const fetchSpy = vi.spyOn(global, "fetch");
-        const res = await svc.delete({ id: 1 } as any);
+        const res = await svc.delete({ id: "1" });
         expect(fetchSpy).toHaveBeenCalledTimes(2);
         expect(res.data).toEqual({ id: 1 });
         fetchSpy.mockRestore();

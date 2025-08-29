@@ -125,7 +125,7 @@ export function useSectionForm(section: SectionType | null) {
                 setMessage("Erreur lors de la suppression de la section.");
             }
         },
-        [listSections, sectionId, refresh]
+        [listSections, sectionId, refresh, setMessage, setError]
     );
 
     return {

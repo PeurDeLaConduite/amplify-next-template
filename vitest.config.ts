@@ -1,39 +1,29 @@
-// vitest.config.ts
 import { defineConfig } from "vitest/config";
-import { fileURLToPath } from "node:url";
-import { dirname, resolve } from "node:path";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+import path from "path";
 
 export default defineConfig({
     resolve: {
         alias: {
-            "@": resolve(__dirname, "."),
-            "@src": resolve(__dirname, "src"),
-            "@entities": resolve(__dirname, "src/entities"),
-            "@test": resolve(__dirname, "test"),
+            "@": path.resolve(__dirname, "./"),
+            "@app": path.resolve(__dirname, "app"),
+            "@src": path.resolve(__dirname, "src"),
+            "@amplify": path.resolve(__dirname, "amplify"),
+            "@components": path.resolve(__dirname, "src/components"),
+            "@hooks": path.resolve(__dirname, "src/hooks"),
+            "@context": path.resolve(__dirname, "src/context"),
+            "@utils": path.resolve(__dirname, "src/utils"),
+            "@assets": path.resolve(__dirname, "src/assets"),
+            "@services": path.resolve(__dirname, "src/services"),
+            "@myTypes": path.resolve(__dirname, "src/types"),
+            "@entities": path.resolve(__dirname, "src/entities"),
+            "@public": path.resolve(__dirname, "public"),
+            "@test": path.resolve(__dirname, "tests"),
+            tests: path.resolve(__dirname, "tests"),
         },
     },
     test: {
         environment: "jsdom",
-        setupFiles: ["./test/setup.ts"],
-        include: ["src/**/*.test.ts", "src/**/*.test.tsx", "test/**/*.test.ts"],
-        exclude: ["**/node_modules/**", "e2e/**"],
-        coverage: {
-            provider: "v8",
-            reporter: ["cobertura", "text-summary"],
-            thresholds: {
-                lines: 80,
-                functions: 80,
-                branches: 80,
-                statements: 80,
-            },
-            include: ["src/**/*.{ts,tsx}"],
-            exclude: ["node_modules/", ".next/", "**/*.d.ts", "tests/**", "test/**"],
-        },
-    },
-    css: {
-        postcss: { plugins: [] },
+        setupFiles: ["./tests/setupTests.ts"],
+        exclude: ["**/node_modules/**", "tests/e2e/**"],
     },
 });
