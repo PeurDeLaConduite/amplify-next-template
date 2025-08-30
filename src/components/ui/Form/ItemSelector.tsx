@@ -33,19 +33,24 @@ export default function ItemSelector<
             <div className="border rounded-md max-h-60 overflow-auto p-2 bg-gray-50">
                 {sortedItems.map((item, idx) => {
                     const id = item[idKey];
+                    const inputId = `${String(idKey)}-${id}`;
                     const checked = selectedIds.includes(id);
                     return (
-                        <div
+                        <label
                             key={id || `item-${idx}`}
+                            htmlFor={inputId}
                             className={`flex items-center p-2 mb-1 rounded-md cursor-pointer ${
                                 checked
                                     ? "bg-green-100 border border-green-400"
                                     : "bg-white hover:bg-gray-100"
                             }`}
-                            onClick={() => toggle(id)}
                         >
                             <input
                                 type="checkbox"
+                                name={`${String(idKey)}[]`}
+                                id={inputId}
+                                value={id}
+                                autoComplete="off"
                                 checked={checked}
                                 onChange={() => toggle(id)}
                                 className="mr-2 cursor-pointer"
@@ -59,7 +64,7 @@ export default function ItemSelector<
                                     </span>
                                 ) : null}
                             </div>
-                        </div>
+                        </label>
                     );
                 })}
             </div>
