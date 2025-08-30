@@ -180,6 +180,10 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
                         <label key={tag.id} className="block">
                             <input
                                 type="checkbox"
+                                name="tagIds"
+                                value={tag.id}
+                                id={`tag-${tag.id}`}
+                                autoComplete="off"
                                 checked={form.tagIds.includes(tag.id)}
                                 onChange={() => toggleTag(tag.id)}
                             />
@@ -196,6 +200,10 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
                         <label key={section.id} className="block">
                             <input
                                 type="checkbox"
+                                name="sectionIds"
+                                value={section.id}
+                                id={`section-${section.id}`}
+                                autoComplete="off"
                                 checked={form.sectionIds.includes(section.id)}
                                 onChange={() => toggleSection(section.id)}
                             />
