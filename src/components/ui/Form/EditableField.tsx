@@ -6,6 +6,8 @@ type EditableFieldProps = {
     onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
     readOnly: boolean;
     name: string;
+    type?: string;
+    autoComplete?: string;
     onFocus?: (e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
     onBlur?: (e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 };
@@ -16,6 +18,8 @@ const EditableField = ({
     onChange,
     readOnly,
     name,
+    type = "text",
+    autoComplete,
     onFocus,
     onBlur,
 }: EditableFieldProps) => (
@@ -24,7 +28,7 @@ const EditableField = ({
             {label}
         </label>
         <input
-            type="text"
+            type={type}
             id={name}
             name={name}
             value={value ?? ""}
@@ -32,7 +36,8 @@ const EditableField = ({
             onFocus={onFocus}
             onBlur={onBlur}
             readOnly={readOnly}
-            className={`w-full px-3 py-2 rounded-md border text-sm shadow-sm transition 
+            autoComplete={autoComplete}
+            className={`w-full px-3 py-2 rounded-md border text-sm shadow-sm transition
                 ${
                     readOnly
                         ? "bg-gray-100 border-gray-300 text-gray-500 cursor-not-allowed"

@@ -37,6 +37,8 @@ export default function SeoFields({ seo, readOnly, onChange }: SeoFieldsProps) {
                 value={seo.image}
                 onChange={onChange}
                 readOnly={readOnly}
+                type="url"
+                autoComplete="url"
             />
         </fieldset>
     );

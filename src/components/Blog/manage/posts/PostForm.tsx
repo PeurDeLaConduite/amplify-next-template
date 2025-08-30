@@ -128,6 +128,8 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
                 value={form.videoUrl ?? ""}
                 onChange={onChange}
                 readOnly={false}
+                type="url"
+                autoComplete="url"
             />
             <EditableTextArea
                 name="content"
