@@ -19,6 +19,24 @@ Des exemples d'utilisation du composant `EntityEditor` sont disponibles :
 - [UserProfileExample.tsx](src/examples/UserProfileExample.tsx)
 - [UserNameExample.tsx](src/examples/UserNameExample.tsx)
 
+### Autocomplétion des champs
+
+Le composant `EntityForm` accepte désormais la prop `fieldAutoComplete`,
+un objet qui associe à chaque champ un token d'autocomplétion HTML
+(`email`, `given-name`, `family-name`, etc.).
+Cela permet aux navigateurs de proposer des valeurs pertinentes lors de la saisie.
+
+```tsx
+<EntityEditor
+    fieldAutoComplete={{
+        email: "email",
+        firstName: "given-name",
+        familyName: "family-name",
+    }}
+    {...autresProps}
+/>
+```
+
 ## Deploying to AWS
 
 For detailed instructions on deploying your application, refer to the [deployment section](https://docs.amplify.aws/nextjs/start/quickstart/nextjs-app-router-client-components/#deploy-a-fullstack-app-to-aws) of our documentation.

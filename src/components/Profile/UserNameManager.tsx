@@ -16,6 +16,9 @@ import {
 
 type IdLike = string | number;
 const fields: (keyof UserNameFormType)[] = ["userName"];
+const fieldAutoComplete: Partial<Record<keyof UserNameFormType, string>> = {
+    userName: "username",
+};
 
 export default function UserNameManager() {
     const { user } = useAuthenticator();
@@ -73,6 +76,7 @@ export default function UserNameManager() {
             setForm={manager.setForm}
             fields={fields}
             labels={fieldLabel as (field: keyof UserNameFormType) => string}
+            fieldAutoComplete={fieldAutoComplete}
             updateEntity={manager.updateEntity}
             clearField={manager.clearField}
             deleteEntity={async (id?: string) => {

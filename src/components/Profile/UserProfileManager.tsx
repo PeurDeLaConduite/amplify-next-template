@@ -27,6 +27,16 @@ const fields: (keyof UserProfileFormType)[] = [
     "country",
 ];
 
+const fieldAutoComplete: Partial<Record<keyof UserProfileFormType, string>> = {
+    firstName: "given-name",
+    familyName: "family-name",
+    phoneNumber: "tel",
+    address: "street-address",
+    postalCode: "postal-code",
+    city: "address-level2",
+    country: "country",
+};
+
 export default function UserProfileManager() {
     const { user } = useAuthenticator();
     const [profileToEdit, setProfileToEdit] = useState<UserProfileType | null>(null);
@@ -116,6 +126,7 @@ export default function UserProfileManager() {
                 setForm={manager.setForm}
                 fields={fields}
                 labels={(f: keyof UserProfileFormType) => fieldLabel(f)}
+                fieldAutoComplete={fieldAutoComplete}
                 updateEntity={manager.updateEntity}
                 clearField={manager.clearField}
                 // Wrapper “à la AuthorList.onDeleteById”
