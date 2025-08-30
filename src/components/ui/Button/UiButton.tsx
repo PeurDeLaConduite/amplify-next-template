@@ -77,7 +77,10 @@ function intentStyles(
     }
 }
 
-export const UiButton = forwardRef<HTMLButtonElement, UiButtonProps>(function UiButton(props, ref) {
+export const UiButton = forwardRef<
+    React.ComponentRef<typeof MuiButton> | React.ComponentRef<typeof MuiIconButton>,
+    UiButtonProps
+>(function UiButton(props, ref) {
     const {
         variantType,
         // discriminants nav/action
@@ -105,12 +108,13 @@ export const UiButton = forwardRef<HTMLButtonElement, UiButtonProps>(function Ui
         Array.isArray(sx) ? [{}, iv.sx, ...sx] : { ...iv.sx, ...sx }
     ) as SxProps<Theme>;
     const isDisabled = disabled || loading;
+    const linkProps = href ? { href } : undefined;
 
     // Rendu discriminé
     const content =
         variantType === "button" ? (
             <MuiButton
-                ref={ref}
+                ref={ref as React.Ref<React.ComponentRef<typeof MuiButton>>}
                 component={href ? NextLink : undefined}
                 href={href}
                 onClick={buttonOnClick}
@@ -129,9 +133,9 @@ export const UiButton = forwardRef<HTMLButtonElement, UiButtonProps>(function Ui
             </MuiButton>
         ) : (
             <MuiIconButton
-                ref={ref as any}
+                ref={ref as React.Ref<React.ComponentRef<typeof MuiIconButton>>}
                 component={href ? NextLink : undefined}
-                {...((href ? { href } : {}) as any)}
+                {...linkProps}
                 onClick={iconButtonOnClick}
                 size={size}
                 color={iv.color as any}
