@@ -6,6 +6,8 @@ type EditableFieldProps = {
     onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
     readOnly: boolean;
     name: string;
+    type?: string;
+    autoComplete?: string;
     onFocus?: (e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
     onBlur?: (e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
     type?: string;
@@ -19,6 +21,8 @@ const EditableField = ({
     onChange,
     readOnly,
     name,
+    type = "text",
+    autoComplete,
     onFocus,
     onBlur,
     type,
