@@ -252,10 +252,11 @@ export function DeleteButton(props: DeleteButtonProps) {
     });
 }
 /* -------------------------------- Cancel ---------------------------------- */
-export type CancelButtonProps = ButtonWrapperProps & { onCancel: () => void; editColor?: string };
+/* -------------------------------- Cancel ---------------------------------- */
+export type CancelButtonProps = ButtonWrapperProps & { onCancel: () => void };
 
 export function CancelButton(props: CancelButtonProps) {
-    const { onCancel, label = "Annuler", editColor = "black", ...rest } = props;
+    const { onCancel, label = "Annuler", ...rest } = props;
     return renderByMode({
         ...rest,
         variantType: rest.variantType ?? "button",
@@ -284,10 +285,10 @@ export function AddButton(props: AddButtonProps) {
 }
 
 /* ------------------------------- Submit/Update ----------------------------- */
-export type SubmitButtonProps = ButtonWrapperProps & { onSubmit: () => void; editColor?: string };
+export type SubmitButtonProps = ButtonWrapperProps & { onSubmit: () => void };
 
 export function SubmitButton(props: SubmitButtonProps) {
-    const { onSubmit, label = "Créer", editColor = "#9e9e9e", ...rest } = props;
+    const { onSubmit, label = "Créer", ...rest } = props;
     return renderByMode({
         ...rest,
         variantType: rest.variantType ?? "button",
@@ -295,7 +296,6 @@ export function SubmitButton(props: SubmitButtonProps) {
         icon: <SaveIcon />,
         intent: "primary",
         onClick: onSubmit,
-        // editColor,
     });
 }
 
@@ -333,7 +333,6 @@ export function ClearFieldButton(props: ClearFieldButtonProps) {
         editColor,
     });
 }
-
 /* --------------------------------- Power ---------------------------------- */
 export type PowerButtonProps = ButtonWrapperProps & { onPowerOff: () => void; editColor?: string };
 
@@ -369,19 +368,10 @@ export function RefreshButton(props: RefreshButtonProps) {
 
 /* ---------------------------------- Back ---------------------------------- */
 export type BackButtonProps = ButtonWrapperProps &
-    ({ href: string; onBack?: never } | { onBack: () => void; href?: never }) & {
-        editColor?: string;
-    };
+    ({ href: string; onBack?: never } | { onBack: () => void; href?: never });
 
 export function BackButton(props: BackButtonProps) {
-    const {
-        label = "Retour",
-        editColor = "#1976d2",
-        variantType,
-        onBack,
-        href,
-        ...wrapper
-    } = props; // bleu primary par défaut
+    const { label = "Retour", variantType, onBack, href, ...wrapper } = props;
     const common = {
         ...wrapper,
         variantType: variantType ?? "button",

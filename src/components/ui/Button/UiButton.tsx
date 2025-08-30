@@ -57,9 +57,12 @@ type AsButton = {
 
 export type UiButtonProps = (ButtonMode | IconMode) & (AsLink | AsButton);
 
-function intentStyles(
-    intent: UiButtonIntent | undefined
-): Pick<MuiButtonProps, "color"> & { sx?: SxProps<Theme> } {
+type MuiColor = MuiButtonProps["color"] & MuiIconButtonProps["color"];
+
+function intentStyles(intent: UiButtonIntent | undefined): {
+    color: MuiColor;
+    sx?: SxProps<Theme>;
+} {
     switch (intent) {
         case "success":
             return { color: "success" };
@@ -138,7 +141,7 @@ export const UiButton = forwardRef<
                 {...linkProps}
                 onClick={iconButtonOnClick}
                 size={size}
-                color={iv.color as any}
+                color={iv.color}
                 className={className}
                 sx={mergedSx}
                 disabled={isDisabled}
