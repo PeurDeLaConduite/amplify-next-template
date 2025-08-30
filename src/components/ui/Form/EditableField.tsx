@@ -10,8 +10,6 @@ type EditableFieldProps = {
     autoComplete?: string;
     onFocus?: (e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
     onBlur?: (e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-    type?: string;
-    autoComplete?: string;
     ariaDescribedBy?: string;
 };
 
@@ -25,8 +23,6 @@ const EditableField = ({
     autoComplete,
     onFocus,
     onBlur,
-    type,
-    autoComplete,
     ariaDescribedBy,
 }: EditableFieldProps) => (
     <div className="mb-4">

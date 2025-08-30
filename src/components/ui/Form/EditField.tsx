@@ -1,6 +1,7 @@
 import { UpdateButton, BackButton } from "@components/ui/Button";
 import React from "react";
 import type { FieldKey } from "@entities/core/hooks";
+import { autocompleteFor } from "@utils/autocomplete";
 
 type EditFieldProps<T extends Record<string, unknown>> = {
     editModeField: { field: FieldKey<T>; value: string };
@@ -9,6 +10,7 @@ type EditFieldProps<T extends Record<string, unknown>> = {
     >;
     saveField: () => void;
     labels: (field: FieldKey<T>) => string;
+    /** Permet d'overrider manuellement si besoin (ex: "new-password") */
     autoComplete?: string;
 };
 
@@ -17,10 +19,12 @@ export default function EditField<T extends Record<string, unknown>>({
     setEditModeField,
     saveField,
     labels,
-    autoComplete,
+    autoComplete, // ← on l’utilise pour override si fourni
 }: EditFieldProps<T>) {
     const { field, value } = editModeField;
     const inputId = React.useId();
+
+    const ac = autocompleteFor<T>(field, autoComplete);
 
     return (
         <fieldset className="my-6 p-4 border rounded-md bg-white shadow-sm max-w-md mx-auto">
@@ -38,7 +42,7 @@ export default function EditField<T extends Record<string, unknown>>({
                 value={value}
                 placeholder={labels(field)}
                 title={labels(field)}
-                autoComplete={autoComplete}
+                autoComplete={ac}
                 onChange={(e) =>
                     setEditModeField((prev) => (prev ? { ...prev, value: e.target.value } : null))
                 }
@@ -51,9 +55,6 @@ export default function EditField<T extends Record<string, unknown>>({
                     className="flex-1 mr-2"
                     size="medium"
                 />
-                {/* //? BackButton => appelle setEditModeField(null) 
-                    //* Sort du mode **édition** sans sans sauvegarder  
-                */}
                 <BackButton
                     onBack={() => setEditModeField(null)}
                     label="Retour"

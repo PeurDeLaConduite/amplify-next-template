@@ -47,9 +47,9 @@ export default function ReadOnlyView<T extends Record<string, unknown>>({
                             className="bg-white rounded-lg shadow-md px-4 py-5"
                         >
                             <div className="flex items-center justify-between mb-2">
-                                <label className="text-gray-800 font-semibold flex items-center gap-2 select-none">
+                                <p className="text-gray-800 font-semibold flex items-center gap-2 select-none">
                                     {labelIcon?.(field)} <span>{labels(field)}</span>
-                                </label>
+                                </p>
                                 <div className="flex gap-2">
                                     {extraButtons?.(field, value)}
                                     <EditButton

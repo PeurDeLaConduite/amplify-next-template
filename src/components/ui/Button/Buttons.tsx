@@ -92,7 +92,12 @@ function withIconFontSize(
     fontSize: "inherit" | "small" | "medium" | "large"
 ) {
     return React.isValidElement(icon)
-        ? React.cloneElement(icon as React.ReactElement<any>, { fontSize })
+        ? React.cloneElement(
+              icon as React.ReactElement<{
+                  fontSize?: "inherit" | "small" | "medium" | "large";
+              }>,
+              { fontSize }
+          )
         : icon;
 }
 
