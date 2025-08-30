@@ -23,6 +23,7 @@ export default function SeoFields({ seo, readOnly, onChange }: SeoFieldsProps) {
                 value={seo.title}
                 onChange={onChange}
                 readOnly={readOnly}
+                autoComplete="off"
             />
             <EditableField
                 name="seo.description"
@@ -30,6 +31,7 @@ export default function SeoFields({ seo, readOnly, onChange }: SeoFieldsProps) {
                 value={seo.description}
                 onChange={onChange}
                 readOnly={readOnly}
+                autoComplete="off"
             />
             <EditableField
                 name="seo.image"
@@ -37,6 +39,8 @@ export default function SeoFields({ seo, readOnly, onChange }: SeoFieldsProps) {
                 value={seo.image}
                 onChange={onChange}
                 readOnly={readOnly}
+                type="url"
+                autoComplete="url"
             />
         </fieldset>
     );

@@ -98,6 +98,7 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
                 value={form.title}
                 onChange={onChange}
                 readOnly={false}
+                autoComplete="off"
             />
             <EditableTextArea
                 name="excerpt"
@@ -112,6 +113,7 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
                 value={form.slug}
                 onChange={onChange}
                 readOnly={false}
+                autoComplete="off"
             />
             <SeoFields
                 seo={{
@@ -128,6 +130,8 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
                 value={form.videoUrl ?? ""}
                 onChange={onChange}
                 readOnly={false}
+                type="url"
+                autoComplete="url"
             />
             <EditableTextArea
                 name="content"

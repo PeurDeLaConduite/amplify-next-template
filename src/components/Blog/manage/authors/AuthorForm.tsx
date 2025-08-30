@@ -40,6 +40,7 @@ const AuthorForm = forwardRef<HTMLFormElement, Props>(function AuthorForm(
                 value={form.authorName ?? ""}
                 onChange={onChange}
                 readOnly={false}
+                autoComplete="name"
             />
 
             <EditableField
@@ -48,6 +49,8 @@ const AuthorForm = forwardRef<HTMLFormElement, Props>(function AuthorForm(
                 value={form.avatar ?? ""}
                 onChange={onChange}
                 readOnly={false}
+                type="url"
+                autoComplete="url"
             />
 
             <EditableTextArea
@@ -64,6 +67,8 @@ const AuthorForm = forwardRef<HTMLFormElement, Props>(function AuthorForm(
                 value={form.email ?? ""}
                 onChange={onChange}
                 readOnly={false}
+                type="email"
+                autoComplete="email"
             />
 
             {/* Aligne avec PostForm → contrôle d'ordre */}

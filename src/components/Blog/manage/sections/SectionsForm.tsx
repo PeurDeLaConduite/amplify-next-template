@@ -97,6 +97,7 @@ const SectionForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
                 value={form.title}
                 onChange={onChange}
                 readOnly={false}
+                autoComplete="off"
             />
 
             <EditableField
@@ -105,6 +106,7 @@ const SectionForm = forwardRef<HTMLFormElement, Props>(function SectionForm(
                 value={form.slug}
                 onChange={onChange}
                 readOnly={false}
+                autoComplete="off"
             />
 
             <EditableTextArea
