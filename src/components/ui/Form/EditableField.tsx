@@ -10,6 +10,9 @@ type EditableFieldProps = {
     autoComplete?: string;
     onFocus?: (e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
     onBlur?: (e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+    type?: string;
+    autoComplete?: string;
+    ariaDescribedBy?: string;
 };
 
 const EditableField = ({
@@ -22,13 +25,16 @@ const EditableField = ({
     autoComplete,
     onFocus,
     onBlur,
+    type,
+    autoComplete,
+    ariaDescribedBy,
 }: EditableFieldProps) => (
     <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor={name}>
             {label}
         </label>
         <input
-            type={type}
+            type={type ?? "text"}
             id={name}
             name={name}
             value={value ?? ""}
@@ -37,6 +43,7 @@ const EditableField = ({
             onBlur={onBlur}
             readOnly={readOnly}
             autoComplete={autoComplete}
+            aria-describedby={ariaDescribedBy}
             className={`w-full px-3 py-2 rounded-md border text-sm shadow-sm transition
                 ${
                     readOnly
