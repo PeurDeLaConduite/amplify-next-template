@@ -1,4 +1,9 @@
-const baseFetch = (url: string, { authMode, body }: { authMode?: string; body?: unknown } = {}) =>
+interface FetchOptions {
+    authMode?: string;
+    body?: unknown;
+}
+
+const baseFetch = (url: string, { authMode, body }: FetchOptions = {}) =>
     fetch(url, {
         method: "POST",
         headers: { "x-auth-mode": authMode ?? "" },
@@ -10,25 +15,25 @@ const baseFetch = (url: string, { authMode, body }: { authMode?: string; body?: 
 
 const models = {
     Todo: {
-        list: (opts?: unknown) => baseFetch("http://test.local/list", opts as any),
+        list: (opts?: unknown) => baseFetch("http://test.local/list", opts as FetchOptions),
         get: (args: unknown, opts?: unknown) =>
-            baseFetch("http://test.local/get", { ...(opts as any), body: args }),
+            baseFetch("http://test.local/get", { ...(opts as FetchOptions), body: args }),
         create: (data: unknown, opts?: unknown) =>
-            baseFetch("http://test.local/create", { ...(opts as any), body: data }),
+            baseFetch("http://test.local/create", { ...(opts as FetchOptions), body: data }),
         update: (data: unknown, opts?: unknown) =>
-            baseFetch("http://test.local/update", { ...(opts as any), body: data }),
+            baseFetch("http://test.local/update", { ...(opts as FetchOptions), body: data }),
         delete: (args: unknown, opts?: unknown) =>
-            baseFetch("http://test.local/delete", { ...(opts as any), body: args }),
+            baseFetch("http://test.local/delete", { ...(opts as FetchOptions), body: args }),
     },
     Comment: {
         get: (args: unknown, opts?: unknown) =>
-            baseFetch("http://test.local/get", { ...(opts as any), body: args }),
+            baseFetch("http://test.local/get", { ...(opts as FetchOptions), body: args }),
         create: (data: unknown, opts?: unknown) =>
-            baseFetch("http://test.local/create", { ...(opts as any), body: data }),
+            baseFetch("http://test.local/create", { ...(opts as FetchOptions), body: data }),
         update: (data: unknown, opts?: unknown) =>
-            baseFetch("http://test.local/update", { ...(opts as any), body: data }),
+            baseFetch("http://test.local/update", { ...(opts as FetchOptions), body: data }),
         delete: (args: unknown, opts?: unknown) =>
-            baseFetch("http://test.local/delete", { ...(opts as any), body: args }),
+            baseFetch("http://test.local/delete", { ...(opts as FetchOptions), body: args }),
     },
     SectionPost: {
         list: (args?: unknown, opts?: unknown) =>
@@ -74,12 +79,42 @@ const models = {
 };
 
 export const client = { models } as const;
+export interface Todo {
+    id: string;
+    content?: string | null;
+}
+
+export interface Comment {
+    id: string;
+    content?: string | null;
+    createdAt?: string;
+    todoId?: string | null;
+    postId?: string | null;
+    userNameId?: string | null;
+    userName?: { userName?: string | null } | null;
+}
+
+export interface SectionPost {
+    sectionId: string;
+    postId: string;
+}
+
+export interface PostTag {
+    postId: string;
+    tagId: string;
+}
+
+export interface TestRelation {
+    parentId: string;
+    childId: string;
+}
+
 export const Schema = {
-    Todo: { type: {} as any },
-    Comment: { type: {} as any },
-    SectionPost: { type: {} as any },
-    PostTag: { type: {} as any },
-    TestRelation: { type: {} as any },
+    Todo: { type: {} as Todo },
+    Comment: { type: {} as Comment },
+    SectionPost: { type: {} as SectionPost },
+    PostTag: { type: {} as PostTag },
+    TestRelation: { type: {} as TestRelation },
 } as const;
 
 export type Schema = typeof Schema;
