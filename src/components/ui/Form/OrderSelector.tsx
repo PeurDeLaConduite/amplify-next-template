@@ -32,6 +32,7 @@ export default function OrderSelector({ items, editingId, value, onReorder }: Pr
             name="order"
             value={String(safeValue)}
             onChange={setFieldValue}
+            autoComplete="off"
             options={options}
         />
     );
