@@ -41,6 +41,11 @@ type EntityEditorProps<T extends Record<string, unknown>> = {
     fields: FieldKey<T>[];
     /** Libellés des champs */
     labels: (field: FieldKey<T>) => string;
+    /**
+     * Tokens d'autocomplétion pour chaque champ.
+     * Voir https://developer.mozilla.org/docs/Web/HTML/Attributes/autocomplete
+     */
+    fieldAutoComplete?: Partial<Record<FieldKey<T>, string>>;
     /** Sauvegarde d'un champ individuel */
     updateEntity?: (field: FieldKey<T>, value: string) => Promise<void>;
     /** Effacement d'un champ individuel */
@@ -68,6 +73,7 @@ export default function EntityEditor<T extends Record<string, unknown>>(
         reset,
         fields,
         labels,
+        fieldAutoComplete,
         updateEntity,
         clearField,
         deleteEntity,
@@ -138,6 +144,7 @@ export default function EntityEditor<T extends Record<string, unknown>>(
                     isEdit={false}
                     onCancel={handleCancel}
                     requiredFields={requiredFields}
+                    fieldAutoComplete={fieldAutoComplete}
                 />
             )}
 

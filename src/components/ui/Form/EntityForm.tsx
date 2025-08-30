@@ -13,6 +13,11 @@ type Props<T extends Record<string, unknown>> = {
     isEdit: boolean;
     onCancel: () => void;
     requiredFields: FieldKey<T>[];
+    /**
+     * Tokens d'autocomplétion HTML pour chaque champ.
+     * Exemple : { email: "email", firstName: "given-name" }
+     */
+    fieldAutoComplete?: Partial<Record<FieldKey<T>, string>>;
 };
 
 export default function EntityForm<T extends Record<string, unknown>>({
@@ -24,6 +29,7 @@ export default function EntityForm<T extends Record<string, unknown>>({
     isEdit,
     onCancel,
     requiredFields,
+    fieldAutoComplete = {},
 }: Props<T>) {
     return (
         <form
@@ -45,6 +51,7 @@ export default function EntityForm<T extends Record<string, unknown>>({
                         value={String(formData[field] ?? "")}
                         onChange={(e) => setFieldValue(field, e.target.value)}
                         className="w-full p-2 border rounded"
+                        autoComplete={fieldAutoComplete[field] ?? "off"}
                         required={requiredFields.includes(field)}
                     />
                 </div>
