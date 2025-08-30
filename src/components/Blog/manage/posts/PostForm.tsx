@@ -145,6 +145,7 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
                 name="status"
                 value={form.status ?? ""}
                 onChange={onChange}
+                autoComplete="off"
                 options={[
                     { value: "draft", label: "Brouillon" },
                     { value: "published", label: "Publié" },
@@ -155,6 +156,7 @@ const PostForm = forwardRef<HTMLFormElement, Props>(function PostForm(
                 name="authorId"
                 value={form.authorId}
                 onChange={onChange}
+                autoComplete="off"
                 options={[
                     { value: "", label: "Sélectionner un auteur" },
                     ...authors
