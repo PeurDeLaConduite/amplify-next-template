@@ -9,6 +9,7 @@ type EditFieldProps<T extends Record<string, unknown>> = {
     >;
     saveField: () => void;
     labels: (field: FieldKey<T>) => string;
+    autoComplete?: string;
 };
 
 export default function EditField<T extends Record<string, unknown>>({
@@ -16,8 +17,10 @@ export default function EditField<T extends Record<string, unknown>>({
     setEditModeField,
     saveField,
     labels,
+    autoComplete,
 }: EditFieldProps<T>) {
     const { field, value } = editModeField;
+    const inputId = React.useId();
 
     return (
         <fieldset className="my-6 p-4 border rounded-md bg-white shadow-sm max-w-md mx-auto">
@@ -25,15 +28,17 @@ export default function EditField<T extends Record<string, unknown>>({
                 Modifier mon {labels(field).toLowerCase()} :
             </legend>
 
-            <label htmlFor="edit-field" className="sr-only">
+            <label htmlFor={inputId} className="sr-only">
                 {labels(field)}
             </label>
             <input
-                id="edit-field"
+                id={inputId}
+                name={String(field)}
                 className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
                 value={value}
                 placeholder={labels(field)}
                 title={labels(field)}
+                autoComplete={autoComplete}
                 onChange={(e) =>
                     setEditModeField((prev) => (prev ? { ...prev, value: e.target.value } : null))
                 }
