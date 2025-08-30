@@ -102,7 +102,7 @@ function mergeSx(...parts: Array<SxProps<Theme> | undefined>): SxProps<Theme> | 
     const out: Array<NonNullable<SxProps<Theme>>> = [];
     for (const p of parts) {
         if (!p) continue;
-        if (Array.isArray(p)) out.push(...(p as any));
+        if (Array.isArray(p)) out.push(...(p as Array<NonNullable<SxProps<Theme>>>));
         else out.push(p);
     }
     return out.length ? (out as SxProps<Theme>) : undefined;
@@ -121,7 +121,7 @@ export type ButtonWrapperProps = {
 
 /** Petite fabrique pour éviter les répétitions */
 // helpers en haut du fichier Buttons.tsx// helpers
-function renderByMode(opts: {
+type RenderByModeOpts = {
     variantType: VariantType;
     label?: string;
     ariaLabel?: string;
@@ -134,11 +134,11 @@ function renderByMode(opts: {
     sx?: SxProps<Theme>;
     /** taille MUI Button/IconButton */
     size?: MuiButtonProps["size"];
-    onClick?: () => void;
-    href?: string;
     /** 👇 couleur custom pour construire un style de base (outlined colorisé) */
     editColor?: string;
-}) {
+} & ({ onClick: () => void; href?: undefined } | { href: string; onClick?: undefined });
+
+function renderByMode(opts: RenderByModeOpts) {
     const {
         variantType,
         label,
@@ -150,10 +150,11 @@ function renderByMode(opts: {
         className,
         sx,
         size,
-        onClick,
-        href,
         editColor,
     } = opts;
+
+    const onClick = "onClick" in opts ? opts.onClick : undefined;
+    const href = "href" in opts ? opts.href : undefined;
 
     // 1) fallback automatique: title = label si non défini
     const safeTitle = title ?? label;
@@ -172,7 +173,7 @@ function renderByMode(opts: {
         return (
             <UiButton
                 variantType="icon"
-                href={href as any}
+                href={href}
                 icon={iconNode}
                 ariaLabel={ariaLabel ?? label ?? "Action"}
                 intent={intent}
@@ -189,7 +190,7 @@ function renderByMode(opts: {
     return (
         <UiButton
             variantType="button"
-            href={href as any}
+            href={href}
             label={label ?? ""}
             icon={iconNode}
             intent={intent}
@@ -368,19 +369,26 @@ export type BackButtonProps = ButtonWrapperProps &
     };
 
 export function BackButton(props: BackButtonProps) {
-    const { label = "Retour", editColor = "#1976d2", ...rest } = props; // bleu primary par défaut
+    const {
+        label = "Retour",
+        editColor = "#1976d2",
+        variantType,
+        onBack,
+        href,
+        ...wrapper
+    } = props; // bleu primary par défaut
     const common = {
-        ...rest,
-        variantType: rest.variantType ?? "button",
+        ...wrapper,
+        variantType: variantType ?? "button",
         label,
         icon: <ArrowBackIcon />,
         intent: "primary" as const,
         // editColor,
     };
 
-    if ("href" in rest) {
-        return renderByMode({ ...common, href: rest.href });
+    if (href) {
+        return renderByMode({ ...common, href });
     }
-    return renderByMode({ ...common, onClick: rest.onBack });
+    return renderByMode({ ...common, onClick: onBack! });
 }
 //
