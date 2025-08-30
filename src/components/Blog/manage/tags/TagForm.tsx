@@ -45,6 +45,7 @@ const TagForm = forwardRef<HTMLFormElement, Props>(function TagForm(
                 value={form.name ?? ""}
                 onChange={onChange}
                 readOnly={false}
+                autoComplete="off"
             />
         </BlogFormShell>
     );
