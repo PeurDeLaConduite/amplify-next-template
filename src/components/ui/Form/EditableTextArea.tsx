@@ -8,6 +8,8 @@ type EditableTextAreaProps = {
     name: string;
     onFocus?: (e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
     onBlur?: (e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+    autoComplete?: string;
+    ariaDescribedBy?: string;
 };
 
 const EditableTextArea = ({
@@ -18,6 +20,8 @@ const EditableTextArea = ({
     name,
     onFocus,
     onBlur,
+    autoComplete,
+    ariaDescribedBy,
 }: EditableTextAreaProps) => (
     <div style={{ marginBottom: "1rem" }}>
         <label htmlFor={name} style={{ display: "block", marginBottom: "0.5rem" }}>
@@ -31,6 +35,8 @@ const EditableTextArea = ({
             onFocus={onFocus}
             onBlur={onBlur}
             readOnly={readOnly}
+            autoComplete={autoComplete}
+            aria-describedby={ariaDescribedBy}
             style={{
                 width: "100%",
                 padding: "8px",
