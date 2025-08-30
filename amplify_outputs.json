@@ -1,0 +1,8 @@
+{
+    "data": {
+        "url": "https://example.com/graphql",
+        "region": "us-east-1",
+        "defaultAuthMode": "apiKey",
+        "apiKey": "dummy"
+    }
+}
