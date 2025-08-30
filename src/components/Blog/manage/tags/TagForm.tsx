@@ -19,7 +19,7 @@ interface Props {
 }
 
 const TagForm = forwardRef<HTMLFormElement, Props>(function TagForm(
-    { tagFormManager, onSaveSuccess, onCancel, tags, editingId },
+    { tagFormManager, onSaveSuccess, onCancel },
     ref
 ) {
     const { form, setFieldValue } = tagFormManager;

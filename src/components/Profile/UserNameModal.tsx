@@ -23,7 +23,7 @@ export default function UserNameModal({ isOpen, onClose }: UserNameModalProps) {
             void manager.refresh();
         });
         return unsub;
-    }, [isOpen, manager.refresh]);
+    }, [isOpen, manager]);
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} title="Mon pseudo public" type="info">
