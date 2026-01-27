@@ -1,8 +1,72 @@
+@import url("https://fonts.googleapis.com/css2?family=Carlito:wght@400;700&family=Roboto:wght@400;500;700&display=swap");
 @import "tailwindcss";
+
+:root {
+    --fs-caption: clamp(0.75rem, 0.72rem + 0.15vw, 0.875rem);
+    --fs-ui: clamp(0.875rem, 0.84rem + 0.2vw, 1rem);
+    --fs-body: clamp(1rem, 0.97rem + 0.25vw, 1.125rem);
+    --fs-h3: clamp(1.125rem, 1.05rem + 0.6vw, 1.5rem);
+    --fs-h2: clamp(1.375rem, 1.2rem + 1.1vw, 2rem);
+    --fs-h1: clamp(1.75rem, 1.35rem + 2vw, 2.75rem);
+    --lh-body: 1.55;
+    --lh-ui: 1.2;
+    --lh-h: 1.2;
+    --measure: 65ch;
+    --font-content: "Carlito", "Calibri", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+    --font-ui: "Roboto", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+}
+
 body {
     margin: 0;
     background: linear-gradient(180deg, rgb(117, 81, 194), rgb(255, 255, 255));
-    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    font-family: var(--font-content);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+}
+
+h1,
+h2,
+h3 {
+    font-weight: 700;
+    line-height: var(--lh-h);
+}
+
+h1 {
+    font-size: var(--fs-h1);
+}
+
+h2 {
+    font-size: var(--fs-h2);
+}
+
+h3 {
+    font-size: var(--fs-h3);
+}
+
+main,
+article,
+.prose {
+    max-inline-size: var(--measure);
+}
+
+nav,
+button,
+input,
+select,
+textarea,
+menu,
+label {
+    font-family: var(--font-ui);
+    line-height: var(--lh-ui);
+}
+
+button,
+nav a,
+nav button,
+menu,
+label {
+    font-size: var(--fs-ui);
+    font-weight: 500;
 }
 /* dans globals.css ou un module CSS importé */
 .markdown-container {
@@ -20,13 +84,13 @@ body {
 }
 
 .markdown-container h1 {
-    font-size: 2em;
+    font-size: var(--fs-h1);
 }
 .markdown-container h2 {
-    font-size: 1.75em;
+    font-size: var(--fs-h2);
 }
 .markdown-container h3 {
-    font-size: 1.5em;
+    font-size: var(--fs-h3);
 }
 
 .markdown-container p {
